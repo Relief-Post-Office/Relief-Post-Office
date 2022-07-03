@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_radius_background"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center"
+    android:paddingHorizontal="50sp"
+    android:paddingVertical="10sp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingTop="10sp" >
+
+        <NumberPicker
+            android:id="@+id/birth_year"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:theme="@style/NumberPicker" />
+
+        <NumberPicker
+            android:id="@+id/birth_month"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:theme="@style/NumberPicker" />
+
+        <NumberPicker
+            android:id="@+id/birth_day"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:theme="@style/NumberPicker" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingTop="10sp" >
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/birth_save"
+            android:text="확인"/>
+
+    </LinearLayout>
+
+</LinearLayout>
