@@ -129,7 +129,7 @@ class PhoneActivity : AppCompatActivity() {
         userDB.get().addOnSuccessListener {
             if (it.getValue(UserDTO::class.java) != null) {
                 ActivityCompat.finishAffinity(this)
-                startActivity(Intent(this, CheckLoginService::class.java))
+                startActivity(Intent(this, MainActivity::class.java))
             }
             else {
                 val intent = Intent(this, JoinActivity::class.java)

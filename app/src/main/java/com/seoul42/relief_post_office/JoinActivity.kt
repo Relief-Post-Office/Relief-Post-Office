@@ -277,7 +277,7 @@ class JoinActivity : AppCompatActivity() {
             Thread.sleep(2000)
             Handler(Looper.getMainLooper()).post {
                 ActivityCompat.finishAffinity(this)
-                startActivity(Intent(this, CheckLoginService::class.java))
+                startActivity(Intent(this, MainActivity::class.java))
             }
         }.start()
     }
