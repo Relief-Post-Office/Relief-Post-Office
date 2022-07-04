@@ -1,7 +1,8 @@
-package com.seoul42.relief_post_office
+package com.seoul42.relief_post_office.guardian
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -9,11 +10,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.*
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
 import com.seoul42.relief_post_office.util.Guardian.Companion.USER
 import com.seoul42.relief_post_office.util.Guardian.Companion.CONNECT_WARD
 import com.seoul42.relief_post_office.util.UserInfo.Companion.ALL_USER
@@ -23,36 +26,39 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.GuardianAdapter
 import com.seoul42.relief_post_office.model.NotificationBody
 import com.seoul42.relief_post_office.model.UserDTO
+import com.seoul42.relief_post_office.service.CheckLoginService
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
+import de.hdodenhof.circleimageview.CircleImageView
 
-class GuardianActivity : AppCompatActivity() {
+class MainFragment : Fragment(R.layout.fragment_guardian) {
 
     private val myUserId: String by lazy {
         Firebase.auth.uid.toString()
     }
-    private val guardianPhoto : ImageView by lazy {
-        findViewById<ImageView>(R.id.guardian_photo)
-    }
-    private val recyclerView : RecyclerView by lazy {
-        findViewById<RecyclerView>(R.id.guardian_recyclerView)
-    }
-    private val guardianButton : ImageButton by lazy {
-        findViewById<ImageButton>(R.id.guardian_add)
-    }
     private val firebaseViewModel : FirebaseViewModel by viewModels()
     private val connectedWardList = ArrayList<UserDTO>()
     private lateinit var guardianAdapter : GuardianAdapter
+    private lateinit var guardianPhoto : CircleImageView
+    private lateinit var recyclerView : RecyclerView
+    private lateinit var guardianButton : ImageButton
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.guardian)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
+        setComponent(view)
         setGuardianPhoto()
         setRecyclerView()
         setRequestButton()
+    }
+
+    private fun setComponent(view : View) {
+        guardianPhoto = view.findViewById<CircleImageView>(R.id.guardian_photo)
+        recyclerView = view.findViewById<RecyclerView>(R.id.guardian_recyclerView)
+        guardianButton = view.findViewById<ImageButton>(R.id.guardian_add)
     }
 
     private fun setGuardianPhoto() {
@@ -63,11 +69,11 @@ class GuardianActivity : AppCompatActivity() {
     }
 
     private fun setRecyclerView() {
-        val wardLayout = LinearLayoutManager(this)
+        val wardLayout = LinearLayoutManager(context)
         val connectDB = Firebase.database.reference.child("guardian").child(myUserId).child("connection")
 
         setConnectedWardList()
-        guardianAdapter = GuardianAdapter(this, connectedWardList)
+        guardianAdapter = GuardianAdapter(requireContext(), connectedWardList)
 
         recyclerView.adapter = guardianAdapter
         recyclerView.layoutManager = wardLayout
@@ -96,8 +102,8 @@ class GuardianActivity : AppCompatActivity() {
 
     private fun setRequestButton() {
         guardianButton.setOnClickListener {
-            val dialog = AlertDialog.Builder(this).create()
-            val eDialog : LayoutInflater = LayoutInflater.from(this)
+            val dialog = AlertDialog.Builder(context).create()
+            val eDialog : LayoutInflater = LayoutInflater.from(context)
             val mView : View = eDialog.inflate(R.layout.dialog_request,null)
             val phoneEdit : EditText = mView.findViewById(R.id.request_edit)
             val requestBtn : Button = mView.findViewById(R.id.request_button)
@@ -106,17 +112,17 @@ class GuardianActivity : AppCompatActivity() {
                 val tel = phoneEdit.text.toString()
 
                 if (tel.length != 11) {
-                    Toast.makeText(this, "휴대전화번호를 정확히 입력해주세요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "휴대전화번호를 정확히 입력해주세요.", Toast.LENGTH_SHORT).show()
                 } else {
                     if (connectUser(tel)) {
-                        Toast.makeText(this, "이미 연결된 피보호자입니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "이미 연결된 피보호자입니다.", Toast.LENGTH_SHORT).show()
                     } else {
                         if (requestUser(tel)) {
-                            Toast.makeText(this, "등록이 완료되었습니다.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "등록이 완료되었습니다.", Toast.LENGTH_SHORT).show()
                             dialog.dismiss()
                             dialog.cancel()
                         } else {
-                            Toast.makeText(this, "등록되지 않은 피보호자 번호입니다.\n다시 확인해주세요.", Toast.LENGTH_SHORT)
+                            Toast.makeText(context, "등록되지 않은 피보호자 번호입니다.\n다시 확인해주세요.", Toast.LENGTH_SHORT)
                                 .show()
                         }
                     }

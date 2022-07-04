@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -15,19 +16,19 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.service.CheckLoginService
+import com.seoul42.relief_post_office.util.Guardian
+import com.seoul42.relief_post_office.util.UserInfo
+import com.seoul42.relief_post_office.util.Ward
+import com.seoul42.relief_post_office.ward.WardActivity
 import java.util.concurrent.TimeUnit
 
 class PhoneActivity : AppCompatActivity() {
-
-    private lateinit var phoneAuthCredential: PhoneAuthCredential
-    private lateinit var verificationId : String
-    private lateinit var phoneNumber: String
-    private lateinit var callbacks : PhoneAuthProvider.OnVerificationStateChangedCallbacks
-    private var requestFlag: Boolean = false
 
     private val auth : FirebaseAuth by lazy {
         Firebase.auth
@@ -47,6 +48,14 @@ class PhoneActivity : AppCompatActivity() {
     private val progressBar by lazy {
         findViewById<ProgressBar>(R.id.phone_progressBar)
     }
+
+    private lateinit var phoneAuthCredential: PhoneAuthCredential
+    private lateinit var verificationId : String
+    private lateinit var phoneNumber: String
+    private lateinit var callbacks : PhoneAuthProvider.OnVerificationStateChangedCallbacks
+    private lateinit var userDTO: UserDTO
+
+    private var requestFlag: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,20 +113,15 @@ class PhoneActivity : AppCompatActivity() {
                 setVerificationDisable()
                 progressBar.visibility = View.VISIBLE
                 phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, myVerification)
-                Thread {
-                    Thread.sleep(2000)
-                    Handler(Looper.getMainLooper()).post {
-                        auth.signInWithCredential(phoneAuthCredential)
-                            .addOnCompleteListener(this) { task ->
-                                if (task.isSuccessful) {
-                                    successVerification()
-                                } else {
-                                    failVerification()
-                                    progressBar.visibility = View.INVISIBLE
-                                }
-                            }
+                auth.signInWithCredential(phoneAuthCredential)
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            successVerification()
+                        } else {
+                            failVerification()
+                            progressBar.visibility = View.INVISIBLE
+                        }
                     }
-                }.start()
             }
         }
     }
@@ -128,8 +132,7 @@ class PhoneActivity : AppCompatActivity() {
         val userDB = Firebase.database.reference.child("user").child(userId)
         userDB.get().addOnSuccessListener {
             if (it.getValue(UserDTO::class.java) != null) {
-                ActivityCompat.finishAffinity(this)
-                startActivity(Intent(this, MainActivity::class.java))
+                setInfo()
             }
             else {
                 val intent = Intent(this, JoinActivity::class.java)
@@ -143,6 +146,39 @@ class PhoneActivity : AppCompatActivity() {
         verificationEditText.setText("")
         Toast.makeText(this, "인증 실패! 인증번호를 다시 확인하세요", Toast.LENGTH_SHORT).show()
         setVerificationEnable()
+    }
+
+    private fun setInfo() {
+        val myUserId = auth.uid.toString()
+        val userDB = Firebase.database.reference.child("user").child(myUserId)
+        var userToken : String
+
+        UserInfo() /* 모든 유저 정보 세팅 */
+        FirebaseMessaging.getInstance().token /* 토큰 획득 및 업데이트 */
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    userToken = task.result.toString()
+                    /* 로그인한 유저가 보호자인지 피보호자인지 확인 */
+                    userDB.get().addOnSuccessListener {
+                        userDTO = it.getValue(UserDTO::class.java) as UserDTO
+                        userDTO.token = userToken
+                        userDB.setValue(userDTO)
+                        if (userDTO.guardian == true) Guardian(userDTO)
+                        else Ward(userDTO)
+                        moveActivity()
+                    }
+                }
+            }
+    }
+
+    private fun moveActivity() {
+        Handler().postDelayed({
+            ActivityCompat.finishAffinity(this)
+            if (userDTO.guardian == true)
+                startActivity(Intent(this, GuardianBackgroundActivity::class.java))
+            else
+                startActivity(Intent(this, WardActivity::class.java))
+        }, 2000)
     }
     /* End verification assistant */
 

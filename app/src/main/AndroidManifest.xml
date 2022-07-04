@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.seoul42.relief_post_office">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -31,8 +32,10 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".PhoneActivity" />
         <activity android:name=".JoinActivity" />
-        <activity android:name=".GuardianActivity" />
-        <activity android:name=".WardActivity" />
+        <activity android:name=".guardian.MainFragment"
+            tools:ignore="Instantiatable" />
+        <activity android:name=".GuardianBackgroundActivity" />
+        <activity android:name=".ward.WardActivity" />
         <activity android:name=".alarm.AlarmActivity" />
 
         <service

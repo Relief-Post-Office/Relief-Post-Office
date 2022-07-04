@@ -1,4 +1,4 @@
-package com.seoul42.relief_post_office
+package com.seoul42.relief_post_office.ward
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.ResponseAdapter
 import com.seoul42.relief_post_office.adapter.WardAdapter
 import com.seoul42.relief_post_office.model.RequestDTO

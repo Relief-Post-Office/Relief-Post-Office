@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:id="@+id/main_layout"
     android:background="#fffbf3">
 
     <TextView
@@ -14,16 +16,17 @@
         android:textColor="@color/black"
         android:textSize="40sp"
         android:textStyle="bold"
-        android:layout_marginTop="75sp"
+        android:layout_marginTop="100sp"
         app:layout_constraintBottom_toTopOf="@+id/main_logo"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/main_logo"
-        android:layout_width="200sp"
-        android:layout_height="200sp"
-        android:layout_marginBottom="100dp"
+        android:layout_width="250sp"
+        android:layout_height="250sp"
+        android:layout_marginTop="25sp"
         android:src="@drawable/relief_post_office"
+        android:layout_gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,49 +35,15 @@
     <Button
         android:layout_width="350sp"
         android:layout_height="wrap_content"
-        android:text=""
+        android:text="핸드폰 인증"
         android:textColor="@color/white"
         android:textSize="15sp"
+        android:layout_margin="50dp"
         android:id="@+id/main_button"
-        android:background="@drawable/rect_round_ffd464_radius_8"
-        android:backgroundTint="#00ffff"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="200sp"
-        />
+        android:background="@drawable/button_rounded_corner"
+        android:backgroundTint="#3f91ff"
+        tools:ignore="MissingConstraints" />
 
-    <Button
-        android:layout_width="350sp"
-        android:layout_height="wrap_content"
-        android:text="로그아웃"
-        android:textColor="@color/white"
-        android:textSize="15sp"
-        android:id="@+id/main_logout"
-        android:background="@drawable/rect_round_ffd464_radius_8"
-        android:backgroundTint="#00ffff"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="100sp"
-        />
 
-    <ProgressBar
-        android:id="@+id/main_progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="200sp"
-        android:layout_height="wrap_content"
-        android:indeterminate = "true"
-        android:max="100"
-        android:minWidth="200sp"
-        android:minHeight="50sp"
-        android:visibility="invisible"
-        android:layout_centerInParent="true"
-        android:progress="0"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

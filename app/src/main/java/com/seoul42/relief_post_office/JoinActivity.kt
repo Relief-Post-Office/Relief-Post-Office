@@ -29,6 +29,10 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.service.CheckLoginService
+import com.seoul42.relief_post_office.util.Guardian
+import com.seoul42.relief_post_office.util.UserInfo
+import com.seoul42.relief_post_office.util.Ward
+import com.seoul42.relief_post_office.ward.WardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -86,6 +90,8 @@ class JoinActivity : AppCompatActivity() {
     private var photoUri : String = ""
     private var token : String = ""
     private var tel : String = ""
+
+    private lateinit var userDTO: UserDTO
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -273,13 +279,40 @@ class JoinActivity : AppCompatActivity() {
     private fun completeJoin() {
         setInsert()
         insertUser()
-        Thread {
-            Thread.sleep(2000)
-            Handler(Looper.getMainLooper()).post {
-                ActivityCompat.finishAffinity(this)
-                startActivity(Intent(this, MainActivity::class.java))
+        setInfo()
+    }
+
+    private fun setInfo() {
+        val myUserId = auth.uid.toString()
+        val userDB = Firebase.database.reference.child("user").child(myUserId)
+        var userToken : String
+
+        UserInfo() /* 모든 유저 정보 세팅 */
+        FirebaseMessaging.getInstance().token /* 토큰 획득 및 업데이트 */
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    userToken = task.result.toString()
+                    /* 로그인한 유저가 보호자인지 피보호자인지 확인 */
+                    userDB.get().addOnSuccessListener {
+                        userDTO = it.getValue(UserDTO::class.java) as UserDTO
+                        userDTO.token = userToken
+                        userDB.setValue(userDTO)
+                        if (userDTO.guardian == true) Guardian(userDTO)
+                        else Ward(userDTO)
+                        moveActivity()
+                    }
+                }
             }
-        }.start()
+    }
+
+    private fun moveActivity() {
+        Handler().postDelayed({
+            ActivityCompat.finishAffinity(this)
+            if (userDTO.guardian == true)
+                startActivity(Intent(this, GuardianBackgroundActivity::class.java))
+            else
+                startActivity(Intent(this, WardActivity::class.java))
+        }, 3000)
     }
     /* End save assistant */
 

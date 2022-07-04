@@ -13,12 +13,16 @@
         android:background="#FAF4C0"
         tools:ignore="MissingConstraints">
 
+
         <ImageView
             android:id="@+id/item_guardian_img"
             android:layout_width="100sp"
             android:layout_height="100sp"
             android:layout_gravity="center"
-            android:layout_marginLeft="16sp"/>
+            android:layout_marginLeft="16sp"
+            android:src="@drawable/relief_post_office"
+            app:civ_border_width="2dp"
+            app:civ_border_color="#ffcccccc"/>
 
         <TextView
             android:textSize="16sp"

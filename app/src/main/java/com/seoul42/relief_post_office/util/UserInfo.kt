@@ -1,5 +1,6 @@
 package com.seoul42.relief_post_office.util
 
+import android.util.Log
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

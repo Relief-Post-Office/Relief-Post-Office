@@ -3,10 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="10sp"
     android:background="#fffbf3"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <TextView
         android:layout_width="wrap_content"
@@ -15,7 +14,7 @@
         android:textColor="#000000"
         android:textSize="25sp"
         android:textStyle="bold"
-        android:layout_marginLeft="10sp"
+        android:layout_marginLeft="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guideline1"
         app:layout_constraintBottom_toTopOf="@id/guideline2"/>
@@ -27,7 +26,7 @@
         android:textColor="#8c8c8c"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:layout_marginLeft="10sp"
+        android:layout_marginLeft="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guideline2"
         app:layout_constraintBottom_toTopOf="@id/guideline3"/>
@@ -39,6 +38,7 @@
         android:textColor="#000000"
         android:textSize="15sp"
         android:textStyle="bold"
+        android:layout_marginLeft="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toTopOf="@id/guideline4"/>
 
@@ -50,8 +50,9 @@
         android:hint="휴대전화번호 입력"
         android:inputType="number"
         android:text=""
-        android:paddingLeft="10sp"
         android:maxLength="11"
+        android:paddingLeft="10sp"
+        android:layout_marginLeft="8sp"
         android:background="@drawable/edittext_rounded_corner_rectangle"
         android:textColorHint="#8E8D8D"
         app:layout_constraintBottom_toTopOf="@id/guideline5"
@@ -83,6 +84,7 @@
         android:textColor="#000000"
         android:textSize="15sp"
         android:textStyle="bold"
+        android:layout_marginLeft="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toTopOf="@id/guideline6"/>
 
@@ -95,6 +97,7 @@
         android:paddingLeft="10sp"
         android:inputType="number"
         android:text=""
+        android:layout_marginLeft="8sp"
         android:enabled="false"
         android:textColorHint="#8E8D8D"
         android:background="@drawable/edittext_rounded_corner_rectangle"
@@ -118,7 +121,7 @@
         app:layout_constraintBottom_toTopOf="@id/guideline7"
         />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -135,20 +138,33 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="200sp"
             android:layout_height="wrap_content"
-            android:indeterminate = "true"
+            android:layout_centerInParent="true"
+            android:indeterminate="true"
             android:max="100"
             android:minWidth="200sp"
             android:minHeight="50sp"
-            android:visibility="invisible"
-            android:layout_centerInParent="true"
             android:progress="0"
-            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            custom:layout_constraintGuide_begin="-134dp" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            custom:barrierDirection="left"
+            custom:constraint_referenced_ids="linearLayout2" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline1"
@@ -184,20 +200,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.39" />
+        app:layout_constraintGuide_percent="0.41" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.46" />
+        app:layout_constraintGuide_percent="0.45" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.52" />
+        app:layout_constraintGuide_percent="0.53" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
