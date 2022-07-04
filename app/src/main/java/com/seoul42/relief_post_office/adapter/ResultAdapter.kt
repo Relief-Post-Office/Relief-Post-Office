@@ -1,4 +1,4 @@
-package com.Seoul42.relief_post_office
+package com.seoul42.relief_post_office
 
 import Results
 import android.view.LayoutInflater

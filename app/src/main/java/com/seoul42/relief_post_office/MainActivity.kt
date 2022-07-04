@@ -49,6 +49,11 @@ class MainActivity : AppCompatActivity() {
         } else { /* 로그아웃 상태 */
             processLogout()
         }
+
+        findViewById<Button>(R.id.btnTmp).setOnClickListener {
+            val intent = Intent(this, ResultActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setInfo() {
