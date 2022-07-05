@@ -1,9 +1,10 @@
 package com.seoul42.relief_post_office
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.firebase.database.DataSnapshot
@@ -15,6 +16,7 @@ import com.google.firebase.storage.ktx.storage
 import com.seoul42.relief_post_office.databinding.ActivityResultBinding
 import com.seoul42.relief_post_office.model.ResultDTO
 import java.text.SimpleDateFormat
+import java.util.*
 
 class ResultActivity : AppCompatActivity() {
     private val binding by lazy { ActivityResultBinding.inflate(layoutInflater) }
@@ -24,7 +26,7 @@ class ResultActivity : AppCompatActivity() {
     private var resultList = mutableListOf<ResultDTO>()
     private lateinit var adapter: ResultAdapter
     //intent로 넘어와야 할 정보들
-    val wardId = "Aw9Pgjc0xXYJ7L25zQ4CtgofuTP2"
+    private val wardId = "jNmigty6iAST8GNZHtkbasmfINy1"
     //끝
 
     @SuppressLint("SetTextI18n")
@@ -35,6 +37,20 @@ class ResultActivity : AppCompatActivity() {
         setWardName()
         setDate()
         resultListenSet()
+    }
+
+    fun showDatePickerDialog(v: View) {
+        val newFragment = DatePickerFragment()
+        newFragment.show(supportFragmentManager, "datePicker")
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    fun processDatePickerResult(year: Int, month: Int, day: Int) {
+        val calendar:Calendar = Calendar.getInstance()
+        calendar.set(year,month,day)
+        val sdf = SimpleDateFormat("yyyy/MM/dd")
+        val dateMessage = sdf.format(calendar.timeInMillis)
+        binding.btnSetDate.text = dateMessage
     }
 
     private fun setProfile(path: String) {
@@ -55,10 +71,11 @@ class ResultActivity : AppCompatActivity() {
             }
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun setDate() {
         val sdf = SimpleDateFormat("yyyy/MM/dd")
         date = sdf.format(System.currentTimeMillis())
-        binding.textDate.text = date
+        binding.btnSetDate.text = date
     }
 
     private fun resultListenSet() {
