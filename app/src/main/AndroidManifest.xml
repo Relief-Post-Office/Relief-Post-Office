@@ -31,12 +31,17 @@
 
         <activity android:name=".MainActivity" />
         <activity android:name=".PhoneActivity" />
-        <activity android:name=".JoinActivity" />
+        <activity android:name=".JoinActivity"
+            android:windowSoftInputMode="adjustNothing"/>
         <activity android:name=".guardian.MainFragment"
             tools:ignore="Instantiatable" />
         <activity android:name=".GuardianBackgroundActivity" />
         <activity android:name=".ward.WardActivity" />
         <activity android:name=".alarm.AlarmActivity" />
+        <activity android:name=".guardian.GuardianProfileActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity android:name=".ward.WardProfileActivity"
+            android:windowSoftInputMode="adjustNothing" />
 
         <service
             android:name=".service.MyFirebaseMessagingService"

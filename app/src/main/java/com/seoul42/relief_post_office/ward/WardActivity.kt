@@ -2,6 +2,7 @@ package com.seoul42.relief_post_office.ward
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -57,10 +58,30 @@ class WardActivity : AppCompatActivity() {
     }
 
     private fun setWardPhoto() {
+        val userDB = Firebase.database.reference.child("user").child(myUserId)
+
         Glide.with(this)
             .load(USER.photoUri) /* ★★★ USER is in class of Ward ★★★ */
             .circleCrop()
             .into(wardPhoto)
+        wardPhoto.setOnClickListener {
+            startActivity(Intent(this, WardProfileActivity::class.java))
+        }
+
+        /* 프로필 편집이 완료될 경우 업데이트된 사진을 적용하도록 리스너 설정 */
+        userDB.addChildEventListener(object : ChildEventListener {
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                Glide.with(this@WardActivity)
+                    .load(USER.photoUri)
+                    .circleCrop()
+                    .into(wardPhoto)
+            }
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     private fun setRecyclerView() {

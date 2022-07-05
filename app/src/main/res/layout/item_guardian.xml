@@ -3,23 +3,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="10sp">
+    android:layout_marginTop="5sp"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="120sp"
+        android:layout_height="90sp"
         android:orientation="horizontal"
-        android:background="#FAF4C0"
+        android:layout_margin="10dp"
+        android:background="@drawable/layout_rounded_corner"
+        android:backgroundTint="#EFEFEF"
+        android:id="@+id/item_user_layout"
         tools:ignore="MissingConstraints">
-
 
         <ImageView
             android:id="@+id/item_guardian_img"
-            android:layout_width="100sp"
-            android:layout_height="100sp"
+            android:layout_width="80sp"
+            android:layout_height="80sp"
             android:layout_gravity="center"
-            android:layout_marginLeft="16sp"
+            android:layout_marginLeft="20sp"
             android:src="@drawable/relief_post_office"
             app:civ_border_width="2dp"
             app:civ_border_color="#ffcccccc"/>
@@ -30,10 +32,10 @@
             android:text=""
             android:id="@+id/item_guardian_text"
             android:layout_height="60sp"
-            android:layout_width="100sp"
+            android:layout_width="80sp"
             android:layout_gravity="center"
             android:gravity="center"
-            android:layout_marginLeft="15sp"/>
+            android:layout_marginLeft="40sp"/>
 
         <CheckBox
             android:layout_width="wrap_content"
@@ -41,7 +43,7 @@
             android:id="@+id/item_guardian_check"
             android:layout_gravity="center"
             android:checked="false"
-            android:layout_marginLeft="15sp"/>
+            android:layout_marginLeft="40sp"/>
 
     </LinearLayout>
 

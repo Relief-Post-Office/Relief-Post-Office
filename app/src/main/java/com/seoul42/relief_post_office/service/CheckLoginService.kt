@@ -3,13 +3,9 @@ package com.seoul42.relief_post_office.service
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
@@ -34,7 +30,7 @@ class CheckLoginService : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.load)
+        setContentView(R.layout.splash)
 
         if (auth.currentUser == null) {
             processLogout()
@@ -45,7 +41,8 @@ class CheckLoginService : AppCompatActivity() {
 
     private fun processLogout() {
         Handler().postDelayed({
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
             finish()
         }, 2500)
     }
@@ -61,7 +58,8 @@ class CheckLoginService : AppCompatActivity() {
             }
             if (!flag) {
                 auth.signOut()
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(this, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
                 finish()
             } else {
                 setInfo()
@@ -94,9 +92,11 @@ class CheckLoginService : AppCompatActivity() {
     private fun moveActivity() {
         Handler().postDelayed({
             if (userDTO.guardian == true)
-                startActivity(Intent(this, GuardianBackgroundActivity::class.java))
+                startActivity(Intent(this, GuardianBackgroundActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
             else
-                startActivity(Intent(this, WardActivity::class.java))
+                startActivity(Intent(this, WardActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
             finish()
         }, 2000)
     }

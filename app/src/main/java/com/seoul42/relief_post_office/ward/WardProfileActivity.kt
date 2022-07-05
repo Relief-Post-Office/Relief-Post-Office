@@ -1,45 +1,43 @@
-package com.seoul42.relief_post_office
+package com.seoul42.relief_post_office.ward
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Matrix
-import android.graphics.drawable.ColorDrawable
 import android.media.ExifInterface
 import android.net.Uri
 import android.net.http.SslError
-import android.os.*
-import android.util.Log
-import android.view.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Message
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.webkit.*
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
+import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.UserDTO
-import com.seoul42.relief_post_office.util.Guardian
-import com.seoul42.relief_post_office.util.UserInfo
-import com.seoul42.relief_post_office.util.Ward
-import com.seoul42.relief_post_office.ward.WardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import com.seoul42.relief_post_office.util.Ward.Companion.USER
 
-class JoinActivity : AppCompatActivity() {
+class WardProfileActivity  : AppCompatActivity() {
 
     private val auth : FirebaseAuth by lazy {
         Firebase.auth
@@ -47,146 +45,86 @@ class JoinActivity : AppCompatActivity() {
     private val storage: FirebaseStorage by lazy {
         FirebaseStorage.getInstance()
     }
-    private val guardianRadioGroup: RadioGroup by lazy {
-        findViewById<RadioGroup>(R.id.join_guardian_group)
-    }
     private val nameEdit: EditText by lazy {
-        findViewById<EditText>(R.id.join_name)
+        findViewById<EditText>(R.id.ward_profile_name)
     }
     private val birthText: TextView by lazy {
-        findViewById<TextView>(R.id.join_birth)
+        findViewById<TextView>(R.id.ward_profile_birth)
     }
-    private val genderRadioGroup: RadioGroup by lazy {
-        findViewById<RadioGroup>(R.id.join_gender_group)
+    private val genderRadioMale: RadioButton by lazy {
+        findViewById<RadioButton>(R.id.ward_profile_male)
+    }
+    private val genderRadioFemale: RadioButton by lazy {
+        findViewById<RadioButton>(R.id.ward_profile_female)
     }
     private val addressText: TextView by lazy {
-        findViewById<TextView>(R.id.join_address)
+        findViewById<TextView>(R.id.ward_profile_address)
     }
     private val detailAddressEdit: EditText by lazy {
-        findViewById<EditText>(R.id.join_detail_address)
+        findViewById<EditText>(R.id.ward_profile_detail_address)
     }
     private val photoButton: ImageButton by lazy {
-        findViewById<ImageButton>(R.id.join_photo)
+        findViewById<ImageButton>(R.id.ward_profile_photo)
     }
     private val saveButton: Button by lazy {
-        findViewById<Button>(R.id.join_save)
+        findViewById<Button>(R.id.ward_profile_save)
     }
     private val progressBar: ProgressBar by lazy {
-        findViewById<ProgressBar>(R.id.join_progressbar)
+        findViewById<ProgressBar>(R.id.ward_profile_progressbar)
     }
     private val translateText: TextView by lazy {
-        findViewById<TextView>(R.id.join_transform_text)
+        findViewById<TextView>(R.id.ward_profile_transform_text)
     }
     private val webView: WebView by lazy {
-        findViewById<WebView>(R.id.join_webView)
+        findViewById<WebView>(R.id.ward_profile_webView)
     }
 
-    private var guardian : Boolean = false
-    private var gender : Boolean = false
-    private var name : String = ""
-    private var birth : String = ""
-    private var photoUri : String = ""
-    private var token : String = ""
-    private var tel : String = ""
-    private var zoneCode : String = ""
-    private var roadAddress : String = ""
-    private var buildingName : String = ""
-    private var detailAddress : String = ""
+    private var guardian : Boolean = USER.guardian == true
+    private var gender : Boolean = USER.gender == true
+    private var name : String = USER.name!!
+    private var birth : String = USER.birth!!
+    private var photoUri : String = USER.photoUri!!
+    private var token : String = USER.token!!
+    private var tel : String = USER.tel!!
+    private var zoneCode : String = USER.zoneCode!!
+    private var roadAddress : String = USER.roadAddress!!
+    private var buildingName : String = USER.buildingName!!
+    private var detailAddress : String = USER.detailAddress!!
 
     private lateinit var userDTO: UserDTO
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.join)
+        setContentView(R.layout.ward_profile)
 
-        /* 현재 유저의 휴대전화번호 및 토큰 정보를 얻어옴 */
-        getTel()
-        getToken()
-        /* 생년월일, 주소, 사진, 저장버튼에 대한 리스너 처리 */
-        setBirth()
+        /* 미리 저장된 정보들을 반영 */
+        setPreProcessed()
+        /* 주소, 사진, 저장버튼에 대한 리스너 처리 */
         setAddress()
         setPhoto()
         setSave()
     }
 
-    private fun getTel() {
-        tel = intent.getStringExtra("tel").toString()
-    }
 
-    private fun getToken() {
-        FirebaseMessaging.getInstance().token
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    token = task.result.toString()
-                }
-            }
-    }
-
-    private fun setBirth() {
-        birthText.setOnClickListener {
-            val dialog = AlertDialog.Builder(this).create()
-            val eDialog : LayoutInflater = LayoutInflater.from(this)
-            val mView : View = eDialog.inflate(R.layout.dialog_birth,null)
-            val year : NumberPicker = mView.findViewById(R.id.birth_year)
-            val month : NumberPicker = mView.findViewById(R.id.birth_month)
-            val day : NumberPicker = mView.findViewById(R.id.birth_day)
-            val save : Button = mView.findViewById(R.id.birth_save)
-            var myYear : Int = 1970
-            var myMonth : Int = 1
-            var myDay : Int = 1
-            val listener = NumberPicker.OnValueChangeListener { numberPicker, _, new ->
-                when (numberPicker) {
-                    year -> myYear = new
-                    month -> myMonth = new
-                    day -> myDay = new
-                }
-            }
-
-            year.wrapSelectorWheel = false
-            month.wrapSelectorWheel = false
-            day.wrapSelectorWheel = false
-            year.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
-            month.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
-            day.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
-            year.minValue = 1900
-            month.minValue = 1
-            day.minValue = 1
-            year.maxValue = 2100
-            month.maxValue = 12
-            day.maxValue = 31
-
-            if (birth.isEmpty()) {
-                year.value = 1970
-                month.value = 1
-                day.value = 1
-                birth = "1970/1/1"
-            } else {
-                year.value = birth.split("/")[0].toInt()
-                month.value = birth.split("/")[1].toInt()
-                day.value = birth.split("/")[2].toInt()
-                myYear = year.value
-                myMonth = month.value
-                myDay = day.value
-            }
-
-            year.setOnValueChangedListener(listener)
-            month.setOnValueChangedListener(listener)
-            day.setOnValueChangedListener(listener)
-
-            save.setOnClickListener {
-                birth = "$myYear/$myMonth/$myDay"
-                birthText.text = birth
-                dialog.dismiss()
-                dialog.cancel()
-            }
-
-            dialog.setView(mView)
-            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.create()
-            dialog.show()
+    private fun setPreProcessed() {
+        birthText.hint = birth
+        nameEdit.setText(name)
+        detailAddressEdit.setText(detailAddress)
+        addressText.text = if (buildingName.isEmpty()) {
+            "($zoneCode)\n$roadAddress"
+        } else {
+            "($zoneCode)\n$roadAddress\n$buildingName"
         }
+        if (USER.gender == true) {
+            genderRadioMale.isChecked = true
+        } else {
+            genderRadioFemale.isChecked = true
+        }
+        Glide.with(this)
+            .load(USER.photoUri)
+            .circleCrop()
+            .into(photoButton)
     }
 
     private fun setAddress() {
@@ -246,17 +184,6 @@ class JoinActivity : AppCompatActivity() {
 
     /* Start save assistant */
     private fun allCheck() : Boolean {
-        guardian = when(guardianRadioGroup.checkedRadioButtonId) {
-            R.id.join_guardian -> true
-            R.id.join_ward -> false
-            else -> return false
-        }
-        gender = when(genderRadioGroup.checkedRadioButtonId) {
-            R.id.join_male -> true
-            R.id.join_female -> false
-            else -> return false
-        }
-        name = nameEdit.text.toString()
         detailAddress = detailAddressEdit.text.toString()
 
         if (name.isEmpty() || birth.isEmpty() || token.isEmpty()
@@ -277,6 +204,7 @@ class JoinActivity : AppCompatActivity() {
         val userDB = Firebase.database.reference.child("user").child(userId)
         userDTO = UserDTO(photoUri, name, birth, tel, token, zoneCode,
             roadAddress, buildingName, detailAddress, gender, guardian)
+        USER = userDTO
 
         userDB.setValue(userDTO)
     }
@@ -284,25 +212,9 @@ class JoinActivity : AppCompatActivity() {
     private fun completeJoin() {
         setInsert()
         insertUser()
-        setInfo()
-    }
-
-    private fun setInfo() {
-        /* 보호자 및 피보호자에 대한 현재 유저 세팅 */
-        if (userDTO.guardian == true) Guardian(userDTO)
-        else Ward(userDTO)
-        UserInfo() /* 모든 유저 정보 세팅 */
-        moveActivity()
-    }
-
-    private fun moveActivity() {
         Handler().postDelayed({
-            ActivityCompat.finishAffinity(this)
-            if (userDTO.guardian == true)
-                startActivity(Intent(this, GuardianBackgroundActivity::class.java))
-            else
-                startActivity(Intent(this, WardActivity::class.java))
-        }, 3000)
+            finish()
+        }, 2500)
     }
     /* End save assistant */
 
@@ -353,8 +265,8 @@ class JoinActivity : AppCompatActivity() {
     private val chromeClient = object : WebChromeClient() {
 
         override fun onCreateWindow(view: WebView?, isDialog: Boolean, isUserGesture: Boolean, resultMsg: Message?): Boolean {
-            val newWebView = WebView(this@JoinActivity)
-            val dialog = Dialog(this@JoinActivity)
+            val newWebView = WebView(this@WardProfileActivity)
+            val dialog = Dialog(this@WardProfileActivity)
             val params = dialog.window!!.attributes
 
             newWebView.settings.javaScriptEnabled = true

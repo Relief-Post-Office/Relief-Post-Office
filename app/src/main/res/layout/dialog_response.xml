@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:background="@drawable/recyclerview_border"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingTop="10sp" >
@@ -21,15 +22,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="보호자 등록"
+            android:padding="10dp"
             android:textColor="@color/black"
-            android:textSize="15sp"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/response_recyclerView"
             android:layout_width="350sp"
-            android:layout_height="500sp"
-            android:layout_marginTop="10sp"
+            android:layout_height="400sp"
+            android:padding="10dp"
             android:scrollbars="vertical" />
 
     </LinearLayout>
@@ -45,6 +47,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/response_button"
+            android:background="@drawable/button_rounded_corner"
+            android:backgroundTint="#3f91ff"
             android:text="등록"/>
 
     </LinearLayout>

@@ -33,8 +33,8 @@ class UserInfo {
                 val userValue = snapshot.getValue(UserDTO::class.java) as UserDTO
                 ALL_USER[userId] = userValue
             }
-            override fun onChildRemoved(snapshot: DataSnapshot) {}
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
             override fun onCancelled(error: DatabaseError) {}
         })
     }

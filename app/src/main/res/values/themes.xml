@@ -15,5 +15,6 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="fontFamily">@font/jua</item>
     </style>
 </resources>

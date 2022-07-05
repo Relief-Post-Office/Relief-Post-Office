@@ -52,7 +52,7 @@
         android:text=""
         android:maxLength="11"
         android:paddingLeft="10sp"
-        android:layout_marginLeft="8sp"
+        android:layout_marginLeft="10sp"
         android:background="@drawable/edittext_rounded_corner_rectangle"
         android:textColorHint="#8E8D8D"
         app:layout_constraintBottom_toTopOf="@id/guideline5"
@@ -74,7 +74,7 @@
         app:layout_constraintStart_toEndOf="@+id/phone_edit_number"
         app:layout_constraintTop_toBottomOf="@id/guideline4"
         app:layout_constraintBottom_toTopOf="@id/guideline5"
-        android:layout_marginLeft="20sp"
+        android:layout_marginLeft="16sp"
         />
 
     <TextView
@@ -97,7 +97,7 @@
         android:paddingLeft="10sp"
         android:inputType="number"
         android:text=""
-        android:layout_marginLeft="8sp"
+        android:layout_marginLeft="10sp"
         android:enabled="false"
         android:textColorHint="#8E8D8D"
         android:background="@drawable/edittext_rounded_corner_rectangle"
@@ -193,27 +193,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.33" />
+        app:layout_constraintGuide_percent="0.30" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.41" />
+        app:layout_constraintGuide_percent="0.38" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.45" />
+        app:layout_constraintGuide_percent="0.42" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.53" />
+        app:layout_constraintGuide_percent="0.50" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

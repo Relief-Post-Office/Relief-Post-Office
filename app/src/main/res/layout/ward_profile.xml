@@ -6,16 +6,15 @@
     android:background="#fffbf3">
 
     <WebView
-        android:id="@+id/join_webView"
+        android:id="@+id/ward_profile_webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#fffbf3" />
 
     <TextView
-        android:id="@+id/join_text"
         android:layout_width="0sp"
         android:layout_height="0sp"
-        android:text="회원 가입"
+        android:text="프로필 편집"
         android:textSize="25sp"
         android:textStyle="bold"
         android:textColor="@color/black"
@@ -41,36 +40,36 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:gravity="center"
-            android:id="@+id/join_guardian_group">
+            android:gravity="center">
 
             <RadioButton
-                android:id="@+id/join_ward"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textColor="@drawable/selector_text_color"
                 android:background="@drawable/check_box"
                 android:button="@null"
                 android:gravity="center"
+                android:checked="true"
+                android:enabled="false"
                 android:paddingHorizontal="15dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginVertical="5dp"
-                android:text="피보호자\n회원가입"
+                android:text="피보호자"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
             <RadioButton
-                android:id="@+id/join_guardian"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textColor="@drawable/selector_text_color"
                 android:background="@drawable/check_box"
                 android:gravity="center"
                 android:button="@null"
+                android:enabled="false"
                 android:paddingHorizontal="15dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginVertical="5dp"
-                android:text="보호자\n회원가입"
+                android:hint="보호자"
                 android:textSize="15sp"
                 android:textStyle="bold"/>
 
@@ -101,12 +100,13 @@
             />
 
         <EditText
-            android:id="@+id/join_name"
+            android:id="@+id/ward_profile_name"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
             android:background="#00000000"
             android:hint="이름을 입력하세요"
+            android:enabled="false"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="20dp"
             android:layout_marginVertical="5dp"
@@ -138,7 +138,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/join_address"
+            android:id="@+id/ward_profile_address"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="주소를 입력하세요"
@@ -173,7 +173,7 @@
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/join_detail_address"
+            android:id="@+id/ward_profile_detail_address"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="15sp"
@@ -209,9 +209,10 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/join_birth"
+            android:id="@+id/ward_profile_birth"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:enabled="false"
             android:layout_marginLeft="15sp"
             android:layout_marginRight="20dp"
             android:layout_marginVertical="5dp"
@@ -245,7 +246,7 @@
             android:textStyle="bold" />
 
         <RadioGroup
-            android:id="@+id/join_gender_group"
+            android:id="@+id/ward_profile_gender_group"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="15dp"
@@ -255,18 +256,20 @@
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/join_male"
+                android:id="@+id/ward_profile_male"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="남자"
+                android:enabled="false"
                 android:layout_marginRight="10dp"
                 android:textSize="13sp" />
 
             <RadioButton
-                android:id="@+id/join_female"
+                android:id="@+id/ward_profile_female"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="여자"
+                android:enabled="false"
                 android:layout_marginLeft="10dp"
                 android:textSize="13sp" />
 
@@ -296,7 +299,7 @@
             android:textStyle="bold" />
 
         <ImageButton
-            android:id="@+id/join_photo"
+            android:id="@+id/ward_profile_photo"
             android:layout_width="80sp"
             android:layout_height="80sp"
             android:layout_gravity="center"
@@ -318,14 +321,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ProgressBar
-            android:id="@+id/join_progressbar"
+            android:id="@+id/ward_profile_progressbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:visibility="invisible" />
 
         <TextView
-            android:id="@+id/join_transform_text"
+            android:id="@+id/ward_profile_transform_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -337,7 +340,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/join_save"
+        android:id="@+id/ward_profile_save"
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:background="#000000"
