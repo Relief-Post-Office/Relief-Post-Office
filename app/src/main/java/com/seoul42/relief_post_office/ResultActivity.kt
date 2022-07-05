@@ -27,6 +27,7 @@ class ResultActivity : AppCompatActivity() {
     val wardId = "Aw9Pgjc0xXYJ7L25zQ4CtgofuTP2"
     //끝
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)

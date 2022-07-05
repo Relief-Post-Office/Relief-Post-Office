@@ -1,5 +1,6 @@
 package com.seoul42.relief_post_office
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -11,14 +12,15 @@ import com.seoul42.relief_post_office.model.ResultDTO
 class ResultAdapter(private val resultList: MutableList<ResultDTO>)
     : RecyclerView.Adapter<ResultAdapter.ResultHolder>() {
     inner class ResultHolder(val binding: ResultRecyclerBinding) : RecyclerView.ViewHolder(binding.root){
+        @SuppressLint("NotifyDataSetChanged")
         fun setResult(result: ResultDTO) {
             val database = Firebase.database
             val regardRef = database.getReference("regard")
-            regardRef.child(result.regard_id).child("name").get().addOnSuccessListener {
+            regardRef.child(result.regardId).child("name").get().addOnSuccessListener {
                 binding.regardName.text = it.value.toString()
                 notifyDataSetChanged()
             }
-            regardRef.child(result.regard_id).child("alarmTime").get().addOnSuccessListener {
+            regardRef.child(result.regardId).child("alarmTime").get().addOnSuccessListener {
                 binding.alarmTime.text = it.value.toString()
                 notifyDataSetChanged()
             }
