@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-port\\values-port.xml",
+            "outputFile": "com.seoul42.relief_post_office.app-mergeDebugResources-46:/values-port/values-port.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\6b152adfb27bbdd71768387757f38972\\transformed\\appcompat-1.4.2\\res\\values-port\\values-port.xml",
+                    "source": "/Users/seungbeom/.gradle/caches/transforms-3/5eec1583ec3dd66f56a5b356183ea45f/transformed/appcompat-1.4.2/res/values-port/values-port.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

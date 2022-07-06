@@ -2870,6 +2870,7 @@ id group_divider
 id grouping
 id groups
 id guardian_add
+id guardian_logout
 id guardian_photo
 id guardian_profile_address
 id guardian_profile_birth
@@ -2899,6 +2900,8 @@ id home
 id homeAsUp
 id honorRequest
 id horizontal_guideline1
+id horizontal_guideline1_25
+id horizontal_guideline1_5
 id horizontal_guideline10
 id horizontal_guideline11
 id horizontal_guideline12
@@ -2977,6 +2980,7 @@ id ltr
 id main_button
 id main_layout
 id main_logo
+id make_safety_btn
 id masked
 id match_constraint
 id match_parent
@@ -3099,6 +3103,12 @@ id right_side
 id rounded
 id row_index_key
 id rtl
+id safety_del_btn
+id safety_edit_btn
+id safety_edit_text
+id safety_rv
+id safety_rv_item
+id safety_title
 id save_non_transition_alpha
 id save_overlay_view
 id sawtooth
@@ -3222,6 +3232,7 @@ id vertical_guideline2
 id vertical_guideline3
 id vertical_guideline4
 id vertical_guideline5
+id vertical_guideline5_5
 id vertical_guideline6
 id vertical_only
 id view_offset_helper
@@ -3232,6 +3243,7 @@ id view_tree_view_model_store_owner
 id visible
 id visible_removing_fragment_view_tag
 id ward_add
+id ward_logout
 id ward_photo
 id ward_profile_address
 id ward_profile_birth
@@ -3253,6 +3265,7 @@ id withinBounds
 id wrap
 id wrap_content
 id wrap_content_constrained
+id write_btn
 id x_left
 id x_right
 id zero_corner_chip
@@ -3351,6 +3364,8 @@ layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
 layout activity_alarm
+layout activity_edit_text
+layout activity_safety_make
 layout browser_actions_context_menu_page
 layout browser_actions_context_menu_row
 layout custom_dialog
@@ -3373,9 +3388,11 @@ layout dialog_birth
 layout dialog_request
 layout dialog_response
 layout fragment_guardian
+layout fragment_safety
 layout guardian_background
 layout guardian_profile
 layout item_guardian
+layout item_safety
 layout item_user
 layout join
 layout m3_alert_dialog

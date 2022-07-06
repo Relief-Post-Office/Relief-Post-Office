@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
@@ -31,7 +30,6 @@ import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.GuardianAdapter
 import com.seoul42.relief_post_office.model.NotificationBody
 import com.seoul42.relief_post_office.model.UserDTO
-import com.seoul42.relief_post_office.service.CheckLoginService
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 import de.hdodenhof.circleimageview.CircleImageView
 

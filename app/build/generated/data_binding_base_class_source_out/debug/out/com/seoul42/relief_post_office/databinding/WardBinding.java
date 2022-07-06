@@ -26,6 +26,12 @@ public final class WardBinding implements ViewBinding {
   public final Guideline horizontalGuideline1;
 
   @NonNull
+  public final Guideline horizontalGuideline125;
+
+  @NonNull
+  public final Guideline horizontalGuideline15;
+
+  @NonNull
   public final Guideline horizontalGuideline2;
 
   @NonNull
@@ -56,10 +62,16 @@ public final class WardBinding implements ViewBinding {
   public final Guideline verticalGuideline5;
 
   @NonNull
+  public final Guideline verticalGuideline55;
+
+  @NonNull
   public final Guideline verticalGuideline6;
 
   @NonNull
   public final Button wardAdd;
+
+  @NonNull
+  public final Button wardLogout;
 
   @NonNull
   public final CircleImageView wardPhoto;
@@ -68,15 +80,19 @@ public final class WardBinding implements ViewBinding {
   public final RecyclerView wardRecyclerView;
 
   private WardBinding(@NonNull ConstraintLayout rootView, @NonNull Guideline horizontalGuideline1,
+      @NonNull Guideline horizontalGuideline125, @NonNull Guideline horizontalGuideline15,
       @NonNull Guideline horizontalGuideline2, @NonNull Guideline horizontalGuideline3,
       @NonNull Guideline horizontalGuideline4, @NonNull Guideline horizontalGuideline5,
       @NonNull Guideline horizontalGuideline6, @NonNull Guideline verticalGuideline1,
       @NonNull Guideline verticalGuideline2, @NonNull Guideline verticalGuideline3,
       @NonNull Guideline verticalGuideline4, @NonNull Guideline verticalGuideline5,
-      @NonNull Guideline verticalGuideline6, @NonNull Button wardAdd,
-      @NonNull CircleImageView wardPhoto, @NonNull RecyclerView wardRecyclerView) {
+      @NonNull Guideline verticalGuideline55, @NonNull Guideline verticalGuideline6,
+      @NonNull Button wardAdd, @NonNull Button wardLogout, @NonNull CircleImageView wardPhoto,
+      @NonNull RecyclerView wardRecyclerView) {
     this.rootView = rootView;
     this.horizontalGuideline1 = horizontalGuideline1;
+    this.horizontalGuideline125 = horizontalGuideline125;
+    this.horizontalGuideline15 = horizontalGuideline15;
     this.horizontalGuideline2 = horizontalGuideline2;
     this.horizontalGuideline3 = horizontalGuideline3;
     this.horizontalGuideline4 = horizontalGuideline4;
@@ -87,8 +103,10 @@ public final class WardBinding implements ViewBinding {
     this.verticalGuideline3 = verticalGuideline3;
     this.verticalGuideline4 = verticalGuideline4;
     this.verticalGuideline5 = verticalGuideline5;
+    this.verticalGuideline55 = verticalGuideline55;
     this.verticalGuideline6 = verticalGuideline6;
     this.wardAdd = wardAdd;
+    this.wardLogout = wardLogout;
     this.wardPhoto = wardPhoto;
     this.wardRecyclerView = wardRecyclerView;
   }
@@ -123,6 +141,18 @@ public final class WardBinding implements ViewBinding {
       id = R.id.horizontal_guideline1;
       Guideline horizontalGuideline1 = ViewBindings.findChildViewById(rootView, id);
       if (horizontalGuideline1 == null) {
+        break missingId;
+      }
+
+      id = R.id.horizontal_guideline1_25;
+      Guideline horizontalGuideline125 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline125 == null) {
+        break missingId;
+      }
+
+      id = R.id.horizontal_guideline1_5;
+      Guideline horizontalGuideline15 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline15 == null) {
         break missingId;
       }
 
@@ -186,6 +216,12 @@ public final class WardBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.vertical_guideline5_5;
+      Guideline verticalGuideline55 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline55 == null) {
+        break missingId;
+      }
+
       id = R.id.vertical_guideline6;
       Guideline verticalGuideline6 = ViewBindings.findChildViewById(rootView, id);
       if (verticalGuideline6 == null) {
@@ -195,6 +231,12 @@ public final class WardBinding implements ViewBinding {
       id = R.id.ward_add;
       Button wardAdd = ViewBindings.findChildViewById(rootView, id);
       if (wardAdd == null) {
+        break missingId;
+      }
+
+      id = R.id.ward_logout;
+      Button wardLogout = ViewBindings.findChildViewById(rootView, id);
+      if (wardLogout == null) {
         break missingId;
       }
 
@@ -211,9 +253,10 @@ public final class WardBinding implements ViewBinding {
       }
 
       return new WardBinding((ConstraintLayout) rootView, horizontalGuideline1,
-          horizontalGuideline2, horizontalGuideline3, horizontalGuideline4, horizontalGuideline5,
-          horizontalGuideline6, verticalGuideline1, verticalGuideline2, verticalGuideline3,
-          verticalGuideline4, verticalGuideline5, verticalGuideline6, wardAdd, wardPhoto,
+          horizontalGuideline125, horizontalGuideline15, horizontalGuideline2, horizontalGuideline3,
+          horizontalGuideline4, horizontalGuideline5, horizontalGuideline6, verticalGuideline1,
+          verticalGuideline2, verticalGuideline3, verticalGuideline4, verticalGuideline5,
+          verticalGuideline55, verticalGuideline6, wardAdd, wardLogout, wardPhoto,
           wardRecyclerView);
     }
     String missingId = rootView.getResources().getResourceName(id);

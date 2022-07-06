@@ -33,6 +33,12 @@
         android:theme="@style/Theme.Relief_post_office"
         android:usesCleartextTraffic="true" >
         <activity
+            android:name="com.seoul42.relief_post_office.safety.EditSafetyActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.seoul42.relief_post_office.safety.SafetyMake"
+            android:exported="false" />
+        <activity
             android:name="com.seoul42.relief_post_office.service.CheckLoginService"
             android:exported="true" >
             <intent-filter>

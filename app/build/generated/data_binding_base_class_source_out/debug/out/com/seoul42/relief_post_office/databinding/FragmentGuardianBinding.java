@@ -4,6 +4,7 @@ package com.seoul42.relief_post_office.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +27,9 @@ public final class FragmentGuardianBinding implements ViewBinding {
   public final ImageButton guardianAdd;
 
   @NonNull
+  public final Button guardianLogout;
+
+  @NonNull
   public final CircleImageView guardianPhoto;
 
   @NonNull
@@ -33,6 +37,12 @@ public final class FragmentGuardianBinding implements ViewBinding {
 
   @NonNull
   public final Guideline horizontalGuideline1;
+
+  @NonNull
+  public final Guideline horizontalGuideline125;
+
+  @NonNull
+  public final Guideline horizontalGuideline15;
 
   @NonNull
   public final Guideline horizontalGuideline2;
@@ -65,22 +75,30 @@ public final class FragmentGuardianBinding implements ViewBinding {
   public final Guideline verticalGuideline5;
 
   @NonNull
+  public final Guideline verticalGuideline55;
+
+  @NonNull
   public final Guideline verticalGuideline6;
 
   private FragmentGuardianBinding(@NonNull ConstraintLayout rootView,
-      @NonNull ImageButton guardianAdd, @NonNull CircleImageView guardianPhoto,
-      @NonNull RecyclerView guardianRecyclerView, @NonNull Guideline horizontalGuideline1,
-      @NonNull Guideline horizontalGuideline2, @NonNull Guideline horizontalGuideline3,
-      @NonNull Guideline horizontalGuideline4, @NonNull Guideline horizontalGuideline5,
-      @NonNull Guideline horizontalGuideline6, @NonNull Guideline verticalGuideline1,
-      @NonNull Guideline verticalGuideline2, @NonNull Guideline verticalGuideline3,
-      @NonNull Guideline verticalGuideline4, @NonNull Guideline verticalGuideline5,
+      @NonNull ImageButton guardianAdd, @NonNull Button guardianLogout,
+      @NonNull CircleImageView guardianPhoto, @NonNull RecyclerView guardianRecyclerView,
+      @NonNull Guideline horizontalGuideline1, @NonNull Guideline horizontalGuideline125,
+      @NonNull Guideline horizontalGuideline15, @NonNull Guideline horizontalGuideline2,
+      @NonNull Guideline horizontalGuideline3, @NonNull Guideline horizontalGuideline4,
+      @NonNull Guideline horizontalGuideline5, @NonNull Guideline horizontalGuideline6,
+      @NonNull Guideline verticalGuideline1, @NonNull Guideline verticalGuideline2,
+      @NonNull Guideline verticalGuideline3, @NonNull Guideline verticalGuideline4,
+      @NonNull Guideline verticalGuideline5, @NonNull Guideline verticalGuideline55,
       @NonNull Guideline verticalGuideline6) {
     this.rootView = rootView;
     this.guardianAdd = guardianAdd;
+    this.guardianLogout = guardianLogout;
     this.guardianPhoto = guardianPhoto;
     this.guardianRecyclerView = guardianRecyclerView;
     this.horizontalGuideline1 = horizontalGuideline1;
+    this.horizontalGuideline125 = horizontalGuideline125;
+    this.horizontalGuideline15 = horizontalGuideline15;
     this.horizontalGuideline2 = horizontalGuideline2;
     this.horizontalGuideline3 = horizontalGuideline3;
     this.horizontalGuideline4 = horizontalGuideline4;
@@ -91,6 +109,7 @@ public final class FragmentGuardianBinding implements ViewBinding {
     this.verticalGuideline3 = verticalGuideline3;
     this.verticalGuideline4 = verticalGuideline4;
     this.verticalGuideline5 = verticalGuideline5;
+    this.verticalGuideline55 = verticalGuideline55;
     this.verticalGuideline6 = verticalGuideline6;
   }
 
@@ -127,6 +146,12 @@ public final class FragmentGuardianBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.guardian_logout;
+      Button guardianLogout = ViewBindings.findChildViewById(rootView, id);
+      if (guardianLogout == null) {
+        break missingId;
+      }
+
       id = R.id.guardian_photo;
       CircleImageView guardianPhoto = ViewBindings.findChildViewById(rootView, id);
       if (guardianPhoto == null) {
@@ -142,6 +167,18 @@ public final class FragmentGuardianBinding implements ViewBinding {
       id = R.id.horizontal_guideline1;
       Guideline horizontalGuideline1 = ViewBindings.findChildViewById(rootView, id);
       if (horizontalGuideline1 == null) {
+        break missingId;
+      }
+
+      id = R.id.horizontal_guideline1_25;
+      Guideline horizontalGuideline125 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline125 == null) {
+        break missingId;
+      }
+
+      id = R.id.horizontal_guideline1_5;
+      Guideline horizontalGuideline15 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline15 == null) {
         break missingId;
       }
 
@@ -205,16 +242,23 @@ public final class FragmentGuardianBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.vertical_guideline5_5;
+      Guideline verticalGuideline55 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline55 == null) {
+        break missingId;
+      }
+
       id = R.id.vertical_guideline6;
       Guideline verticalGuideline6 = ViewBindings.findChildViewById(rootView, id);
       if (verticalGuideline6 == null) {
         break missingId;
       }
 
-      return new FragmentGuardianBinding((ConstraintLayout) rootView, guardianAdd, guardianPhoto,
-          guardianRecyclerView, horizontalGuideline1, horizontalGuideline2, horizontalGuideline3,
-          horizontalGuideline4, horizontalGuideline5, horizontalGuideline6, verticalGuideline1,
-          verticalGuideline2, verticalGuideline3, verticalGuideline4, verticalGuideline5,
+      return new FragmentGuardianBinding((ConstraintLayout) rootView, guardianAdd, guardianLogout,
+          guardianPhoto, guardianRecyclerView, horizontalGuideline1, horizontalGuideline125,
+          horizontalGuideline15, horizontalGuideline2, horizontalGuideline3, horizontalGuideline4,
+          horizontalGuideline5, horizontalGuideline6, verticalGuideline1, verticalGuideline2,
+          verticalGuideline3, verticalGuideline4, verticalGuideline5, verticalGuideline55,
           verticalGuideline6);
     }
     String missingId = rootView.getResources().getResourceName(id);
