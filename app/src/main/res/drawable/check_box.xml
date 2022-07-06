@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Unchecked -->
+    <item android:state_checked="false">
+        <shape>
+            <stroke android:color="#c4cbd2" android:width="1sp" />
+            <corners android:radius="30sp" />
+            <solid android:color="#fff" />
+        </shape>
+    </item>
+    <!-- Checked -->
+    <item android:state_checked="true">
+        <layer-list>
+            <!-- 배경 -->
+            <item>
+                <shape>
+                    <corners android:radius="30sp" />
+                    <solid android:color="#9fd6fd" />
+                </shape>
+            </item>
+            <!-- 이미지 영역 -->
+        </layer-list>
+    </item>
+</selector>
