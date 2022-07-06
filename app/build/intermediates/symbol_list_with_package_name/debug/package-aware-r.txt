@@ -2730,7 +2730,6 @@ id autoComplete
 id autoCompleteToEnd
 id autoCompleteToStart
 id barrier
-id barrier2
 id baseline
 id beginOnFirstDraw
 id beginning
@@ -2886,14 +2885,6 @@ id guardian_profile_transform_text
 id guardian_profile_webView
 id guardian_recyclerView
 id guideline
-id guideline1
-id guideline2
-id guideline3
-id guideline4
-id guideline5
-id guideline6
-id guideline7
-id guideline8
 id header_title
 id hideable
 id home
@@ -2911,11 +2902,16 @@ id horizontal_guideline15
 id horizontal_guideline16
 id horizontal_guideline17
 id horizontal_guideline18
+id horizontal_guideline19
 id horizontal_guideline2
+id horizontal_guideline2_5
+id horizontal_guideline20
 id horizontal_guideline3
+id horizontal_guideline3_5
 id horizontal_guideline4
 id horizontal_guideline5
 id horizontal_guideline6
+id horizontal_guideline6_5
 id horizontal_guideline7
 id horizontal_guideline8
 id horizontal_guideline9
@@ -2972,7 +2968,6 @@ id light
 id line1
 id line3
 id linear
-id linearLayout2
 id listMode
 id list_item
 id locale
@@ -3234,6 +3229,8 @@ id vertical_guideline4
 id vertical_guideline5
 id vertical_guideline5_5
 id vertical_guideline6
+id vertical_guideline7
+id vertical_guideline8
 id vertical_only
 id view_offset_helper
 id view_transition

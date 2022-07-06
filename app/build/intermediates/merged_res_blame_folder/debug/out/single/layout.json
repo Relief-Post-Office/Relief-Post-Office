@@ -52,8 +52,8 @@
         "source": "/Users/seungbeom/.gradle/daemon/7.3.3/com.seoul42.relief_post_office.app-main-50:/layout/splash.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/activity_edit_text.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/activity_edit_text.xml"
+        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/phone.xml",
+        "source": "com.seoul42.relief_post_office.app-main-50:/layout/phone.xml"
     },
     {
         "merged": "/Users/seungbeom/.gradle/daemon/7.3.3/com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/ward.xml",

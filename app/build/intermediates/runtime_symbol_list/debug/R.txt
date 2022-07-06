@@ -2729,7 +2729,6 @@ int id autoComplete 0x7f090057
 int id autoCompleteToEnd 0x7f090058
 int id autoCompleteToStart 0x7f090059
 int id barrier 0x7f09005a
-int id barrier2 0x7f09005b
 int id baseline 0x7f09005c
 int id beginOnFirstDraw 0x7f09005d
 int id beginning 0x7f09005e
@@ -2885,14 +2884,6 @@ int id guardian_profile_transform_text 0x7f0900f3
 int id guardian_profile_webView 0x7f0900f4
 int id guardian_recyclerView 0x7f0900f5
 int id guideline 0x7f0900f6
-int id guideline1 0x7f0900f7
-int id guideline2 0x7f0900f8
-int id guideline3 0x7f0900f9
-int id guideline4 0x7f0900fa
-int id guideline5 0x7f0900fb
-int id guideline6 0x7f0900fc
-int id guideline7 0x7f0900fd
-int id guideline8 0x7f0900fe
 int id header_title 0x7f0900ff
 int id hideable 0x7f090100
 int id home 0x7f090101
@@ -2910,11 +2901,16 @@ int id horizontal_guideline15 0x7f09010c
 int id horizontal_guideline16 0x7f09010d
 int id horizontal_guideline17 0x7f09010e
 int id horizontal_guideline18 0x7f09010f
+int id horizontal_guideline19 0x7f090276
 int id horizontal_guideline2 0x7f090110
+int id horizontal_guideline2_5 0x7f09027a
+int id horizontal_guideline20 0x7f090277
 int id horizontal_guideline3 0x7f090111
+int id horizontal_guideline3_5 0x7f09027b
 int id horizontal_guideline4 0x7f090112
 int id horizontal_guideline5 0x7f090113
 int id horizontal_guideline6 0x7f090114
+int id horizontal_guideline6_5 0x7f09027c
 int id horizontal_guideline7 0x7f090115
 int id horizontal_guideline8 0x7f090116
 int id horizontal_guideline9 0x7f090117
@@ -2971,7 +2967,6 @@ int id light 0x7f090149
 int id line1 0x7f09014a
 int id line3 0x7f09014b
 int id linear 0x7f09014c
-int id linearLayout2 0x7f09014d
 int id listMode 0x7f09014e
 int id list_item 0x7f09014f
 int id locale 0x7f090150
@@ -3233,6 +3228,8 @@ int id vertical_guideline4 0x7f09024c
 int id vertical_guideline5 0x7f09024d
 int id vertical_guideline5_5 0x7f09024e
 int id vertical_guideline6 0x7f09024f
+int id vertical_guideline7 0x7f090278
+int id vertical_guideline8 0x7f090279
 int id vertical_only 0x7f090250
 int id view_offset_helper 0x7f090251
 int id view_transition 0x7f090252

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Guideline;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.seoul42.relief_post_office.R;
@@ -21,6 +22,24 @@ import java.lang.String;
 public final class ItemUserBinding implements ViewBinding {
   @NonNull
   private final ConstraintLayout rootView;
+
+  @NonNull
+  public final Guideline horizontalGuideline1;
+
+  @NonNull
+  public final Guideline horizontalGuideline2;
+
+  @NonNull
+  public final Guideline horizontalGuideline3;
+
+  @NonNull
+  public final Guideline horizontalGuideline4;
+
+  @NonNull
+  public final Guideline horizontalGuideline5;
+
+  @NonNull
+  public final Guideline horizontalGuideline6;
 
   @NonNull
   public final Button itemUserCall;
@@ -34,14 +53,59 @@ public final class ItemUserBinding implements ViewBinding {
   @NonNull
   public final TextView itemUserText;
 
-  private ItemUserBinding(@NonNull ConstraintLayout rootView, @NonNull Button itemUserCall,
-      @NonNull ImageView itemUserImg, @NonNull LinearLayout itemUserLayout,
-      @NonNull TextView itemUserText) {
+  @NonNull
+  public final Guideline verticalGuideline1;
+
+  @NonNull
+  public final Guideline verticalGuideline2;
+
+  @NonNull
+  public final Guideline verticalGuideline3;
+
+  @NonNull
+  public final Guideline verticalGuideline4;
+
+  @NonNull
+  public final Guideline verticalGuideline5;
+
+  @NonNull
+  public final Guideline verticalGuideline6;
+
+  @NonNull
+  public final Guideline verticalGuideline7;
+
+  @NonNull
+  public final Guideline verticalGuideline8;
+
+  private ItemUserBinding(@NonNull ConstraintLayout rootView,
+      @NonNull Guideline horizontalGuideline1, @NonNull Guideline horizontalGuideline2,
+      @NonNull Guideline horizontalGuideline3, @NonNull Guideline horizontalGuideline4,
+      @NonNull Guideline horizontalGuideline5, @NonNull Guideline horizontalGuideline6,
+      @NonNull Button itemUserCall, @NonNull ImageView itemUserImg,
+      @NonNull LinearLayout itemUserLayout, @NonNull TextView itemUserText,
+      @NonNull Guideline verticalGuideline1, @NonNull Guideline verticalGuideline2,
+      @NonNull Guideline verticalGuideline3, @NonNull Guideline verticalGuideline4,
+      @NonNull Guideline verticalGuideline5, @NonNull Guideline verticalGuideline6,
+      @NonNull Guideline verticalGuideline7, @NonNull Guideline verticalGuideline8) {
     this.rootView = rootView;
+    this.horizontalGuideline1 = horizontalGuideline1;
+    this.horizontalGuideline2 = horizontalGuideline2;
+    this.horizontalGuideline3 = horizontalGuideline3;
+    this.horizontalGuideline4 = horizontalGuideline4;
+    this.horizontalGuideline5 = horizontalGuideline5;
+    this.horizontalGuideline6 = horizontalGuideline6;
     this.itemUserCall = itemUserCall;
     this.itemUserImg = itemUserImg;
     this.itemUserLayout = itemUserLayout;
     this.itemUserText = itemUserText;
+    this.verticalGuideline1 = verticalGuideline1;
+    this.verticalGuideline2 = verticalGuideline2;
+    this.verticalGuideline3 = verticalGuideline3;
+    this.verticalGuideline4 = verticalGuideline4;
+    this.verticalGuideline5 = verticalGuideline5;
+    this.verticalGuideline6 = verticalGuideline6;
+    this.verticalGuideline7 = verticalGuideline7;
+    this.verticalGuideline8 = verticalGuideline8;
   }
 
   @Override
@@ -71,6 +135,42 @@ public final class ItemUserBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.horizontal_guideline1;
+      Guideline horizontalGuideline1 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline1 == null) {
+        break missingId;
+      }
+
+      id = R.id.horizontal_guideline2;
+      Guideline horizontalGuideline2 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline2 == null) {
+        break missingId;
+      }
+
+      id = R.id.horizontal_guideline3;
+      Guideline horizontalGuideline3 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline3 == null) {
+        break missingId;
+      }
+
+      id = R.id.horizontal_guideline4;
+      Guideline horizontalGuideline4 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline4 == null) {
+        break missingId;
+      }
+
+      id = R.id.horizontal_guideline5;
+      Guideline horizontalGuideline5 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline5 == null) {
+        break missingId;
+      }
+
+      id = R.id.horizontal_guideline6;
+      Guideline horizontalGuideline6 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline6 == null) {
+        break missingId;
+      }
+
       id = R.id.item_user_call;
       Button itemUserCall = ViewBindings.findChildViewById(rootView, id);
       if (itemUserCall == null) {
@@ -95,8 +195,59 @@ public final class ItemUserBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ItemUserBinding((ConstraintLayout) rootView, itemUserCall, itemUserImg,
-          itemUserLayout, itemUserText);
+      id = R.id.vertical_guideline1;
+      Guideline verticalGuideline1 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline1 == null) {
+        break missingId;
+      }
+
+      id = R.id.vertical_guideline2;
+      Guideline verticalGuideline2 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline2 == null) {
+        break missingId;
+      }
+
+      id = R.id.vertical_guideline3;
+      Guideline verticalGuideline3 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline3 == null) {
+        break missingId;
+      }
+
+      id = R.id.vertical_guideline4;
+      Guideline verticalGuideline4 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline4 == null) {
+        break missingId;
+      }
+
+      id = R.id.vertical_guideline5;
+      Guideline verticalGuideline5 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline5 == null) {
+        break missingId;
+      }
+
+      id = R.id.vertical_guideline6;
+      Guideline verticalGuideline6 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline6 == null) {
+        break missingId;
+      }
+
+      id = R.id.vertical_guideline7;
+      Guideline verticalGuideline7 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline7 == null) {
+        break missingId;
+      }
+
+      id = R.id.vertical_guideline8;
+      Guideline verticalGuideline8 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline8 == null) {
+        break missingId;
+      }
+
+      return new ItemUserBinding((ConstraintLayout) rootView, horizontalGuideline1,
+          horizontalGuideline2, horizontalGuideline3, horizontalGuideline4, horizontalGuideline5,
+          horizontalGuideline6, itemUserCall, itemUserImg, itemUserLayout, itemUserText,
+          verticalGuideline1, verticalGuideline2, verticalGuideline3, verticalGuideline4,
+          verticalGuideline5, verticalGuideline6, verticalGuideline7, verticalGuideline8);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -94,7 +94,13 @@ public final class GuardianProfileBinding implements ViewBinding {
   public final Guideline horizontalGuideline18;
 
   @NonNull
+  public final Guideline horizontalGuideline19;
+
+  @NonNull
   public final Guideline horizontalGuideline2;
+
+  @NonNull
+  public final Guideline horizontalGuideline20;
 
   @NonNull
   public final Guideline horizontalGuideline3;
@@ -132,6 +138,9 @@ public final class GuardianProfileBinding implements ViewBinding {
   @NonNull
   public final Guideline verticalGuideline5;
 
+  @NonNull
+  public final Guideline verticalGuideline6;
+
   private GuardianProfileBinding(@NonNull ConstraintLayout rootView,
       @NonNull TextView guardianProfileAddress, @NonNull TextView guardianProfileBirth,
       @NonNull EditText guardianProfileDetailAddress, @NonNull RadioButton guardianProfileFemale,
@@ -144,13 +153,14 @@ public final class GuardianProfileBinding implements ViewBinding {
       @NonNull Guideline horizontalGuideline13, @NonNull Guideline horizontalGuideline14,
       @NonNull Guideline horizontalGuideline15, @NonNull Guideline horizontalGuideline16,
       @NonNull Guideline horizontalGuideline17, @NonNull Guideline horizontalGuideline18,
-      @NonNull Guideline horizontalGuideline2, @NonNull Guideline horizontalGuideline3,
+      @NonNull Guideline horizontalGuideline19, @NonNull Guideline horizontalGuideline2,
+      @NonNull Guideline horizontalGuideline20, @NonNull Guideline horizontalGuideline3,
       @NonNull Guideline horizontalGuideline4, @NonNull Guideline horizontalGuideline5,
       @NonNull Guideline horizontalGuideline6, @NonNull Guideline horizontalGuideline7,
       @NonNull Guideline horizontalGuideline8, @NonNull Guideline horizontalGuideline9,
       @NonNull Guideline verticalGuideline1, @NonNull Guideline verticalGuideline2,
       @NonNull Guideline verticalGuideline3, @NonNull Guideline verticalGuideline4,
-      @NonNull Guideline verticalGuideline5) {
+      @NonNull Guideline verticalGuideline5, @NonNull Guideline verticalGuideline6) {
     this.rootView = rootView;
     this.guardianProfileAddress = guardianProfileAddress;
     this.guardianProfileBirth = guardianProfileBirth;
@@ -174,7 +184,9 @@ public final class GuardianProfileBinding implements ViewBinding {
     this.horizontalGuideline16 = horizontalGuideline16;
     this.horizontalGuideline17 = horizontalGuideline17;
     this.horizontalGuideline18 = horizontalGuideline18;
+    this.horizontalGuideline19 = horizontalGuideline19;
     this.horizontalGuideline2 = horizontalGuideline2;
+    this.horizontalGuideline20 = horizontalGuideline20;
     this.horizontalGuideline3 = horizontalGuideline3;
     this.horizontalGuideline4 = horizontalGuideline4;
     this.horizontalGuideline5 = horizontalGuideline5;
@@ -187,6 +199,7 @@ public final class GuardianProfileBinding implements ViewBinding {
     this.verticalGuideline3 = verticalGuideline3;
     this.verticalGuideline4 = verticalGuideline4;
     this.verticalGuideline5 = verticalGuideline5;
+    this.verticalGuideline6 = verticalGuideline6;
   }
 
   @Override
@@ -348,9 +361,21 @@ public final class GuardianProfileBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.horizontal_guideline19;
+      Guideline horizontalGuideline19 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline19 == null) {
+        break missingId;
+      }
+
       id = R.id.horizontal_guideline2;
       Guideline horizontalGuideline2 = ViewBindings.findChildViewById(rootView, id);
       if (horizontalGuideline2 == null) {
+        break missingId;
+      }
+
+      id = R.id.horizontal_guideline20;
+      Guideline horizontalGuideline20 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline20 == null) {
         break missingId;
       }
 
@@ -426,6 +451,12 @@ public final class GuardianProfileBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.vertical_guideline6;
+      Guideline verticalGuideline6 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline6 == null) {
+        break missingId;
+      }
+
       return new GuardianProfileBinding((ConstraintLayout) rootView, guardianProfileAddress,
           guardianProfileBirth, guardianProfileDetailAddress, guardianProfileFemale,
           guardianProfileGenderGroup, guardianProfileMale, guardianProfileName,
@@ -433,10 +464,11 @@ public final class GuardianProfileBinding implements ViewBinding {
           guardianProfileTransformText, guardianProfileWebView, horizontalGuideline1,
           horizontalGuideline10, horizontalGuideline11, horizontalGuideline12,
           horizontalGuideline13, horizontalGuideline14, horizontalGuideline15,
-          horizontalGuideline16, horizontalGuideline17, horizontalGuideline18, horizontalGuideline2,
-          horizontalGuideline3, horizontalGuideline4, horizontalGuideline5, horizontalGuideline6,
-          horizontalGuideline7, horizontalGuideline8, horizontalGuideline9, verticalGuideline1,
-          verticalGuideline2, verticalGuideline3, verticalGuideline4, verticalGuideline5);
+          horizontalGuideline16, horizontalGuideline17, horizontalGuideline18,
+          horizontalGuideline19, horizontalGuideline2, horizontalGuideline20, horizontalGuideline3,
+          horizontalGuideline4, horizontalGuideline5, horizontalGuideline6, horizontalGuideline7,
+          horizontalGuideline8, horizontalGuideline9, verticalGuideline1, verticalGuideline2,
+          verticalGuideline3, verticalGuideline4, verticalGuideline5, verticalGuideline6);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

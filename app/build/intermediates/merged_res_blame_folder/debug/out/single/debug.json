@@ -28,10 +28,6 @@
         "source": "/Users/seungbeom/.gradle/daemon/7.3.3/com.seoul42.relief_post_office.app-pngs-43:/drawable-hdpi/ic_launcher_foreground.png"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-merged_res-48:/layout_activity_edit_text.xml.flat",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/activity_edit_text.xml"
-    },
-    {
         "merged": "/Users/seungbeom/.gradle/daemon/7.3.3/com.seoul42.relief_post_office.app-merged_res-48:/layout_dialog_request.xml.flat",
         "source": "/Users/seungbeom/.gradle/daemon/7.3.3/com.seoul42.relief_post_office.app-main-50:/layout/dialog_request.xml"
     },
@@ -190,6 +186,10 @@
     {
         "merged": "/Users/seungbeom/.gradle/daemon/7.3.3/com.seoul42.relief_post_office.app-merged_res-48:/layout_dialog_birth.xml.flat",
         "source": "/Users/seungbeom/.gradle/daemon/7.3.3/com.seoul42.relief_post_office.app-main-50:/layout/dialog_birth.xml"
+    },
+    {
+        "merged": "com.seoul42.relief_post_office.app-merged_res-48:/layout_phone.xml.flat",
+        "source": "com.seoul42.relief_post_office.app-main-50:/layout/phone.xml"
     },
     {
         "merged": "/Users/seungbeom/.gradle/daemon/7.3.3/com.seoul42.relief_post_office.app-merged_res-48:/mipmap-xxxhdpi_ic_launcher.webp.flat",

@@ -9,7 +9,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.Barrier;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.Guideline;
 import androidx.viewbinding.ViewBinding;
@@ -25,34 +24,40 @@ public final class PhoneBinding implements ViewBinding {
   private final ConstraintLayout rootView;
 
   @NonNull
-  public final Barrier barrier2;
+  public final Guideline horizontalGuideline1;
 
   @NonNull
-  public final Guideline guideline1;
+  public final Guideline horizontalGuideline15;
 
   @NonNull
-  public final Guideline guideline2;
+  public final Guideline horizontalGuideline2;
 
   @NonNull
-  public final Guideline guideline3;
+  public final Guideline horizontalGuideline25;
 
   @NonNull
-  public final Guideline guideline4;
+  public final Guideline horizontalGuideline3;
 
   @NonNull
-  public final Guideline guideline5;
+  public final Guideline horizontalGuideline35;
 
   @NonNull
-  public final Guideline guideline6;
+  public final Guideline horizontalGuideline4;
 
   @NonNull
-  public final Guideline guideline7;
+  public final Guideline horizontalGuideline5;
 
   @NonNull
-  public final Guideline guideline8;
+  public final Guideline horizontalGuideline6;
 
   @NonNull
-  public final ConstraintLayout linearLayout2;
+  public final Guideline horizontalGuideline65;
+
+  @NonNull
+  public final Guideline horizontalGuideline7;
+
+  @NonNull
+  public final Guideline horizontalGuideline8;
 
   @NonNull
   public final EditText phoneEditNumber;
@@ -69,29 +74,65 @@ public final class PhoneBinding implements ViewBinding {
   @NonNull
   public final TextView phoneTimerText;
 
-  private PhoneBinding(@NonNull ConstraintLayout rootView, @NonNull Barrier barrier2,
-      @NonNull Guideline guideline1, @NonNull Guideline guideline2, @NonNull Guideline guideline3,
-      @NonNull Guideline guideline4, @NonNull Guideline guideline5, @NonNull Guideline guideline6,
-      @NonNull Guideline guideline7, @NonNull Guideline guideline8,
-      @NonNull ConstraintLayout linearLayout2, @NonNull EditText phoneEditNumber,
+  @NonNull
+  public final Guideline verticalGuideline1;
+
+  @NonNull
+  public final Guideline verticalGuideline2;
+
+  @NonNull
+  public final Guideline verticalGuideline3;
+
+  @NonNull
+  public final Guideline verticalGuideline4;
+
+  @NonNull
+  public final Guideline verticalGuideline5;
+
+  @NonNull
+  public final Guideline verticalGuideline6;
+
+  @NonNull
+  public final Guideline verticalGuideline7;
+
+  private PhoneBinding(@NonNull ConstraintLayout rootView, @NonNull Guideline horizontalGuideline1,
+      @NonNull Guideline horizontalGuideline15, @NonNull Guideline horizontalGuideline2,
+      @NonNull Guideline horizontalGuideline25, @NonNull Guideline horizontalGuideline3,
+      @NonNull Guideline horizontalGuideline35, @NonNull Guideline horizontalGuideline4,
+      @NonNull Guideline horizontalGuideline5, @NonNull Guideline horizontalGuideline6,
+      @NonNull Guideline horizontalGuideline65, @NonNull Guideline horizontalGuideline7,
+      @NonNull Guideline horizontalGuideline8, @NonNull EditText phoneEditNumber,
       @NonNull EditText phoneEditVerification, @NonNull ProgressBar phoneProgressBar,
-      @NonNull LoadingButton phoneRequestButton, @NonNull TextView phoneTimerText) {
+      @NonNull LoadingButton phoneRequestButton, @NonNull TextView phoneTimerText,
+      @NonNull Guideline verticalGuideline1, @NonNull Guideline verticalGuideline2,
+      @NonNull Guideline verticalGuideline3, @NonNull Guideline verticalGuideline4,
+      @NonNull Guideline verticalGuideline5, @NonNull Guideline verticalGuideline6,
+      @NonNull Guideline verticalGuideline7) {
     this.rootView = rootView;
-    this.barrier2 = barrier2;
-    this.guideline1 = guideline1;
-    this.guideline2 = guideline2;
-    this.guideline3 = guideline3;
-    this.guideline4 = guideline4;
-    this.guideline5 = guideline5;
-    this.guideline6 = guideline6;
-    this.guideline7 = guideline7;
-    this.guideline8 = guideline8;
-    this.linearLayout2 = linearLayout2;
+    this.horizontalGuideline1 = horizontalGuideline1;
+    this.horizontalGuideline15 = horizontalGuideline15;
+    this.horizontalGuideline2 = horizontalGuideline2;
+    this.horizontalGuideline25 = horizontalGuideline25;
+    this.horizontalGuideline3 = horizontalGuideline3;
+    this.horizontalGuideline35 = horizontalGuideline35;
+    this.horizontalGuideline4 = horizontalGuideline4;
+    this.horizontalGuideline5 = horizontalGuideline5;
+    this.horizontalGuideline6 = horizontalGuideline6;
+    this.horizontalGuideline65 = horizontalGuideline65;
+    this.horizontalGuideline7 = horizontalGuideline7;
+    this.horizontalGuideline8 = horizontalGuideline8;
     this.phoneEditNumber = phoneEditNumber;
     this.phoneEditVerification = phoneEditVerification;
     this.phoneProgressBar = phoneProgressBar;
     this.phoneRequestButton = phoneRequestButton;
     this.phoneTimerText = phoneTimerText;
+    this.verticalGuideline1 = verticalGuideline1;
+    this.verticalGuideline2 = verticalGuideline2;
+    this.verticalGuideline3 = verticalGuideline3;
+    this.verticalGuideline4 = verticalGuideline4;
+    this.verticalGuideline5 = verticalGuideline5;
+    this.verticalGuideline6 = verticalGuideline6;
+    this.verticalGuideline7 = verticalGuideline7;
   }
 
   @Override
@@ -121,63 +162,75 @@ public final class PhoneBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.barrier2;
-      Barrier barrier2 = ViewBindings.findChildViewById(rootView, id);
-      if (barrier2 == null) {
+      id = R.id.horizontal_guideline1;
+      Guideline horizontalGuideline1 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline1 == null) {
         break missingId;
       }
 
-      id = R.id.guideline1;
-      Guideline guideline1 = ViewBindings.findChildViewById(rootView, id);
-      if (guideline1 == null) {
+      id = R.id.horizontal_guideline1_5;
+      Guideline horizontalGuideline15 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline15 == null) {
         break missingId;
       }
 
-      id = R.id.guideline2;
-      Guideline guideline2 = ViewBindings.findChildViewById(rootView, id);
-      if (guideline2 == null) {
+      id = R.id.horizontal_guideline2;
+      Guideline horizontalGuideline2 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline2 == null) {
         break missingId;
       }
 
-      id = R.id.guideline3;
-      Guideline guideline3 = ViewBindings.findChildViewById(rootView, id);
-      if (guideline3 == null) {
+      id = R.id.horizontal_guideline2_5;
+      Guideline horizontalGuideline25 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline25 == null) {
         break missingId;
       }
 
-      id = R.id.guideline4;
-      Guideline guideline4 = ViewBindings.findChildViewById(rootView, id);
-      if (guideline4 == null) {
+      id = R.id.horizontal_guideline3;
+      Guideline horizontalGuideline3 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline3 == null) {
         break missingId;
       }
 
-      id = R.id.guideline5;
-      Guideline guideline5 = ViewBindings.findChildViewById(rootView, id);
-      if (guideline5 == null) {
+      id = R.id.horizontal_guideline3_5;
+      Guideline horizontalGuideline35 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline35 == null) {
         break missingId;
       }
 
-      id = R.id.guideline6;
-      Guideline guideline6 = ViewBindings.findChildViewById(rootView, id);
-      if (guideline6 == null) {
+      id = R.id.horizontal_guideline4;
+      Guideline horizontalGuideline4 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline4 == null) {
         break missingId;
       }
 
-      id = R.id.guideline7;
-      Guideline guideline7 = ViewBindings.findChildViewById(rootView, id);
-      if (guideline7 == null) {
+      id = R.id.horizontal_guideline5;
+      Guideline horizontalGuideline5 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline5 == null) {
         break missingId;
       }
 
-      id = R.id.guideline8;
-      Guideline guideline8 = ViewBindings.findChildViewById(rootView, id);
-      if (guideline8 == null) {
+      id = R.id.horizontal_guideline6;
+      Guideline horizontalGuideline6 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline6 == null) {
         break missingId;
       }
 
-      id = R.id.linearLayout2;
-      ConstraintLayout linearLayout2 = ViewBindings.findChildViewById(rootView, id);
-      if (linearLayout2 == null) {
+      id = R.id.horizontal_guideline6_5;
+      Guideline horizontalGuideline65 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline65 == null) {
+        break missingId;
+      }
+
+      id = R.id.horizontal_guideline7;
+      Guideline horizontalGuideline7 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline7 == null) {
+        break missingId;
+      }
+
+      id = R.id.horizontal_guideline8;
+      Guideline horizontalGuideline8 = ViewBindings.findChildViewById(rootView, id);
+      if (horizontalGuideline8 == null) {
         break missingId;
       }
 
@@ -211,10 +264,55 @@ public final class PhoneBinding implements ViewBinding {
         break missingId;
       }
 
-      return new PhoneBinding((ConstraintLayout) rootView, barrier2, guideline1, guideline2,
-          guideline3, guideline4, guideline5, guideline6, guideline7, guideline8, linearLayout2,
-          phoneEditNumber, phoneEditVerification, phoneProgressBar, phoneRequestButton,
-          phoneTimerText);
+      id = R.id.vertical_guideline1;
+      Guideline verticalGuideline1 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline1 == null) {
+        break missingId;
+      }
+
+      id = R.id.vertical_guideline2;
+      Guideline verticalGuideline2 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline2 == null) {
+        break missingId;
+      }
+
+      id = R.id.vertical_guideline3;
+      Guideline verticalGuideline3 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline3 == null) {
+        break missingId;
+      }
+
+      id = R.id.vertical_guideline4;
+      Guideline verticalGuideline4 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline4 == null) {
+        break missingId;
+      }
+
+      id = R.id.vertical_guideline5;
+      Guideline verticalGuideline5 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline5 == null) {
+        break missingId;
+      }
+
+      id = R.id.vertical_guideline6;
+      Guideline verticalGuideline6 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline6 == null) {
+        break missingId;
+      }
+
+      id = R.id.vertical_guideline7;
+      Guideline verticalGuideline7 = ViewBindings.findChildViewById(rootView, id);
+      if (verticalGuideline7 == null) {
+        break missingId;
+      }
+
+      return new PhoneBinding((ConstraintLayout) rootView, horizontalGuideline1,
+          horizontalGuideline15, horizontalGuideline2, horizontalGuideline25, horizontalGuideline3,
+          horizontalGuideline35, horizontalGuideline4, horizontalGuideline5, horizontalGuideline6,
+          horizontalGuideline65, horizontalGuideline7, horizontalGuideline8, phoneEditNumber,
+          phoneEditVerification, phoneProgressBar, phoneRequestButton, phoneTimerText,
+          verticalGuideline1, verticalGuideline2, verticalGuideline3, verticalGuideline4,
+          verticalGuideline5, verticalGuideline6, verticalGuideline7);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
