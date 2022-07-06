@@ -11,6 +11,7 @@
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/drawable/circle_relief_post_office.xml" value="0.1" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/drawable/dialog_radius_background.xml" value="0.1715" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/drawable/edittext_rounded_corner_rectangle.xml" value="0.1715" />
+        <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1865" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.1715" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/drawable/ic_notification.xml" value="0.1715" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/drawable/layout_rounded_corner.xml" value="0.201" />
@@ -29,7 +30,7 @@
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/join.xml" value="0.264" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/load.xml" value="0.19375" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/main.xml" value="0.264" />
-        <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/phone.xml" value="0.2" />
+        <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/phone.xml" value="0.264" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/splash.xml" value="0.23802083333333332" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/ward.xml" value="0.264" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/ward_profile.xml" value="0.264" />

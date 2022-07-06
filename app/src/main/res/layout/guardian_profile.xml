@@ -43,35 +43,39 @@
             android:gravity="center">
 
             <RadioButton
-                android:layout_width="wrap_content"
+                android:layout_width="0sp"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:textColor="@drawable/selector_text_color"
                 android:background="@drawable/check_box"
                 android:button="@null"
                 android:gravity="center"
                 android:enabled="false"
-                android:paddingHorizontal="15dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginVertical="5dp"
                 android:hint="피보호자"
                 android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_marginLeft="30sp"
+                android:layout_marginRight="10sp"
+                android:layout_marginTop="10sp"
+                android:layout_marginBottom="10sp"/>
 
             <RadioButton
-                android:layout_width="wrap_content"
+                android:layout_width="0sp"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:textColor="@drawable/selector_text_color"
                 android:background="@drawable/check_box"
                 android:gravity="center"
                 android:button="@null"
                 android:enabled="false"
                 android:checked="true"
-                android:paddingHorizontal="15dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginVertical="5dp"
                 android:text="보호자"
                 android:textSize="15sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:layout_marginLeft="10sp"
+                android:layout_marginRight="30sp"
+                android:layout_marginTop="10sp"
+                android:layout_marginBottom="10sp"/>
 
         </RadioGroup>
 
@@ -298,16 +302,19 @@
             android:layout_marginLeft="20sp"
             android:textStyle="bold" />
 
-        <ImageButton
-            android:id="@+id/guardian_profile_photo"
-            android:layout_width="80sp"
-            android:layout_height="80sp"
-            android:layout_gravity="center"
-            android:background="@drawable/add_photo"
-            android:layout_marginLeft="70sp"
-            />
-
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/guardian_profile_photo"
+        android:layout_width="0sp"
+        android:layout_height="0sp"
+        android:layout_gravity="center"
+        android:background="@drawable/add_photo"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline19"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline20"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline6"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -480,6 +487,20 @@
         app:layout_constraintGuide_percent="0.9" />
 
     <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.66" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.77" />
+
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -513,5 +534,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.875" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.425" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
