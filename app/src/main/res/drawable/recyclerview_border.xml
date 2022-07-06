@@ -12,6 +12,7 @@
                 android:width="1dp"
                 android:color="#ddd9d1" />
             <solit android:color="#FFF" />
+            <solid android:color="#ddd9d1" />
         </shape>
     </item>
 

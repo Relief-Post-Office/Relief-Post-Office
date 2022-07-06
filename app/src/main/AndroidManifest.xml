@@ -29,15 +29,21 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity" />
-        <activity android:name=".PhoneActivity" />
+        <activity android:name=".MainActivity"
+            android:windowSoftInputMode="adjustNothing"/>
+        <activity android:name=".PhoneActivity"
+            android:windowSoftInputMode="adjustNothing"/>
         <activity android:name=".JoinActivity"
             android:windowSoftInputMode="adjustNothing"/>
         <activity android:name=".guardian.MainFragment"
+            android:windowSoftInputMode="adjustNothing"
             tools:ignore="Instantiatable" />
-        <activity android:name=".GuardianBackgroundActivity" />
-        <activity android:name=".ward.WardActivity" />
-        <activity android:name=".alarm.AlarmActivity" />
+        <activity android:name=".GuardianBackgroundActivity"
+            android:windowSoftInputMode="adjustNothing"/>
+        <activity android:name=".ward.WardActivity"
+            android:windowSoftInputMode="adjustNothing"/>
+        <activity android:name=".alarm.AlarmActivity"
+            android:windowSoftInputMode="adjustNothing"/>
         <activity android:name=".guardian.GuardianProfileActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity android:name=".ward.WardProfileActivity"

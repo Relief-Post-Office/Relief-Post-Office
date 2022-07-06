@@ -28,6 +28,16 @@
         app:layout_constraintStart_toStartOf="@id/vertical_guideline2"
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline5"/>
 
+    <Button
+        android:layout_width="0sp"
+        android:layout_height="0sp"
+        android:text="로그아웃"
+        android:id="@+id/guardian_logout"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline1.25"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline1.5"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline5.5"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline6"/>
+
     <LinearLayout
         android:layout_width="0sp"
         android:layout_height="0sp"
@@ -66,6 +76,20 @@
         app:layout_constraintGuide_percent="0.025" />
 
     <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline1.25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.04" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline1.5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.10" />
+
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -84,21 +108,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.825" />
+        app:layout_constraintGuide_percent="0.865" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.85" />
+        app:layout_constraintGuide_percent="0.875" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.95" />
+        app:layout_constraintGuide_percent="0.975" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline1"
@@ -134,6 +158,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.625" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline5.5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline6"

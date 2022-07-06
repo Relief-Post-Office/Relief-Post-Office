@@ -193,7 +193,7 @@ class GuardianProfileActivity : AppCompatActivity() {
 
     private fun setInsert() {
         progressBar.visibility = View.VISIBLE
-        translateText.text = "회원가입 처리중..."
+        translateText.text = "프로필 변경중..."
         window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 

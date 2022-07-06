@@ -37,6 +37,9 @@ import de.hdodenhof.circleimageview.CircleImageView
 
 class MainFragment : Fragment(R.layout.fragment_guardian) {
 
+    private val auth: FirebaseAuth by lazy {
+        Firebase.auth
+    }
     private val myUserId: String by lazy {
         Firebase.auth.uid.toString()
     }
@@ -46,11 +49,13 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
     private lateinit var guardianPhoto : CircleImageView
     private lateinit var recyclerView : RecyclerView
     private lateinit var guardianButton : ImageButton
+    private lateinit var guardianLogout : Button
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setComponent(view)
+        setLogout()
         setGuardianPhoto()
         setRecyclerView()
         setRequestButton()
@@ -60,6 +65,14 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
         guardianPhoto = view.findViewById<CircleImageView>(R.id.guardian_photo)
         recyclerView = view.findViewById<RecyclerView>(R.id.guardian_recyclerView)
         guardianButton = view.findViewById<ImageButton>(R.id.guardian_add)
+        guardianLogout = view.findViewById<Button>(R.id.guardian_logout)
+    }
+
+    private fun setLogout() {
+        guardianLogout.setOnClickListener {
+            auth.signOut()
+            ActivityCompat.finishAffinity(requireActivity())
+        }
     }
 
     private fun setGuardianPhoto() {

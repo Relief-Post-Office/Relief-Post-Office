@@ -11,9 +11,11 @@ import android.view.View
 import android.view.Window
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
 import com.seoul42.relief_post_office.util.UserInfo.Companion.ALL_USER
 import com.seoul42.relief_post_office.util.Ward.Companion.CONNECT_GUARDIAN
 import com.seoul42.relief_post_office.util.Ward.Companion.REQUEST_GUARDIAN
@@ -33,6 +35,9 @@ import com.seoul42.relief_post_office.model.UserDTO
 
 class WardActivity : AppCompatActivity() {
 
+    private val auth: FirebaseAuth by lazy {
+        Firebase.auth
+    }
     private val myUserId: String by lazy {
         Firebase.auth.uid.toString()
     }
@@ -45,6 +50,9 @@ class WardActivity : AppCompatActivity() {
     private val guardianAddButton : Button by lazy {
         findViewById<Button>(R.id.ward_add)
     }
+    private val logoutButton : Button by lazy {
+        findViewById<Button>(R.id.ward_logout)
+    }
     private val connectedGuardianList = ArrayList<UserDTO>()
     private lateinit var wardAdapter : WardAdapter
 
@@ -52,9 +60,17 @@ class WardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ward)
 
+        setLogout()
         setWardPhoto()
         setRecyclerView()
         setAddButton()
+    }
+
+    private fun setLogout() {
+        logoutButton.setOnClickListener {
+            auth.signOut()
+            ActivityCompat.finishAffinity(this)
+        }
     }
 
     private fun setWardPhoto() {
