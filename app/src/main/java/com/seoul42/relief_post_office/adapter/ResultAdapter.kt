@@ -16,15 +16,15 @@ class ResultAdapter(private val resultList: MutableList<ResultDTO>)
         fun setResult(result: ResultDTO) {
             val database = Firebase.database
             val regardRef = database.getReference("regard")
-            regardRef.child(result.regardId).child("name").get().addOnSuccessListener {
+            regardRef.child(result.resultData.regardId).child("name").get().addOnSuccessListener {
                 binding.regardName.text = it.value.toString()
                 notifyDataSetChanged()
             }
-            regardRef.child(result.regardId).child("alarmTime").get().addOnSuccessListener {
+            regardRef.child(result.resultData.regardId).child("alarmTime").get().addOnSuccessListener {
                 binding.alarmTime.text = it.value.toString()
                 notifyDataSetChanged()
             }
-            binding.responseTime.text = result.responseTime.toString()
+            binding.responseTime.text = result.resultData.responseTime.toString()
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultHolder {

@@ -2,8 +2,11 @@ package com.seoul42.relief_post_office
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -35,8 +38,26 @@ class ResultActivity : AppCompatActivity() {
         setContentView(binding.root)
         setProfile("/profile/${wardId}.jpg")
         setWardName()
+        setDateBtn()
         setDate()
         resultListenSet()
+    }
+
+    private fun setDateBtn() {
+        binding.btnSetDate.setOnClickListener {
+            showDatePickerDialog(binding.btnSetDate)
+        }
+        binding.btnSetDate.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                Toast.makeText(applicationContext, "here", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     fun showDatePickerDialog(v: View) {
@@ -76,6 +97,7 @@ class ResultActivity : AppCompatActivity() {
         val sdf = SimpleDateFormat("yyyy/MM/dd")
         date = sdf.format(System.currentTimeMillis())
         binding.btnSetDate.text = date
+
     }
 
     private fun resultListenSet() {
@@ -94,12 +116,10 @@ class ResultActivity : AppCompatActivity() {
                 for(item in snapshot.children) {
                     item.getValue(String::class.java)?.let { resultId ->
                         resultsRef.child(resultId).get().addOnSuccessListener {
-                            val result = it.getValue(ResultDTO::class.java)
-                            if (result != null) {
-                                if (result.date == date)
-                                    resultList.add(result)
-                                adapter.notifyDataSetChanged()
-                            }
+                            val resultData = it.getValue(ResultDTO.ResultData::class.java) as ResultDTO.ResultData
+                            if (resultData.date == binding.btnSetDate.text)
+                                resultList.add(it.getValue(ResultDTO::class.java) as ResultDTO)
+                            adapter.notifyDataSetChanged()
                         }
                     }
                 }

@@ -13,18 +13,19 @@
         android:background="#E4F0F2">
         <!--tools:context=".ResultActivity">-->
 
-        <Button
+        <TextView
             android:id="@+id/btnSetDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="30dp"
+            android:background="@drawable/background"
             android:fontFamily="@font/bmjua"
-            android:onClick="showDatePickerDialog"
-            android:text="date"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="Date"
             app:layout_constraintBottom_toBottomOf="@+id/imgProfile"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.95"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.926"
+            app:layout_constraintStart_toEndOf="@+id/imgProfile"
+            app:layout_constraintTop_toTopOf="@+id/imgProfile"
             app:layout_constraintVertical_bias="1.0" />
 
         <de.hdodenhof.circleimageview.CircleImageView
