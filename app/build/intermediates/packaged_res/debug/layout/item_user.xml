@@ -2,14 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-<<<<<<< HEAD
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-=======
     android:layout_height="120sp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
->>>>>>> mojo
 
     <LinearLayout
         android:id="@+id/item_user_layout"
@@ -68,66 +63,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-<<<<<<< HEAD
-        app:layout_constraintGuide_percent="0.02" />
-=======
         app:layout_constraintGuide_percent="0.05" />
->>>>>>> mojo
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-<<<<<<< HEAD
-        app:layout_constraintGuide_percent="0.2" />
-=======
         app:layout_constraintGuide_percent="0.95" />
->>>>>>> mojo
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-<<<<<<< HEAD
-        app:layout_constraintGuide_percent="0.04" />
-=======
         app:layout_constraintGuide_percent="0.125" />
->>>>>>> mojo
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-<<<<<<< HEAD
-        app:layout_constraintGuide_percent="0.18" />
-=======
         app:layout_constraintGuide_percent="0.875" />
->>>>>>> mojo
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-<<<<<<< HEAD
-        app:layout_constraintGuide_percent="0.07" />
-=======
         app:layout_constraintGuide_percent="0.3" />
->>>>>>> mojo
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-<<<<<<< HEAD
-        app:layout_constraintGuide_percent="0.15" />
-=======
         app:layout_constraintGuide_percent="0.7" />
->>>>>>> mojo
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline1"

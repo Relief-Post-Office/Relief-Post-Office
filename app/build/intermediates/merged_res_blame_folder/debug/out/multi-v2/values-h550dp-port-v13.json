@@ -1,17 +1,10 @@
 {
     "logs": [
         {
-<<<<<<< HEAD
             "outputFile": "com.seoul42.relief_post_office.app-mergeDebugResources-46:/values-h550dp-port-v13/values-h550dp-port-v13.xml",
             "map": [
                 {
                     "source": "/Users/seungbeom/.gradle/caches/transforms-3/df765440782738e22220512f3d54d9fd/transformed/material-1.6.1/res/values-h550dp-port-v13/values-h550dp-port-v13.xml",
-=======
-            "outputFile": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-h550dp-port-v13\\values-h550dp-port-v13.xml",
-            "map": [
-                {
-                    "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\1ec4a201c566e6ea4c5b5160216a03ff\\transformed\\material-1.6.1\\res\\values-h550dp-port-v13\\values-h550dp-port-v13.xml",
->>>>>>> mojo
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
