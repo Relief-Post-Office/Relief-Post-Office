@@ -18,6 +18,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.seoul42.relief_post_office.databinding.ActivityResultBinding
 import com.seoul42.relief_post_office.model.ResultDTO
+import com.seoul42.relief_post_office.model.WardDTO
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -54,8 +55,20 @@ class ResultActivity : AppCompatActivity() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             override fun afterTextChanged(p0: Editable?) {
-                Toast.makeText(applicationContext, "here", Toast.LENGTH_SHORT).show()
+                resultList.clear()
+                database.getReference("ward").child(wardId).get().addOnSuccessListener {
+                    val resultIdList = it.getValue(WardDTO.ResultIdList::class.java) as WardDTO.ResultIdList
+                    for (resultId in resultIdList.resultIdList) {
+                        database.getReference("result").child(resultId).get().addOnSuccessListener {
+                            val resultData = it.getValue(ResultDTO.ResultData::class.java) as ResultDTO.ResultData
+                            if (resultData.date == binding.btnSetDate.text)
+                                resultList.add(it.getValue(ResultDTO::class.java) as ResultDTO)
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
+                }
             }
         })
     }
