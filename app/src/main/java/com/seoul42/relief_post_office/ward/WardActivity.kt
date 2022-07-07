@@ -32,6 +32,8 @@ import com.seoul42.relief_post_office.adapter.ResponseAdapter
 import com.seoul42.relief_post_office.adapter.WardAdapter
 import com.seoul42.relief_post_office.model.RequestDTO
 import com.seoul42.relief_post_office.model.UserDTO
+import com.seoul42.relief_post_office.service.CheckLoginService
+import com.seoul42.relief_post_office.util.Ward
 
 class WardActivity : AppCompatActivity() {
 
@@ -68,8 +70,10 @@ class WardActivity : AppCompatActivity() {
 
     private fun setLogout() {
         logoutButton.setOnClickListener {
+            Ward.setLogout()
             auth.signOut()
             ActivityCompat.finishAffinity(this)
+            startActivity(Intent(this, CheckLoginService::class.java))
         }
     }
 

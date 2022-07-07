@@ -20,5 +20,5 @@ data class GuardianBody(
     ) {
         constructor() : this(ArrayList<String>())
     }
-    constructor() : this(null, null, null)
+    constructor() : this(QuestionData(), SafetyData(), ConnectData())
 }

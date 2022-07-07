@@ -1,5 +1,6 @@
 [
     {
+<<<<<<< HEAD
         "merged": "/Users/seungbeom/.gradle/daemon/7.3.3/com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/activity_edit_text.xml",
         "source": "/Users/seungbeom/.gradle/daemon/7.3.3/com.seoul42.relief_post_office.app-main-50:/layout/activity_edit_text.xml"
     },
@@ -78,5 +79,65 @@
     {
         "merged": "/Users/seungbeom/.gradle/daemon/7.3.3/com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/ward_profile.xml",
         "source": "/Users/seungbeom/.gradle/daemon/7.3.3/com.seoul42.relief_post_office.app-main-50:/layout/ward_profile.xml"
+=======
+        "merged": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\join.xml",
+        "source": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\src\\main\\res\\layout\\join.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\dialog_response.xml",
+        "source": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\src\\main\\res\\layout\\dialog_response.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\ward.xml",
+        "source": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\src\\main\\res\\layout\\ward.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\activity_alarm.xml",
+        "source": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\src\\main\\res\\layout\\activity_alarm.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\guardian_background.xml",
+        "source": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\src\\main\\res\\layout\\guardian_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\ward_profile.xml",
+        "source": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\src\\main\\res\\layout\\ward_profile.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\item_user.xml",
+        "source": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\src\\main\\res\\layout\\item_user.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\guardian_profile.xml",
+        "source": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\src\\main\\res\\layout\\guardian_profile.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\main.xml",
+        "source": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\src\\main\\res\\layout\\main.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\fragment_guardian.xml",
+        "source": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\src\\main\\res\\layout\\fragment_guardian.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\dialog_request.xml",
+        "source": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\src\\main\\res\\layout\\dialog_request.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\splash.xml",
+        "source": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\src\\main\\res\\layout\\splash.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\dialog_birth.xml",
+        "source": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\src\\main\\res\\layout\\dialog_birth.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\phone.xml",
+        "source": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\src\\main\\res\\layout\\phone.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\item_guardian.xml",
+        "source": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\src\\main\\res\\layout\\item_guardian.xml"
+>>>>>>> mojo
     }
 ]

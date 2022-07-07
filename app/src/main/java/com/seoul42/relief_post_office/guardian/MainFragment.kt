@@ -30,6 +30,8 @@ import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.GuardianAdapter
 import com.seoul42.relief_post_office.model.NotificationBody
 import com.seoul42.relief_post_office.model.UserDTO
+import com.seoul42.relief_post_office.service.CheckLoginService
+import com.seoul42.relief_post_office.util.Guardian
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -68,8 +70,10 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
 
     private fun setLogout() {
         guardianLogout.setOnClickListener {
+            Guardian.setLogout()
             auth.signOut()
             ActivityCompat.finishAffinity(requireActivity())
+            startActivity(Intent(context, CheckLoginService::class.java))
         }
     }
 

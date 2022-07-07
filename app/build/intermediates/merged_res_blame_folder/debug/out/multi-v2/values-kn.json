@@ -1,10 +1,68 @@
 {
     "logs": [
         {
+<<<<<<< HEAD
             "outputFile": "com.seoul42.relief_post_office.app-mergeDebugResources-46:/values-kn/values-kn.xml",
             "map": [
                 {
                     "source": "/Users/seungbeom/.gradle/caches/transforms-3/33eff3e9a3114bf5ea231f545337bb01/transformed/core-1.7.0/res/values-kn/values-kn.xml",
+=======
+            "outputFile": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-kn\\values-kn.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\c75cf6d56c4898abc26b0e36dd1f6399\\transformed\\navigation-ui-2.4.2\\res\\values-kn\\values-kn.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,173",
+                        "endColumns": "117,128",
+                        "endOffsets": "168,297"
+                    },
+                    "to": {
+                        "startLines": "108,109",
+                        "startColumns": "4,4",
+                        "startOffsets": "10002,10120",
+                        "endColumns": "117,128",
+                        "endOffsets": "10115,10244"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\c426e970ce1c5edcd87bdaba218db8ed\\transformed\\play-services-basement-18.0.0\\res\\values-kn\\values.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "195",
+                        "endColumns": "141",
+                        "endOffsets": "336"
+                    },
+                    "to": {
+                        "startLines": "45",
+                        "startColumns": "4",
+                        "startOffsets": "4423",
+                        "endColumns": "145",
+                        "endOffsets": "4564"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\6b152adfb27bbdd71768387757f38972\\transformed\\appcompat-1.4.2\\res\\values-kn\\values-kn.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "105,219,331,444,532,639,765,843,919,1010,1103,1198,1292,1392,1485,1580,1674,1765,1856,1938,2054,2164,2263,2376,2481,2595,2759,2859",
+                        "endColumns": "113,111,112,87,106,125,77,75,90,92,94,93,99,92,94,93,90,90,81,115,109,98,112,104,113,163,99,82",
+                        "endOffsets": "214,326,439,527,634,760,838,914,1005,1098,1193,1287,1387,1480,1575,1669,1760,1851,1933,2049,2159,2258,2371,2476,2590,2754,2854,2937"
+                    },
+                    "to": {
+                        "startLines": "6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,111",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "274,388,500,613,701,808,934,1012,1088,1179,1272,1367,1461,1561,1654,1749,1843,1934,2025,2107,2223,2333,2432,2545,2650,2764,2928,10331",
+                        "endColumns": "113,111,112,87,106,125,77,75,90,92,94,93,99,92,94,93,90,90,81,115,109,98,112,104,113,163,99,82",
+                        "endOffsets": "383,495,608,696,803,929,1007,1083,1174,1267,1362,1456,1556,1649,1744,1838,1929,2020,2102,2218,2328,2427,2540,2645,2759,2923,3023,10409"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\23fc37437bace226093c9a564ed97200\\transformed\\core-1.7.0\\res\\values-kn\\values-kn.xml",
+>>>>>>> mojo
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -21,7 +79,11 @@
                     }
                 },
                 {
+<<<<<<< HEAD
                     "source": "/Users/seungbeom/.gradle/caches/transforms-3/df765440782738e22220512f3d54d9fd/transformed/material-1.6.1/res/values-kn/values-kn.xml",
+=======
+                    "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\1ec4a201c566e6ea4c5b5160216a03ff\\transformed\\material-1.6.1\\res\\values-kn\\values-kn.xml",
+>>>>>>> mojo
                     "from": {
                         "startLines": "2,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -40,7 +102,11 @@
                     }
                 },
                 {
+<<<<<<< HEAD
                     "source": "/Users/seungbeom/.gradle/caches/transforms-3/ea057e77b5879f84ee750955c0b8bea8/transformed/play-services-base-18.0.1/res/values-kn/values.xml",
+=======
+                    "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\ddee711d241c007476ba897c05feeccf\\transformed\\play-services-base-18.0.1\\res\\values-kn\\values.xml",
+>>>>>>> mojo
                     "from": {
                         "startLines": "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                         "startColumns": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
@@ -57,7 +123,11 @@
                     }
                 },
                 {
+<<<<<<< HEAD
                     "source": "/Users/seungbeom/.gradle/caches/transforms-3/efb9ec9d92bf0c0f7f42589f3bdba7ad/transformed/browser-1.4.0/res/values-kn/values-kn.xml",
+=======
+                    "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\f7015cd3a6eb098d6a4945b80aaf4cc3\\transformed\\browser-1.4.0\\res\\values-kn\\values-kn.xml",
+>>>>>>> mojo
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",
@@ -72,6 +142,7 @@
                         "endColumns": "113,99,115,100",
                         "endOffsets": "5760,6017,6133,6234"
                     }
+<<<<<<< HEAD
                 },
                 {
                     "source": "/Users/seungbeom/.gradle/caches/transforms-3/5eec1583ec3dd66f56a5b356183ea45f/transformed/appcompat-1.4.2/res/values-kn/values-kn.xml",
@@ -123,6 +194,8 @@
                         "endColumns": "117,128",
                         "endOffsets": "10115,10244"
                     }
+=======
+>>>>>>> mojo
                 }
             ]
         }

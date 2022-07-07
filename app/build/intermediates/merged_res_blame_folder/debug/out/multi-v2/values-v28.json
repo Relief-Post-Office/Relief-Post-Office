@@ -1,10 +1,17 @@
 {
     "logs": [
         {
+<<<<<<< HEAD
             "outputFile": "com.seoul42.relief_post_office.app-mergeDebugResources-46:/values-v28/values-v28.xml",
             "map": [
                 {
                     "source": "/Users/seungbeom/.gradle/caches/transforms-3/5eec1583ec3dd66f56a5b356183ea45f/transformed/appcompat-1.4.2/res/values-v28/values-v28.xml",
+=======
+            "outputFile": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v28\\values-v28.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\6b152adfb27bbdd71768387757f38972\\transformed\\appcompat-1.4.2\\res\\values-v28\\values-v28.xml",
+>>>>>>> mojo
                     "from": {
                         "startLines": "2,3,4,8",
                         "startColumns": "4,4,4,4",
@@ -16,6 +23,7 @@
                     "to": {
                         "startLines": "14,15,16,20",
                         "startColumns": "4,4,4,4",
+<<<<<<< HEAD
                         "startOffsets": "1141,1216,1303,1483",
                         "endLines": "14,15,19,23",
                         "endColumns": "74,86,12,12",
@@ -24,6 +32,16 @@
                 },
                 {
                     "source": "/Users/seungbeom/.gradle/caches/transforms-3/df765440782738e22220512f3d54d9fd/transformed/material-1.6.1/res/values-v28/values-v28.xml",
+=======
+                        "startOffsets": "1141,1216,1303,1533",
+                        "endLines": "14,15,19,23",
+                        "endColumns": "74,86,12,12",
+                        "endOffsets": "1211,1298,1528,1770"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\1ec4a201c566e6ea4c5b5160216a03ff\\transformed\\material-1.6.1\\res\\values-v28\\values-v28.xml",
+>>>>>>> mojo
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4",

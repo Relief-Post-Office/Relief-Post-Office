@@ -15,7 +15,10 @@ class UserInfo {
     }
 
     init {
-        setAllUser()
+        /* 단 한번만 실행 */
+        if (ALL_USER.isEmpty()) {
+            setAllUser()
+        }
     }
 
     private fun setAllUser() {
