@@ -1,17 +1,10 @@
 {
     "logs": [
         {
-<<<<<<< HEAD
             "outputFile": "com.seoul42.relief_post_office.app-mergeDebugResources-46:/values-small-v4/values-small-v4.xml",
             "map": [
                 {
-                    "source": "/Users/seungbeom/.gradle/caches/transforms-3/df765440782738e22220512f3d54d9fd/transformed/material-1.6.1/res/values-small-v4/values-small-v4.xml",
-=======
-            "outputFile": "C:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-small-v4\\values-small-v4.xml",
-            "map": [
-                {
-                    "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\1ec4a201c566e6ea4c5b5160216a03ff\\transformed\\material-1.6.1\\res\\values-small-v4\\values-small-v4.xml",
->>>>>>> mojo
+                    "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\df765440782738e22220512f3d54d9fd\\transformed\\material-1.6.1\\res\\values-small-v4\\values-small-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",

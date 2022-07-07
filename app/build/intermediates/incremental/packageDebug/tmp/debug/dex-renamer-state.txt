@@ -1,14 +1,7 @@
-<<<<<<< HEAD
-#Thu Jul 07 01:53:26 KST 2022
-path.4=13/classes.dex
-path.3=12/classes.dex
-path.2=1/classes.dex
-=======
-#Thu Jul 07 15:13:27 KST 2022
+#Thu Jul 07 16:02:37 KST 2022
 path.4=14/classes.dex
 path.3=13/classes.dex
 path.2=12/classes.dex
->>>>>>> mojo
 renamed.9=classes10.dex
 path.1=0/classes.dex
 renamed.8=classes9.dex
@@ -16,17 +9,6 @@ path.8=6/classes.dex
 path.7=3/classes.dex
 path.6=2/classes.dex
 renamed.12=classes13.dex
-<<<<<<< HEAD
-path.5=14/classes.dex
-renamed.11=classes12.dex
-renamed.10=classes11.dex
-path.0=classes.dex
-base.4=/Users/seungbeom/Relief-Post-Office/app/build/intermediates/dex/debug/mergeProjectDexDebug/13/classes.dex
-base.3=/Users/seungbeom/Relief-Post-Office/app/build/intermediates/dex/debug/mergeProjectDexDebug/12/classes.dex
-base.2=/Users/seungbeom/Relief-Post-Office/app/build/intermediates/dex/debug/mergeProjectDexDebug/1/classes.dex
-base.1=/Users/seungbeom/Relief-Post-Office/app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
-base.0=/Users/seungbeom/Relief-Post-Office/app/build/intermediates/dex/debug/mergeExtDexDebug/classes.dex
-=======
 path.5=1/classes.dex
 renamed.11=classes12.dex
 renamed.10=classes11.dex
@@ -36,29 +18,12 @@ base.3=C\:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\
 base.2=C\:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\12\\classes.dex
 base.1=C\:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
 base.0=C\:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
->>>>>>> mojo
 renamed.3=classes4.dex
 path.12=classes2.dex
 renamed.2=classes3.dex
 renamed.1=classes2.dex
 path.10=8/classes.dex
 renamed.0=classes.dex
-<<<<<<< HEAD
-base.9=/Users/seungbeom/Relief-Post-Office/app/build/intermediates/dex/debug/mergeProjectDexDebug/7/classes.dex
-path.9=7/classes.dex
-path.11=9/classes.dex
-renamed.7=classes8.dex
-base.8=/Users/seungbeom/Relief-Post-Office/app/build/intermediates/dex/debug/mergeProjectDexDebug/6/classes.dex
-renamed.6=classes7.dex
-base.7=/Users/seungbeom/Relief-Post-Office/app/build/intermediates/dex/debug/mergeProjectDexDebug/3/classes.dex
-renamed.5=classes6.dex
-base.6=/Users/seungbeom/Relief-Post-Office/app/build/intermediates/dex/debug/mergeProjectDexDebug/2/classes.dex
-renamed.4=classes5.dex
-base.5=/Users/seungbeom/Relief-Post-Office/app/build/intermediates/dex/debug/mergeProjectDexDebug/14/classes.dex
-base.12=/Users/seungbeom/Relief-Post-Office/app/build/intermediates/dex/debug/mergeExtDexDebug/classes2.dex
-base.11=/Users/seungbeom/Relief-Post-Office/app/build/intermediates/dex/debug/mergeProjectDexDebug/9/classes.dex
-base.10=/Users/seungbeom/Relief-Post-Office/app/build/intermediates/dex/debug/mergeProjectDexDebug/8/classes.dex
-=======
 base.9=C\:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\7\\classes.dex
 path.9=7/classes.dex
 path.11=9/classes.dex
@@ -73,4 +38,3 @@ base.5=C\:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\
 base.12=C\:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
 base.11=C\:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\9\\classes.dex
 base.10=C\:\\Users\\cmj09\\AndroidStudioProjects\\relief_post_office\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\8\\classes.dex
->>>>>>> mojo
