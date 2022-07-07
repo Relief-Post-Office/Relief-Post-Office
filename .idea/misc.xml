@@ -37,10 +37,13 @@
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.2" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_edit_safety.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_edit_text.xml" value="0.184375" />
         <entry key="app/src/main/res/layout/activity_safety_make.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_guardian.xml" value="0.36041666666666666" />
         <entry key="app/src/main/res/layout/fragment_safety.xml" value="0.30727762803234504" />
+        <entry key="app/src/main/res/layout/guardian_background.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/layout/guardian_profile.xml" value="0.36041666666666666" />
         <entry key="app/src/main/res/layout/item_guardian.xml" value="0.36041666666666666" />
         <entry key="app/src/main/res/layout/item_safety.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_user.xml" value="0.36041666666666666" />

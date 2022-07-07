@@ -146,7 +146,7 @@ id ward_profile_webView
 id ward_recyclerView
 id write_btn
 layout activity_alarm
-layout activity_edit_text
+layout activity_edit_safety
 layout activity_safety_make
 layout dialog_birth
 layout dialog_request

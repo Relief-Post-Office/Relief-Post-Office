@@ -2,7 +2,6 @@ package com.seoul42.relief_post_office.safety
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import com.google.firebase.auth.FirebaseAuth
@@ -11,10 +10,12 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.SafetyDTO
-import kotlinx.android.synthetic.main.activity_edit_text.*
-import okhttp3.Cache.key
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+
+// recylcerview 설정
+//
+
 
 class EditSafetyActivity : AppCompatActivity() {
 
@@ -23,7 +24,7 @@ class EditSafetyActivity : AppCompatActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(R.layout.activity_edit_text)
+		setContentView(R.layout.activity_edit_safety)
 
 		val safetyEditText = findViewById<EditText>(R.id.safety_edit_text)
 		val safetyEditBtn = findViewById<Button>(R.id.safety_edit_btn)
@@ -47,6 +48,7 @@ class EditSafetyActivity : AppCompatActivity() {
 			)
 			finish()
 		}
+
 
 		safetyDelBtn.setOnClickListener {
 			val safetyRef = database.getReference("safety").child(safetyDTO.key)
