@@ -8,7 +8,7 @@ data class SafetyDTO(
 ) : Serializable {
 	data class SafetyData(
 		val uid: String,
-		val content: String,
+		val content:String,
 		val date: String
 	) : Serializable {
 		constructor() : this("", "", "")

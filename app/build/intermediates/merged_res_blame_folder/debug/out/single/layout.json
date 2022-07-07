@@ -1,5 +1,9 @@
 [
     {
+        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/activity_edit_safety.xml",
+        "source": "com.seoul42.relief_post_office.app-main-50:/layout/activity_edit_safety.xml"
+    },
+    {
         "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/ward_profile.xml",
         "source": "com.seoul42.relief_post_office.app-main-50:/layout/ward_profile.xml"
     },
@@ -42,10 +46,6 @@
     {
         "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/dialog_request.xml",
         "source": "com.seoul42.relief_post_office.app-main-50:/layout/dialog_request.xml"
-    },
-    {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/activity_edit_text.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/activity_edit_text.xml"
     },
     {
         "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/activity_alarm.xml",

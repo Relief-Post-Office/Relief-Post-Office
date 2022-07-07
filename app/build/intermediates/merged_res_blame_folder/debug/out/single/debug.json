@@ -20,6 +20,10 @@
         "source": "com.seoul42.relief_post_office.app-main-50:/drawable/ic_notification.xml"
     },
     {
+        "merged": "com.seoul42.relief_post_office.app-merged_res-48:/layout_activity_edit_safety.xml.flat",
+        "source": "com.seoul42.relief_post_office.app-main-50:/layout/activity_edit_safety.xml"
+    },
+    {
         "merged": "com.seoul42.relief_post_office.app-merged_res-48:/layout_fragment_guardian.xml.flat",
         "source": "com.seoul42.relief_post_office.app-main-50:/layout/fragment_guardian.xml"
     },
@@ -34,10 +38,6 @@
     {
         "merged": "com.seoul42.relief_post_office.app-merged_res-48:/drawable-anydpi-v24_ic_launcher_foreground.xml.flat",
         "source": "com.seoul42.relief_post_office.app-pngs-43:/drawable-anydpi-v24/ic_launcher_foreground.xml"
-    },
-    {
-        "merged": "com.seoul42.relief_post_office.app-merged_res-48:/layout_activity_edit_text.xml.flat",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/activity_edit_text.xml"
     },
     {
         "merged": "com.seoul42.relief_post_office.app-merged_res-48:/drawable-mdpi_ic_launcher_foreground.png.flat",

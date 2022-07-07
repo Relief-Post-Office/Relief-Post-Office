@@ -3361,7 +3361,7 @@ layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
 layout activity_alarm
-layout activity_edit_text
+layout activity_edit_safety
 layout activity_safety_make
 layout browser_actions_context_menu_page
 layout browser_actions_context_menu_row

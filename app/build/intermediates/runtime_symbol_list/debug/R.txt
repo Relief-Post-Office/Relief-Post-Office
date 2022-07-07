@@ -3360,7 +3360,7 @@ int layout abc_search_view 0x7f0c0019
 int layout abc_select_dialog_material 0x7f0c001a
 int layout abc_tooltip 0x7f0c001b
 int layout activity_alarm 0x7f0c001c
-int layout activity_edit_text 0x7f0c001d
+int layout activity_edit_safety 0x7f0c001d
 int layout activity_safety_make 0x7f0c001e
 int layout browser_actions_context_menu_page 0x7f0c001f
 int layout browser_actions_context_menu_row 0x7f0c0020
