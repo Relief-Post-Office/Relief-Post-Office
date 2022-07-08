@@ -1,10 +1,13 @@
 package com.seoul42.relief_post_office.guardian
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.Window
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -61,20 +64,24 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         questionPlusBtn.setOnClickListener{
 
             // 질문 추가 다이얼로그 띄우기
-            val mDialogView = LayoutInflater.from(context).inflate(R.layout.setting_question_dialog, null)
-            val mBuilder = android.app.AlertDialog.Builder(context)
-                .setView(mDialogView)
+            val dialog = android.app.AlertDialog.Builder(context).create()
+            val eDialog : LayoutInflater = LayoutInflater.from(context)
+            val mView : View = eDialog.inflate(R.layout.setting_question_dialog,null)
 
-            val mAlertDialog = mBuilder.show()
+            dialog.setView(mView)
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.create()
+            dialog.show()
 
             // 질문 추가 다이얼로그의 "저장"버튼을 눌렀을 때 이벤트 처리
-            mAlertDialog.findViewById<Button>(R.id.add_question_btn).setOnClickListener {
+            dialog.findViewById<Button>(R.id.add_question_btn).setOnClickListener {
 
                 // 생성 날짜, 텍스트, 비밀 옵션, 녹음 옵션, 녹음 파일 주소
                 val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                val questionText = mAlertDialog.findViewById<EditText>(R.id.question_text).text.toString()
-                val secret = mAlertDialog.findViewById<Switch>(R.id.secret_switch).isChecked
-                val record = mAlertDialog.findViewById<Switch>(R.id.record_switch).isChecked
+                val questionText = dialog.findViewById<EditText>(R.id.question_text).text.toString()
+                val secret = dialog.findViewById<Switch>(R.id.secret_switch).isChecked
+                val record = dialog.findViewById<Switch>(R.id.record_switch).isChecked
                 val src = null
 
                 // question 컬렉션에 추가할 QuestoinBody 생성
@@ -93,7 +100,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
 
                 // 다이얼로그 종료
                 Toast.makeText(context, "질문 추가 완료", Toast.LENGTH_SHORT).show()
-                mAlertDialog.dismiss()
+                dialog.dismiss()
 
             }
         }

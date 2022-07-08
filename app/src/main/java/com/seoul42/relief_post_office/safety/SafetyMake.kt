@@ -1,9 +1,11 @@
 package com.seoul42.relief_post_office.safety
 
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -19,6 +21,7 @@ class SafetyMake : AppCompatActivity() {
 	private val database = Firebase.database
 	private val safetyRef = database.getReference("safety")
 
+	@RequiresApi(Build.VERSION_CODES.O)
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_safety_make)

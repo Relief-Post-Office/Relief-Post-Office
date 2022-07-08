@@ -2,16 +2,23 @@ package com.seoul42.relief_post_office.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivities
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.UserDTO
+import com.seoul42.relief_post_office.safety.WardSafetySettingActivity
+import com.seoul42.relief_post_office.util.UserInfo
 import java.text.SimpleDateFormat
 
 class GuardianAdapter(private val context: Context, private val dataList: ArrayList<UserDTO>) :
@@ -43,9 +50,49 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
                         null
                     )
                 }
+
+                // 연결된 피보호자를 눌렀을 때 이벤트 처리
                 userLayout.setOnClickListener {
-                    /* 해당 유저의 안부 여부를 확인하도록 */
-                    Toast.makeText(context, "안부 확인", Toast.LENGTH_SHORT).show()
+
+                    // 피보호자 다이얼로그 세팅
+                    val dialog = android.app.AlertDialog.Builder(context).create()
+                    val eDialog : LayoutInflater = LayoutInflater.from(context)
+                    val mView : View = eDialog.inflate(R.layout.ward_profile_dialog,null)
+
+                    dialog.setView(mView)
+                    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                    dialog.create()
+
+                    // 피보호자 이름 세팅
+                    dialog.findViewById<TextView>(R.id.guardian_dialog_name).setText(userName)
+
+                    // 피보호자 사진 세팅
+                    Glide.with(context)
+                        .load(user.photoUri)
+                        .circleCrop()
+                        .into(dialog.findViewById<ImageView>(R.id.guardian_dialog_photo))
+
+                    // 피보호자 다이얼로그 띄우기
+                    dialog.show()
+
+                    // 프로필 보기 버튼 이벤트 처리
+                    dialog.findViewById<Button>(R.id.guardian_dialog_profile_button).setOnClickListener {
+
+                    }
+
+                    // 안부 설정 버튼 이벤트 처리
+                    dialog.findViewById<Button>(R.id.guardian_dialog_safety_setting_button).setOnClickListener {
+                        val intent = Intent(context, WardSafetySettingActivity::class.java)
+                        intent.putExtra("photoUri", user.photoUri)
+                        startActivity(context, intent, null)
+                    }
+
+                    // 결과 보기 버튼 이벤트 처리
+                    dialog.findViewById<Button>(R.id.guardian_dialog_result_button).setOnClickListener {
+
+                    }
+
                 }
             }
         }

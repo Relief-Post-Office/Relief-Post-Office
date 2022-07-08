@@ -1,10 +1,13 @@
 package com.seoul42.relief_post_office.adapter
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.ktx.database
@@ -56,26 +59,30 @@ class QuestionFragmentRVAdapter(private val context : Context, private val items
                 val secret = item.body.secret
                 val record = item.body.record
 
-                val mDialogView = LayoutInflater.from(context).inflate(R.layout.setting_question_dialog2, null)
-                val mBuilder = android.app.AlertDialog.Builder(context)
-                    .setView(mDialogView)
+                val dialog = android.app.AlertDialog.Builder(context).create()
+                val eDialog : LayoutInflater = LayoutInflater.from(context)
+                val mView : View = eDialog.inflate(R.layout.setting_question_dialog2,null)
 
-                mDialogView.findViewById<EditText>(R.id.question_text2).setText(questionText) // 텍스트 세팅
-                mDialogView.findViewById<Switch>(R.id.secret_switch2).isChecked = secret   // 비밀 스위치 세팅
-                mDialogView.findViewById<Switch>(R.id.record_switch2).isChecked = record   // 녹음 스위치 세팅
+                dialog.setView(mView)
+                dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                dialog.create()
+
+                dialog.findViewById<EditText>(R.id.question_text2).setText(questionText) // 텍스트 세팅
+                dialog.findViewById<Switch>(R.id.secret_switch2).isChecked = secret   // 비밀 스위치 세팅
+                dialog.findViewById<Switch>(R.id.record_switch2).isChecked = record   // 녹음 스위치 세팅
 
 
                 // 질문 수정 다이얼로그 띄우기
-                val mAlertDialog = mBuilder.show()
-
+                dialog.show()
 
 
                 // 질문 수정 다이얼로그의 "저장" 버튼을 눌렀을 때 이벤트 처리
-                mAlertDialog.findViewById<Button>(R.id.save_question_btn).setOnClickListener {
+                dialog.findViewById<Button>(R.id.save_question_btn).setOnClickListener {
                     // 텍스트, 비밀 옵션, 녹음 옵션
-                    val editedQuestionText = mAlertDialog.findViewById<EditText>(R.id.question_text2).text.toString()
-                    val editedSecret = mAlertDialog.findViewById<Switch>(R.id.secret_switch2).isChecked
-                    val editedRecord = mAlertDialog.findViewById<Switch>(R.id.record_switch2).isChecked
+                    val editedQuestionText = dialog.findViewById<EditText>(R.id.question_text2).text.toString()
+                    val editedSecret = dialog.findViewById<Switch>(R.id.secret_switch2).isChecked
+                    val editedRecord = dialog.findViewById<Switch>(R.id.record_switch2).isChecked
 
                     // question 컬렉션에 수정된 질문 내용 수정
                     val questionBody = database.getReference("question").child(item.key!!).child("body")
@@ -85,17 +92,17 @@ class QuestionFragmentRVAdapter(private val context : Context, private val items
 
                     // 다이얼로그 종료
                     Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
-                    mAlertDialog.dismiss()
+                    dialog.dismiss()
                 }
 
                 // 질문 수정 다이얼로그의 "삭제" 버튼을 눌렀을 때 이벤트 처리
-                mAlertDialog.findViewById<Button>(R.id.delete_question_btn).setOnClickListener {
+                dialog.findViewById<Button>(R.id.delete_question_btn).setOnClickListener {
                     // 해당 질문 id를 통해 데이터베이스에서 삭제
                     database.getReference("question").child(item.key!!).setValue(null)
 
                     // 다이얼로그 종료
                     Toast.makeText(context, "질문 삭제 완료", Toast.LENGTH_SHORT).show()
-                    mAlertDialog.dismiss()
+                    dialog.dismiss()
                 }
             }
 
