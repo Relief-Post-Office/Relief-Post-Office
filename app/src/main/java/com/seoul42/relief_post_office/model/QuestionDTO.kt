@@ -12,7 +12,7 @@ data class QuestionDTO(
         var owner: String?,      // 소유주
         var date: String?,        // 생성 날짜
         var text: String?,       // 텍스트
-        var secrete: Boolean,    // 비밀 옵션
+        var secret: Boolean,    // 비밀 옵션
         var record: Boolean,     // 녹음 옵션
         var src: String?         // 녹음 파일 주소
     ) : Serializable {

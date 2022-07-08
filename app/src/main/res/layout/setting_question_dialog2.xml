@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,7 +8,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="질문 추가"
+        android:text="질문 수정"
         android:textStyle="bold"
         android:textSize="40sp"
         android:gravity="center"
@@ -30,7 +29,7 @@
         android:layout_height="40dp">
 
         <Button
-            android:id="@+id/question_setting_playBtn"
+            android:id="@+id/question_setting_playBtn2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -41,7 +40,7 @@
             tools:ignore="ButtonStyle,HardcodedText" />
 
         <Button
-            android:id="@+id/question_record_settingBtn"
+            android:id="@+id/question_record_settingBtn2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -55,7 +54,7 @@
 
 
     <EditText
-        android:id="@+id/question_text"
+        android:id="@+id/question_text2"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_margin="10dp"
@@ -63,7 +62,7 @@
         tools:ignore="Autofill,HardcodedText,TextFields" />
 
     <Switch
-        android:id="@+id/record_switch"
+        android:id="@+id/record_switch2"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="녹음 회신"
@@ -74,15 +73,15 @@
         tools:ignore="HardcodedText,UseSwitchCompatOrMaterialXml" />
 
     <Switch
-        android:id="@+id/secret_switch"
+        android:id="@+id/secret_switch2"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="비밀"
         android:fontFamily="@font/jua"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        tools:ignore="HardcodedText,SpUsage,UseSwitchCompatOrMaterialXml" />
+        tools:ignore="HardcodedText,UseSwitchCompatOrMaterialXml" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -92,17 +91,30 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="50dp"
+        android:orientation="horizontal">
 
         <Button
-            android:id="@+id/add_question_btn"
+            android:id="@+id/save_question_btn"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:text="저장"
             android:textSize="25sp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            tools:ignore="HardcodedText" />
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="15dp"
+            android:layout_weight="1"
+            tools:ignore="ButtonStyle,HardcodedText" />
+
+        <Button
+            android:id="@+id/delete_question_btn"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:text="삭제"
+            android:textSize="25sp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="20dp"
+            android:layout_weight="1"
+            tools:ignore="ButtonStyle,HardcodedText" />
 
     </LinearLayout>
 
