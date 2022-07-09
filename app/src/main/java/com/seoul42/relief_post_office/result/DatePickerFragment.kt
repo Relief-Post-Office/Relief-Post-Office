@@ -1,4 +1,4 @@
-package com.seoul42.relief_post_office
+package com.seoul42.relief_post_office.result
 
 import android.app.DatePickerDialog
 import android.app.Dialog

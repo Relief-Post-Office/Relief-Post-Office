@@ -1,4 +1,4 @@
-package com.seoul42.relief_post_office
+package com.seoul42.relief_post_office.result
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -6,7 +6,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -16,9 +15,9 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.seoul42.relief_post_office.ResultAdapter
 import com.seoul42.relief_post_office.databinding.ActivityResultBinding
 import com.seoul42.relief_post_office.model.ResultDTO
-import com.seoul42.relief_post_office.model.WardDTO
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,7 +26,7 @@ class ResultActivity : AppCompatActivity() {
     private val database = Firebase.database
     private val storage = Firebase.storage
     private lateinit var date: String
-    private var resultList = mutableListOf<ResultDTO>()
+    private var resultList = mutableListOf<Pair<String, ResultDTO>>()
     private lateinit var adapter: ResultAdapter
     //intent로 넘어와야 할 정보들
     private val wardId = "jNmigty6iAST8GNZHtkbasmfINy1"
@@ -59,19 +58,19 @@ class ResultActivity : AppCompatActivity() {
             override fun afterTextChanged(p0: Editable?) {
                 resultList.clear()
                 database.getReference("wards").child(wardId).get().addOnSuccessListener {
-                    if (it.value != null) {
-                        val resultIdList = it.getValue(WardDTO.ResultIdData::class.java) as WardDTO.ResultIdData
-                        Log.d("파이어베이스", resultIdList.toString())
-                        for (resultId in resultIdList.resultIdList) {
-                            database.getReference("result").child(resultId).get().addOnSuccessListener {
-                                val resultData = it.getValue(ResultDTO.ResultData::class.java) as ResultDTO.ResultData
-                                Log.d("파이어베이스", resultData.toString())
-                                if (resultData.date == binding.btnSetDate.text)
-                                    resultList.add(it.getValue(ResultDTO::class.java) as ResultDTO)
-                                adapter.notifyDataSetChanged()
-                            }
-                        }
-                    }
+//                    if (it.value != null) {
+//                        val resultIdList = it.getValue(WardDTO.ResultIdData::class.java) as WardDTO.ResultIdData
+//                        Log.d("파이어베이스", resultIdList.toString())
+//                        for (resultId in resultIdList.resultIdList) {
+//                            database.getReference("result").child(resultId).get().addOnSuccessListener {
+//                                val resultData = it.getValue(ResultDTO.ResultData::class.java) as ResultDTO.ResultData
+//                                Log.d("파이어베이스", resultData.toString())
+//                                if (resultData.date == binding.btnSetDate.text)
+//                                    resultList.add(it.getValue(ResultDTO::class.java) as ResultDTO)
+//                                adapter.notifyDataSetChanged()
+//                            }
+//                        }
+//                    }
                 }
             }
         })

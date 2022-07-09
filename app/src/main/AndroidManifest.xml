@@ -33,7 +33,7 @@
         <activity android:name=".GuardianActivity" />
         <activity android:name=".WardActivity" />
         <activity android:name=".alarm.AlarmActivity" />
-        <activity android:name=".ResultActivity" />
+        <activity android:name=".result.ResultActivity" />
         <service
             android:name=".service.MyFirebaseMessagingService"
             android:exported="false">
