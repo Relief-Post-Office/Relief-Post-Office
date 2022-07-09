@@ -58,14 +58,18 @@ class ResultActivity : AppCompatActivity() {
             @SuppressLint("NotifyDataSetChanged")
             override fun afterTextChanged(p0: Editable?) {
                 resultList.clear()
-                database.getReference("ward").child(wardId).get().addOnSuccessListener {
-                    val resultIdList = it.getValue(WardDTO.ResultIdList::class.java) as WardDTO.ResultIdList
-                    for (resultId in resultIdList.resultIdList) {
-                        database.getReference("result").child(resultId).get().addOnSuccessListener {
-                            val resultData = it.getValue(ResultDTO.ResultData::class.java) as ResultDTO.ResultData
-                            if (resultData.date == binding.btnSetDate.text)
-                                resultList.add(it.getValue(ResultDTO::class.java) as ResultDTO)
-                            adapter.notifyDataSetChanged()
+                database.getReference("wards").child(wardId).get().addOnSuccessListener {
+                    if (it.value != null) {
+                        val resultIdList = it.getValue(WardDTO.ResultIdData::class.java) as WardDTO.ResultIdData
+                        Log.d("파이어베이스", resultIdList.toString())
+                        for (resultId in resultIdList.resultIdList) {
+                            database.getReference("result").child(resultId).get().addOnSuccessListener {
+                                val resultData = it.getValue(ResultDTO.ResultData::class.java) as ResultDTO.ResultData
+                                Log.d("파이어베이스", resultData.toString())
+                                if (resultData.date == binding.btnSetDate.text)
+                                    resultList.add(it.getValue(ResultDTO::class.java) as ResultDTO)
+                                adapter.notifyDataSetChanged()
+                            }
                         }
                     }
                 }
@@ -125,17 +129,17 @@ class ResultActivity : AppCompatActivity() {
         resultListRef.addValueEventListener(object : ValueEventListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun onDataChange(snapshot: DataSnapshot) {
-                resultList.clear()
-                for(item in snapshot.children) {
-                    item.getValue(String::class.java)?.let { resultId ->
-                        resultsRef.child(resultId).get().addOnSuccessListener {
-                            val resultData = it.getValue(ResultDTO.ResultData::class.java) as ResultDTO.ResultData
-                            if (resultData.date == binding.btnSetDate.text)
-                                resultList.add(it.getValue(ResultDTO::class.java) as ResultDTO)
-                            adapter.notifyDataSetChanged()
-                        }
-                    }
-                }
+//                resultList.clear()
+//                for(item in snapshot.children) {
+//                    item.getValue(String::class.java)?.let { resultId ->
+//                        resultsRef.child(resultId).get().addOnSuccessListener {
+//                            val resultData = it.getValue(ResultDTO.ResultData::class.java) as ResultDTO.ResultData
+//                            if (resultData.date == binding.btnSetDate.text)
+//                                resultList.add(it.getValue(ResultDTO::class.java) as ResultDTO)
+//                            adapter.notifyDataSetChanged()
+//                        }
+//                    }
+//                }
             }
             override fun onCancelled(error: DatabaseError) {
                 print(error.message)

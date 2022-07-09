@@ -1,20 +1,21 @@
 package com.seoul42.relief_post_office.model
 
+import java.io.Serializable
+
 data class ResultDTO(
     val resultData: ResultData,
-    val answerList: QuestionAndAnswer
-) {
+    val questionAndAnswerIdList: QuestionAndAnswerIdList
+) : Serializable {
     data class ResultData(
         val date: String,
-        val regardId: String,
+        val safetyId: String,
         val responseTime: String
-    ) {
+    ) : Serializable {
         constructor() : this("", "", "")
     }
-    data class QuestionAndAnswer(
-        val questionId: String,
-        val answerId: String
-    ) {
-        constructor() : this("", "")
+    data class QuestionAndAnswerIdList(
+        val questionAndAnswerIdList: ArrayList<QuestionAndAnswerId>
+    ) : Serializable {
+        constructor() : this(ArrayList<QuestionAndAnswerId>())
     }
 }
