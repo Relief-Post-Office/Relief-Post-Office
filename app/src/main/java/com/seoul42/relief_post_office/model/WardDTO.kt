@@ -4,9 +4,9 @@ import java.io.Serializable
 
 data class WardDTO(
     val connectedSafetyIdList: ArrayList<String>,
-    val resultIdList: ArrayList<String>,
+    val resultIdList: MutableMap<String, String>,
     val requestedUserIdList: ArrayList<String>,
     val connectedUserIdList: ArrayList<String>
 ) :Serializable {
-    constructor() : this(arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf())
+    constructor() : this(arrayListOf(), mutableMapOf("" to ""), arrayListOf(), arrayListOf())
 }

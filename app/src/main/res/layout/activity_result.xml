@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/safety_recyclerView"
+    android:id="@+id/result_safety_recyclerView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -14,22 +14,22 @@
         <!--tools:context=".ResultActivity">-->
 
         <TextView
-            android:id="@+id/btnSetDate"
+            android:id="@+id/btn_result_SetDate"
             android:layout_width="120dp"
             android:layout_height="30dp"
             android:background="@drawable/background"
             android:fontFamily="@font/bmjua"
             android:gravity="center_horizontal|center_vertical"
             android:text="Date"
-            app:layout_constraintBottom_toBottomOf="@+id/imgProfile"
+            app:layout_constraintBottom_toBottomOf="@+id/img_result_Profile"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.926"
-            app:layout_constraintStart_toEndOf="@+id/imgProfile"
-            app:layout_constraintTop_toTopOf="@+id/imgProfile"
+            app:layout_constraintStart_toEndOf="@+id/img_result_Profile"
+            app:layout_constraintTop_toTopOf="@+id/img_result_Profile"
             app:layout_constraintVertical_bias="1.0" />
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imgProfile"
+            android:id="@+id/img_result_Profile"
             android:layout_width="96dp"
             android:layout_height="96dp"
             app:civ_border_color="#FF000000"
@@ -41,7 +41,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textWardName"
+            android:id="@+id/text_result_WardName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/bmjua"
@@ -49,8 +49,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.07"
-            app:layout_constraintStart_toEndOf="@+id/imgProfile"
-            app:layout_constraintTop_toTopOf="@+id/imgProfile"
+            app:layout_constraintStart_toEndOf="@+id/img_result_Profile"
+            app:layout_constraintTop_toTopOf="@+id/img_result_Profile"
             app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -61,7 +61,7 @@
         android:background="#E4F0F2">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/result_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"

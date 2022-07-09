@@ -13,6 +13,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.seoul42.relief_post_office.ResultAdapter
@@ -38,40 +39,25 @@ class ResultActivity : AppCompatActivity() {
         setContentView(binding.root)
         setProfile("/profile/${wardId}.jpg")
         setWardName()
-        setDateBtn()
         setDate()
+        setAdapter()
+        setDateBtn()
         resultListenSet()
     }
 
     private fun setDateBtn() {
-        binding.btnSetDate.setOnClickListener {
-            showDatePickerDialog(binding.btnSetDate)
+        binding.btnResultSetDate.setOnClickListener {
+            showDatePickerDialog(binding.btnResultSetDate)
         }
-        binding.btnSetDate.addTextChangedListener(object : TextWatcher{
+        binding.btnResultSetDate.addTextChangedListener(object : TextWatcher{
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
-            @SuppressLint("NotifyDataSetChanged")
             override fun afterTextChanged(p0: Editable?) {
-                resultList.clear()
-                database.getReference("wards").child(wardId).get().addOnSuccessListener {
-//                    if (it.value != null) {
-//                        val resultIdList = it.getValue(WardDTO.ResultIdData::class.java) as WardDTO.ResultIdData
-//                        Log.d("파이어베이스", resultIdList.toString())
-//                        for (resultId in resultIdList.resultIdList) {
-//                            database.getReference("result").child(resultId).get().addOnSuccessListener {
-//                                val resultData = it.getValue(ResultDTO.ResultData::class.java) as ResultDTO.ResultData
-//                                Log.d("파이어베이스", resultData.toString())
-//                                if (resultData.date == binding.btnSetDate.text)
-//                                    resultList.add(it.getValue(ResultDTO::class.java) as ResultDTO)
-//                                adapter.notifyDataSetChanged()
-//                            }
-//                        }
-//                    }
-                }
+                resetResultList()
             }
         })
     }
@@ -87,12 +73,12 @@ class ResultActivity : AppCompatActivity() {
         calendar.set(year,month,day)
         val sdf = SimpleDateFormat("yyyy/MM/dd")
         val dateMessage = sdf.format(calendar.timeInMillis)
-        binding.btnSetDate.text = dateMessage
+        binding.btnResultSetDate.text = dateMessage
     }
 
     private fun setProfile(path: String) {
         storage.getReference(path).downloadUrl.addOnSuccessListener { uri ->
-            Glide.with(this).load(uri).into(binding.imgProfile)
+            Glide.with(this).load(uri).into(binding.imgResultProfile)
         }.addOnFailureListener {
             Log.e("스토리지", "다운로드 에러=>${it.message}")
         }
@@ -104,7 +90,7 @@ class ResultActivity : AppCompatActivity() {
             .child("name")
             .get()
             .addOnSuccessListener {
-                binding.textWardName.text = it.value.toString()
+                binding.textResultWardName.text = it.value.toString()
             }
     }
 
@@ -112,37 +98,52 @@ class ResultActivity : AppCompatActivity() {
     private fun setDate() {
         val sdf = SimpleDateFormat("yyyy/MM/dd")
         date = sdf.format(System.currentTimeMillis())
-        binding.btnSetDate.text = date
+        binding.btnResultSetDate.text = date
 
     }
 
-    private fun resultListenSet() {
-        val resultListRef = database.getReference("ward").child(wardId).child("resultList")
-        val resultsRef = database.getReference("result")
-
+    private fun setAdapter() {
         adapter = ResultAdapter(resultList)
         with(binding) {
-            recyclerView.adapter = adapter
-            recyclerView.layoutManager = LinearLayoutManager(baseContext)
+            resultRecyclerView.adapter = adapter
+            resultRecyclerView.layoutManager = LinearLayoutManager(baseContext)
         }
+    }
+
+    private fun resultListenSet() {
+        val resultListRef = database.getReference("ward").child(wardId).child("resultIdList")
+
         resultListRef.addValueEventListener(object : ValueEventListener {
-            @SuppressLint("NotifyDataSetChanged")
             override fun onDataChange(snapshot: DataSnapshot) {
-//                resultList.clear()
-//                for(item in snapshot.children) {
-//                    item.getValue(String::class.java)?.let { resultId ->
-//                        resultsRef.child(resultId).get().addOnSuccessListener {
-//                            val resultData = it.getValue(ResultDTO.ResultData::class.java) as ResultDTO.ResultData
-//                            if (resultData.date == binding.btnSetDate.text)
-//                                resultList.add(it.getValue(ResultDTO::class.java) as ResultDTO)
-//                            adapter.notifyDataSetChanged()
-//                        }
-//                    }
-//                }
+                resetResultList()
             }
             override fun onCancelled(error: DatabaseError) {
                 print(error.message)
             }
         })
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun resetResultList() {
+        val resultListRef = database.getReference("ward").child(wardId).child("resultIdList")
+        val resultsRef = database.getReference("result")
+
+        resultList.clear()
+        resultListRef.get().addOnSuccessListener {
+            if (it.value != null) {
+                val resultIdList = it.getValue<MutableMap<String, String>>() as MutableMap<String, String>
+                for ((dummy, resultId) in resultIdList) {
+                    resultsRef.child(resultId).get().addOnSuccessListener {
+                        if (it.value != null) {
+                            val result = it.getValue(ResultDTO::class.java) as ResultDTO
+                            if (result.date == binding.btnResultSetDate.text.toString()) {
+                                resultList.add(Pair(it.key.toString(), result))
+                                adapter.notifyDataSetChanged()
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
