@@ -12,6 +12,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
+import com.seoul42.relief_post_office.model.SafetyDTO
 import com.seoul42.relief_post_office.model.WardDTO
 import java.text.SimpleDateFormat
 import java.util.*
@@ -49,7 +50,7 @@ class WardReceiver() : BroadcastReceiver() {
         else if (intent.action == REPEAT_STOP) {
             val safetyId = intent.getStringExtra("safetyId")
             val safetyName = intent.getStringExtra("safetyName")
-            setForcedAlarm(context, intent, safetyId!!, safetyName!!) /* 강제 알람 */
+            setForcedAlarm(context, safetyId!!, safetyName!!) /* 강제 알람 */
         }
     }
 
@@ -92,15 +93,15 @@ class WardReceiver() : BroadcastReceiver() {
         val myUserId = Firebase.auth.uid.toString()
         val userDB = Firebase.database.reference.child("ward").child(myUserId)
 
-       /* userDB.get().addOnSuccessListener { snapshot ->
-            if (snapshot.getValue(WardDTO.ConnectedSafetyIdList::class.java) != null) {
-                val connectedSafetyIdList = snapshot.getValue(WardDTO.ConnectedSafetyIdList::class.java) as WardDTO.ConnectedSafetyIdList
+       userDB.get().addOnSuccessListener { snapshot ->
+            if (snapshot.getValue(WardDTO::class.java) != null) {
+                val connectedSafetyIdList = snapshot.getValue(WardDTO::class.java) as WardDTO
                 safetyCount = connectedSafetyIdList.connectedSafetyIdList.size
                 for (connectedSafetyId in connectedSafetyIdList.connectedSafetyIdList) {
                     setSafetyList(context, connectedSafetyId)
                 }
             }
-        }*/
+        }
     }
 
     /* 안부 data 를 가져와서 safetyList 를 세팅하는 작업을 하는 메서드 */
@@ -108,13 +109,13 @@ class WardReceiver() : BroadcastReceiver() {
         val date = SimpleDateFormat("HH:mm:ss:E")
             .format(Date(System.currentTimeMillis()))
         val curTime = date.substring(0, 8)
-        val curDay = getDay(date.split(":")[2])
+        val curDay = getDay(date.split(":")[3])
         val userDB = Firebase.database.reference.child("safety").child(safetyId)
 
-        /*userDB.get().addOnSuccessListener { snapshot ->
-            if (snapshot.getValue(SafetyBody::class.java) != null) {
-                val safetyData = snapshot.getValue(SafetyBody::class.java) as SafetyBody
-                addSafetyList(curDay, curTime, safetyId, safetyData.safetyData)
+        userDB.get().addOnSuccessListener { snapshot ->
+            if (snapshot.getValue(SafetyDTO::class.java) != null) {
+                val safetyDTO = snapshot.getValue(SafetyDTO::class.java) as SafetyDTO
+                addSafetyList(curDay, curTime, safetyId, safetyDTO)
                 safetyCount--
                 if (safetyCount == 0) {
                     if (recommendList.isNotEmpty()) {
@@ -128,30 +129,29 @@ class WardReceiver() : BroadcastReceiver() {
                     }
                 }
             }
-        }*/
+        }
     }
 
     /* 보유한 안부중에 동일한 요일이 있을 경우 safetyList 에 추가하는 메서드 */
-   /* private fun addSafetyList(curDay : Int, curTime : String, safetyId : String, safetyData : SafetyBody.SafetyData) {
-        for (safetyDay in safetyData.dayList) {
+   private fun addSafetyList(curDay : Int, curTime : String, safetyId : String, safetyDTO : SafetyDTO) {
+        for (safetyDay in safetyDTO.dayOfWeek) {
             if (curDay == getDay(safetyDay)) {
-                val timeGap = getTimeGap(curTime, safetyData.time, 0)
-                recommendList.add(RecommendDTO(timeGap, safetyId, safetyData.safetyName))
+                val timeGap = getTimeGap(curTime, safetyDTO.time!!, 0)
+                recommendList.add(RecommendDTO(timeGap, safetyId, safetyDTO.name))
             } else {
                 if (getDay(safetyDay) - curDay < 0) {
-                    val timeGap = getTimeGap(curTime, safetyData.time, (getDay(safetyDay) + 7) - curDay)
-                    recommendList.add(RecommendDTO(timeGap, safetyId, safetyData.safetyName))
+                    val timeGap = getTimeGap(curTime, safetyDTO.time!!, (getDay(safetyDay) + 7) - curDay)
+                    recommendList.add(RecommendDTO(timeGap, safetyId, safetyDTO.name))
                 } else {
-                    val timeGap = getTimeGap(curTime, safetyData.time, getDay(safetyDay) - curDay)
-                    recommendList.add(RecommendDTO(timeGap, safetyId, safetyData.safetyName))
+                    val timeGap = getTimeGap(curTime, safetyDTO.time!!, getDay(safetyDay) - curDay)
+                    recommendList.add(RecommendDTO(timeGap, safetyId, safetyDTO.name))
                 }
             }
         }
-    }*/
+    }
 
     /* 피보호자 측에게 강제 알람을 띄우도록 하는 메서드 */
-    private fun setForcedAlarm(context : Context, intent: Intent, safetyId : String, safetyName : String) {
-        Log.d("Check [setForcedAlarm]", "safetyId : $safetyId, safetyName : $safetyName")
+    private fun setForcedAlarm(context : Context, safetyId : String, safetyName : String) {
         val notificationManager = context.getSystemService(
             Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -189,10 +189,7 @@ class WardReceiver() : BroadcastReceiver() {
                 .setAutoCancel(true)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
 
-        with(notificationManager) {
-            buildChannel()
-            notify(NOTIFICATION_ID, builder.build())
-        }
+        notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 
     /* Start alarm's util */
@@ -226,16 +223,4 @@ class WardReceiver() : BroadcastReceiver() {
         }
     }
     /* End alarm's util */
-
-    private fun NotificationManager.buildChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Example Notification Channel"
-            val descriptionText = "This is used to demonstrate the Full Screen Intent"
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-            }
-            createNotificationChannel(channel)
-        }
-    }
 }

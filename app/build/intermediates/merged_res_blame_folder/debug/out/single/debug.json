@@ -64,6 +64,10 @@
         "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\menu\\bottom_navigation_menu.xml"
     },
     {
+        "merged": "com.seoul42.relief_post_office.app-merged_res-48:/layout_dialog_request.xml.flat",
+        "source": "com.seoul42.relief_post_office.app-main-50:/layout/dialog_request.xml"
+    },
+    {
         "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-48:\\mipmap-mdpi_ic_launcher_round.webp.flat",
         "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\mipmap-mdpi\\ic_launcher_round.webp"
     },
@@ -218,10 +222,6 @@
     {
         "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-48:\\drawable_add_photo.png.flat",
         "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\drawable\\add_photo.png"
-    },
-    {
-        "merged": "com.seoul42.relief_post_office.app-merged_res-48:/layout_activity_alarm.xml.flat",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/activity_alarm.xml"
     },
     {
         "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-48:\\layout_guardian_background.xml.flat",

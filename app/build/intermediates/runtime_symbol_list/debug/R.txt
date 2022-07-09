@@ -3087,6 +3087,7 @@ int id ratio 0x7f0901bd
 int id rectangles 0x7f0901be
 int id request_button 0x7f0901bf
 int id request_edit 0x7f0901c0
+int id request_progressBar 0x7f090275
 int id response_button 0x7f0901c1
 int id response_recyclerView 0x7f0901c2
 int id reverseSawtooth 0x7f0901c3

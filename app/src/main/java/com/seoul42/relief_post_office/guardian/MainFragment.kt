@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
+import android.view.WindowManager
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -26,11 +27,13 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.GuardianBackgroundActivity
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.GuardianAdapter
+import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.service.CheckLoginService
@@ -47,8 +50,10 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
     private val myUserId: String by lazy {
         Firebase.auth.uid.toString()
     }
+
     private val firebaseViewModel : FirebaseViewModel by viewModels()
     private val connectedWardList = ArrayList<Pair<String, UserDTO>>()
+    private val listenerList = ArrayList<ListenerDTO>()
     private lateinit var guardianAdapter : GuardianAdapter
     private lateinit var guardianPhoto : CircleImageView
     private lateinit var recyclerView : RecyclerView
@@ -63,6 +68,19 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
         setGuardianPhoto()
         setRecyclerView()
         setRequestButton()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        var reference : DatabaseReference
+        var listener : ChildEventListener
+
+        for (listenerInfo in listenerList) {
+            reference = listenerInfo.reference
+            listener = listenerInfo.listener
+            reference.removeEventListener(listener)
+        }
     }
 
     private fun setComponent(view : View) {
@@ -93,7 +111,7 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
         }
 
         /* 프로필 편집이 완료될 경우 업데이트된 사진을 적용하도록 리스너 설정 */
-        userDB.addChildEventListener(object : ChildEventListener {
+        val userListener = userDB.addChildEventListener(object : ChildEventListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 Glide.with(this@MainFragment)
@@ -106,6 +124,7 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onCancelled(error: DatabaseError) {}
         })
+        listenerList.add(ListenerDTO(userDB, userListener))
     }
 
     private fun setRecyclerView() {
@@ -120,7 +139,7 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
         recyclerView.setHasFixedSize(true)
 
         /* 연결된 피보호자가 실시간으로 recyclerView 에 적용하도록 리스너 설정 */
-        connectDB.addChildEventListener(object : ChildEventListener {
+        val connectListener = connectDB.addChildEventListener(object : ChildEventListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val connectedUserId = snapshot.value.toString()
@@ -138,6 +157,7 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onCancelled(error: DatabaseError) {}
         })
+        listenerList.add(ListenerDTO(connectDB, connectListener))
     }
 
     private fun setRequestButton() {
@@ -147,6 +167,7 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
             val mView : View = eDialog.inflate(R.layout.dialog_request,null)
             val phoneEdit : EditText = mView.findViewById(R.id.request_edit)
             val requestBtn : Button = mView.findViewById(R.id.request_button)
+            val progressBar : ProgressBar = mView.findViewById(R.id.request_progressBar)
 
             requestBtn.setOnClickListener {
                 val tel = phoneEdit.text.toString()
@@ -154,7 +175,9 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
                 if (tel.length != 11) {
                     Toast.makeText(context, "휴대전화번호를 정확히 입력해주세요.", Toast.LENGTH_SHORT).show()
                 } else {
-                    connectUser(tel, dialog)
+                    progressBar.visibility = View.VISIBLE
+                    activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    connectUser(tel, dialog, progressBar) /* 휴대전화번호에 해당하는 피보호자와 연결 시도 */
                 }
             }
 
@@ -167,14 +190,13 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
     }
 
     /* 연결된 피보호자인지 확인하는 메서드 */
-    private fun connectUser(tel : String, dialog : Dialog) {
+    private fun connectUser(tel : String, dialog : Dialog, progressBar : ProgressBar) {
         var connectFlag = false
 
         for (ward in CONNECT_WARD) {
             val wardDB = Firebase.database.reference.child("user").child(ward)
 
             wardDB.get().addOnSuccessListener {
-                Log.d("1 번째", "11111")
                 val userDTO = it.getValue(UserDTO::class.java) as UserDTO
                 if (userDTO.tel == tel) {
                     connectFlag = true
@@ -183,24 +205,24 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
         }
 
         Handler().postDelayed({
-            Log.d("2 번째", "22222")
             if (connectFlag) {
                 Toast.makeText(context, "이미 연결된 피보호자입니다.", Toast.LENGTH_SHORT).show()
+                activity!!.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                progressBar.visibility = View.INVISIBLE
             } else {
-                requestUser(tel, dialog)
+                requestUser(tel, dialog, progressBar)
             }
-        }, 500)
+        }, 1000)
     }
 
     /* 요청 작업을 수행할지 확인하는 메서드 */
-    private fun requestUser(tel : String, dialog : Dialog) {
+    private fun requestUser(tel : String, dialog : Dialog, progressBar : ProgressBar) {
         val userDB = Firebase.database.reference.child("user")
         var userId : String
         var userValue : UserDTO
         var isExist : Boolean = false
 
         userDB.get().addOnSuccessListener {
-            Log.d("3 번째", "33333")
             for (user in it.children) {
                 userId = user.key!!
                 userValue = user.getValue(UserDTO::class.java) as UserDTO
@@ -213,15 +235,20 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
         }
 
         Handler().postDelayed({
-            Log.d("4 번째", "44444")
             if (isExist) {
                 Toast.makeText(context, "등록이 완료되었습니다.", Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
                 dialog.cancel()
             } else {
-                Toast.makeText(context, "등록되지 않은 피보호자 번호입니다.\n다시 확인해주세요.", Toast.LENGTH_SHORT).show()
+                if (tel == USER.tel) {
+                    Toast.makeText(context, "본인의 휴대전화번호입니다.\n다시 입력해주세요.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "등록되지 않은 피보호자 번호입니다.\n다시 입력해주세요.", Toast.LENGTH_SHORT).show()
+                }
             }
-        }, 500)
+            activity!!.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            progressBar.visibility = View.INVISIBLE
+        }, 1000)
     }
 
     /* 요청 작업을 수행하는 메서드 */

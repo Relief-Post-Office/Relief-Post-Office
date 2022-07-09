@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
@@ -26,11 +27,15 @@ public final class DialogRequestBinding implements ViewBinding {
   @NonNull
   public final EditText requestEdit;
 
+  @NonNull
+  public final ProgressBar requestProgressBar;
+
   private DialogRequestBinding(@NonNull LinearLayout rootView, @NonNull Button requestButton,
-      @NonNull EditText requestEdit) {
+      @NonNull EditText requestEdit, @NonNull ProgressBar requestProgressBar) {
     this.rootView = rootView;
     this.requestButton = requestButton;
     this.requestEdit = requestEdit;
+    this.requestProgressBar = requestProgressBar;
   }
 
   @Override
@@ -72,7 +77,14 @@ public final class DialogRequestBinding implements ViewBinding {
         break missingId;
       }
 
-      return new DialogRequestBinding((LinearLayout) rootView, requestButton, requestEdit);
+      id = R.id.request_progressBar;
+      ProgressBar requestProgressBar = ViewBindings.findChildViewById(rootView, id);
+      if (requestProgressBar == null) {
+        break missingId;
+      }
+
+      return new DialogRequestBinding((LinearLayout) rootView, requestButton, requestEdit,
+          requestProgressBar);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

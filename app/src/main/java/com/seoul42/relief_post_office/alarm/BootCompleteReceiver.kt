@@ -1,15 +1,24 @@
 package com.seoul42.relief_post_office.alarm
 
 import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.seoul42.relief_post_office.R
+import com.seoul42.relief_post_office.alarm.WardReceiver.Companion.CHANNEL_ID
+import com.seoul42.relief_post_office.alarm.WardReceiver.Companion.NOTIFICATION_ID
+import com.seoul42.relief_post_office.alarm.WardReceiver.Companion.PRIMARY_CHANNEL_ID
+import com.seoul42.relief_post_office.model.SafetyDTO
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.model.WardDTO
 import java.text.SimpleDateFormat
@@ -20,9 +29,10 @@ class BootCompleteReceiver : BroadcastReceiver() {
 
     data class RecommendDTO(
         val timeGap: Int?,
-        val safetyId: String?
+        val safetyId: String?,
+        val safetyName: String?
     ) {
-        constructor() : this(0,"")
+        constructor() : this(0,"", "")
     }
 
     private val recommendList = ArrayList<RecommendDTO>()
@@ -54,10 +64,11 @@ class BootCompleteReceiver : BroadcastReceiver() {
     *  alarmSecond = (안부 시간 - 현재 시간)
     *   - 안부 시간 - 현재 시간 : 현재 시간으로부터 가장 가까운 안부 시간(초 단위)
     */
-    private fun setWardAlarm(context: Context, alarmFlag : String, alarmSecond : Int, safetyId : String) {
+    private fun setWardAlarm(context: Context, alarmFlag : String, recommendDTO : RecommendDTO) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val schedule = Intent(alarmFlag) /* 주기적으로 수행할지, 강제 알람을 수행할지 결정 */
-        schedule.putExtra("safetyId", safetyId) /* schedule intent 에 safetyId 를 넣음 */
+        schedule.putExtra("safetyId", recommendDTO.safetyId) /* schedule intent 에 safetyId 를 넣음 */
+        schedule.putExtra("safetyName", recommendDTO.safetyName) /* schedule intent 에 safetyName 를 넣음 */
         schedule.setClass(context, WardReceiver::class.java)
 
         val sender = PendingIntent.getBroadcast(context, 0, schedule,
@@ -65,7 +76,7 @@ class BootCompleteReceiver : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.SECOND, alarmSecond) /* 알람 시간 설정 */
+        interval.add(Calendar.SECOND, recommendDTO.timeGap!!) /* 알람 시간 설정 */
         alarmManager.cancel(sender)
         if (Build.VERSION.SDK_INT >= 23) {
             alarmManager.setExactAndAllowWhileIdle(
@@ -85,13 +96,15 @@ class BootCompleteReceiver : BroadcastReceiver() {
         val myUserId = Firebase.auth.uid.toString()
         val userDB = Firebase.database.reference.child("ward").child(myUserId)
 
-        /*userDB.get().addOnSuccessListener { snapshot ->
-            val connectedSafetyIdList = snapshot.getValue(WardDTO.ConnectedSafetyIdList::class.java) as WardDTO.ConnectedSafetyIdList
-            safetyCount = connectedSafetyIdList.connectedSafetyIdList.size
-            for (connectedSafetyId in connectedSafetyIdList.connectedSafetyIdList) {
-                setSafetyList(context, connectedSafetyId)
+        userDB.get().addOnSuccessListener { snapshot ->
+            if (snapshot.getValue(WardDTO::class.java) != null) {
+                val connectedSafetyIdList = snapshot.getValue(WardDTO::class.java) as WardDTO
+                safetyCount = connectedSafetyIdList.connectedSafetyIdList.size
+                for (connectedSafetyId in connectedSafetyIdList.connectedSafetyIdList) {
+                    setSafetyList(context, connectedSafetyId)
+                }
             }
-        }*/
+        }
     }
 
     /* 안부 data 를 가져와서 safetyList 를 세팅하는 작업을 하는 메서드 */
@@ -99,48 +112,45 @@ class BootCompleteReceiver : BroadcastReceiver() {
         val date = SimpleDateFormat("HH:mm:ss:E")
             .format(Date(System.currentTimeMillis()))
         val curTime = date.substring(0, 8)
-        val curDay = getDay(date.split(":")[2])
+        val curDay = getDay(date.split(":")[3])
         val userDB = Firebase.database.reference.child("safety").child(safetyId)
 
-        /*userDB.get().addOnSuccessListener { snapshot ->
-            val safetyData = snapshot.getValue(SafetyBody::class.java) as SafetyBody
-            addSafetyList(curDay, curTime, safetyId, safetyData.safetyData)
-            safetyCount--
-            if (safetyCount == 0) {
-                if (recommendList.isNotEmpty()) {
-                    recommendList.sortBy { it.timeGap }
-                    Log.d("Check [recommendList]", recommendList.toString())
-                    val timeDTO = recommendList.minBy { it.timeGap!! }
-                    Log.d("Check [findSafety]", "$timeDTO is recommended!")
-                    setWardAlarm(context, REPEAT_STOP, timeDTO.timeGap!!, timeDTO.safetyId!!)
-                } else {
-                    Log.d("Check [findSafety]", "no Safety ...")
-                }
-            }
-        }*/
-    }
-
-    /* 보유한 안부중에 동일한 요일이 있을 경우 safetyList 에 추가하는 메서드 */
-    /*private fun addSafetyList(curDay : Int, curTime : String, safetyId : String, safetyData : SafetyBody.SafetyData) {
-        for (safetyDay in safetyData.dayList) {
-            if (curDay == getDay(safetyDay)) {
-                val timeGap = getTimeGap(curTime, safetyData.time, 0)
-                recommendList.add(RecommendDTO(timeGap, safetyId))
-            } else {
-                if (getDay(safetyDay) - curDay < 0) {
-                    val timeGap = getTimeGap(curTime, safetyData.time, (getDay(safetyDay) + 7) - curDay)
-                    recommendList.add(RecommendDTO(timeGap, safetyId))
-                } else {
-                    val timeGap = getTimeGap(curTime, safetyData.time, getDay(safetyDay) - curDay)
-                    recommendList.add(RecommendDTO(timeGap, safetyId))
+        userDB.get().addOnSuccessListener { snapshot ->
+            if (snapshot.getValue(SafetyDTO::class.java) != null) {
+                val safetyDTO = snapshot.getValue(SafetyDTO::class.java) as SafetyDTO
+                addSafetyList(curDay, curTime, safetyId, safetyDTO)
+                safetyCount--
+                if (safetyCount == 0) {
+                    if (recommendList.isNotEmpty()) {
+                        recommendList.sortBy { it.timeGap }
+                        Log.d("Check [recommendList]", recommendList.toString())
+                        val recommendDTO = recommendList.minBy { it.timeGap!! }
+                        Log.d("Check [findSafety]", "$recommendDTO is recommended!")
+                        setWardAlarm(context, REPEAT_STOP, recommendDTO)
+                    } else {
+                        Log.d("Check [findSafety]", "no Safety ...")
+                    }
                 }
             }
         }
-    }*/
+    }
 
-    /* 피보호자 측에게 강제 알람을 띄우도록 하는 메서드 */
-    private fun setForcedAlarm(safetyId : String) {
-        Log.d("Check [setForcedAlarm]", "safety : $safetyId")
+    /* 보유한 안부중에 동일한 요일이 있을 경우 safetyList 에 추가하는 메서드 */
+    private fun addSafetyList(curDay : Int, curTime : String, safetyId : String, safetyDTO : SafetyDTO) {
+        for (safetyDay in safetyDTO.dayOfWeek) {
+            if (curDay == getDay(safetyDay)) {
+                val timeGap = getTimeGap(curTime, safetyDTO.time!!, 0)
+                recommendList.add(RecommendDTO(timeGap, safetyId, safetyDTO.name))
+            } else {
+                if (getDay(safetyDay) - curDay < 0) {
+                    val timeGap = getTimeGap(curTime, safetyDTO.time!!, (getDay(safetyDay) + 7) - curDay)
+                    recommendList.add(RecommendDTO(timeGap, safetyId, safetyDTO.name))
+                } else {
+                    val timeGap = getTimeGap(curTime, safetyDTO.time!!, getDay(safetyDay) - curDay)
+                    recommendList.add(RecommendDTO(timeGap, safetyId, safetyDTO.name))
+                }
+            }
+        }
     }
 
     /* Start alarm's util */

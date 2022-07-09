@@ -111,6 +111,7 @@ id phone_request_button
 id phone_timer_text
 id request_button
 id request_edit
+id request_progressBar
 id response_button
 id response_recyclerView
 id safety_del_btn

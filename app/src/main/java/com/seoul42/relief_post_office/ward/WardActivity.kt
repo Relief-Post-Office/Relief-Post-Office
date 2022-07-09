@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
@@ -17,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.gms.common.internal.ServiceSpecificExtraArgs.CastExtraArgs.LISTENER
 import com.google.firebase.auth.FirebaseAuth
 import com.seoul42.relief_post_office.util.Ward.Companion.CONNECT_GUARDIAN
 import com.seoul42.relief_post_office.util.Ward.Companion.REQUEST_GUARDIAN
@@ -32,9 +34,11 @@ import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.ResponseAdapter
 import com.seoul42.relief_post_office.adapter.WardAdapter
 import com.seoul42.relief_post_office.alarm.WardReceiver
+import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.service.CheckLoginService
 import com.seoul42.relief_post_office.util.Alarm.isIgnoringBatteryOptimizations
+import com.seoul42.relief_post_office.util.Guardian
 import com.seoul42.relief_post_office.util.Ward
 
 class WardActivity : AppCompatActivity() {
@@ -57,9 +61,11 @@ class WardActivity : AppCompatActivity() {
     private val logoutButton : Button by lazy {
         findViewById<Button>(R.id.ward_logout)
     }
-    private val connectedGuardianList = ArrayList<Pair<String, UserDTO>>()
+
     private lateinit var wardAdapter : WardAdapter
     private lateinit var responseAdapter : ResponseAdapter
+    private val connectedGuardianList = ArrayList<Pair<String, UserDTO>>()
+    private val listenerList = ArrayList<ListenerDTO>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +76,19 @@ class WardActivity : AppCompatActivity() {
         setWardPhoto()
         setRecyclerView()
         setAddButton()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        var reference : DatabaseReference
+        var listener : ChildEventListener
+
+        for (listenerInfo in listenerList) {
+            reference = listenerInfo.reference
+            listener = listenerInfo.listener
+            reference.removeEventListener(listener)
+        }
     }
 
     /*
@@ -112,7 +131,7 @@ class WardActivity : AppCompatActivity() {
         }
 
         /* 프로필 편집이 완료될 경우 업데이트된 사진을 적용하도록 리스너 설정 */
-        userDB.addChildEventListener(object : ChildEventListener {
+        val userListener = userDB.addChildEventListener(object : ChildEventListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 Glide.with(this@WardActivity)
@@ -125,6 +144,7 @@ class WardActivity : AppCompatActivity() {
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onCancelled(error: DatabaseError) {}
         })
+        listenerList.add(ListenerDTO(userDB, userListener))
     }
 
     private fun setRecyclerView() {
@@ -139,7 +159,7 @@ class WardActivity : AppCompatActivity() {
         recyclerView.setHasFixedSize(true)
 
         /* 연결된 피보호자가 실시간으로 recyclerView 에 적용하도록 리스너 설정 */
-        connectDB.addChildEventListener(object : ChildEventListener {
+        val connectListener = connectDB.addChildEventListener(object : ChildEventListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val connectedUserId = snapshot.value.toString()
@@ -157,6 +177,7 @@ class WardActivity : AppCompatActivity() {
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onCancelled(error: DatabaseError) {}
         })
+        listenerList.add(ListenerDTO(connectDB, connectListener))
     }
 
     private fun setAddButton() {
@@ -171,7 +192,7 @@ class WardActivity : AppCompatActivity() {
         }
 
         /* 요청온 보호자의 수를 실시간으로 반영 */
-        requestDB.addChildEventListener(object : ChildEventListener {
+        val requestListener = requestDB.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 guardianAddButton.text = REQUEST_GUARDIAN.size.toString()
             }
@@ -182,6 +203,7 @@ class WardActivity : AppCompatActivity() {
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onCancelled(error: DatabaseError) {}
         })
+        listenerList.add(ListenerDTO(requestDB, requestListener))
     }
 
     private fun setAddDialog() {

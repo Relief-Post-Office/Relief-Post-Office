@@ -5,9 +5,9 @@ import java.io.Serializable
 data class SafetyDTO(
 	val uid: String?,
 	val name: String?,
-	val questionList: ArrayList<String>,
 	val time: String?,
+	val questionList: ArrayList<String>,
 	val dayOfWeek: ArrayList<String>
 ) : Serializable{
-	constructor() : this(null, null, arrayListOf(), null, arrayListOf())
+	constructor() : this("", "", "", ArrayList<String>(), ArrayList<String>())
 }
