@@ -13,7 +13,6 @@ import android.media.ExifInterface
 import android.net.Uri
 import android.net.http.SslError
 import android.os.*
-import android.util.Log
 import android.view.*
 import android.webkit.*
 import android.widget.*
@@ -30,7 +29,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.util.Guardian
-import com.seoul42.relief_post_office.util.UserInfo
 import com.seoul42.relief_post_office.util.Ward
 import com.seoul42.relief_post_office.ward.WardActivity
 import kotlinx.coroutines.CoroutineScope
@@ -291,7 +289,6 @@ class JoinActivity : AppCompatActivity() {
         /* 보호자 및 피보호자에 대한 현재 유저 세팅 */
         if (userDTO.guardian == true) Guardian(userDTO)
         else Ward(userDTO)
-        UserInfo() /* 모든 유저 정보 세팅 */
         moveActivity()
     }
 

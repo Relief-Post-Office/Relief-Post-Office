@@ -32,29 +32,29 @@ class EditSafetyActivity : AppCompatActivity() {
 
 		val safetyDTO = intent.getSerializableExtra("safetyDTO") as SafetyDTO?
 
-		safetyEditText.setText(safetyDTO!!.data!!.content)
+		//safetyEditText.setText(safetyDTO!!.data!!.content)
 
 		safetyEditBtn.setOnClickListener {
 			val current = LocalDateTime.now()
 			val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 			val formatted = current.format(formatter)
 
-			val safetyDB = database.getReference("safety").child(safetyDTO.key).child("safetyBody")
+			//val safetyDB = database.getReference("safety").child(safetyDTO.key).child("safetyBody")
 
 			auth = Firebase.auth
 
-			safetyDB.setValue(
+			/*safetyDB.setValue(
 				SafetyDTO.SafetyData(safetyDTO!!.data!!.uid, safetyEditText.text.toString(), formatted.toString())
-			)
+			)*/
 			finish()
 		}
 
 
 		safetyDelBtn.setOnClickListener {
-			val safetyRef = database.getReference("safety").child(safetyDTO.key)
-			val guardianSafetyRef = database.getReference("guardian").child(safetyDTO!!.data!!.uid).child("safetyList")
+			//val safetyRef = database.getReference("safety").child(safetyDTO.key)
+			//val guardianSafetyRef = database.getReference("guardian").child(safetyDTO!!.data!!.uid).child("safetyList")
 
-			guardianSafetyRef.get().addOnSuccessListener {
+			/*guardianSafetyRef.get().addOnSuccessListener {
 				for (child in it.children) {
 					if (child.value == safetyDTO.key)
 					{
@@ -66,7 +66,7 @@ class EditSafetyActivity : AppCompatActivity() {
 				}
 				safetyRef.removeValue()
 				finish()
-			}
+			}*/
 		}
 	}
 }

@@ -1,78 +1,82 @@
 [
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/activity_edit_safety.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/activity_edit_safety.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\activity_edit_safety.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\activity_edit_safety.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/ward_profile.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/ward_profile.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\guardian_background.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\guardian_background.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/dialog_birth.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/dialog_birth.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\dialog_birth.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\dialog_birth.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/guardian_background.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/guardian_background.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\phone.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\phone.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/fragment_guardian.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/fragment_guardian.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\activity_alarm.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\activity_alarm.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/main.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/main.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\dialog_request.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\dialog_request.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/item_guardian.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/item_guardian.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\item_safety.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\item_safety.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/dialog_response.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/dialog_response.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\item_guardian.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\item_guardian.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/item_user.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/item_user.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\dialog_response.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\dialog_response.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/ward.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/ward.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\fragment_guardian.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\fragment_guardian.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/phone.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/phone.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\activity_safety_make.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\activity_safety_make.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/dialog_request.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/dialog_request.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\guardian_profile.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\guardian_profile.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\ward.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\ward.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\ward_profile.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\ward_profile.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\item_user.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\item_user.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\main.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\main.xml"
     },
     {
         "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/activity_alarm.xml",
         "source": "com.seoul42.relief_post_office.app-main-50:/layout/activity_alarm.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/guardian_profile.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/guardian_profile.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\fragment_safety.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\fragment_safety.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/item_safety.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/item_safety.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\join.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\join.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/activity_safety_make.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/activity_safety_make.xml"
-    },
-    {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/join.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/join.xml"
-    },
-    {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/splash.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/splash.xml"
-    },
-    {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/fragment_safety.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/fragment_safety.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\splash.xml",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\splash.xml"
     }
 ]

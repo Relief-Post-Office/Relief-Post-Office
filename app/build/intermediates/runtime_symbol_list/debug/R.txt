@@ -2711,6 +2711,7 @@ int id activity_chooser_view_content 0x7f090045
 int id add 0x7f090046
 int id adjust_height 0x7f090047
 int id adjust_width 0x7f090048
+int id alarm_btnClose 0x7f090273
 int id alertTitle 0x7f090049
 int id aligned 0x7f09004a
 int id all 0x7f09004b
@@ -2749,7 +2750,6 @@ int id browser_actions_menu_item_icon 0x7f09006b
 int id browser_actions_menu_item_text 0x7f09006c
 int id browser_actions_menu_items 0x7f09006d
 int id browser_actions_menu_view 0x7f09006e
-int id btnClose 0x7f09006f
 int id buttonPanel 0x7f090070
 int id cache_measures 0x7f090071
 int id callMeasure 0x7f090072

@@ -3,6 +3,7 @@ package com.seoul42.relief_post_office.service
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -14,7 +15,6 @@ import com.seoul42.relief_post_office.MainActivity
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.util.Guardian
-import com.seoul42.relief_post_office.util.UserInfo
 import com.seoul42.relief_post_office.util.Ward
 import com.seoul42.relief_post_office.ward.WardActivity
 
@@ -71,7 +71,6 @@ class CheckLoginService : AppCompatActivity() {
         val userDB = Firebase.database.reference.child("user").child(myUserId)
         var userToken : String
 
-        UserInfo() /* 모든 유저 정보 세팅 */
         FirebaseMessaging.getInstance().token /* 토큰 획득 및 업데이트 */
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {

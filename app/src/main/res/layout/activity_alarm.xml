@@ -8,7 +8,7 @@
     android:background="#333333">
 
     <Button
-        android:id="@+id/btnClose"
+        android:id="@+id/alarm_btnClose"
         android:layout_width="200sp"
         android:layout_height="200sp"
         android:textSize="30sp"

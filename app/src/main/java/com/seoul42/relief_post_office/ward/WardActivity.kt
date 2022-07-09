@@ -5,7 +5,9 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
@@ -16,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
-import com.seoul42.relief_post_office.util.UserInfo.Companion.ALL_USER
 import com.seoul42.relief_post_office.util.Ward.Companion.CONNECT_GUARDIAN
 import com.seoul42.relief_post_office.util.Ward.Companion.REQUEST_GUARDIAN
 import com.seoul42.relief_post_office.util.Ward.Companion.USER
@@ -30,9 +31,10 @@ import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.ResponseAdapter
 import com.seoul42.relief_post_office.adapter.WardAdapter
-import com.seoul42.relief_post_office.model.RequestDTO
+import com.seoul42.relief_post_office.alarm.WardReceiver
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.service.CheckLoginService
+import com.seoul42.relief_post_office.util.Alarm.isIgnoringBatteryOptimizations
 import com.seoul42.relief_post_office.util.Ward
 
 class WardActivity : AppCompatActivity() {
@@ -55,17 +57,38 @@ class WardActivity : AppCompatActivity() {
     private val logoutButton : Button by lazy {
         findViewById<Button>(R.id.ward_logout)
     }
-    private val connectedGuardianList = ArrayList<UserDTO>()
+    private val connectedGuardianList = ArrayList<Pair<String, UserDTO>>()
     private lateinit var wardAdapter : WardAdapter
+    private lateinit var responseAdapter : ResponseAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ward)
 
+        setAlarm()
         setLogout()
         setWardPhoto()
         setRecyclerView()
         setAddButton()
+    }
+
+    /*
+     * 주기적 작업을 수행할 수 있도록 설정
+     * 단, 배터리 최적화 무시를 안할 경우 피보호자 측은 강제 알람을 띄울 수 없음
+     *
+     */
+    private fun setAlarm() {
+        if (!isIgnoringBatteryOptimizations(this)) {
+            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+
+            intent.data = Uri.parse("package:$packageName")
+            startActivity(intent)
+        } else {
+            val start = Intent(WardReceiver.REPEAT_START)
+
+            start.setClass(this, WardReceiver::class.java)
+            sendBroadcast(start, WardReceiver.PERMISSION_REPEAT)
+        }
     }
 
     private fun setLogout() {
@@ -120,14 +143,14 @@ class WardActivity : AppCompatActivity() {
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val connectedUserId = snapshot.value.toString()
-                if (!connectedGuardianList.contains(ALL_USER[connectedUserId]))
-                    connectedGuardianList.add(ALL_USER[connectedUserId]!!)
-                wardAdapter.notifyDataSetChanged()
+                addConnectedGuardianList(connectedGuardianList, connectedUserId)
             }
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 val connectedUserId = snapshot.value.toString()
-                connectedGuardianList.remove(ALL_USER[connectedUserId]!!)
+                connectedGuardianList.removeIf {
+                    it.first == connectedUserId
+                }
                 wardAdapter.notifyDataSetChanged()
             }
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
@@ -167,8 +190,9 @@ class WardActivity : AppCompatActivity() {
         val mView : View = eDialog.inflate(R.layout.dialog_response,null)
         val dialogRecyclerView : RecyclerView = mView.findViewById(R.id.response_recyclerView)
         val responseButton : Button = mView.findViewById(R.id.response_button)
-        val responseAdapter = ResponseAdapter(this, getRequestedGuardianList())
         val responseLayout = LinearLayoutManager(this)
+
+        responseAdapter = ResponseAdapter(this, getRequestedGuardianList())
 
         dialogRecyclerView.adapter = responseAdapter
         dialogRecyclerView.layoutManager = responseLayout
@@ -202,30 +226,49 @@ class WardActivity : AppCompatActivity() {
             /* 피보호자는 선택한 보호자와 연결 */
             wardDB = Firebase.database.reference.child("ward").child(myUserId).child("connection")
             wardDB.push().setValue(checkId)
-            connectedGuardianList.add(ALL_USER[checkId]!!)
+            addConnectedGuardianList(connectedGuardianList, checkId)
             /* 선택된 보호자는 피보호자와 연결 */
             guardianDB = Firebase.database.reference.child("guardian").child(checkId).child("connection")
             guardianDB.push().setValue(myUserId)
         }
-
-        /* 실시간으로 선택한 유저들을 추가 반영 */
-        wardAdapter.notifyDataSetChanged()
     }
 
     private fun setConnectedGuardianList() {
         for (connectId in CONNECT_GUARDIAN) {
-            connectedGuardianList.add(ALL_USER[connectId]!!)
+            addConnectedGuardianList(connectedGuardianList, connectId)
         }
     }
 
-    private fun getRequestedGuardianList() : ArrayList<RequestDTO> {
-        val requestedGuardianList = ArrayList<RequestDTO>()
+    private fun getRequestedGuardianList() : ArrayList<Pair<String, UserDTO>> {
+        val requestedGuardianList = ArrayList<Pair<String, UserDTO>>()
 
-        for (requestId in REQUEST_GUARDIAN) {
-            val request = RequestDTO(ALL_USER[requestId]?.photoUri, ALL_USER[requestId]?.name,
-                ALL_USER[requestId]?.birth, requestId)
-            requestedGuardianList.add(request)
+        for (requestedUserId in REQUEST_GUARDIAN) {
+            addRequestedGuardianList(requestedGuardianList, requestedUserId)
         }
         return requestedGuardianList
+    }
+
+    private fun addRequestedGuardianList(requestedGuardianList : ArrayList<Pair<String, UserDTO>>, requestedUserId : String) {
+        val userDB = Firebase.database.reference.child("user").child(requestedUserId)
+
+        userDB.get().addOnSuccessListener {
+            if (!requestedGuardianList.contains(Pair(requestedUserId, it.getValue(UserDTO::class.java) as UserDTO))) {
+                requestedGuardianList.add(Pair(requestedUserId, it.getValue(UserDTO::class.java) as UserDTO))
+                /* 실시간으로 요청온 유저들을 추가 반영 */
+                responseAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun addConnectedGuardianList(connectedGuardianList : ArrayList<Pair<String, UserDTO>>, connectedUserId : String) {
+        val userDB = Firebase.database.reference.child("user").child(connectedUserId)
+
+        userDB.get().addOnSuccessListener {
+            if (!connectedGuardianList.contains(Pair(connectedUserId, it.getValue(UserDTO::class.java) as UserDTO))) {
+                connectedGuardianList.add(Pair(connectedUserId, it.getValue(UserDTO::class.java) as UserDTO))
+                /* 실시간으로 선택한 유저들을 추가 반영 */
+                wardAdapter.notifyDataSetChanged()
+            }
+        }
     }
 }

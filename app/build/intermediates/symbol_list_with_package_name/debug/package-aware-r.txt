@@ -2712,6 +2712,7 @@ id activity_chooser_view_content
 id add
 id adjust_height
 id adjust_width
+id alarm_btnClose
 id alertTitle
 id aligned
 id all
@@ -2750,7 +2751,6 @@ id browser_actions_menu_item_icon
 id browser_actions_menu_item_text
 id browser_actions_menu_items
 id browser_actions_menu_view
-id btnClose
 id buttonPanel
 id cache_measures
 id callMeasure

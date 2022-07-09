@@ -1,41 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="deploymentTargetDropDown">
-    <targetSelectedWithDropDown>
+    <runningDeviceTargetSelectedWithDropDown>
       <Target>
-        <type value="QUICK_BOOT_TARGET" />
+        <type value="RUNNING_DEVICE_TARGET" />
         <deviceKey>
           <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-<<<<<<< HEAD
-            <value value="$PROJECT_DIR$/../.android/avd/Pixel_3_API_30.avd" />
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-            <value value="C:\Users\cmj09\.android\avd\Pixel_2_API_30.avd" />
-=======
-            <value value="C:\Users\cmj09\.android\avd\Nexus_4_API_23.avd" />
->>>>>>> Stashed changes
-=======
-            <value value="C:\Users\cmj09\.android\avd\Nexus_4_API_23.avd" />
->>>>>>> Stashed changes
->>>>>>> mojo
+            <type value="SERIAL_NUMBER" />
+            <value value="R5CR60HGZZK" />
           </Key>
         </deviceKey>
       </Target>
-    </targetSelectedWithDropDown>
-<<<<<<< HEAD
-    <timeTargetWasSelectedWithDropDown value="2022-07-06T11:00:28.618033Z" />
-=======
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    <timeTargetWasSelectedWithDropDown value="2022-07-06T05:58:53.588394600Z" />
-=======
-    <timeTargetWasSelectedWithDropDown value="2022-07-06T17:43:36.397313300Z" />
->>>>>>> Stashed changes
-=======
-    <timeTargetWasSelectedWithDropDown value="2022-07-06T17:43:36.397313300Z" />
->>>>>>> Stashed changes
->>>>>>> mojo
+    </runningDeviceTargetSelectedWithDropDown>
+    <timeTargetWasSelectedWithDropDown value="2022-07-09T13:15:13.009420600Z" />
   </component>
 </project>

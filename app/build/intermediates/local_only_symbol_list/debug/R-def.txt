@@ -26,12 +26,12 @@ drawable safety
 drawable selector_text_color
 drawable splash
 font jua
+id alarm_btnClose
 id birth_day
 id birth_month
 id birth_save
 id birth_year
 id bottomNavigationView
-id btnClose
 id fragmentContainer
 id guardian_add
 id guardian_logout

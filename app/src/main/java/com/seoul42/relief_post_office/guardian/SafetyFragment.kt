@@ -67,9 +67,8 @@ class SafetyFragment : Fragment(R.layout.fragment_safety) {
 	private fun setSafetyList(safetyID : String) {
 		val safetyDB = Firebase.database.getReference("safety").child(safetyID)
 
-		safetyDB.addChildEventListener(object : ChildEventListener {
+		/*safetyDB.addChildEventListener(object : ChildEventListener {
 			override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-
 				val value = snapshot.getValue(SafetyDTO.SafetyData::class.java) as SafetyDTO.SafetyData
 
 				safetyList.add(SafetyDTO(safetyID, value))
@@ -109,7 +108,7 @@ class SafetyFragment : Fragment(R.layout.fragment_safety) {
 				TODO("Not yet implemented")
 			}
 
-		})
+		})*/
 	}
 
 	private fun setRecyclerView(view : View) {

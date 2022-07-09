@@ -17,7 +17,7 @@ class SafetyAdapter(private val context : Context, private val dataList : ArrayL
 		private val text = itemView.findViewById<TextView>(R.id.safety_rv_item)
 
 		fun bind(data : SafetyDTO, context: Context) {
-			text.text = data.data!!.content
+			//text.text = data.data!!.content
 			text.setOnClickListener {
 				val intent = Intent(context, EditSafetyActivity::class.java)
 

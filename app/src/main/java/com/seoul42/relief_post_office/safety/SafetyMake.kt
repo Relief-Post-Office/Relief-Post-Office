@@ -39,9 +39,9 @@ class SafetyMake : AppCompatActivity() {
 			val key = push.key
 
 			// 데이터 추가 arrayList 형태로 넣기
-			push.child("safetyBody").setValue(
+			/*push.child("safetyBody").setValue(
 				SafetyDTO.SafetyData(auth.currentUser?.uid.toString(), safetyTitle.text.toString(), formatted.toString())
-			)
+			)*/
 
 			guardianSafetyRef.push().setValue(key.toString())
 

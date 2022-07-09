@@ -20,11 +20,11 @@ public final class ActivityAlarmBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
-  public final Button btnClose;
+  public final Button alarmBtnClose;
 
-  private ActivityAlarmBinding(@NonNull LinearLayout rootView, @NonNull Button btnClose) {
+  private ActivityAlarmBinding(@NonNull LinearLayout rootView, @NonNull Button alarmBtnClose) {
     this.rootView = rootView;
-    this.btnClose = btnClose;
+    this.alarmBtnClose = alarmBtnClose;
   }
 
   @Override
@@ -54,13 +54,13 @@ public final class ActivityAlarmBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.btnClose;
-      Button btnClose = ViewBindings.findChildViewById(rootView, id);
-      if (btnClose == null) {
+      id = R.id.alarm_btnClose;
+      Button alarmBtnClose = ViewBindings.findChildViewById(rootView, id);
+      if (alarmBtnClose == null) {
         break missingId;
       }
 
-      return new ActivityAlarmBinding((LinearLayout) rootView, btnClose);
+      return new ActivityAlarmBinding((LinearLayout) rootView, alarmBtnClose);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -7,13 +7,17 @@ import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
 import androidx.core.graphics.drawable.IconCompat
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.seoul42.relief_post_office.R
+import com.seoul42.relief_post_office.alarm.WardReceiver
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     // 메세지가 수신되면 호출
@@ -28,7 +32,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // 다른 기기에서 서버로 보냈을 때
         else if(remoteMessage.data.isNotEmpty()){
             val title = remoteMessage.data["title"]!!
-            val userId = remoteMessage.data["userId"]!!
+            val userId = remoteMessage.data["name"]!!
             val message = remoteMessage.data["message"]!!
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -91,10 +95,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         notificationManager.notify(0 , notificationBuilder.build()) // 알림 생성
     }
 
-
     // 다른 기기에서 서버로 보냈을 때
     @RequiresApi(Build.VERSION_CODES.P)
-    private fun sendMessageNotification(title: String, userId: String, body: String){
+    private fun sendMessageNotification(title: String, name: String, body: String) {
         val intent = Intent(this, CheckLoginService::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // 액티비티 중복 생성 방지
         val pendingIntent = PendingIntent.getActivity(this, 0 , intent,
@@ -102,7 +105,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         // messageStyle
         val user: androidx.core.app.Person = Person.Builder()
-            .setName(userId)
+            .setName(name)
             .setIcon(IconCompat.createWithResource(this, R.drawable.relief_post_office))
             .build()
 
@@ -140,8 +143,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         notificationManager.notify(0 , builder.build()) // 알림 생성
 
-        /* Here is Forced Alarm */
-        // val tempIntent = Intent(this, AlarmActivity::class.java)
-        // startActivity(tempIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        /* 피보호자가 안부에 대한 푸시 알람을 받게 될 경우 주기적 알람 수행 */
+        /* val start = Intent(WardReceiver.REPEAT_START)
+
+        start.setClass(this, WardReceiver::class.java)
+        sendBroadcast(start, WardReceiver.PERMISSION_REPEAT)
+        */
     }
 }

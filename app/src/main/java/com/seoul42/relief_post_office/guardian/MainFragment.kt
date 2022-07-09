@@ -2,10 +2,12 @@ package com.seoul42.relief_post_office.guardian
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,20 +22,21 @@ import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.seoul42.relief_post_office.util.Guardian.Companion.USER
 import com.seoul42.relief_post_office.util.Guardian.Companion.CONNECT_WARD
-import com.seoul42.relief_post_office.util.UserInfo.Companion.ALL_USER
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.seoul42.relief_post_office.GuardianBackgroundActivity
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.GuardianAdapter
-import com.seoul42.relief_post_office.model.NotificationBody
+import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.service.CheckLoginService
 import com.seoul42.relief_post_office.util.Guardian
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
+import com.seoul42.relief_post_office.ward.WardActivity
 import de.hdodenhof.circleimageview.CircleImageView
 
 class MainFragment : Fragment(R.layout.fragment_guardian) {
@@ -45,7 +48,7 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
         Firebase.auth.uid.toString()
     }
     private val firebaseViewModel : FirebaseViewModel by viewModels()
-    private val connectedWardList = ArrayList<UserDTO>()
+    private val connectedWardList = ArrayList<Pair<String, UserDTO>>()
     private lateinit var guardianAdapter : GuardianAdapter
     private lateinit var guardianPhoto : CircleImageView
     private lateinit var recyclerView : RecyclerView
@@ -121,14 +124,14 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val connectedUserId = snapshot.value.toString()
-                if (!connectedWardList.contains(ALL_USER[connectedUserId]))
-                    connectedWardList.add(ALL_USER[connectedUserId]!!)
-                guardianAdapter.notifyDataSetChanged()
+                addConnectedWardList(connectedWardList, connectedUserId)
             }
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 val connectedUserId = snapshot.value.toString()
-                connectedWardList.remove(ALL_USER[connectedUserId]!!)
+                connectedWardList.removeIf {
+                    it.first == connectedUserId
+                }
                 guardianAdapter.notifyDataSetChanged()
             }
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
@@ -151,18 +154,7 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
                 if (tel.length != 11) {
                     Toast.makeText(context, "휴대전화번호를 정확히 입력해주세요.", Toast.LENGTH_SHORT).show()
                 } else {
-                    if (connectUser(tel)) {
-                        Toast.makeText(context, "이미 연결된 피보호자입니다.", Toast.LENGTH_SHORT).show()
-                    } else {
-                        if (requestUser(tel)) {
-                            Toast.makeText(context, "등록이 완료되었습니다.", Toast.LENGTH_SHORT).show()
-                            dialog.dismiss()
-                            dialog.cancel()
-                        } else {
-                            Toast.makeText(context, "등록되지 않은 피보호자 번호입니다.\n다시 확인해주세요.", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    }
+                    connectUser(tel, dialog)
                 }
             }
 
@@ -175,52 +167,97 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
     }
 
     /* 연결된 피보호자인지 확인하는 메서드 */
-    private fun connectUser(tel : String) : Boolean {
-        var isConnect : Boolean = false
+    private fun connectUser(tel : String, dialog : Dialog) {
+        var connectFlag = false
 
-        for (user in CONNECT_WARD) {
-            /* 연결된 피보호자의 전화번호와 일치한지 확인 */
-            if (ALL_USER[user]?.tel == tel)
-                isConnect = true
+        for (ward in CONNECT_WARD) {
+            val wardDB = Firebase.database.reference.child("user").child(ward)
+
+            wardDB.get().addOnSuccessListener {
+                Log.d("1 번째", "11111")
+                val userDTO = it.getValue(UserDTO::class.java) as UserDTO
+                if (userDTO.tel == tel) {
+                    connectFlag = true
+                }
+            }
         }
-        return isConnect
+
+        Handler().postDelayed({
+            Log.d("2 번째", "22222")
+            if (connectFlag) {
+                Toast.makeText(context, "이미 연결된 피보호자입니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                requestUser(tel, dialog)
+            }
+        }, 500)
     }
 
     /* 요청 작업을 수행할지 확인하는 메서드 */
-    private fun requestUser(tel : String) : Boolean {
+    private fun requestUser(tel : String, dialog : Dialog) {
+        val userDB = Firebase.database.reference.child("user")
         var userId : String
         var userValue : UserDTO
         var isExist : Boolean = false
 
-        for (user in ALL_USER) {
-            userId = user.key
-            userValue = user.value
-            /* 피보호자의 전화번호와 일치한지 확인 */
-            if (tel == userValue.tel && userValue.guardian == false) {
-                processRequest(userId) /* 요청 작업을 수행 */
-                isExist = true
-                break
+        userDB.get().addOnSuccessListener {
+            Log.d("3 번째", "33333")
+            for (user in it.children) {
+                userId = user.key!!
+                userValue = user.getValue(UserDTO::class.java) as UserDTO
+                /* 피보호자의 전화번호와 일치한지 확인 */
+                if (tel == userValue.tel && userValue.guardian == false) {
+                    processRequest(userId) /* 요청 작업을 수행 */
+                    isExist = true
+                }
             }
         }
 
-        return isExist
+        Handler().postDelayed({
+            Log.d("4 번째", "44444")
+            if (isExist) {
+                Toast.makeText(context, "등록이 완료되었습니다.", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+                dialog.cancel()
+            } else {
+                Toast.makeText(context, "등록되지 않은 피보호자 번호입니다.\n다시 확인해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }, 500)
     }
 
     /* 요청 작업을 수행하는 메서드 */
     private fun processRequest(userId : String) {
+        val userDB = Firebase.database.reference.child("user")
         val wardDB = Firebase.database.reference.child("ward").child(userId).child("request")
-        val data = NotificationBody.NotificationData("안심 집배원"
-            , USER.name!!, USER.name + "님이 보호자 요청을 보냈습니다.")
-        val token = ALL_USER[userId]?.token.toString()
-        val body = NotificationBody(token, data)
 
-        wardDB.push().setValue(myUserId) /* 피보호자 요청 목록에 현재 보호자의 uid 추가 */
-        firebaseViewModel.sendNotification(body) /* FCM 전송하기 */
+        userDB.get().addOnSuccessListener {
+            for (child in it.children) {
+                if (child.key == userId) {
+                    val userDTO = child.getValue(UserDTO::class.java) as UserDTO
+                    val token = userDTO.token.toString()
+                    val notificationDTO = NotificationDTO(token, "안심 집배원"
+                        , USER.name!!, USER.name + "님이 보호자 요청을 보냈습니다.")
+                    wardDB.push().setValue(myUserId) /* 피보호자 요청 목록에 현재 보호자의 uid 추가 */
+                    firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                    break
+                }
+            }
+        }
     }
 
     private fun setConnectedWardList() {
         for (userId in CONNECT_WARD) {
-            connectedWardList.add(ALL_USER[userId]!!)
+            addConnectedWardList(connectedWardList, userId)
+        }
+    }
+
+    private fun addConnectedWardList(connectedWardList : ArrayList<Pair<String, UserDTO>>, connectedUserId : String) {
+        val userDB = Firebase.database.reference.child("user").child(connectedUserId)
+
+        userDB.get().addOnSuccessListener {
+            if (!connectedWardList.contains(Pair(connectedUserId, it.getValue(UserDTO::class.java) as UserDTO))) {
+                connectedWardList.add(Pair(connectedUserId, it.getValue(UserDTO::class.java) as UserDTO))
+                guardianAdapter.notifyDataSetChanged()
+            }
         }
     }
 }

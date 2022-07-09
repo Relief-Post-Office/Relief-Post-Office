@@ -3,16 +3,11 @@ package com.seoul42.relief_post_office.model
 import java.io.Serializable
 
 data class SafetyDTO(
-	val key: String,
-	val data: SafetyData?
-) : Serializable {
-	data class SafetyData(
-		val uid: String,
-		val content:String,
-		val date: String
-	) : Serializable {
-		constructor() : this("", "", "")
-	}
-	constructor() : this("", SafetyData())
+	val uid: String?,
+	val name: String?,
+	val questionList: ArrayList<String>,
+	val time: String?,
+	val dayOfWeek: ArrayList<String>
+) : Serializable{
+	constructor() : this(null, null, arrayListOf(), null, arrayListOf())
 }
-

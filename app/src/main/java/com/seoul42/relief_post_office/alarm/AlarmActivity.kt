@@ -3,11 +3,18 @@ package com.seoul42.relief_post_office.alarm
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.seoul42.relief_post_office.R
+import kotlinx.android.synthetic.main.activity_alarm.view.*
 
 class AlarmActivity : AppCompatActivity() {
+
+    private  val btnClose : Button by lazy {
+        findViewById<Button>(R.id.alarm_btnClose)
+    }
     private var mediaPlayer: MediaPlayer? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarm)
@@ -16,7 +23,9 @@ class AlarmActivity : AppCompatActivity() {
         mediaPlayer = MediaPlayer.create(this, R.raw.alarm)
         mediaPlayer!!.start()
         mediaPlayer!!.isLooping = true
-        findViewById<View>(R.id.btnClose).setOnClickListener(mClickListener)
+
+        btnClose.text = intent.getStringExtra("safetyName")
+        btnClose.setOnClickListener(mClickListener)
     }
 
     override fun onDestroy() {
@@ -41,7 +50,8 @@ class AlarmActivity : AppCompatActivity() {
 
     private var mClickListener: View.OnClickListener = View.OnClickListener { v ->
         when(v!!.id) {
-            R.id.btnClose -> close()
+            R.id.alarm_btnClose -> close()
         }
     }
 }
+
