@@ -3,12 +3,12 @@
     package="com.seoul42.relief_post_office">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.DIAL_PHONE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
         android:allowBackup="true"
@@ -34,6 +34,7 @@
         <activity android:name=".WardActivity" />
         <activity android:name=".alarm.AlarmActivity" />
         <activity android:name=".result.ResultActivity" />
+        <activity android:name=".result.ResultDetailActivity"/>
         <service
             android:name=".service.MyFirebaseMessagingService"
             android:exported="false">
