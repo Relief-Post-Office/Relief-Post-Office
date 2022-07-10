@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -14,6 +15,7 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -129,7 +131,7 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
 
     private fun setRecyclerView() {
         val wardLayout = LinearLayoutManager(context)
-        val connectDB = Firebase.database.reference.child("guardian").child(myUserId).child("connection")
+        val connectDB = Firebase.database.reference.child("guardian").child(myUserId).child("connectList")
 
         setConnectedWardList()
         guardianAdapter = GuardianAdapter(requireContext(), connectedWardList)
@@ -145,6 +147,7 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
                 val connectedUserId = snapshot.value.toString()
                 addConnectedWardList(connectedWardList, connectedUserId)
             }
+            @RequiresApi(Build.VERSION_CODES.N)
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 val connectedUserId = snapshot.value.toString()
@@ -176,7 +179,7 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
                     Toast.makeText(context, "휴대전화번호를 정확히 입력해주세요.", Toast.LENGTH_SHORT).show()
                 } else {
                     progressBar.visibility = View.VISIBLE
-                    activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     connectUser(tel, dialog, progressBar) /* 휴대전화번호에 해당하는 피보호자와 연결 시도 */
                 }
             }
@@ -207,7 +210,7 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
         Handler().postDelayed({
             if (connectFlag) {
                 Toast.makeText(context, "이미 연결된 피보호자입니다.", Toast.LENGTH_SHORT).show()
-                activity!!.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 progressBar.visibility = View.INVISIBLE
             } else {
                 requestUser(tel, dialog, progressBar)
@@ -246,7 +249,7 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
                     Toast.makeText(context, "등록되지 않은 피보호자 번호입니다.\n다시 입력해주세요.", Toast.LENGTH_SHORT).show()
                 }
             }
-            activity!!.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             progressBar.visibility = View.INVISIBLE
         }, 1000)
     }
