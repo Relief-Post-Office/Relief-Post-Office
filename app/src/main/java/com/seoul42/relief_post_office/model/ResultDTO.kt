@@ -6,7 +6,7 @@ data class ResultDTO(
     var date: String,
     var safetyId: String,
     var responseTime: String,
-    var questionAndAnswerIdList: MutableMap<String, String>
+    var answerIdList: MutableMap<String, String>
 ) : Serializable {
     constructor() : this("", "", "미응답", mutableMapOf("" to ""))
 }

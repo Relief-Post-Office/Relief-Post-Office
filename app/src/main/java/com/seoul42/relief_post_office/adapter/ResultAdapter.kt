@@ -13,18 +13,20 @@ import com.seoul42.relief_post_office.databinding.ItemResultBinding
 import com.seoul42.relief_post_office.model.ResultDTO
 import com.seoul42.relief_post_office.result.ResultDetailActivity
 
-class ResultAdapter(private val context : Context, private val resultList: MutableList<Pair<String, ResultDTO>>)
+class ResultAdapter(private val context : Context,
+                    private val resultList: MutableList<Pair<String, ResultDTO>>,
+                    private val wardId: String)
     : RecyclerView.Adapter<ResultAdapter.ResultHolder>() {
     inner class ResultHolder(private val binding: ItemResultBinding) : RecyclerView.ViewHolder(binding.root){
         @SuppressLint("NotifyDataSetChanged", "ResourceAsColor")
         fun setResult(result: Pair<String, ResultDTO>, context: Context) {
             val database = Firebase.database
-            val regardRef = database.getReference("safety")
-            regardRef.child(result.second.safetyId).child("name").get().addOnSuccessListener {
+            val safetyRef = database.getReference("safety")
+            safetyRef.child(result.second.safetyId).child("name").get().addOnSuccessListener {
                 binding.itemResultSafetyName.text = it.value.toString()
                 notifyDataSetChanged()
             }
-            regardRef.child(result.second.safetyId).child("time").get().addOnSuccessListener {
+            safetyRef.child(result.second.safetyId).child("time").get().addOnSuccessListener {
                 binding.itemResultAlarmTime.text = it.value.toString()
                 notifyDataSetChanged()
             }
@@ -36,7 +38,9 @@ class ResultAdapter(private val context : Context, private val resultList: Mutab
             else {
                 binding.itemResultSafetyLayout.setOnClickListener {
                     val intent = Intent(context, ResultDetailActivity::class.java)
-                    intent.putExtra("result", result)
+                    intent.putExtra("wardId", wardId)
+                    intent.putExtra("resultId", result.first)
+                    intent.putExtra("result", result.second)
                     ContextCompat.startActivity(context, intent, null)
                 }
             }

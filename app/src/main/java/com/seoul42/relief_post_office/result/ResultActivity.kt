@@ -103,7 +103,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun setAdapter() {
-        adapter = ResultAdapter(this, resultList)
+        adapter = ResultAdapter(this, resultList, wardId)
         with(binding) {
             resultRecyclerView.adapter = adapter
             resultRecyclerView.layoutManager = LinearLayoutManager(baseContext)
