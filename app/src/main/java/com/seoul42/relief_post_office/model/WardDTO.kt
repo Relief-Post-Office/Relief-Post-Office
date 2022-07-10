@@ -3,11 +3,10 @@ package com.seoul42.relief_post_office.model
 import java.io.Serializable
 
 data class WardDTO(
-    val connectedSafetyIdList : ArrayList<String>,
-    val resultIdList : ArrayList<String>,
-    val requestedUserIdList : ArrayList<String>,
-    val connectedUserIdList : ArrayList<String>
-) : Serializable {
-    constructor() : this(ArrayList<String>(), ArrayList<String>(),
-        ArrayList<String>(), ArrayList<String>())
+    val safetyIdList: MutableMap<String, String>,
+    val resultIdList: MutableMap<String, String>,
+    val requestList: MutableMap<String, String>,
+    val connectList: MutableMap<String, String>,
+) :Serializable {
+    constructor() : this(mutableMapOf(), mutableMapOf(), mutableMapOf(), mutableMapOf())
 }

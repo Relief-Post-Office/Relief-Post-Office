@@ -47,7 +47,7 @@ class WardReceiver() : BroadcastReceiver() {
             findSafety(context) /* 보유한 안부중에 동일한 요일이 있을 경우 강제 알람을 요청 */
         }
         /* 강제 알람을 수행 */
-        else if (intent.action == REPEAT_STOP) {
+        else if (intent.action == REPEAT_STOP && Firebase.auth.currentUser != null) {
             val safetyId = intent.getStringExtra("safetyId")
             val safetyName = intent.getStringExtra("safetyName")
             setForcedAlarm(context, safetyId!!, safetyName!!) /* 강제 알람 */
@@ -96,9 +96,9 @@ class WardReceiver() : BroadcastReceiver() {
        userDB.get().addOnSuccessListener { snapshot ->
             if (snapshot.getValue(WardDTO::class.java) != null) {
                 val connectedSafetyIdList = snapshot.getValue(WardDTO::class.java) as WardDTO
-                safetyCount = connectedSafetyIdList.connectedSafetyIdList.size
-                for (connectedSafetyId in connectedSafetyIdList.connectedSafetyIdList) {
-                    setSafetyList(context, connectedSafetyId)
+                safetyCount = connectedSafetyIdList.safetyIdList.size
+                for (safety in connectedSafetyIdList.safetyIdList) {
+                    setSafetyList(context, safety.value)
                 }
             }
         }
@@ -135,15 +135,15 @@ class WardReceiver() : BroadcastReceiver() {
     /* 보유한 안부중에 동일한 요일이 있을 경우 safetyList 에 추가하는 메서드 */
    private fun addSafetyList(curDay : Int, curTime : String, safetyId : String, safetyDTO : SafetyDTO) {
         for (safetyDay in safetyDTO.dayOfWeek) {
-            if (curDay == getDay(safetyDay)) {
+            if (curDay == getDay(safetyDay.value)) {
                 val timeGap = getTimeGap(curTime, safetyDTO.time!!, 0)
                 recommendList.add(RecommendDTO(timeGap, safetyId, safetyDTO.name))
             } else {
-                if (getDay(safetyDay) - curDay < 0) {
-                    val timeGap = getTimeGap(curTime, safetyDTO.time!!, (getDay(safetyDay) + 7) - curDay)
+                if (getDay(safetyDay.value) - curDay < 0) {
+                    val timeGap = getTimeGap(curTime, safetyDTO.time!!, (getDay(safetyDay.value) + 7) - curDay)
                     recommendList.add(RecommendDTO(timeGap, safetyId, safetyDTO.name))
                 } else {
-                    val timeGap = getTimeGap(curTime, safetyDTO.time!!, getDay(safetyDay) - curDay)
+                    val timeGap = getTimeGap(curTime, safetyDTO.time!!, getDay(safetyDay.value) - curDay)
                     recommendList.add(RecommendDTO(timeGap, safetyId, safetyDTO.name))
                 }
             }

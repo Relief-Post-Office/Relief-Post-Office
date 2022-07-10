@@ -20,8 +20,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.gms.common.internal.ServiceSpecificExtraArgs.CastExtraArgs.LISTENER
 import com.google.firebase.auth.FirebaseAuth
-import com.seoul42.relief_post_office.util.Ward.Companion.CONNECT_GUARDIAN
-import com.seoul42.relief_post_office.util.Ward.Companion.REQUEST_GUARDIAN
+import com.seoul42.relief_post_office.util.Ward.Companion.CONNECT_LIST
+import com.seoul42.relief_post_office.util.Ward.Companion.REQUEST_LIST
 import com.seoul42.relief_post_office.util.Ward.Companion.USER
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
@@ -184,7 +184,7 @@ class WardActivity : AppCompatActivity() {
         val requestDB = Firebase.database.reference.child("ward").child(myUserId).child("request")
 
         guardianAddButton.setOnClickListener {
-            if (REQUEST_GUARDIAN.size == 0) {
+            if (REQUEST_LIST.isEmpty()) {
                 Toast.makeText(this, "추가하실 보호자 정보가 없습니다.", Toast.LENGTH_SHORT).show()
             } else {
                 setAddDialog()
@@ -194,10 +194,10 @@ class WardActivity : AppCompatActivity() {
         /* 요청온 보호자의 수를 실시간으로 반영 */
         val requestListener = requestDB.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                guardianAddButton.text = REQUEST_GUARDIAN.size.toString()
+                guardianAddButton.text = REQUEST_LIST.size.toString()
             }
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                guardianAddButton.text = REQUEST_GUARDIAN.size.toString()
+                guardianAddButton.text = REQUEST_LIST.size.toString()
             }
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
@@ -246,26 +246,26 @@ class WardActivity : AppCompatActivity() {
 
         for (checkId in checkList) {
             /* 피보호자는 선택한 보호자와 연결 */
-            wardDB = Firebase.database.reference.child("ward").child(myUserId).child("connection")
+            wardDB = Firebase.database.reference.child("ward").child(myUserId).child("connectList")
             wardDB.push().setValue(checkId)
             addConnectedGuardianList(connectedGuardianList, checkId)
             /* 선택된 보호자는 피보호자와 연결 */
-            guardianDB = Firebase.database.reference.child("guardian").child(checkId).child("connection")
+            guardianDB = Firebase.database.reference.child("guardian").child(checkId).child("connectList")
             guardianDB.push().setValue(myUserId)
         }
     }
 
     private fun setConnectedGuardianList() {
-        for (connectId in CONNECT_GUARDIAN) {
-            addConnectedGuardianList(connectedGuardianList, connectId)
+        for (guardian in CONNECT_LIST) {
+            addConnectedGuardianList(connectedGuardianList, guardian.value)
         }
     }
 
     private fun getRequestedGuardianList() : ArrayList<Pair<String, UserDTO>> {
         val requestedGuardianList = ArrayList<Pair<String, UserDTO>>()
 
-        for (requestedUserId in REQUEST_GUARDIAN) {
-            addRequestedGuardianList(requestedGuardianList, requestedUserId)
+        for (requestGuardian in REQUEST_LIST) {
+            addRequestedGuardianList(requestedGuardianList, requestGuardian.value)
         }
         return requestedGuardianList
     }

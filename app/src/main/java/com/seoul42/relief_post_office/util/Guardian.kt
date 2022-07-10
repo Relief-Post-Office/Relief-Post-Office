@@ -1,5 +1,6 @@
 package com.seoul42.relief_post_office.util
 
+import com.google.android.gms.common.internal.ServiceSpecificExtraArgs.CastExtraArgs.LISTENER
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -18,7 +19,7 @@ class Guardian(user : UserDTO) {
 
     companion object {
         lateinit var USER : UserDTO /* 현재 로그인한 유저 정보 */
-        val CONNECT_WARD = mutableSetOf<String>()
+        val CONNECT_LIST : MutableMap<String, String> = mutableMapOf()
         private val LISTENER = ArrayList<ListenerDTO>()
 
         /* 로그아웃 시 등록된 리스너 및 Collection 초기화 작업 */
@@ -31,7 +32,7 @@ class Guardian(user : UserDTO) {
                 listener = listenerInfo.listener
                 reference.removeEventListener(listener)
             }
-            CONNECT_WARD.clear()
+            CONNECT_LIST.clear()
         }
     }
 
@@ -46,12 +47,13 @@ class Guardian(user : UserDTO) {
         /* 연결된 피보호자를 자동으로 추가하거나 제거 가능 */
         val connectedListener = connectedDB.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val key = snapshot.key.toString()
                 val connectedUserId = snapshot.value.toString()
-                CONNECT_WARD += connectedUserId
+                CONNECT_LIST[key] = connectedUserId
             }
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                val connectedUserId = snapshot.value.toString()
-                CONNECT_WARD -= connectedUserId
+                val key = snapshot.key.toString()
+                CONNECT_LIST.remove(key)
             }
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}

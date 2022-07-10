@@ -19,8 +19,8 @@ class Ward(user : UserDTO) {
 
     companion object {
         lateinit var USER : UserDTO /* 현재 로그인한 유저 정보 */
-        val CONNECT_GUARDIAN = mutableSetOf<String>()
-        val REQUEST_GUARDIAN = mutableSetOf<String>()
+        val CONNECT_LIST : MutableMap<String, String> = mutableMapOf()
+        val REQUEST_LIST : MutableMap<String, String> = mutableMapOf()
         private val LISTENER = ArrayList<ListenerDTO>()
 
         /* 로그아웃 시 등록된 리스너 및 Collection 초기화 작업 */
@@ -33,8 +33,8 @@ class Ward(user : UserDTO) {
                 listener = listenerInfo.listener
                 reference.removeEventListener(listener)
             }
-            CONNECT_GUARDIAN.clear()
-            REQUEST_GUARDIAN.clear()
+            CONNECT_LIST.clear()
+            REQUEST_LIST.clear()
         }
     }
 
@@ -50,12 +50,13 @@ class Ward(user : UserDTO) {
         /* 연결된 보호자를 자동으로 추가하거나 제거 가능 */
         val connectedListener = connectedDB.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val key = snapshot.key.toString()
                 val connectedUserId = snapshot.value.toString()
-                CONNECT_GUARDIAN += connectedUserId
+                CONNECT_LIST[key] = connectedUserId
             }
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                val connectedUserId = snapshot.value.toString()
-                CONNECT_GUARDIAN -= connectedUserId
+                val key = snapshot.key.toString()
+                CONNECT_LIST.remove(key)
             }
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
@@ -70,12 +71,13 @@ class Ward(user : UserDTO) {
         /* 요청온 보호자를 자동으로 추가하거나 제거 가능 */
         val requestedListener = requestedDB.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val key = snapshot.key.toString()
                 val requestedUserId = snapshot.value.toString()
-                REQUEST_GUARDIAN += requestedUserId
+                REQUEST_LIST[key] = requestedUserId
             }
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                val requestedUserId = snapshot.value.toString()
-                REQUEST_GUARDIAN -= requestedUserId
+                val key = snapshot.key.toString()
+                REQUEST_LIST.remove(key)
             }
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}

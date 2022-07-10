@@ -36,9 +36,9 @@ class QuestionFragmentRVAdapter(private val context : Context, private val items
             val rvText = itemView.findViewById<TextView>(R.id.question_rv_item_text)
 
             // text 매핑
-            if (item.body!!.text != null){
+            /*if (item.body!!.text != null){
                 rvText.text = item.body!!.text
-            }
+            }*/
             // 녹음 소스 매핑 필요
         }
     }

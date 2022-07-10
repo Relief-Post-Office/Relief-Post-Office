@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.seoul42.relief_post_office.util.Guardian.Companion.USER
-import com.seoul42.relief_post_office.util.Guardian.Companion.CONNECT_WARD
+import com.seoul42.relief_post_office.util.Guardian.Companion.CONNECT_LIST
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -193,8 +193,8 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
     private fun connectUser(tel : String, dialog : Dialog, progressBar : ProgressBar) {
         var connectFlag = false
 
-        for (ward in CONNECT_WARD) {
-            val wardDB = Firebase.database.reference.child("user").child(ward)
+        for (ward in CONNECT_LIST) {
+            val wardDB = Firebase.database.reference.child("user").child(ward.value)
 
             wardDB.get().addOnSuccessListener {
                 val userDTO = it.getValue(UserDTO::class.java) as UserDTO
@@ -272,8 +272,8 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
     }
 
     private fun setConnectedWardList() {
-        for (userId in CONNECT_WARD) {
-            addConnectedWardList(connectedWardList, userId)
+        for (ward in CONNECT_LIST) {
+            addConnectedWardList(connectedWardList, ward.value)
         }
     }
 

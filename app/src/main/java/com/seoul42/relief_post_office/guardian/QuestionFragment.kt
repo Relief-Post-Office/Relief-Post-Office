@@ -75,14 +75,14 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 val src = null
 
                 // question 컬렉션에 추가할 QuestoinBody 생성
-                val newQuestion = QuestionDTO(null, QuestionDTO.QuestionBody(owner, date, questionText, secret, record, src))
+                // val newQuestion = QuestionDTO(null, QuestionDTO.QuestionBody(owner, date, questionText, secret, record, src))
 
                 // question 컬렉션에 작성한 내용 추가
                 val questionRef = database.getReference("question")
                 val newPush = questionRef.push()
                 val key = newPush.key.toString()
-                newQuestion.key = key
-                newPush.setValue(newQuestion)
+                // newQuestion.key = key
+                // newPush.setValue(newQuestion)
 
                 // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
                 val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
@@ -111,12 +111,12 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 val questionToAdd = database.getReference("question").child(questionId).child("body")
 
                 // 질문 컬렉션에서 각 질문 불러와서 questionList에 넣기
-                questionToAdd.get().addOnSuccessListener {
+                /* questionToAdd.get().addOnSuccessListener {
                     Log.d("하하하2", it.value.toString())
                     questionList.add(QuestionDTO(questionId, it.getValue(QuestionDTO.QuestionBody::class.java)))
                     questionList.sortByDescending { it.body!!.date }
                     QuestionAdapter.notifyDataSetChanged()
-                }
+                } */
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
