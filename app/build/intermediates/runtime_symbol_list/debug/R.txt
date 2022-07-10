@@ -2530,6 +2530,7 @@ int drawable abc_textfield_search_default_mtrl_alpha 0x7f070053
 int drawable abc_textfield_search_material 0x7f070054
 int drawable abc_vector_test 0x7f070055
 int drawable add_photo 0x7f070056
+int drawable alarm_background 0x7f0700c2
 int drawable avd_hide_password 0x7f070057
 int drawable avd_show_password 0x7f070058
 int drawable border_line 0x7f070059
@@ -2711,7 +2712,10 @@ int id activity_chooser_view_content 0x7f090045
 int id add 0x7f090046
 int id adjust_height 0x7f090047
 int id adjust_width 0x7f090048
-int id alarm_btnClose 0x7f090273
+int id alarm_button 0x7f090276
+int id alarm_day 0x7f090277
+int id alarm_text 0x7f090278
+int id alarm_time 0x7f090279
 int id alertTitle 0x7f090049
 int id aligned 0x7f09004a
 int id all 0x7f09004b
@@ -4342,6 +4346,7 @@ int style ThemeOverlay_MaterialComponents_Toolbar_Popup_Primary 0x7f1202bf
 int style ThemeOverlay_MaterialComponents_Toolbar_Primary 0x7f1202c0
 int style ThemeOverlay_MaterialComponents_Toolbar_Surface 0x7f1202c1
 int style ThemeOverlayColorAccentRed 0x7f1202c2
+int style TransparentStatusTheme 0x7f12041f
 int style Widget_AppCompat_ActionBar 0x7f1202c3
 int style Widget_AppCompat_ActionBar_Solid 0x7f1202c4
 int style Widget_AppCompat_ActionBar_TabBar 0x7f1202c5

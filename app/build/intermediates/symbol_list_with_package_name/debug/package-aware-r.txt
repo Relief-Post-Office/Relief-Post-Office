@@ -2531,6 +2531,7 @@ drawable abc_textfield_search_default_mtrl_alpha
 drawable abc_textfield_search_material
 drawable abc_vector_test
 drawable add_photo
+drawable alarm_background
 drawable avd_hide_password
 drawable avd_show_password
 drawable border_line
@@ -2712,7 +2713,10 @@ id activity_chooser_view_content
 id add
 id adjust_height
 id adjust_width
-id alarm_btnClose
+id alarm_button
+id alarm_day
+id alarm_text
+id alarm_time
 id alertTitle
 id aligned
 id all
@@ -4343,6 +4347,7 @@ style ThemeOverlay_MaterialComponents_Toolbar_Popup_Primary
 style ThemeOverlay_MaterialComponents_Toolbar_Primary
 style ThemeOverlay_MaterialComponents_Toolbar_Surface
 style ThemeOverlayColorAccentRed
+style TransparentStatusTheme
 style Widget_AppCompat_ActionBar
 style Widget_AppCompat_ActionBar_Solid
 style Widget_AppCompat_ActionBar_TabBar

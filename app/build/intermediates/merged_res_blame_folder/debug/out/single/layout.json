@@ -56,16 +56,16 @@
         "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\ward_profile.xml"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/dialog_request.xml",
-        "source": "com.seoul42.relief_post_office.app-main-50:/layout/dialog_request.xml"
-    },
-    {
         "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\item_user.xml",
         "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\item_user.xml"
     },
     {
         "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\main.xml",
         "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-50:\\layout\\main.xml"
+    },
+    {
+        "merged": "com.seoul42.relief_post_office.app-mergeDebugResources-47:/layout/activity_alarm.xml",
+        "source": "com.seoul42.relief_post_office.app-main-50:/layout/activity_alarm.xml"
     },
     {
         "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-mergeDebugResources-47:\\layout\\fragment_safety.xml",

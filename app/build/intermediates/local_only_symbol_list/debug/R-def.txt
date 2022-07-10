@@ -8,6 +8,7 @@ color teal_200
 color teal_700
 color white
 drawable add_photo
+drawable alarm_background
 drawable border_line
 drawable button_rounded_corner
 drawable check_box
@@ -26,7 +27,10 @@ drawable safety
 drawable selector_text_color
 drawable splash
 font jua
-id alarm_btnClose
+id alarm_button
+id alarm_day
+id alarm_text
+id alarm_time
 id birth_day
 id birth_month
 id birth_save
@@ -180,3 +184,4 @@ string google_storage_bucket
 string project_id
 style NumberPicker
 style Theme.Relief_post_office
+style TransparentStatusTheme

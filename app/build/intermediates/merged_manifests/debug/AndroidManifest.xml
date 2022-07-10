@@ -20,6 +20,7 @@
     <uses-permission android:name="com.rightline.backgroundrepeatapp.permission.ACTION_REPEAT" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <permission
         android:name="com.rightline.backgroundrepeatapp.permission.ACTION_REPEAT"
@@ -78,6 +79,7 @@
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name="com.seoul42.relief_post_office.alarm.AlarmActivity"
+            android:theme="@style/TransparentStatusTheme"
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name="com.seoul42.relief_post_office.guardian.GuardianProfileActivity"
