@@ -42,6 +42,7 @@
     </FrameLayout>
 
     <TextView
+        android:id="@+id/ward_safety_setting_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="홍길동 님의 안부"

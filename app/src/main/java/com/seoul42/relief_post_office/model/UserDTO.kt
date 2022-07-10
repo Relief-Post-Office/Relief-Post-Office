@@ -1,6 +1,7 @@
 package com.seoul42.relief_post_office.model
 
 data class UserDTO(
+    val userId: String?,
     val photoUri: String?,
     val name: String?,
     val birth: String?, /* ex: 1997/09/22 */
@@ -13,7 +14,7 @@ data class UserDTO(
     val gender: Boolean?, /* true(남), false(여) */
     val guardian: Boolean? /* true(보호자), false(피보호자) */
 ) {
-    constructor(): this("","","","",
+    constructor(): this("","","","","",
         "","","","","",
         false, false)
 }

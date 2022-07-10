@@ -275,7 +275,7 @@ class JoinActivity : AppCompatActivity() {
     private fun insertUser() {
         val userId = auth.uid.toString()
         val userDB = Firebase.database.reference.child("user").child(userId)
-        userDTO = UserDTO(photoUri, name, birth, tel, token, zoneCode,
+        userDTO = UserDTO(userId, photoUri, name, birth, tel, token, zoneCode,
             roadAddress, buildingName, detailAddress, gender, guardian)
 
         userDB.setValue(userDTO)

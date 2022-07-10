@@ -85,6 +85,8 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
                     dialog.findViewById<Button>(R.id.guardian_dialog_safety_setting_button).setOnClickListener {
                         val intent = Intent(context, WardSafetySettingActivity::class.java)
                         intent.putExtra("photoUri", user.photoUri)
+                        intent.putExtra("wardId", user.userId)
+                        intent.putExtra("wardName", user.name)
                         startActivity(context, intent, null)
                     }
 

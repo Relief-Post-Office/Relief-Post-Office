@@ -10,7 +10,6 @@ import android.view.View
 import android.view.Window
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,14 +18,11 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.QuestionFragmentRVAdapter
 import com.seoul42.relief_post_office.model.QuestionDTO
-import com.seoul42.relief_post_office.util.Guardian
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -35,7 +31,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
 
     private val database = Firebase.database
     // 유저가 가지고 있는 질문들의 객체를 담은 리스트 선언
-    private val questionList = ArrayList<QuestionDTO>()
+    private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
     // 리스트를 가진 아답터를 담은 변수 초기화
     private lateinit var QuestionAdapter : QuestionFragmentRVAdapter
     private lateinit var auth : FirebaseAuth
@@ -85,18 +81,17 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 val src = null
 
                 // question 컬렉션에 추가할 QuestoinBody 생성
-                val newQuestion = QuestionDTO(null, QuestionDTO.QuestionBody(owner, date, questionText, secret, record, src))
+                val newQuestion = QuestionDTO(owner, date, questionText, secret, record, src)
 
                 // question 컬렉션에 작성한 내용 추가
                 val questionRef = database.getReference("question")
                 val newPush = questionRef.push()
                 val key = newPush.key.toString()
-                newQuestion.key = key
                 newPush.setValue(newQuestion)
 
                 // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
                 val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
-                userQuestionRef.child(key).setValue(key)
+                userQuestionRef.child(key).setValue(date)
 
                 // 다이얼로그 종료
                 Toast.makeText(context, "질문 추가 완료", Toast.LENGTH_SHORT).show()
@@ -115,13 +110,17 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         userQuestionRef.addChildEventListener(object : ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 // 로그인한 유저의 질문 하나씩 참조
-                val questionId = snapshot.getValue().toString()
-                val questionToAdd = database.getReference("question").child(questionId).child("body")
+                val questionId = snapshot.key.toString()
+                val questionToAdd = database.getReference("question").child(questionId)
+
+                Log.d("하하하", owner)
 
                 // 질문 컬렉션에서 각 질문 불러와서 questionList에 넣기
                 questionToAdd.get().addOnSuccessListener {
-                    questionList.add(QuestionDTO(questionId, it.getValue(QuestionDTO.QuestionBody::class.java)))
-                    questionList.sortByDescending { it.body!!.date }
+                    questionList.add(Pair(questionId, it.getValue(QuestionDTO::class.java) as QuestionDTO))
+                    // 내림차순으로 정렬(map -> list.sort -> map)
+                    questionList.sortedByDescending { it.second.date }
+                    // 리사이클러 뷰 어댑터에 알려주기
                     QuestionAdapter.notifyDataSetChanged()
                 }
             }
@@ -140,9 +139,9 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         })
     }
 
-    // 리사이클러 뷰 업데이트 함수
+    // 질문 수정시 리사이클러 뷰 업데이트
     private fun updateRV() {
-        val QuestionRef = database.getReference("question")
+        val QuestionRef = database.getReference("guardian").child(owner).child("questionList")
 
         QuestionRef.addChildEventListener(object : ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -150,43 +149,45 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 // questionID 찾기
-                val questionId = snapshot.child("key").getValue()
+                val questionId = snapshot.key.toString()
+                val questionInDB = database.getReference("question").child(questionId)
+
+                Log.d("하하하2", snapshot.toString())
 
                 // questionList에서 questionID에 해당하는 질문 찾아 수정해주기
-                for (q in questionList) {
-                    if (q.key == questionId){
+                for (q in questionList){
+                    if (q.first == questionId){
+                        questionInDB.get().addOnSuccessListener {
+                            Log.d("하하하3", questionList.toString())
+                            q.second.text = it.child("text").getValue().toString()
+                            q.second.record = it.child("record").getValue() as Boolean
+                            q.second.secret = it.child("secret").getValue() as Boolean
+                            q.second.date = it.child("date").getValue().toString()
+                            Log.d("하하하4", questionList.toString())
 
-                        q.body!!.text = snapshot.child("body").child("text").getValue().toString()
-                        q.body.record = snapshot.child("body").child("record").getValue() as Boolean
-                        q.body.secret = snapshot.child("body").child("secret").getValue() as Boolean
+                            Log.d("하하하5", questionList.toString())
+                            // 가장 최근에 수정된 것이 리스트 상단으로 가게 하기
+                            // 내림차순으로 정렬(map -> list.sort -> map)
+                            questionList.sortedByDescending { it.second.date }
+
+                            // 리스트가 수정되었다고 어댑터에게 알려주기
+                            QuestionAdapter.notifyDataSetChanged()
+                        }
                         break
-
                     }
                 }
-                // 리스트가 수정되었다고 어댑터에게 알려주기
-                QuestionAdapter.notifyDataSetChanged()
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 // questionID 찾기
-                val questionId = snapshot.child("key").getValue().toString()
+                val questionId = snapshot.key.toString()
 
                 // questionList에서 questionID에 해당하는 질문 찾아 삭제하기
-                for (q in questionList) {
-                    if (q.key == questionId){
-
+                for (q in questionList){
+                    if (q.first == questionId){
                         questionList.remove(q)
-                        break
-
                     }
                 }
-
-                // 로그인한 보호자의 질문 목록에서 해당하는 질문id 삭제하기
-                database.getReference("guardian")
-                    .child(owner)
-                    .child("questionList")
-                    .child(questionId).setValue(null)
-
                 // 리스트가 수정되었다고 어댑터에게 알려주기
                 QuestionAdapter.notifyDataSetChanged()
             }

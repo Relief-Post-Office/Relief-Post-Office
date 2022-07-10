@@ -1,9 +1,11 @@
 package com.seoul42.relief_post_office.safety
 
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -22,6 +24,7 @@ class EditSafetyActivity : AppCompatActivity() {
 	private lateinit var auth : FirebaseAuth
 	val database = Firebase.database
 
+	@RequiresApi(Build.VERSION_CODES.O)
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_edit_safety)
@@ -32,7 +35,7 @@ class EditSafetyActivity : AppCompatActivity() {
 
 		val safetyDTO = intent.getSerializableExtra("safetyDTO") as SafetyDTO?
 
-		safetyEditText.setText(safetyDTO!!.data!!.content)
+		safetyEditText.setText(safetyDTO!!.data!!.name)
 
 		safetyEditBtn.setOnClickListener {
 			val current = LocalDateTime.now()
@@ -44,7 +47,7 @@ class EditSafetyActivity : AppCompatActivity() {
 			auth = Firebase.auth
 
 			safetyDB.setValue(
-				SafetyDTO.SafetyData(safetyDTO!!.data!!.uid, safetyEditText.text.toString(), formatted.toString())
+				SafetyDTO.SafetyData(safetyDTO!!.data!!.uid, safetyEditText.text.toString(), ArrayList() , formatted.toString(), "", "")
 			)
 			finish()
 		}
@@ -52,7 +55,7 @@ class EditSafetyActivity : AppCompatActivity() {
 
 		safetyDelBtn.setOnClickListener {
 			val safetyRef = database.getReference("safety").child(safetyDTO.key)
-			val guardianSafetyRef = database.getReference("guardian").child(safetyDTO!!.data!!.uid).child("safetyList")
+			val guardianSafetyRef = database.getReference("guardian").child(safetyDTO.data!!.uid!!).child("safetyList")
 
 			guardianSafetyRef.get().addOnSuccessListener {
 				for (child in it.children) {

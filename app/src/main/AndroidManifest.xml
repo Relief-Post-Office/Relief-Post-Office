@@ -20,6 +20,9 @@
         android:theme="@style/Theme.Relief_post_office"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".safety.AddWardSafetyActivity"
+            android:exported="false" />
+        <activity
             android:name=".safety.WardSafetySettingActivity"
             android:exported="false" />
         <activity

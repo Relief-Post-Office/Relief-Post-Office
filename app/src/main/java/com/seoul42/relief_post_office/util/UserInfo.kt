@@ -22,23 +22,23 @@ class UserInfo {
     }
 
     private fun setAllUser() {
-        val userDB = Firebase.database.reference.child("user")
+            val userDB = Firebase.database.reference.child("user")
 
-        /* 유저 정보가 삭제되지 않는다는 가정하에 구현 */
-        userDB.addChildEventListener(object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val userId = snapshot.key.toString()
-                val userValue = snapshot.getValue(UserDTO::class.java) as UserDTO
-                ALL_USER[userId] = userValue
-            }
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                val userId = snapshot.key.toString()
-                val userValue = snapshot.getValue(UserDTO::class.java) as UserDTO
-                ALL_USER[userId] = userValue
-            }
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-            override fun onChildRemoved(snapshot: DataSnapshot) {}
-            override fun onCancelled(error: DatabaseError) {}
-        })
+            /* 유저 정보가 삭제되지 않는다는 가정하에 구현 */
+            userDB.addChildEventListener(object : ChildEventListener {
+                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                    val userId = snapshot.key.toString()
+                    val userValue = snapshot.getValue(UserDTO::class.java) as UserDTO
+                    ALL_USER[userId] = userValue
+                }
+                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                    val userId = snapshot.key.toString()
+                    val userValue = snapshot.getValue(UserDTO::class.java) as UserDTO
+                    ALL_USER[userId] = userValue
+                }
+                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+                override fun onChildRemoved(snapshot: DataSnapshot) {}
+                override fun onCancelled(error: DatabaseError) {}
+            })
     }
 }

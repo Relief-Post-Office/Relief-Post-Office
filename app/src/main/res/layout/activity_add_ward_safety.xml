@@ -4,6 +4,280 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".safety.AddWardSafetyActivity">
+    android:background="#fffbf3">
+
+    <ImageView
+        android:id="@+id/add_ward_safety_backBtn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/backbtn"
+        app:layout_constraintTop_toBottomOf="@id/horizontal_guideline1"
+        app:layout_constraintStart_toEndOf="@id/vertical_guideline1" />
+
+
+    <LinearLayout
+        android:id="@+id/add_ward_safety_linear1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/horizontal_guideline2"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/ward_safety_setting_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="안부 추가"
+            android:textSize="40sp"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/add_ward_safety_linear2"
+        android:layout_width="0sp"
+        android:layout_height="40sp"
+        app:layout_constraintTop_toBottomOf="@+id/add_ward_safety_linear1"
+        app:layout_constraintStart_toEndOf="@id/vertical_guideline1"
+        app:layout_constraintEnd_toStartOf="@id/vertical_guideline6"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="안부 이름"
+            android:textSize="25sp"
+            android:layout_gravity="left|center"
+            android:layout_marginStart="5sp"/>
+
+        <EditText
+            android:id="@+id/add_ward_safety_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="안부 이름을 작성해주세요"
+            android:layout_marginStart="30sp"
+            android:layout_marginEnd="70sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/add_ward_safety_linear3"
+        android:layout_width="0sp"
+        android:layout_height="50sp"
+        app:layout_constraintTop_toBottomOf="@+id/add_ward_safety_linear2"
+        app:layout_constraintStart_toEndOf="@id/vertical_guideline1"
+        app:layout_constraintEnd_toStartOf="@id/vertical_guideline6"
+        android:orientation="horizontal">
+
+
+        <CheckBox
+            android:id="@+id/add_ward_safety_monday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="월"
+            android:textSize="25sp"
+            android:layout_gravity="center"/>
+
+        <CheckBox
+            android:id="@+id/add_ward_safety_tuesday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="화"
+            android:textSize="25sp"
+            android:layout_gravity="center"/>
+
+        <CheckBox
+            android:id="@+id/add_ward_safety_wednesday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="수"
+            android:textSize="25sp"
+            android:layout_gravity="center"/>
+
+        <CheckBox
+            android:id="@+id/add_ward_safety_thursday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="목"
+            android:textSize="25sp"
+            android:layout_gravity="center"/>
+
+        <CheckBox
+            android:id="@+id/add_ward_safety_friday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="금"
+            android:textSize="25sp"
+            android:layout_gravity="center"/>
+
+        <CheckBox
+            android:id="@+id/saturday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="토"
+            android:textSize="25sp"
+            android:layout_gravity="center"/>
+
+        <CheckBox
+            android:id="@+id/add_ward_safety_sunday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="일"
+            android:textSize="25sp"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/add_ward_safety_linear4"
+        android:layout_width="wrap_content"
+        android:layout_height="60sp"
+        android:background="@drawable/question_item_border"
+        app:layout_constraintTop_toBottomOf="@+id/add_ward_safety_linear3"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@id/vertical_guideline1"
+        app:layout_constraintEnd_toStartOf="@id/vertical_guideline6">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="오전  00시  00분"
+            android:layout_marginTop="8sp"
+            android:layout_marginStart="10sp"
+            android:layout_margin="10sp"
+            android:textSize="40sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0sp"
+        android:layout_height="0sp"
+        android:background="@drawable/recyclerview_border"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline4"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline6"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
+        app:layout_constraintTop_toBottomOf="@id/add_ward_safety_linear4"
+        app:layout_constraintVertical_bias="1.0">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="25sp"
+                android:text="질문 설정"/>
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:src="@drawable/optionbtn" />
+        </FrameLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ward_safety_setting_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:scrollbars="vertical" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/ward_safety_setting_add_button"
+        android:layout_width="0sp"
+        android:layout_height="0sp"
+        android:layout_gravity="center"
+        android:text="저장"
+        android:textSize="30sp"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.025" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline1.5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.17" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.06" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.90" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.90" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.975" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.7" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
