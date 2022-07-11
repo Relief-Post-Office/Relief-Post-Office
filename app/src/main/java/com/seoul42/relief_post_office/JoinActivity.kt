@@ -28,7 +28,9 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.seoul42.relief_post_office.model.UserDTO
-import com.seoul42.relief_post_office.service.CheckLoginService
+import com.seoul42.relief_post_office.util.Guardian
+import com.seoul42.relief_post_office.util.Ward
+import com.seoul42.relief_post_office.ward.WardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -81,11 +83,15 @@ class JoinActivity : AppCompatActivity() {
     private var gender : Boolean = false
     private var name : String = ""
     private var birth : String = ""
-    private var address : String = ""
-    private var detailAddress : String = ""
     private var photoUri : String = ""
     private var token : String = ""
     private var tel : String = ""
+    private var zoneCode : String = ""
+    private var roadAddress : String = ""
+    private var buildingName : String = ""
+    private var detailAddress : String = ""
+
+    private lateinit var userDTO: UserDTO
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -182,6 +188,7 @@ class JoinActivity : AppCompatActivity() {
     }
 
     private fun setAddress() {
+        webView.setBackgroundColor(Color.TRANSPARENT);
         addressText.setOnClickListener {
             showKakaoAddressWebView()
         }
@@ -208,6 +215,7 @@ class JoinActivity : AppCompatActivity() {
                                 photoUri = task.result.toString()
                                 Glide.with(this)
                                     .load(photoUri)
+                                    .circleCrop()
                                     .into(photoButton)
                             }
                             setUploadFinish()
@@ -249,8 +257,9 @@ class JoinActivity : AppCompatActivity() {
         name = nameEdit.text.toString()
         detailAddress = detailAddressEdit.text.toString()
 
-        if (name.isEmpty() || birth.isEmpty() || token.isEmpty() ||
-            address.isEmpty() || detailAddress.isEmpty() || photoUri.isEmpty())
+        if (name.isEmpty() || birth.isEmpty() || token.isEmpty()
+            || addressText.text.isEmpty() || detailAddressEdit.text.isEmpty()
+            || photoUri.isEmpty())
             return false
         return true
     }
@@ -258,14 +267,14 @@ class JoinActivity : AppCompatActivity() {
     private fun setInsert() {
         progressBar.visibility = View.VISIBLE
         translateText.text = "회원가입 처리중..."
-        window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
     private fun insertUser() {
         val userId = auth.uid.toString()
         val userDB = Firebase.database.reference.child("user").child(userId)
-        val userDTO : UserDTO = UserDTO(photoUri, name, birth, tel,
-            "$address/$detailAddress", token, gender, guardian)
+        userDTO = UserDTO(photoUri, name, birth, tel, token, zoneCode,
+            roadAddress, buildingName, detailAddress, gender, guardian)
 
         userDB.setValue(userDTO)
     }
@@ -273,13 +282,24 @@ class JoinActivity : AppCompatActivity() {
     private fun completeJoin() {
         setInsert()
         insertUser()
-        Thread {
-            Thread.sleep(2000)
-            Handler(Looper.getMainLooper()).post {
-                ActivityCompat.finishAffinity(this)
-                startActivity(Intent(this, CheckLoginService::class.java))
-            }
-        }.start()
+        setInfo()
+    }
+
+    private fun setInfo() {
+        /* 보호자 및 피보호자에 대한 현재 유저 세팅 */
+        if (userDTO.guardian == true) Guardian(userDTO)
+        else Ward(userDTO)
+        moveActivity()
+    }
+
+    private fun moveActivity() {
+        Handler().postDelayed({
+            ActivityCompat.finishAffinity(this)
+            if (userDTO.guardian == true)
+                startActivity(Intent(this, GuardianBackgroundActivity::class.java))
+            else
+                startActivity(Intent(this, WardActivity::class.java))
+        }, 3000)
     }
     /* End save assistant */
 
@@ -301,11 +321,9 @@ class JoinActivity : AppCompatActivity() {
     }
 
     private val client: WebViewClient = object : WebViewClient() {
-
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
             return false
         }
-
         override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
             handler?.proceed()
         }
@@ -313,13 +331,17 @@ class JoinActivity : AppCompatActivity() {
 
     private inner class WebViewData {
         @JavascriptInterface
-        fun getAddress(zoneCode: String, roadAddress: String, buildingName: String) {
+        fun getAddress(zone: String, road: String, building: String) {
             CoroutineScope(Dispatchers.Default).launch {
                 withContext(CoroutineScope(Dispatchers.Main).coroutineContext) {
-                    address = if (buildingName.isEmpty()) "($zoneCode) $roadAddress"
-                        else "($zoneCode) $roadAddress $buildingName"
-                    addressText.text = if (buildingName.isEmpty()) "($zoneCode)\n$roadAddress"
-                    else "($zoneCode)\n$roadAddress\n$buildingName"
+                    zoneCode = zone
+                    roadAddress = road
+                    buildingName = building
+                    addressText.text = if (buildingName.isEmpty()) {
+                        "($zoneCode)\n$roadAddress"
+                    } else {
+                        "($zoneCode)\n$roadAddress\n$buildingName"
+                    }
                 }
             }
         }
@@ -392,13 +414,13 @@ class JoinActivity : AppCompatActivity() {
     private fun setUpload() {
         progressBar.visibility = View.VISIBLE
         translateText.text = "이미지 업로드중..."
-        window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
     private fun setUploadFinish() {
         progressBar.visibility = View.INVISIBLE
         translateText.text = ""
-        window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
     /* End photo assistant */
 }

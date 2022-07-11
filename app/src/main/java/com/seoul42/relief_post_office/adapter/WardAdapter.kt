@@ -14,7 +14,7 @@ import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.UserDTO
 import java.text.SimpleDateFormat
 
-class WardAdapter(private val context: Context, private val dataList: ArrayList<UserDTO>) :
+class WardAdapter(private val context: Context, private val dataList: ArrayList<Pair<String, UserDTO>>) :
     RecyclerView.Adapter<WardAdapter.ItemViewHolder>() {
     inner class ItemViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         private val userPhoto = itemView.findViewById<ImageView>(R.id.item_user_img)
@@ -22,16 +22,16 @@ class WardAdapter(private val context: Context, private val dataList: ArrayList<
         private val userCall = itemView.findViewById<Button>(R.id.item_user_call)
         private val userLayout = itemView.findViewById<LinearLayout>(R.id.item_user_layout)
 
-        fun bind(user : UserDTO, context : Context) {
+        fun bind(user : Pair<String, UserDTO>, context : Context) {
             val curYear = SimpleDateFormat("yyyy-MM-dd hh:mm")
                 .format(System.currentTimeMillis())
                 .split("-")[0].toInt()
-            val userYear = user.birth!!.split("/")[0].toInt()
+            val userYear = user.second.birth!!.split("/")[0].toInt()
             val userAge = curYear - userYear + 1
-            val userName = user.name
+            val userName = user.second.name
 
             Glide.with(context)
-                .load(user.photoUri)
+                .load(user.second.photoUri)
                 .circleCrop()
                 .into(userPhoto)
             userText.text = "$userName\n$userAge"
@@ -39,7 +39,7 @@ class WardAdapter(private val context: Context, private val dataList: ArrayList<
                 /* 통화 바로 가능하도록 */
                 ContextCompat.startActivity(
                     context,
-                    Intent(Intent.ACTION_VIEW, Uri.parse("tel:" + user.tel)),
+                    Intent(Intent.ACTION_VIEW, Uri.parse("tel:" + user.second.tel)),
                     null
                 )
             }

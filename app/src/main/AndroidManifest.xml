@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.seoul42.relief_post_office">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -9,6 +10,17 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.rightline.backgroundrepeatapp.permission.ACTION_REPEAT" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <permission
+        android:name="com.rightline.backgroundrepeatapp.permission.ACTION_REPEAT"
+        android:protectionLevel="signature"
+        tools:ignore="UniquePermission" />
 
     <application
         android:allowBackup="true"
@@ -16,25 +28,65 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.Relief_post_office">
+        android:theme="@style/Theme.Relief_post_office"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".safety.AddWardSafetyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.WardSafetySettingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.EditSafetyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".safety.SafetyMake"
+            android:exported="false" />
         <activity
             android:name=".service.CheckLoginService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".PhoneActivity" />
-        <activity android:name=".JoinActivity" />
-        <activity android:name=".GuardianActivity" />
-        <activity android:name=".WardActivity" />
-        <activity android:name=".alarm.AlarmActivity" />
-        <activity android:name=".result.ResultActivity" />
-        <activity android:name=".result.ResultDetailActivity"/>
+        <activity
+            android:name=".MainActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".PhoneActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".JoinActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".guardian.MainFragment"
+            android:windowSoftInputMode="adjustNothing"
+            tools:ignore="Instantiatable" />
+        <activity
+            android:name=".GuardianBackgroundActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".ward.WardActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".alarm.AlarmActivity"
+            android:theme="@style/TransparentStatusTheme"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".guardian.GuardianProfileActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".ward.WardProfileActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".result.ResultActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".result.ResultDetailActivity"
+            android:windowSoftInputMode="adjustNothing" />
         <service
             android:name=".service.MyFirebaseMessagingService"
             android:exported="false">
@@ -42,6 +94,28 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <receiver
+            android:name=".alarm.WardReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.rightline.backgroundrepeatapp.REPEAT_START" />
+                <action android:name="com.rightline.backgroundrepeatapp.REPEAT_STOP" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".alarm.BootCompleteReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:label="BootCompletedReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
