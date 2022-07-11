@@ -8,20 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.seoul42.relief_post_office.R
+import com.seoul42.relief_post_office.databinding.DialogResponseBinding
+import com.seoul42.relief_post_office.databinding.ItemUserBinding
 import com.seoul42.relief_post_office.model.UserDTO
 import java.text.SimpleDateFormat
 
 class WardAdapter(private val context: Context, private val dataList: ArrayList<Pair<String, UserDTO>>) :
     RecyclerView.Adapter<WardAdapter.ItemViewHolder>() {
-    inner class ItemViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
-        private val userPhoto = itemView.findViewById<ImageView>(R.id.item_user_img)
-        private val userText = itemView.findViewById<TextView>(R.id.item_user_text)
-        private val userCall = itemView.findViewById<Button>(R.id.item_user_call)
-        private val userLayout = itemView.findViewById<LinearLayout>(R.id.item_user_layout)
-
+    inner class ItemViewHolder(private val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(user : Pair<String, UserDTO>, context : Context) {
             val curYear = SimpleDateFormat("yyyy-MM-dd hh:mm")
                 .format(System.currentTimeMillis())
@@ -33,9 +31,9 @@ class WardAdapter(private val context: Context, private val dataList: ArrayList<
             Glide.with(context)
                 .load(user.second.photoUri)
                 .circleCrop()
-                .into(userPhoto)
-            userText.text = "$userName\n$userAge"
-            userCall.setOnClickListener {
+                .into(binding.itemUserImg)
+            binding.itemUserText.text = "$userName\n$userAge"
+            binding.itemUserCall.setOnClickListener {
                 /* 통화 바로 가능하도록 */
                 ContextCompat.startActivity(
                     context,
@@ -43,7 +41,7 @@ class WardAdapter(private val context: Context, private val dataList: ArrayList<
                     null
                 )
             }
-            userLayout.setOnClickListener {
+            binding.itemUserLayout.setOnClickListener {
                 /* 보호자 정보 확인 */
                 Toast.makeText(context, "안부 확인", Toast.LENGTH_SHORT).show()
             }
@@ -51,8 +49,10 @@ class WardAdapter(private val context: Context, private val dataList: ArrayList<
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_user, parent, false)
-        return ItemViewHolder(view)
+        return ItemViewHolder(
+            DataBindingUtil.inflate(
+                LayoutInflater.from(context), R.layout.item_user, parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {

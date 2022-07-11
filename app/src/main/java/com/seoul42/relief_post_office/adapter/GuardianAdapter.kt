@@ -11,10 +11,12 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.seoul42.relief_post_office.R
+import com.seoul42.relief_post_office.databinding.ItemUserBinding
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.result.ResultActivity
 import com.seoul42.relief_post_office.safety.WardSafetySettingActivity
@@ -22,12 +24,7 @@ import java.text.SimpleDateFormat
 
 class GuardianAdapter(private val context: Context, private val dataList: ArrayList<Pair<String, UserDTO>>) :
     RecyclerView.Adapter<GuardianAdapter.ItemViewHolder>() {
-        inner class ItemViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
-            private val userPhoto = itemView.findViewById<ImageView>(R.id.item_user_img)
-            private val userText = itemView.findViewById<TextView>(R.id.item_user_text)
-            private val userCall = itemView.findViewById<Button>(R.id.item_user_call)
-            private val userLayout = itemView.findViewById<LinearLayout>(R.id.item_user_layout)
-
+        inner class ItemViewHolder(private val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root) {
             fun bind(user : Pair<String, UserDTO>, context : Context) {
                 val curYear = SimpleDateFormat("yyyy-MM-dd hh:mm")
                     .format(System.currentTimeMillis())
@@ -39,9 +36,9 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
                 Glide.with(context)
                     .load(user.second.photoUri)
                     .circleCrop()
-                    .into(userPhoto)
-                userText.text = "$userName\n$userAge"
-                userCall.setOnClickListener {
+                    .into(binding.itemUserImg)
+                binding.itemUserText.text = "$userName\n$userAge"
+                binding.itemUserCall.setOnClickListener {
                     /* 통화 바로 가능하도록 */
                     ContextCompat.startActivity(
                         context,
@@ -49,9 +46,8 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
                         null
                     )
                 }
-
                 // 연결된 피보호자를 눌렀을 때 이벤트 처리
-                userLayout.setOnClickListener {
+                binding.itemUserLayout.setOnClickListener {
 
                     // 피보호자 다이얼로그 세팅
                     val dialog = android.app.AlertDialog.Builder(context).create()
@@ -101,8 +97,10 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_user, parent, false)
-        return ItemViewHolder(view)
+        return ItemViewHolder(
+            DataBindingUtil.inflate(
+                LayoutInflater.from(context), R.layout.item_user, parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {

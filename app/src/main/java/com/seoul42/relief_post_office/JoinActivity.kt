@@ -1,14 +1,12 @@
 package com.seoul42.relief_post_office
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Matrix
-import android.graphics.drawable.ColorDrawable
 import android.media.ExifInterface
 import android.net.Uri
 import android.net.http.SslError
@@ -27,6 +25,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
+import com.seoul42.relief_post_office.databinding.JoinBinding
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.util.Guardian
 import com.seoul42.relief_post_office.util.Ward
@@ -45,38 +44,8 @@ class JoinActivity : AppCompatActivity() {
     private val storage: FirebaseStorage by lazy {
         FirebaseStorage.getInstance()
     }
-    private val guardianRadioGroup: RadioGroup by lazy {
-        findViewById<RadioGroup>(R.id.join_guardian_group)
-    }
-    private val nameEdit: EditText by lazy {
-        findViewById<EditText>(R.id.join_name)
-    }
-    private val birthText: TextView by lazy {
-        findViewById<TextView>(R.id.join_birth)
-    }
-    private val genderRadioGroup: RadioGroup by lazy {
-        findViewById<RadioGroup>(R.id.join_gender_group)
-    }
-    private val addressText: TextView by lazy {
-        findViewById<TextView>(R.id.join_address)
-    }
-    private val detailAddressEdit: EditText by lazy {
-        findViewById<EditText>(R.id.join_detail_address)
-    }
-    private val photoButton: ImageButton by lazy {
-        findViewById<ImageButton>(R.id.join_photo)
-    }
-    private val saveButton: Button by lazy {
-        findViewById<Button>(R.id.join_save)
-    }
-    private val progressBar: ProgressBar by lazy {
-        findViewById<ProgressBar>(R.id.join_progressbar)
-    }
-    private val translateText: TextView by lazy {
-        findViewById<TextView>(R.id.join_transform_text)
-    }
-    private val webView: WebView by lazy {
-        findViewById<WebView>(R.id.join_webView)
+    private val binding by lazy {
+        JoinBinding.inflate(layoutInflater)
     }
 
     private var guardian : Boolean = false
@@ -96,7 +65,7 @@ class JoinActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.join)
+        setContentView(binding.root)
 
         /* 현재 유저의 휴대전화번호 및 토큰 정보를 얻어옴 */
         getTel()
@@ -122,74 +91,20 @@ class JoinActivity : AppCompatActivity() {
     }
 
     private fun setBirth() {
-        birthText.setOnClickListener {
-            val dialog = AlertDialog.Builder(this).create()
-            val eDialog : LayoutInflater = LayoutInflater.from(this)
-            val mView : View = eDialog.inflate(R.layout.dialog_birth,null)
-            val year : NumberPicker = mView.findViewById(R.id.birth_year)
-            val month : NumberPicker = mView.findViewById(R.id.birth_month)
-            val day : NumberPicker = mView.findViewById(R.id.birth_day)
-            val save : Button = mView.findViewById(R.id.birth_save)
-            var myYear : Int = 1970
-            var myMonth : Int = 1
-            var myDay : Int = 1
-            val listener = NumberPicker.OnValueChangeListener { numberPicker, _, new ->
-                when (numberPicker) {
-                    year -> myYear = new
-                    month -> myMonth = new
-                    day -> myDay = new
-                }
+        binding.joinBirth.setOnClickListener {
+            val birthDialog = BirthDialog(this)
+
+            birthDialog.show(birth)
+            birthDialog.setOnSaveClickedListener { content ->
+                birth = content
+                binding.joinBirth.text = birth
             }
-
-            year.wrapSelectorWheel = false
-            month.wrapSelectorWheel = false
-            day.wrapSelectorWheel = false
-            year.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
-            month.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
-            day.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
-            year.minValue = 1900
-            month.minValue = 1
-            day.minValue = 1
-            year.maxValue = 2100
-            month.maxValue = 12
-            day.maxValue = 31
-
-            if (birth.isEmpty()) {
-                year.value = 1970
-                month.value = 1
-                day.value = 1
-                birth = "1970/1/1"
-            } else {
-                year.value = birth.split("/")[0].toInt()
-                month.value = birth.split("/")[1].toInt()
-                day.value = birth.split("/")[2].toInt()
-                myYear = year.value
-                myMonth = month.value
-                myDay = day.value
-            }
-
-            year.setOnValueChangedListener(listener)
-            month.setOnValueChangedListener(listener)
-            day.setOnValueChangedListener(listener)
-
-            save.setOnClickListener {
-                birth = "$myYear/$myMonth/$myDay"
-                birthText.text = birth
-                dialog.dismiss()
-                dialog.cancel()
-            }
-
-            dialog.setView(mView)
-            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.create()
-            dialog.show()
         }
     }
 
     private fun setAddress() {
-        webView.setBackgroundColor(Color.TRANSPARENT);
-        addressText.setOnClickListener {
+        binding.joinWebView.setBackgroundColor(Color.TRANSPARENT);
+        binding.joinAddress.setOnClickListener {
             showKakaoAddressWebView()
         }
     }
@@ -216,7 +131,7 @@ class JoinActivity : AppCompatActivity() {
                                 Glide.with(this)
                                     .load(photoUri)
                                     .circleCrop()
-                                    .into(photoButton)
+                                    .into(binding.joinPhoto)
                             }
                             setUploadFinish()
                         }
@@ -225,7 +140,7 @@ class JoinActivity : AppCompatActivity() {
             }
         }
 
-        photoButton.setOnClickListener {
+        binding.joinPhoto.setOnClickListener {
             val intent = Intent("android.intent.action.GET_CONTENT")
             intent.type = "image/*"
             getFromAlbumResultLauncher.launch(intent)
@@ -233,7 +148,7 @@ class JoinActivity : AppCompatActivity() {
     }
 
     private fun setSave() {
-        saveButton.setOnClickListener {
+        binding.joinSave.setOnClickListener {
             if (allCheck()) {
                 completeJoin()
             } else {
@@ -244,29 +159,30 @@ class JoinActivity : AppCompatActivity() {
 
     /* Start save assistant */
     private fun allCheck() : Boolean {
-        guardian = when(guardianRadioGroup.checkedRadioButtonId) {
-            R.id.join_guardian -> true
-            R.id.join_ward -> false
+        guardian = when(binding.joinGuardianGroup.checkedRadioButtonId) {
+            binding.joinGuardian.id -> true
+            binding.joinWard.id -> false
             else -> return false
         }
-        gender = when(genderRadioGroup.checkedRadioButtonId) {
-            R.id.join_male -> true
-            R.id.join_female -> false
+        gender = when(binding.joinGenderGroup.checkedRadioButtonId) {
+            binding.joinMale.id -> true
+            binding.joinFemale.id -> false
             else -> return false
         }
-        name = nameEdit.text.toString()
-        detailAddress = detailAddressEdit.text.toString()
+        name = binding.joinName.text.toString()
+        detailAddress = binding.joinDetailAddress.text.toString()
 
         if (name.isEmpty() || birth.isEmpty() || token.isEmpty()
-            || addressText.text.isEmpty() || detailAddressEdit.text.isEmpty()
+            || binding.joinAddress.text.isEmpty()
+            || binding.joinDetailAddress.text.isEmpty()
             || photoUri.isEmpty())
             return false
         return true
     }
 
     private fun setInsert() {
-        progressBar.visibility = View.VISIBLE
-        translateText.text = "회원가입 처리중..."
+        binding.joinProgressbar.visibility = View.VISIBLE
+        binding.joinTransformText.text = "회원가입 처리중..."
         window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
@@ -305,12 +221,12 @@ class JoinActivity : AppCompatActivity() {
 
     /* Start address assistant */
     private fun showKakaoAddressWebView() {
-        webView.settings.apply {
+        binding.joinWebView.settings.apply {
             javaScriptEnabled = true
             javaScriptCanOpenWindowsAutomatically = true
             setSupportMultipleWindows(true)
         }
-        webView.apply {
+        binding.joinWebView.apply {
             /* index.html 에서 Leaf */
             addJavascriptInterface(WebViewData(), "Leaf")
             webViewClient = client
@@ -337,7 +253,7 @@ class JoinActivity : AppCompatActivity() {
                     zoneCode = zone
                     roadAddress = road
                     buildingName = building
-                    addressText.text = if (buildingName.isEmpty()) {
+                    binding.joinAddress.text = if (buildingName.isEmpty()) {
                         "($zoneCode)\n$roadAddress"
                     } else {
                         "($zoneCode)\n$roadAddress\n$buildingName"
@@ -412,14 +328,14 @@ class JoinActivity : AppCompatActivity() {
     }
 
     private fun setUpload() {
-        progressBar.visibility = View.VISIBLE
-        translateText.text = "이미지 업로드중..."
+        binding.joinProgressbar.visibility = View.VISIBLE
+        binding.joinTransformText.text = "이미지 업로드중..."
         window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
     private fun setUploadFinish() {
-        progressBar.visibility = View.INVISIBLE
-        translateText.text = ""
+        binding.joinProgressbar.visibility = View.INVISIBLE
+        binding.joinTransformText.text = ""
         window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
     /* End photo assistant */

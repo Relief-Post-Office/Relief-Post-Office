@@ -8,17 +8,17 @@ import android.widget.Button
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import com.seoul42.relief_post_office.util.Alarm.isIgnoringBatteryOptimizations
-
+import com.seoul42.relief_post_office.databinding.MainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    private val loadButton: Button by lazy {
-        findViewById<Button>(R.id.main_button)
+    private val binding by lazy {
+        MainBinding.inflate(layoutInflater)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main)
+        setContentView(binding.root)
 
         setBatteryOptimization()
         setLogin()
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setLogin() {
-        loadButton.setOnClickListener {
+        binding.mainButton.setOnClickListener {
             startActivity(Intent(this, PhoneActivity::class.java))
         }
     }

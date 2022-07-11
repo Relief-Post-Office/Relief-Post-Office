@@ -2,12 +2,13 @@ package com.seoul42.relief_post_office.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.seoul42.relief_post_office.R
+import com.seoul42.relief_post_office.databinding.ItemGuardianBinding
 import com.seoul42.relief_post_office.model.UserDTO
 import java.text.SimpleDateFormat
 
@@ -16,11 +17,7 @@ class ResponseAdapter(private val context: Context, private val dataList: ArrayL
 
     private val checkList = ArrayList<String>()
 
-    inner class ItemViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
-        private val userPhoto = itemView.findViewById<ImageView>(R.id.item_guardian_img)
-        private val userText = itemView.findViewById<TextView>(R.id.item_guardian_text)
-        private val userCheck = itemView.findViewById<CheckBox>(R.id.item_guardian_check)
-
+    inner class ItemViewHolder(private val binding: ItemGuardianBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(user : Pair<String, UserDTO>, context : Context) {
             val curYear = SimpleDateFormat("yyyy-MM-dd hh:mm")
                 .format(System.currentTimeMillis())
@@ -32,9 +29,9 @@ class ResponseAdapter(private val context: Context, private val dataList: ArrayL
             Glide.with(context)
                 .load(user.second.photoUri)
                 .circleCrop()
-                .into(userPhoto)
-            userText.text = "$userName\n$userAge"
-            userCheck.setOnCheckedChangeListener { _, isChecked ->
+                .into(binding.itemGuardianImg)
+            binding.itemGuardianText.text = "$userName\n$userAge"
+            binding.itemGuardianCheck.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) checkList.add(user.first)
                 else checkList.remove(user.first)
             }
@@ -42,8 +39,10 @@ class ResponseAdapter(private val context: Context, private val dataList: ArrayL
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_guardian, parent, false)
-        return ItemViewHolder(view)
+        return ItemViewHolder(
+            DataBindingUtil.inflate(
+                LayoutInflater.from(context), R.layout.item_guardian, parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
