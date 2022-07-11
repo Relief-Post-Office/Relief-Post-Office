@@ -22,12 +22,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="안부 이름"
-            android:textSize="34sp"
+            android:textSize="35sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.08"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ward_safety_item_vertical_guide1"
+            android:layout_marginBottom="20sp"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/ward_safety_item_dayOfWeek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/ward_safety_item_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ward_safety_item_vertical_guide1"
+            android:layout_marginTop="10sp"
+            app:layout_constraintEnd_toEndOf="parent
+"
+            android:text="월 화 수 목 금 토 일"
+            android:textSize="20sp" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -35,26 +48,25 @@
             android:gravity="center_horizontal|center_vertical"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.92"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/ward_safety_item_dayOfWeek"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="수 요 일"
-                android:textSize="30sp" />
+            app:layout_constraintStart_toStartOf="@id/ward_safety_item_vertical_guide1"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/ward_safety_item_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:textSize="20sp"
+                android:textSize="50sp"
                 android:text="09 : 45" />
         </LinearLayout>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/ward_safety_item_vertical_guide1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.55" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

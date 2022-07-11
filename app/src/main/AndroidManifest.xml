@@ -31,6 +31,9 @@
         android:theme="@style/Theme.Relief_post_office"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".safety.SafetyQuestionSettingActivity"
+            android:exported="false" />
+        <activity
             android:name=".safety.AddWardSafetyActivity"
             android:exported="false" />
         <activity
@@ -99,18 +102,17 @@
                 <action android:name="com.rightline.backgroundrepeatapp.REPEAT_STOP" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".alarm.BootCompleteReceiver"
             android:enabled="true"
             android:exported="false"
-            android:label="BootCompletedReceiver" >
+            android:label="BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

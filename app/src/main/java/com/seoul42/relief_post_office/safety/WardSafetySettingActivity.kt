@@ -23,11 +23,11 @@ import com.seoul42.relief_post_office.model.SafetyDTO
 class WardSafetySettingActivity : AppCompatActivity() {
 
     private val database = Firebase.database
+    private var wardSafetyList = arrayListOf<Pair<String, SafetyDTO>>()
+    private lateinit var wardSafetyAdapter : WardSafetyAdapter
     private lateinit var wardId : String
     private lateinit var wardName : String
     private lateinit var photoUri : String
-    // 피보호자 안부 리스트
-    private lateinit var WardSafetyList : ArrayList<Pair<String, SafetyDTO>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,16 +53,30 @@ class WardSafetySettingActivity : AppCompatActivity() {
 
         // 추가 버튼 이벤트
         findViewById<ImageView>(R.id.ward_safety_setting_add_button).setOnClickListener {
-            startActivity(Intent(this, AddWardSafetyActivity::class.java))
+            val tmpIntent = Intent(this, AddWardSafetyActivity::class.java)
+            tmpIntent.putExtra("wardId", wardId)
+            startActivity(tmpIntent)
         }
 
-        // WardSafetyList 세팅 및 업데이트 하기
+        // wardSafetyList 세팅 및 업데이트 하기
         // 현재 선택한 피보호자의 안부 목록
         val wardSafetyRef = database.getReference("ward").child(wardId).child("safetyIdList")
 
-        // questionList에 로그인한 유저의 질문들 넣기
+        // wardSafetyList에 선택한 피보호자의 안부들 넣기
         wardSafetyRef.addChildEventListener(object : ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                // 선택한 피보호자의 안부 하나씩 참조
+                val safetyId = snapshot.key.toString()
+                val safetyToAdd = database.getReference("safety").child(safetyId)
+
+                // 안부 컬렉션에서 각 안부 불러와서 WardSafetyList에 넣기
+                safetyToAdd.get().addOnSuccessListener {
+                    wardSafetyList.add(Pair(safetyId, it.getValue(SafetyDTO::class.java) as SafetyDTO))
+                    // 내림차순으로 정렬
+                    wardSafetyList.sortedByDescending { it.second.date }
+                    // 리사이클러 뷰 어답터에 알려주기
+                    wardSafetyAdapter.notifyDataSetChanged()
+                }
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
@@ -83,9 +97,9 @@ class WardSafetySettingActivity : AppCompatActivity() {
         // 리사이클러 뷰 가져오기
         val rv = findViewById<RecyclerView>(R.id.ward_safety_setting_rv)
         // 리사이클러 뷰 아답터에 리스트 넘긴 후 아답터 가져오기
-        val rvAdapter = WardSafetyAdapter(WardSafetyList)
+        wardSafetyAdapter = WardSafetyAdapter(wardSafetyList)
         // 리사이클러 뷰에 아답터 연결하기
-        rv.adapter = rvAdapter
+        rv.adapter = wardSafetyAdapter
         rv.layoutManager = LinearLayoutManager(this)
         rv.setHasFixedSize(true)
     }

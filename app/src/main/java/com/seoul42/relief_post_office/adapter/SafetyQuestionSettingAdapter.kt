@@ -5,58 +5,69 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.util.Log
+import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.core.util.remove
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.QuestionDTO
+import com.seoul42.relief_post_office.model.SafetyDTO
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class QuestionFragmentRVAdapter(private val context: Context, private val items: ArrayList<Pair<String, QuestionDTO>>)
-    : RecyclerView.Adapter<QuestionFragmentRVAdapter.ViewHolder>() {
+class SafetyQuestionSettingAdapter(private val context: Context, val checkedQuestions : ArrayList<String>,
+                                   private val items : ArrayList<Pair<String, QuestionDTO>>)
+    : RecyclerView.Adapter<SafetyQuestionSettingAdapter.ViewHolder>() {
 
     val database = Firebase.database
-    private lateinit var QuestionAdapter : QuestionFragmentRVAdapter
+    val checkboxStatus = SparseBooleanArray()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
-    : QuestionFragmentRVAdapter.ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.question_rv_item, parent, false)
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): SafetyQuestionSettingAdapter.ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.safety_question_item, parent, false)
 
         return ViewHolder(view)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun onBindViewHolder(holder: QuestionFragmentRVAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: SafetyQuestionSettingAdapter.ViewHolder, position: Int) {
         holder.bindItems(items[position])
     }
 
-    // 전체 리사이클러 뷰의 아이템 개수
     override fun getItemCount(): Int {
         return items.size
     }
 
-    inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
+    inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
 
-        // 데이터 매핑 해주기
+        // 각 아이템마다 뷰 처리
         @RequiresApi(Build.VERSION_CODES.O)
         fun bindItems(item: Pair<String, QuestionDTO>){
-            // 각 질문 별 텍스트
-            val rvText = itemView.findViewById<TextView>(R.id.question_rv_item_text)
-
-            // text 매핑
+            // 각 질문 세팅
+            val rvText = itemView.findViewById<TextView>(R.id.safety_question_item_text)
             rvText.text = item.second.text
+
+            // 기존 안부에 있던 질문들인지 확인하고 스위치 세팅
+            val itemCheckBox = itemView.findViewById<Switch>(R.id.safety_question_item_switch)
+            if (checkedQuestions.contains(item.first)){
+                itemCheckBox.isChecked = true
+                checkboxStatus.put(adapterPosition, true)
+            }
+            else
+                checkboxStatus.put(adapterPosition, false)
 
             // 아이템 눌렀을 때 이벤트
             rvText.setOnClickListener{
                 // 질문 수정 다이얼로그 세팅
-//                val date = item.body.date
                 val questionText = item.second.text
                 val secret = item.second.secret
                 val record = item.second.record
@@ -113,13 +124,34 @@ class QuestionFragmentRVAdapter(private val context: Context, private val items:
                         .child("questionList")
                         .child(item.first).setValue(null)
 
+                    // 현재 아답터에서 가지고 있는 리스트에 해당 질문 삭제 적용
+                    checkboxStatus.delete(adapterPosition)
+                    checkedQuestions.remove(item.first)
+
+
                     // 다이얼로그 종료
                     Toast.makeText(context, "질문 삭제 완료", Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
                 }
             }
 
+            // 체크 박스 처리
+            if (checkboxStatus[adapterPosition] != null)
+                itemCheckBox.isChecked = checkboxStatus[adapterPosition]
+            itemCheckBox.setOnClickListener {
+                if (!itemCheckBox.isChecked) {
+                    checkboxStatus.put(adapterPosition, false)
+                    checkedQuestions.remove(item.first)
+                }
+                else {
+                    checkboxStatus.put(adapterPosition, true)
+                    checkedQuestions.add(item.first)
+                }
+                notifyItemChanged(adapterPosition)
+            }
+
             // 녹음 소스 매핑 필요
+
         }
     }
 }

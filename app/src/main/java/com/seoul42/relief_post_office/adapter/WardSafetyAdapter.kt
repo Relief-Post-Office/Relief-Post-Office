@@ -43,10 +43,19 @@ class WardSafetyAdapter(private val items: ArrayList<Pair<String, SafetyDTO>>)
             val rvTime = itemView.findViewById<TextView>(R.id.ward_safety_item_time)
 
             var itemDayOfWeek = ""
-            for (d in item.second.dayOfWeek){
-                itemDayOfWeek += "${d.value} "
+            var count = 0
+            for (d in arrayListOf<String>("월", "화", "수", "목", "금", "토", "일",)){
+                if (item.second.dayOfWeek[d]!!){
+                    itemDayOfWeek += "${d} "
+                    count++
+                }
             }
-            itemDayOfWeek = itemDayOfWeek.substring(0 until itemDayOfWeek.length)
+            if (count == 7)
+                itemDayOfWeek = "매일 "
+            else if (count == 0){
+                itemDayOfWeek = "비활성화 "
+            }
+            itemDayOfWeek = itemDayOfWeek.substring(0 until itemDayOfWeek.length - 1)
 
             rvName.text = item.second.name
             rvDayOfWeek.text = itemDayOfWeek
