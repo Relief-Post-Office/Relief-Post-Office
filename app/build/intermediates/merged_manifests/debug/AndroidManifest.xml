@@ -44,6 +44,12 @@
         android:theme="@style/Theme.Relief_post_office"
         android:usesCleartextTraffic="true" >
         <activity
+            android:name="com.seoul42.relief_post_office.safety.AddWardSafetyActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.seoul42.relief_post_office.safety.WardSafetySettingActivity"
+            android:exported="false" />
+        <activity
             android:name="com.seoul42.relief_post_office.safety.EditSafetyActivity"
             android:exported="false" />
         <activity

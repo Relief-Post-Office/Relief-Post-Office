@@ -77,7 +77,9 @@ class AlarmActivity : AppCompatActivity() {
 
         /* 5분 뒤에 알람 종료 */
         Handler().postDelayed({
-            close()
+            if (mediaPlayer != null) {
+                close()
+            }
         }, finishTime)
     }
 

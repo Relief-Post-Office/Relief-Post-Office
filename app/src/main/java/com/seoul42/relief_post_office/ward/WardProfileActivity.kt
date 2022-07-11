@@ -29,6 +29,8 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.seoul42.relief_post_office.R
+import com.seoul42.relief_post_office.databinding.JoinBinding
+import com.seoul42.relief_post_office.databinding.WardProfileBinding
 import com.seoul42.relief_post_office.model.UserDTO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,38 +47,8 @@ class WardProfileActivity  : AppCompatActivity() {
     private val storage: FirebaseStorage by lazy {
         FirebaseStorage.getInstance()
     }
-    private val nameEdit: EditText by lazy {
-        findViewById<EditText>(R.id.ward_profile_name)
-    }
-    private val birthText: TextView by lazy {
-        findViewById<TextView>(R.id.ward_profile_birth)
-    }
-    private val genderRadioMale: RadioButton by lazy {
-        findViewById<RadioButton>(R.id.ward_profile_male)
-    }
-    private val genderRadioFemale: RadioButton by lazy {
-        findViewById<RadioButton>(R.id.ward_profile_female)
-    }
-    private val addressText: TextView by lazy {
-        findViewById<TextView>(R.id.ward_profile_address)
-    }
-    private val detailAddressEdit: EditText by lazy {
-        findViewById<EditText>(R.id.ward_profile_detail_address)
-    }
-    private val photoButton: ImageButton by lazy {
-        findViewById<ImageButton>(R.id.ward_profile_photo)
-    }
-    private val saveButton: Button by lazy {
-        findViewById<Button>(R.id.ward_profile_save)
-    }
-    private val progressBar: ProgressBar by lazy {
-        findViewById<ProgressBar>(R.id.ward_profile_progressbar)
-    }
-    private val translateText: TextView by lazy {
-        findViewById<TextView>(R.id.ward_profile_transform_text)
-    }
-    private val webView: WebView by lazy {
-        findViewById<WebView>(R.id.ward_profile_webView)
+    private val binding by lazy {
+        WardProfileBinding.inflate(layoutInflater)
     }
 
     private var guardian : Boolean = USER.guardian == true
@@ -96,7 +68,7 @@ class WardProfileActivity  : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.ward_profile)
+        setContentView(binding.root)
 
         /* 미리 저장된 정보들을 반영 */
         setPreProcessed()
@@ -108,28 +80,28 @@ class WardProfileActivity  : AppCompatActivity() {
 
 
     private fun setPreProcessed() {
-        birthText.hint = birth
-        nameEdit.setText(name)
-        detailAddressEdit.setText(detailAddress)
-        addressText.text = if (buildingName.isEmpty()) {
+        binding.wardProfileBirth.hint = birth
+        binding.wardProfileName.setText(name)
+        binding.wardProfileDetailAddress.setText(detailAddress)
+        binding.wardProfileAddress.text = if (buildingName.isEmpty()) {
             "($zoneCode)\n$roadAddress"
         } else {
             "($zoneCode)\n$roadAddress\n$buildingName"
         }
         if (USER.gender == true) {
-            genderRadioMale.isChecked = true
+            binding.wardProfileMale.isChecked = true
         } else {
-            genderRadioFemale.isChecked = true
+            binding.wardProfileFemale.isChecked = true
         }
         Glide.with(this)
             .load(USER.photoUri)
             .circleCrop()
-            .into(photoButton)
+            .into(binding.wardProfilePhoto)
     }
 
     private fun setAddress() {
-        webView.setBackgroundColor(Color.TRANSPARENT);
-        addressText.setOnClickListener {
+        binding.wardProfileWebView.setBackgroundColor(Color.TRANSPARENT);
+        binding.wardProfileAddress.setOnClickListener {
             showKakaoAddressWebView()
         }
     }
@@ -156,7 +128,7 @@ class WardProfileActivity  : AppCompatActivity() {
                                 Glide.with(this)
                                     .load(photoUri)
                                     .circleCrop()
-                                    .into(photoButton)
+                                    .into(binding.wardProfilePhoto)
                             }
                             setUploadFinish()
                         }
@@ -165,7 +137,7 @@ class WardProfileActivity  : AppCompatActivity() {
             }
         }
 
-        photoButton.setOnClickListener {
+        binding.wardProfilePhoto.setOnClickListener {
             val intent = Intent("android.intent.action.GET_CONTENT")
             intent.type = "image/*"
             getFromAlbumResultLauncher.launch(intent)
@@ -173,7 +145,7 @@ class WardProfileActivity  : AppCompatActivity() {
     }
 
     private fun setSave() {
-        saveButton.setOnClickListener {
+        binding.wardProfileSave.setOnClickListener {
             if (allCheck()) {
                 completeJoin()
             } else {
@@ -184,18 +156,19 @@ class WardProfileActivity  : AppCompatActivity() {
 
     /* Start save assistant */
     private fun allCheck() : Boolean {
-        detailAddress = detailAddressEdit.text.toString()
+        detailAddress = binding.wardProfileDetailAddress.text.toString()
 
         if (name.isEmpty() || birth.isEmpty() || token.isEmpty()
-            || addressText.text.isEmpty() || detailAddressEdit.text.isEmpty()
+            || binding.wardProfileAddress.text.isEmpty()
+            || binding.wardProfileDetailAddress.text.isEmpty()
             || photoUri.isEmpty())
             return false
         return true
     }
 
     private fun setInsert() {
-        progressBar.visibility = View.VISIBLE
-        translateText.text = "프로필 변경중..."
+        binding.wardProfileProgressbar.visibility = View.VISIBLE
+        binding.wardProfileTransformText.text = "프로필 변경중..."
         window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
@@ -220,12 +193,12 @@ class WardProfileActivity  : AppCompatActivity() {
 
     /* Start address assistant */
     private fun showKakaoAddressWebView() {
-        webView.settings.apply {
+        binding.wardProfileWebView.settings.apply {
             javaScriptEnabled = true
             javaScriptCanOpenWindowsAutomatically = true
             setSupportMultipleWindows(true)
         }
-        webView.apply {
+        binding.wardProfileWebView.apply {
             /* index.html 에서 Leaf */
             addJavascriptInterface(WebViewData(), "Leaf")
             webViewClient = client
@@ -252,7 +225,7 @@ class WardProfileActivity  : AppCompatActivity() {
                     zoneCode = zone
                     roadAddress = road
                     buildingName = building
-                    addressText.text = if (buildingName.isEmpty()) {
+                    binding.wardProfileAddress.text = if (buildingName.isEmpty()) {
                         "($zoneCode)\n$roadAddress"
                     } else {
                         "($zoneCode)\n$roadAddress\n$buildingName"
@@ -327,14 +300,14 @@ class WardProfileActivity  : AppCompatActivity() {
     }
 
     private fun setUpload() {
-        progressBar.visibility = View.VISIBLE
-        translateText.text = "이미지 업로드중..."
+        binding.wardProfileProgressbar.visibility = View.VISIBLE
+        binding.wardProfileTransformText.text = "이미지 업로드중..."
         window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
     private fun setUploadFinish() {
-        progressBar.visibility = View.INVISIBLE
-        translateText.text = ""
+        binding.wardProfileProgressbar.visibility = View.INVISIBLE
+        binding.wardProfileTransformText.text = ""
         window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
     /* End photo assistant */

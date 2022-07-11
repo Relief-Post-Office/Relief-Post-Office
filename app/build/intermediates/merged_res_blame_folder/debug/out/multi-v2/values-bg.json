@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.seoul42.relief_post_office.app-mergeDebugResources-46:/values-bg/values-bg.xml",
+            "outputFile": "com.seoul42.relief_post_office.app-mergeDebugResources-48:/values-bg/values-bg.xml",
             "map": [
                 {
                     "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\fd85e1febed85e13419d3956dc7e5ca3\\transformed\\play-services-basement-18.0.0\\res\\values-bg\\values.xml",

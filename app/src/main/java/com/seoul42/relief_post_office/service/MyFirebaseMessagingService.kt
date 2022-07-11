@@ -22,7 +22,6 @@ import com.seoul42.relief_post_office.alarm.WardReceiver
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     // 메세지가 수신되면 호출
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-
         // 서버에서 직접 보냈을 때
         if(remoteMessage.notification != null){
             sendNotification(remoteMessage.notification?.title,
@@ -36,7 +35,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val message = remoteMessage.data["message"]!!
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                sendMessageNotification(title,userId,message)
+                sendMessageNotification(title, userId, message)
             }
             else{
                 sendNotification(remoteMessage.notification?.title,
@@ -104,7 +103,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         // messageStyle
-        val user: androidx.core.app.Person = Person.Builder()
+        val user: Person = Person.Builder()
             .setName(name)
             .setIcon(IconCompat.createWithResource(this, R.drawable.relief_post_office))
             .build()

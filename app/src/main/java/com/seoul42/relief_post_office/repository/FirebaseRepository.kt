@@ -1,5 +1,6 @@
 package com.seoul42.relief_post_office.repository
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.seoul42.relief_post_office.fcmapi.RetrofitInstance
 import com.seoul42.relief_post_office.model.NotificationDTO
@@ -12,5 +13,6 @@ class FirebaseRepository {
     // 푸시 메세지 전송
     suspend fun sendNotification(notification: NotificationDTO) {
         myResponse.value = RetrofitInstance.api.sendNotification(notification)
+        Log.d("확인중...", myResponse.value.toString())
     }
 }
