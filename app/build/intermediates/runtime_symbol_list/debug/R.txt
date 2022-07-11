@@ -3128,6 +3128,7 @@ int id question_rv_item_text 0x7f0901dc
 int id question_setting_button_layout 0x7f0901dd
 int id question_setting_playBtn 0x7f0901de
 int id question_setting_playBtn2 0x7f0901df
+int id question_setting_time 0x7f0902a9
 int id question_setting_title 0x7f0901e0
 int id question_text 0x7f0901e1
 int id question_text2 0x7f0901e2

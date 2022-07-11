@@ -1,7 +1,9 @@
 package com.seoul42.relief_post_office.guardian
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
 import android.widget.*
@@ -27,6 +29,7 @@ import com.seoul42.relief_post_office.databinding.FragmentGuardianBinding
 import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.UserDTO
+import com.seoul42.relief_post_office.record.RecordActivity
 import com.seoul42.relief_post_office.service.CheckLoginService
 import com.seoul42.relief_post_office.util.Guardian
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel

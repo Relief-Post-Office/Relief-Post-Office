@@ -152,6 +152,7 @@ id question_rv_item_text
 id question_setting_button_layout
 id question_setting_playBtn
 id question_setting_playBtn2
+id question_setting_time
 id question_setting_title
 id question_text
 id question_text2

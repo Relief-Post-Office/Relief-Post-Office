@@ -1,5 +1,6 @@
 package com.seoul42.relief_post_office.guardian
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
@@ -20,9 +21,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.QuestionFragmentRVAdapter
 import com.seoul42.relief_post_office.model.QuestionDTO
+import com.seoul42.relief_post_office.record.RecordActivity
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -36,6 +39,9 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
     private lateinit var QuestionAdapter : QuestionFragmentRVAdapter
     private lateinit var auth : FirebaseAuth
     private lateinit var owner : String
+    private val storage: FirebaseStorage by lazy {
+        FirebaseStorage.getInstance()
+    }
 
     // 프래그먼트 실행시 동작
     @RequiresApi(Build.VERSION_CODES.O)
@@ -69,6 +75,12 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.create()
             dialog.show()
+
+            val recordActivity = RecordActivity(mView)
+
+            recordActivity.initViews()
+            recordActivity.bindViews()
+            recordActivity.initVariables()
 
             // 질문 추가 다이얼로그의 "저장"버튼을 눌렀을 때 이벤트 처리
             dialog.findViewById<Button>(R.id.add_question_btn).setOnClickListener {
