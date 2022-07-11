@@ -29,23 +29,21 @@ class ResultActivity : AppCompatActivity() {
     private lateinit var date: String
     private var resultList = mutableListOf<Pair<String, ResultDTO>>()
     private lateinit var adapter: ResultAdapter
-    //intent로 넘어와야 할 정보들
-    private val wardId = "jNmigty6iAST8GNZHtkbasmfINy1"
-    //끝
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val wardId = intent.getSerializableExtra("wardId") as String
         setContentView(binding.root)
         setProfile("/profile/${wardId}.jpg")
-        setWardName()
+        setWardName(wardId)
         setDate()
-        setAdapter()
-        setDateBtn()
-        resultListenSet()
+        setAdapter(wardId)
+        setDateBtn(wardId)
+        resultListenSet(wardId)
     }
 
-    private fun setDateBtn() {
+    private fun setDateBtn(wardId: String) {
         binding.btnResultSetDate.setOnClickListener {
             showDatePickerDialog(binding.btnResultSetDate)
         }
@@ -57,7 +55,7 @@ class ResultActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(p0: Editable?) {
-                resetResultList()
+                resetResultList(wardId)
             }
         })
     }
@@ -84,7 +82,7 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun setWardName() {
+    private fun setWardName(wardId: String) {
         val usersRef = database.getReference("user")
         usersRef.child(wardId)
             .child("name")
@@ -102,7 +100,7 @@ class ResultActivity : AppCompatActivity() {
 
     }
 
-    private fun setAdapter() {
+    private fun setAdapter(wardId: String) {
         adapter = ResultAdapter(this, resultList, wardId)
         with(binding) {
             resultRecyclerView.adapter = adapter
@@ -110,12 +108,12 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun resultListenSet() {
+    private fun resultListenSet(wardId: String) {
         val resultListRef = database.getReference("ward").child(wardId).child("resultIdList")
 
         resultListRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                resetResultList()
+                resetResultList(wardId)
             }
             override fun onCancelled(error: DatabaseError) {
                 print(error.message)
@@ -124,7 +122,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun resetResultList() {
+    private fun resetResultList(wardId: String) {
         val resultListRef = database.getReference("ward").child(wardId).child("resultIdList")
         val resultsRef = database.getReference("result")
 
