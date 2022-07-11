@@ -22,14 +22,8 @@ class ResultAdapter(private val context : Context,
         fun setResult(result: Pair<String, ResultDTO>, context: Context) {
             val database = Firebase.database
             val safetyRef = database.getReference("safety")
-            safetyRef.child(result.second.safetyId).child("name").get().addOnSuccessListener {
-                binding.itemResultSafetyName.text = it.value.toString()
-                notifyDataSetChanged()
-            }
-            safetyRef.child(result.second.safetyId).child("time").get().addOnSuccessListener {
-                binding.itemResultAlarmTime.text = it.value.toString()
-                notifyDataSetChanged()
-            }
+            binding.itemResultSafetyName.text = result.second.safetyName
+            binding.itemResultAlarmTime.text = result.second.safetyTime
             binding.itemResultResponseTime.text = result.second.responseTime
             if (!isResponsed(result.second.responseTime)) {
                 binding.itemResultSafetyLayout.setBackgroundResource(R.drawable.result_disable_background)

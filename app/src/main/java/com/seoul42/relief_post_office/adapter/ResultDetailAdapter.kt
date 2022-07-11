@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.seoul42.relief_post_office.databinding.ItemResultDetailBinding
+import com.seoul42.relief_post_office.model.AnswerDTO
 
 class ResultDetailAdapter (private val context : Context,
                            private val answerList: MutableList<Pair<String, AnswerDTO>>)

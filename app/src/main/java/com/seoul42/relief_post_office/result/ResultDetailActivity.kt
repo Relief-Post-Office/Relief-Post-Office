@@ -12,8 +12,8 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.adapter.ResultDetailAdapter
 import com.seoul42.relief_post_office.databinding.ActivityResultDetailBinding
+import com.seoul42.relief_post_office.model.AnswerDTO
 import com.seoul42.relief_post_office.model.ResultDTO
-import java.util.*
 
 class ResultDetailActivity : AppCompatActivity() {
     private val binding by lazy { ActivityResultDetailBinding.inflate(layoutInflater) }
@@ -25,18 +25,15 @@ class ResultDetailActivity : AppCompatActivity() {
         val wardId = intent.getSerializableExtra("wardId") as String
         val resultId = intent.getSerializableExtra("resultId") as String
         val result = intent.getSerializableExtra("result") as ResultDTO
-        setSafetyName(result.safetyId)
+        setSafetyName(result.safetyName)
         setWardName(wardId)
         setDate(result.date)
         setAdapter()
         setQuestionAnswerList(resultId)
     }
 
-    private fun setSafetyName(safetyId: String) {
-        val safetyRef = database.getReference("safety")
-        safetyRef.child(safetyId).child("name").get().addOnSuccessListener {
-            binding.textResultDetailSafetyName.text = it.value.toString()
-        }
+    private fun setSafetyName(safetyName: String) {
+        binding.textResultDetailSafetyName.text = safetyName
     }
 
     private fun setWardName(wardId: String) {
@@ -49,7 +46,7 @@ class ResultDetailActivity : AppCompatActivity() {
     }
 
     private fun setAdapter() {
-        val adapter = ResultDetailAdapter(this, questionAnswerList)
+        val adapter = ResultDetailAdapter(this, answerList)
         with(binding) {
             resultDetailRecyclerView.adapter = adapter
             resultDetailRecyclerView.layoutManager = LinearLayoutManager(baseContext)
@@ -80,14 +77,11 @@ class ResultDetailActivity : AppCompatActivity() {
             if (it.value != null) {
                 val answerIdList = it.getValue<MutableMap<String, String>>() as MutableMap<String, String>
                 for ((dummy, answerId) in answerIdList) {
-                    var answer: AnswerDTO? = null
                     answerRef.child(answerId).get().addOnSuccessListener {
                         if (it.value != null) {
-                            answer = it.getValue(AnswerDTO::class.java) as AnswerDTO
+                            val answer = it.getValue(AnswerDTO::class.java) as AnswerDTO
+                            answerList.add(Pair(answerId, answer))
                         }
-                    }
-                    if (answer != null) {
-                        answerList.add(Pair(answerId, answer))
                     }
                 }
             }
