@@ -19,7 +19,7 @@ import com.seoul42.relief_post_office.model.QuestionDTO
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class QuestionFragmentRVAdapter(private val context: Context, private val items: List<Pair<String, QuestionDTO>>)
+class QuestionFragmentRVAdapter(private val context: Context, private val items: ArrayList<Pair<String, QuestionDTO>>)
     : RecyclerView.Adapter<QuestionFragmentRVAdapter.ViewHolder>() {
 
     val database = Firebase.database
