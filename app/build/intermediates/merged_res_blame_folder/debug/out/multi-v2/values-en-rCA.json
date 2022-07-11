@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.seoul42.relief_post_office.app-mergeDebugResources-46:/values-en-rCA/values-en-rCA.xml",
+            "outputFile": "com.seoul42.relief_post_office.app-mergeDebugResources-48:/values-en-rCA/values-en-rCA.xml",
             "map": [
                 {
                     "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\efb9ec9d92bf0c0f7f42589f3bdba7ad\\transformed\\browser-1.4.0\\res\\values-en-rCA\\values-en-rCA.xml",

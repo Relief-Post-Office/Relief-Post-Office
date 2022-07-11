@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fffbf3">
+    android:background="#fffbf3"
+    tools:context=".ward.WardActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="0sp"
@@ -57,7 +58,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/ward_add"
+        android:id="@+id/ward_add_guardian"
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:layout_gravity="center"

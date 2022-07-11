@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.seoul42.relief_post_office.app-mergeDebugResources-46:/values-az/values-az.xml",
+            "outputFile": "com.seoul42.relief_post_office.app-mergeDebugResources-48:/values-az/values-az.xml",
             "map": [
                 {
                     "source": "C:\\Users\\cmj09\\.gradle\\caches\\transforms-3\\4cb0bcaea300d9c69362a73c3106057e\\transformed\\navigation-ui-2.4.2\\res\\values-az\\values-az.xml",

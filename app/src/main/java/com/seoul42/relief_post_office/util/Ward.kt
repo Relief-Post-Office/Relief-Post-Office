@@ -45,7 +45,7 @@ class Ward(user : UserDTO) {
     }
 
     private fun setConnectedUser() {
-        val connectedDB = Firebase.database.reference.child("ward").child(userId).child("connection")
+        val connectedDB = Firebase.database.reference.child("ward").child(userId).child("connectList")
 
         /* 연결된 보호자를 자동으로 추가하거나 제거 가능 */
         val connectedListener = connectedDB.addChildEventListener(object : ChildEventListener {
@@ -66,7 +66,7 @@ class Ward(user : UserDTO) {
     }
 
     private fun setRequestedUser() {
-        val requestedDB = Firebase.database.reference.child("ward").child(userId).child("request")
+        val requestedDB = Firebase.database.reference.child("ward").child(userId).child("requestList")
 
         /* 요청온 보호자를 자동으로 추가하거나 제거 가능 */
         val requestedListener = requestedDB.addChildEventListener(object : ChildEventListener {

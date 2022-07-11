@@ -23,26 +23,15 @@ import com.seoul42.relief_post_office.util.Guardian
 import com.seoul42.relief_post_office.util.Ward
 import com.seoul42.relief_post_office.ward.WardActivity
 import java.util.concurrent.TimeUnit
+import com.seoul42.relief_post_office.databinding.PhoneBinding
 
 class PhoneActivity : AppCompatActivity() {
 
     private val auth : FirebaseAuth by lazy {
         Firebase.auth
     }
-    private val requestButton by lazy {
-        findViewById<LoadingButton>(R.id.phone_request_button)
-    }
-    private val timerText by lazy {
-        findViewById<TextView>(R.id.phone_timer_text)
-    }
-    private val phoneEditText by lazy {
-        findViewById<EditText>(R.id.phone_edit_number)
-    }
-    private val verificationEditText by lazy {
-        findViewById<EditText>(R.id.phone_edit_verification)
-    }
-    private val progressBar by lazy {
-        findViewById<ProgressBar>(R.id.phone_progressBar)
+    private val binding by lazy {
+        PhoneBinding.inflate(layoutInflater)
     }
 
     private lateinit var phoneAuthCredential: PhoneAuthCredential
@@ -55,7 +44,7 @@ class PhoneActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.phone)
+        setContentView(binding.root)
 
         initCallback()
         requestVerification()
@@ -67,13 +56,13 @@ class PhoneActivity : AppCompatActivity() {
             override fun onVerificationCompleted(p0: PhoneAuthCredential) {  }
             override fun onVerificationFailed(p0: FirebaseException) {
                 Toast.makeText(this@PhoneActivity, "잘못된 전화번호입니다. 다시 입력해주세요.", Toast.LENGTH_SHORT).show()
-                requestButton.loadingFailed()
+                binding.phoneRequestButton.loadingFailed()
                 setPhoneEnable()
             }
             override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
                 Toast.makeText(this@PhoneActivity, "인증 요청이 완료되었습니다.", Toast.LENGTH_SHORT).show()
                 this@PhoneActivity.verificationId = verificationId
-                requestButton.loadingSuccessful()
+                binding.phoneRequestButton.loadingSuccessful()
                 setVerificationEnable()
                 requestFlag = true
                 setTimer()
@@ -82,19 +71,19 @@ class PhoneActivity : AppCompatActivity() {
     }
 
     private fun requestVerification() {
-        requestButton.setOnClickListener {
-            val phoneNum = phoneEditText.text.toString()
+        binding.phoneRequestButton.setOnClickListener {
+            val phoneNum = binding.phoneEditNumber.text.toString()
 
-            requestButton.startLoading()
+            binding.phoneRequestButton.startLoading()
             if (phoneNum.length == 11) {
                 if (!requestFlag) {
                     requestPhone()
                 } else {
-                    requestButton.loadingFailed()
+                    binding.phoneRequestButton.loadingFailed()
                     Toast.makeText(this, "이미 인증요청을 하셨습니다.", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                requestButton.loadingFailed()
+                binding.phoneRequestButton.loadingFailed()
                 Toast.makeText(this, "휴대전화번호를 정확히 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
@@ -103,11 +92,11 @@ class PhoneActivity : AppCompatActivity() {
     private fun checkVerification() {
         var myVerification : String
 
-        verificationEditText.addTextChangedListener {
-            myVerification = verificationEditText.text.toString()
+        binding.phoneEditVerification.addTextChangedListener {
+            myVerification = binding.phoneEditVerification.text.toString()
             if (myVerification.length == 6) {
                 setVerificationDisable()
-                progressBar.visibility = View.VISIBLE
+                binding.phoneProgressBar.visibility = View.VISIBLE
                 phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, myVerification)
                 auth.signInWithCredential(phoneAuthCredential)
                     .addOnCompleteListener(this) { task ->
@@ -115,7 +104,7 @@ class PhoneActivity : AppCompatActivity() {
                             successVerification()
                         } else {
                             failVerification()
-                            progressBar.visibility = View.INVISIBLE
+                            binding.phoneProgressBar.visibility = View.INVISIBLE
                         }
                     }
             }
@@ -139,7 +128,7 @@ class PhoneActivity : AppCompatActivity() {
     }
 
     private fun failVerification() {
-        verificationEditText.setText("")
+        binding.phoneEditVerification.setText("")
         Toast.makeText(this, "인증 실패! 인증번호를 다시 확인하세요", Toast.LENGTH_SHORT).show()
         setVerificationEnable()
     }
@@ -179,7 +168,7 @@ class PhoneActivity : AppCompatActivity() {
 
     /* Start request assistant */
     private fun requestPhone() {
-        var phoneNum = phoneEditText.text.toString()
+        var phoneNum = binding.phoneEditNumber.text.toString()
 
         phoneNumber = phoneNum
         phoneNum = "+82" + phoneNum.substring(1, phoneNum.length)
@@ -195,21 +184,21 @@ class PhoneActivity : AppCompatActivity() {
 
     /* Start miscellaneous assistant */
     private fun setPhoneEnable() {
-        phoneEditText.isEnabled = true
-        requestButton.isEnabled = true
+        binding.phoneEditNumber.isEnabled = true
+        binding.phoneRequestButton.isEnabled = true
     }
 
     private fun setPhoneDisable() {
-        phoneEditText.isEnabled = false
-        requestButton.isEnabled = false
+        binding.phoneEditNumber.isEnabled = false
+        binding.phoneRequestButton.isEnabled = false
     }
 
     private fun setVerificationEnable() {
-        verificationEditText.isEnabled = true
+        binding.phoneEditVerification.isEnabled = true
     }
 
     private fun setVerificationDisable() {
-        verificationEditText.isEnabled = false
+        binding.phoneEditVerification.isEnabled = false
     }
 
     private fun makeTime(minute : Int, second : Int) : String {
@@ -231,7 +220,7 @@ class PhoneActivity : AppCompatActivity() {
         Thread {
             while (minute != 0 || second != 0) {
                 Handler(Looper.getMainLooper()).post {
-                    timerText.text = makeTime(minute, second)
+                    binding.phoneTimerText.text = makeTime(minute, second)
                 }
                 if (second == 0) {
                     minute--

@@ -24,15 +24,14 @@ class GuardianBackgroundActivity : AppCompatActivity() {
     private val questionFragment : QuestionFragment by lazy {
         QuestionFragment()
     }
-    private lateinit var binding: GuardianBackgroundBinding
+    private val binding: GuardianBackgroundBinding by lazy {
+        GuardianBackgroundBinding.inflate(layoutInflater)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = GuardianBackgroundBinding.inflate(layoutInflater)
-
-        val view = binding.root
-        setContentView(view)
+        setContentView(binding.root)
         setFragment(TAG_MAIN, mainFragment)
 
         binding.bottomNavigationView.setOnItemSelectedListener { item ->

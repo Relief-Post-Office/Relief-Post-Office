@@ -17,7 +17,6 @@ import com.seoul42.relief_post_office.model.WardDTO
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 class WardReceiver() : BroadcastReceiver() {
 
     data class RecommendDTO(
@@ -36,12 +35,12 @@ class WardReceiver() : BroadcastReceiver() {
         const val REPEAT_START = "com.rightline.backgroundrepeatapp.REPEAT_START"
         const val REPEAT_STOP = "com.rightline.backgroundrepeatapp.REPEAT_STOP"
         const val PRIMARY_CHANNEL_ID = "primary_notification_channel"
-        const val CHANNEL_ID = "channel_id"
         const val NOTIFICATION_ID = 0
     }
 
     /* 주기적으로 특정 알람을 받아서 수행하는 메서드 */
     override fun onReceive(context: Context, intent: Intent) {
+        Log.d("Check [onReceive]", intent.action.toString())
         /* 최초 알람을 수행 */
         if (intent.action == REPEAT_START) {
             findSafety(context) /* 보유한 안부중에 동일한 요일이 있을 경우 강제 알람을 요청 */

@@ -1,6 +1,5 @@
 package com.seoul42.relief_post_office.util
 
-import com.google.android.gms.common.internal.ServiceSpecificExtraArgs.CastExtraArgs.LISTENER
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -42,7 +41,7 @@ class Guardian(user : UserDTO) {
     }
 
     private fun setConnectedUser() {
-        val connectedDB = Firebase.database.reference.child("guardian").child(userId).child("connection")
+        val connectedDB = Firebase.database.reference.child("guardian").child(userId).child("connectList")
 
         /* 연결된 피보호자를 자동으로 추가하거나 제거 가능 */
         val connectedListener = connectedDB.addChildEventListener(object : ChildEventListener {
