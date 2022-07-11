@@ -154,7 +154,7 @@ id vertical_guideline5.5
 id vertical_guideline6
 id vertical_guideline7
 id vertical_guideline8
-id ward_add
+id ward_add_guardian
 id ward_logout
 id ward_photo
 id ward_profile_address

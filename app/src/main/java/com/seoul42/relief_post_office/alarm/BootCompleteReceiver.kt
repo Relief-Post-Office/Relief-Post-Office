@@ -1,29 +1,20 @@
 package com.seoul42.relief_post_office.alarm
 
 import android.app.AlarmManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.util.Log
-import androidx.core.app.NotificationCompat
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.seoul42.relief_post_office.R
-import com.seoul42.relief_post_office.alarm.WardReceiver.Companion.CHANNEL_ID
-import com.seoul42.relief_post_office.alarm.WardReceiver.Companion.NOTIFICATION_ID
-import com.seoul42.relief_post_office.alarm.WardReceiver.Companion.PRIMARY_CHANNEL_ID
 import com.seoul42.relief_post_office.model.SafetyDTO
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.model.WardDTO
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.abs
 
 class BootCompleteReceiver : BroadcastReceiver() {
 
