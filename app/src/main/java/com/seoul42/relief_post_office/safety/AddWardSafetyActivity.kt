@@ -113,8 +113,6 @@ class AddWardSafetyActivity : AppCompatActivity() {
             // 생성 날짜 세팅
             val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 
-            Log.d("하하하", name)
-
             // 시간을 설정한 경우에만 추가 가능
             if (time == null){
                 Toast.makeText(this, "시간을 설정해 주세요", Toast.LENGTH_SHORT).show()

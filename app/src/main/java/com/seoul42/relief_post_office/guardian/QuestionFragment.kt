@@ -129,16 +129,13 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 for (q in questionList) {
                     if (q.first == questionId) {
                         questionInDB.get().addOnSuccessListener {
-                            Log.d("하하하3", questionList.toString())
                             q.second.text = it.child("text").getValue().toString()
                             q.second.record = it.child("record").getValue() as Boolean
                             q.second.secret = it.child("secret").getValue() as Boolean
                             q.second.date = it.child("date").getValue().toString()
-                            Log.d("하하하4", questionList.toString())
 
-                            Log.d("하하하5", questionList.toString())
                             // 가장 최근에 수정된 것이 리스트 상단으로 가게 하기
-                            // 내림차순으로 정렬(map -> list.sort -> map)
+                            // 내림차순으로 정렬
                             questionList.sortedByDescending { it.second.date }
 
                             // 리스트가 수정되었다고 어댑터에게 알려주기
@@ -157,10 +154,11 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 for (q in questionList){
                     if (q.first == questionId){
                         questionList.remove(q)
+                        // 리스트가 수정되었다고 어댑터에게 알려주기
+                        QuestionAdapter.notifyDataSetChanged()
+                        break
                     }
                 }
-                // 리스트가 수정되었다고 어댑터에게 알려주기
-                QuestionAdapter.notifyDataSetChanged()
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {

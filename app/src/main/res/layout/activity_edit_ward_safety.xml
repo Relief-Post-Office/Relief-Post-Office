@@ -7,7 +7,7 @@
     android:background="#fffbf3">
 
     <ImageView
-        android:id="@+id/add_ward_safety_backBtn"
+        android:id="@+id/edit_ward_safety_backBtn"
         android:layout_width="50dp"
         android:layout_height="50dp"
         app:srcCompat="@drawable/backbtn"
@@ -16,27 +16,27 @@
 
 
     <LinearLayout
-        android:id="@+id/add_ward_safety_linear1"
+        android:id="@+id/edit_ward_safety_linear1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/horizontal_guideline2"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/ward_safety_setting_text"
+            android:id="@+id/edit_safety_setting_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="안부 추가"
+            android:text="안부 수정"
             android:textSize="40sp"
             android:layout_gravity="center"/>
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/add_ward_safety_linear2"
+        android:id="@+id/edit_ward_safety_linear2"
         android:layout_width="0sp"
         android:layout_height="40sp"
-        app:layout_constraintTop_toBottomOf="@+id/add_ward_safety_linear1"
+        app:layout_constraintTop_toBottomOf="@+id/edit_ward_safety_linear1"
         app:layout_constraintStart_toEndOf="@id/vertical_guideline1"
         app:layout_constraintEnd_toStartOf="@id/vertical_guideline6"
         android:layout_marginTop="20dp"
@@ -51,7 +51,7 @@
             android:layout_marginStart="5sp"/>
 
         <EditText
-            android:id="@+id/add_ward_safety_name"
+            android:id="@+id/edit_ward_safety_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="안부 이름을 작성해주세요"
@@ -61,17 +61,17 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/add_ward_safety_linear3"
+        android:id="@+id/edit_ward_safety_linear3"
         android:layout_width="0sp"
         android:layout_height="50sp"
-        app:layout_constraintTop_toBottomOf="@+id/add_ward_safety_linear2"
+        app:layout_constraintTop_toBottomOf="@+id/edit_ward_safety_linear2"
         app:layout_constraintStart_toEndOf="@id/vertical_guideline1"
         app:layout_constraintEnd_toStartOf="@id/vertical_guideline6"
         android:orientation="horizontal">
 
 
         <CheckBox
-            android:id="@+id/add_ward_safety_monday"
+            android:id="@+id/edit_ward_safety_monday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -80,7 +80,7 @@
             android:layout_gravity="center"/>
 
         <CheckBox
-            android:id="@+id/add_ward_safety_tuesday"
+            android:id="@+id/edit_ward_safety_tuesday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -89,7 +89,7 @@
             android:layout_gravity="center"/>
 
         <CheckBox
-            android:id="@+id/add_ward_safety_wednesday"
+            android:id="@+id/edit_ward_safety_wednesday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -98,7 +98,7 @@
             android:layout_gravity="center"/>
 
         <CheckBox
-            android:id="@+id/add_ward_safety_thursday"
+            android:id="@+id/edit_ward_safety_thursday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -107,7 +107,7 @@
             android:layout_gravity="center"/>
 
         <CheckBox
-            android:id="@+id/add_ward_safety_friday"
+            android:id="@+id/edit_ward_safety_friday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -116,7 +116,7 @@
             android:layout_gravity="center"/>
 
         <CheckBox
-            android:id="@+id/add_ward_safety_saturday"
+            android:id="@+id/edit_ward_safety_saturday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -125,7 +125,7 @@
             android:layout_gravity="center"/>
 
         <CheckBox
-            android:id="@+id/add_ward_safety_sunday"
+            android:id="@+id/edit_ward_safety_sunday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -136,17 +136,17 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/add_ward_safety_linear4"
+        android:id="@+id/edit_ward_safety_linear4"
         android:layout_width="wrap_content"
         android:layout_height="60sp"
         android:background="@drawable/question_item_border"
-        app:layout_constraintTop_toBottomOf="@+id/add_ward_safety_linear3"
+        app:layout_constraintTop_toBottomOf="@+id/edit_ward_safety_linear3"
         android:orientation="vertical"
         app:layout_constraintStart_toEndOf="@id/vertical_guideline1"
         app:layout_constraintEnd_toStartOf="@id/vertical_guideline6">
 
         <TextView
-            android:id="@+id/add_ward_safety_time"
+            android:id="@+id/edit_ward_safety_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -166,7 +166,7 @@
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline4"
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline6"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
-        app:layout_constraintTop_toBottomOf="@id/add_ward_safety_linear4">
+        app:layout_constraintTop_toBottomOf="@id/edit_ward_safety_linear4">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -181,7 +181,7 @@
                 android:text="질문 설정"/>
 
             <ImageView
-                android:id="@+id/add_ward_safety_question_setting"
+                android:id="@+id/edit_ward_safety_question_setting"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="right"
@@ -189,7 +189,7 @@
         </FrameLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/add_ward_safety_rv"
+            android:id="@+id/edit_ward_safety_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="10dp"
@@ -197,18 +197,46 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/add_ward_safety_add_button"
+    <LinearLayout
         android:layout_width="0sp"
         android:layout_height="0sp"
-        android:layout_gravity="center"
-        android:text="저 장"
-        android:textSize="30sp"
-        app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
-        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
-        app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
-        app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"
-        />
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
+        app:layout_constraintEnd_toStartOf="@id/vertical_guideline6"
+        app:layout_constraintTop_toBottomOf="@id/horizontal_guideline4"
+        app:layout_constraintBottom_toTopOf="@id/horizontal_guideline6"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/edit_ward_safety_save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="저 장"
+            android:textSize="30sp"
+            android:layout_marginTop="5sp"
+            android:layout_marginEnd="5sp"
+            app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
+            app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
+            app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
+            app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/edit_ward_safety_delete_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="삭 제"
+            android:textSize="30sp"
+            android:layout_marginTop="5sp"
+            android:layout_marginStart="5sp"
+            app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
+            app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
+            app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
+            app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline1"
@@ -264,7 +292,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.3" />
+        app:layout_constraintGuide_percent="0.0" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline4"

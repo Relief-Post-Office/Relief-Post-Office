@@ -3,6 +3,7 @@ package com.seoul42.relief_post_office.safety
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -80,9 +81,40 @@ class WardSafetySettingActivity : AppCompatActivity() {
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                // safetyId 찾기
+                val safetyId = snapshot.key.toString()
+                val safetyInDB = database.getReference("safety").child(safetyId)
+
+                // wardSafetyList에서 safetyId에 해당하는 안부 찾아 수정해주기
+                var idx = -1
+                for (s in wardSafetyList){
+                    idx++
+                    if (s.first == safetyId){
+                        safetyInDB.get().addOnSuccessListener {
+                            wardSafetyList.remove(s)
+                            wardSafetyList.add(idx, Pair(safetyId, it.getValue(SafetyDTO::class.java) as SafetyDTO))
+
+                            // 리스트가 수정되었다고 어댑터에게 알려주기
+                            wardSafetyAdapter.notifyDataSetChanged()
+                        }
+                        break
+                    }
+                }
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
+                // safetyId 찾기
+                val safetyId = snapshot.key.toString()
+
+                // wardSafetyList에서 safetyId에 해당하는 안부 찾아 삭제하기
+                for (s in wardSafetyList){
+                    if (s.first == safetyId) {
+                        wardSafetyList.remove(s)
+                        // 리스트가 수정되었다고 어댑터에게 알려주기
+                        wardSafetyAdapter.notifyDataSetChanged()
+                        break
+                    }
+                }
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
@@ -97,7 +129,7 @@ class WardSafetySettingActivity : AppCompatActivity() {
         // 리사이클러 뷰 가져오기
         val rv = findViewById<RecyclerView>(R.id.ward_safety_setting_rv)
         // 리사이클러 뷰 아답터에 리스트 넘긴 후 아답터 가져오기
-        wardSafetyAdapter = WardSafetyAdapter(wardSafetyList)
+        wardSafetyAdapter = WardSafetyAdapter(this, wardSafetyList)
         // 리사이클러 뷰에 아답터 연결하기
         rv.adapter = wardSafetyAdapter
         rv.layoutManager = LinearLayoutManager(this)

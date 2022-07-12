@@ -1,18 +1,22 @@
 package com.seoul42.relief_post_office.adapter
 
 
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.SafetyDTO
+import com.seoul42.relief_post_office.safety.EditWardSafetyActivity
 
 
-class WardSafetyAdapter(private val items: ArrayList<Pair<String, SafetyDTO>>)
+class WardSafetyAdapter(private val context: Context, private val items: ArrayList<Pair<String, SafetyDTO>>)
     : RecyclerView.Adapter<WardSafetyAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -60,6 +64,13 @@ class WardSafetyAdapter(private val items: ArrayList<Pair<String, SafetyDTO>>)
             rvName.text = item.second.name
             rvDayOfWeek.text = itemDayOfWeek
             rvTime.text = item.second.time
+
+            // 안부 클릭시 안부 수정 액티비티로 이동
+            itemView.setOnClickListener{
+                val tmpIntent = Intent(context, EditWardSafetyActivity::class.java)
+                tmpIntent.putExtra("safetyId", item.first)
+                startActivity(context, tmpIntent, null)
+            }
 
         }
     }
