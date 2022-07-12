@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -17,6 +19,7 @@ import com.seoul42.relief_post_office.model.ResultDTO
 
 class ResultDetailActivity : AppCompatActivity() {
     private val binding by lazy { ActivityResultDetailBinding.inflate(layoutInflater) }
+    private val auth : FirebaseAuth by lazy { Firebase.auth }
     private val database = Firebase.database
     private var answerList = mutableListOf<Pair<String, AnswerDTO>>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +75,6 @@ class ResultDetailActivity : AppCompatActivity() {
         answerList.clear()
         val answerListRef = database.getReference("result").child(resultId).child("answerList")
         val answerRef = database.getReference("answer")
-
         answerListRef.get().addOnSuccessListener {
             if (it.value != null) {
                 val answerIdList = it.getValue<MutableMap<String, String>>() as MutableMap<String, String>
@@ -80,7 +82,11 @@ class ResultDetailActivity : AppCompatActivity() {
                     answerRef.child(answerId).get().addOnSuccessListener {
                         if (it.value != null) {
                             val answer = it.getValue(AnswerDTO::class.java) as AnswerDTO
-                            answerList.add(Pair(answerId, answer))
+                            val userId = auth.uid.toString()
+                            if ((answer.questionSecret) and (answer.questionOwner == userId))
+                                answerList.add(Pair(answerId, answer))
+                            else
+                                answerList.add(Pair(answerId, answer))
                         }
                     }
                 }
