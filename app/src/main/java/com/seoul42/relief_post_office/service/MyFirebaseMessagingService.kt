@@ -18,17 +18,17 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.alarm.WardReceiver
+import com.seoul42.relief_post_office.util.Alarm
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     // 메세지가 수신되면 호출
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // 서버에서 직접 보냈을 때
+        // 서버에서 직접 보냈을 때(사용 x)
         if(remoteMessage.notification != null){
             sendNotification(remoteMessage.notification?.title,
                 remoteMessage.notification?.body!!)
         }
-
-        // 다른 기기에서 서버로 보냈을 때
+        // 다른 기기에서 서버로 보냈을 때(이 경우에 해당)
         else if(remoteMessage.data.isNotEmpty()){
             val title = remoteMessage.data["title"]!!
             val userId = remoteMessage.data["name"]!!
@@ -97,56 +97,62 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     // 다른 기기에서 서버로 보냈을 때
     @RequiresApi(Build.VERSION_CODES.P)
     private fun sendMessageNotification(title: String, name: String, body: String) {
-        val intent = Intent(this, CheckLoginService::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // 액티비티 중복 생성 방지
-        val pendingIntent = PendingIntent.getActivity(this, 0 , intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        /* 피보호자가 안부에 대한 푸시 알람을 받게 될 경우 알람 설정 */
+        if (title == "Safety") {
+            /* 배터리 최적화를 무시하며 로그인된 피보호자일 경우 알람 설정 */
+            if (Alarm.isIgnoringBatteryOptimizations(this) && Firebase.auth.currentUser != null) {
+                val start = Intent(WardReceiver.REPEAT_START)
 
-        // messageStyle
-        val user: Person = Person.Builder()
-            .setName(name)
-            .setIcon(IconCompat.createWithResource(this, R.drawable.relief_post_office))
-            .build()
-
-        val message = NotificationCompat.MessagingStyle.Message(
-            body,
-            System.currentTimeMillis(),
-            user
-        )
-        val messageStyle = NotificationCompat.MessagingStyle(user)
-            .addMessage(message)
-
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val builder = NotificationCompat.Builder(this, "default")
-
-        // 오레오 버전 예외처리
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder.setSmallIcon(R.drawable.ic_launcher_foreground)
-
-            val channelName = "매일 알람 채널"
-            val description = "매일 정해진 시간에 알람합니다."
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel("default", channelName, importance)
-
-            channel.description = description
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel)
+                start.setClass(this, WardReceiver::class.java)
+                sendBroadcast(start, WardReceiver.PERMISSION_REPEAT)
             }
         }
-        builder.setContentTitle(title) // 제목
-            .setContentText(body) // 내용
-            .setStyle(messageStyle)
-            .setSmallIcon(R.drawable.relief_post_office) // 아이콘
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
+        /* 받은 푸시 알람을 띄우도록 설정 */
+        else {
+            val intent = Intent(this, CheckLoginService::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // 액티비티 중복 생성 방지
+            val pendingIntent = PendingIntent.getActivity(this, 0 , intent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
-        notificationManager.notify(0 , builder.build()) // 알림 생성
+            // messageStyle
+            val user: Person = Person.Builder()
+                .setName(name)
+                .setIcon(IconCompat.createWithResource(this, R.drawable.relief_post_office))
+                .build()
 
-        /* 피보호자가 안부에 대한 푸시 알람을 받게 될 경우 주기적 알람 수행 */
-        /* val start = Intent(WardReceiver.REPEAT_START)
+            val message = NotificationCompat.MessagingStyle.Message(
+                body,
+                System.currentTimeMillis(),
+                user
+            )
+            val messageStyle = NotificationCompat.MessagingStyle(user)
+                .addMessage(message)
 
-        start.setClass(this, WardReceiver::class.java)
-        sendBroadcast(start, WardReceiver.PERMISSION_REPEAT)
-        */
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val builder = NotificationCompat.Builder(this, "default")
+
+            // 오레오 버전 예외처리
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                builder.setSmallIcon(R.drawable.ic_launcher_foreground)
+
+                val channelName = "매일 알람 채널"
+                val description = "매일 정해진 시간에 알람합니다."
+                val importance = NotificationManager.IMPORTANCE_HIGH
+                val channel = NotificationChannel("default", channelName, importance)
+
+                channel.description = description
+                if (notificationManager != null) {
+                    notificationManager.createNotificationChannel(channel)
+                }
+            }
+            builder.setContentTitle(title) // 제목
+                .setContentText(body) // 내용
+                .setStyle(messageStyle)
+                .setSmallIcon(R.drawable.relief_post_office) // 아이콘
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+
+            notificationManager.notify(0 , builder.build()) // 알림 생성
+        }
     }
 }

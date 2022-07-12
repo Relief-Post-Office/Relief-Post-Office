@@ -8,7 +8,8 @@ data class AnswerDTO(
     var questionRecord : Boolean,
     var questionOwner : String,
     var questionSrc : String,
-    var questionText : String
+    var questionText : String,
+    var answerSrc : String  // 답변 녹음
 ) : Serializable {
-    constructor() : this(null, false, false, "", "", "")
+    constructor() : this(null, false, false, "", "", "", "")
 }

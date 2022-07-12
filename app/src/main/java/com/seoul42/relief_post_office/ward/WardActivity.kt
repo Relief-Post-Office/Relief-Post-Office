@@ -259,7 +259,7 @@ class WardActivity : AppCompatActivity() {
         val requestedGuardianList = ArrayList<Pair<String, UserDTO>>()
 
         for (requestGuardian in REQUEST_LIST) {
-            addRequestedGuardianList(requestedGuardianList, requestGuardian.value)
+            addRequestedGuardianList(requestedGuardianList, requestGuardian.key)
         }
         return requestedGuardianList
     }
