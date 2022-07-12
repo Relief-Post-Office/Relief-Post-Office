@@ -1,8 +1,8 @@
 package com.seoul42.relief_post_office.guardian
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -26,11 +26,15 @@ import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.QuestionFragmentRVAdapter
 import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.record.RecordActivity
+import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class QuestionFragment : Fragment(R.layout.fragment_question) {
 
+    private val storage: FirebaseStorage by lazy {
+        FirebaseStorage.getInstance()
+    }
 
     private val database = Firebase.database
     // 유저가 가지고 있는 질문들의 객체를 담은 리스트 선언
@@ -39,9 +43,6 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
     private lateinit var QuestionAdapter : QuestionFragmentRVAdapter
     private lateinit var auth : FirebaseAuth
     private lateinit var owner : String
-    private val storage: FirebaseStorage by lazy {
-        FirebaseStorage.getInstance()
-    }
 
     // 프래그먼트 실행시 동작
     @RequiresApi(Build.VERSION_CODES.O)
@@ -63,12 +64,12 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
 
         // 질문 추가 버튼 이벤트
         val questionPlusBtn = view.findViewById<ImageView>(R.id.question_rv_item_plusBtn)
-        questionPlusBtn.setOnClickListener{
+        questionPlusBtn.setOnClickListener {
 
             // 질문 추가 다이얼로그 띄우기
             val dialog = android.app.AlertDialog.Builder(context).create()
-            val eDialog : LayoutInflater = LayoutInflater.from(context)
-            val mView : View = eDialog.inflate(R.layout.setting_question_dialog,null)
+            val eDialog: LayoutInflater = LayoutInflater.from(context)
+            val mView: View = eDialog.inflate(R.layout.setting_question_dialog, null)
 
             dialog.setView(mView)
             dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -76,6 +77,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
             dialog.create()
             dialog.show()
 
+            // 녹음 기능 작동
             val recordActivity = RecordActivity(mView)
 
             recordActivity.initViews()
@@ -85,30 +87,54 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
             // 질문 추가 다이얼로그의 "저장"버튼을 눌렀을 때 이벤트 처리
             dialog.findViewById<Button>(R.id.add_question_btn).setOnClickListener {
 
-                // 생성 날짜, 텍스트, 비밀 옵션, 녹음 옵션, 녹음 파일 주소
-                val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                val questionText = dialog.findViewById<EditText>(R.id.question_text).text.toString()
-                val secret = dialog.findViewById<Switch>(R.id.secret_switch).isChecked
-                val record = dialog.findViewById<Switch>(R.id.record_switch).isChecked
-                val src = null
+                val quesitonText = dialog.findViewById<EditText>(R.id.question_text)
 
-                // question 컬렉션에 추가할 QuestoinBody 생성
-                val newQuestion = QuestionDTO(secret, record, owner, date, questionText, src)
+                if (quesitonText.text.isEmpty()) {
+                    Toast.makeText(context, "질문을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                } else {
 
-                // question 컬렉션에 작성한 내용 추가
-                val questionRef = database.getReference("question")
-                val newPush = questionRef.push()
-                val key = newPush.key.toString()
-                newPush.setValue(newQuestion)
+                    // 생성 날짜, 텍스트, 비밀 옵션, 녹음 옵션, 녹음 파일 주소
+                    val date = LocalDateTime.now()
+                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                    val questionText =
+                        dialog.findViewById<EditText>(R.id.question_text).text.toString()
+                    val secret = dialog.findViewById<Switch>(R.id.secret_switch).isChecked
+                    val record = dialog.findViewById<Switch>(R.id.record_switch).isChecked
+                    var src: String? = null
 
-                // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
-                val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
-                userQuestionRef.child(key).setValue(date)
+                    // question 컬렉션에 추가할 QuestoinBody 생성
+                    val newQuestion = QuestionDTO(secret, record, owner, date, questionText, src)
 
-                // 다이얼로그 종료
-                Toast.makeText(context, "질문 추가 완료", Toast.LENGTH_SHORT).show()
+                    // question 컬렉션에 작성한 내용 추가
+                    val questionRef = database.getReference("question")
+                    val newPush = questionRef.push()
+                    val key = newPush.key.toString()
+
+                    // 녹음 파일 생성 및 스토리지 저장
+                    var recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
+                    val recordRef =
+                        storage.reference.child("questionRecord/${auth.currentUser?.uid}/${key.toString()}.3gp")
+                    var uploadRecord = recordRef.putFile(recordFile)
+
+                    uploadRecord.addOnSuccessListener {
+                        recordRef.downloadUrl.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                newQuestion.src = task.result.toString()
+                                newPush.setValue(newQuestion)
+                            }
+                        }
+                    }
+
+                    newPush.setValue(newQuestion)
+                    // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
+                    val userQuestionRef =
+                        database.getReference("guardian").child(owner).child("questionList")
+                    userQuestionRef.child(key).setValue(date)
+
+                    // 다이얼로그 종료
+                    Toast.makeText(context, "질문 추가 완료", Toast.LENGTH_SHORT).show()
+                }
                 dialog.dismiss()
-
             }
         }
     }
@@ -129,6 +155,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
 
                 // 질문 컬렉션에서 각 질문 불러와서 questionList에 넣기
                 questionToAdd.get().addOnSuccessListener {
+                    Log.d("test", it.getValue(QuestionDTO::class.java).toString())
                     questionList.add(Pair(questionId, it.getValue(QuestionDTO::class.java) as QuestionDTO))
                     // 내림차순으로 정렬(map -> list.sort -> map)
                     questionList.sortedByDescending { it.second.date }
@@ -198,6 +225,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 for (q in questionList){
                     if (q.first == questionId){
                         questionList.remove(q)
+                        break
                     }
                 }
                 // 리스트가 수정되었다고 어댑터에게 알려주기

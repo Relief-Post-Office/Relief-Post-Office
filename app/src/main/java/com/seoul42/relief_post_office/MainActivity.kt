@@ -6,11 +6,10 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import com.seoul42.relief_post_office.util.Alarm.isIgnoringBatteryOptimizations
 import com.seoul42.relief_post_office.databinding.MainBinding
+import com.seoul42.relief_post_office.util.Alarm.isIgnoringBatteryOptimizations
+
 import com.seoul42.relief_post_office.record.RecordActivity
 
 class MainActivity : AppCompatActivity() {
@@ -20,8 +19,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val requiredPermissions = arrayOf(
-        android.Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.READ_EXTERNAL_STORAGE
+        Manifest.permission.RECORD_AUDIO
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
