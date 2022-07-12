@@ -6,6 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -60,6 +61,15 @@ class ResultActivity : AppCompatActivity() {
         })
     }
 
+    private fun isEnableDate(year: Int, month: Int, day: Int): Boolean {
+        val calendar:Calendar = Calendar.getInstance()
+        calendar.set(year,month,day)
+        val sdf = SimpleDateFormat("yyyyMMdd")
+        val today = sdf.format(System.currentTimeMillis()).toLong()
+        val pickerDate = sdf.format(calendar.timeInMillis).toLong()
+        return today >= pickerDate
+    }
+
     fun showDatePickerDialog(v: View) {
         val newFragment = DatePickerFragment()
         newFragment.show(supportFragmentManager, "datePicker")
@@ -67,11 +77,16 @@ class ResultActivity : AppCompatActivity() {
 
     @SuppressLint("SimpleDateFormat")
     fun processDatePickerResult(year: Int, month: Int, day: Int) {
-        val calendar:Calendar = Calendar.getInstance()
-        calendar.set(year,month,day)
-        val sdf = SimpleDateFormat("yyyy/MM/dd")
-        val dateMessage = sdf.format(calendar.timeInMillis)
-        binding.btnResultSetDate.text = dateMessage
+        if (isEnableDate(year, month, day)) {
+            val calendar:Calendar = Calendar.getInstance()
+            calendar.set(year,month,day)
+            val sdf = SimpleDateFormat("yyyy/MM/dd")
+            val dateMessage = sdf.format(calendar.timeInMillis)
+            binding.btnResultSetDate.text = dateMessage
+        }
+        else {
+            Toast.makeText(this, "데이터가 없는 날입니다!", Toast.LENGTH_SHORT)
+        }
     }
 
     private fun setProfile(path: String) {

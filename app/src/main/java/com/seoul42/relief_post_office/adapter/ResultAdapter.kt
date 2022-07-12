@@ -20,8 +20,6 @@ class ResultAdapter(private val context : Context,
     inner class ResultHolder(private val binding: ItemResultBinding) : RecyclerView.ViewHolder(binding.root){
         @SuppressLint("NotifyDataSetChanged", "ResourceAsColor")
         fun setResult(result: Pair<String, ResultDTO>, context: Context) {
-            val database = Firebase.database
-            val safetyRef = database.getReference("safety")
             binding.itemResultSafetyName.text = result.second.safetyName
             binding.itemResultAlarmTime.text = result.second.safetyTime
             binding.itemResultResponseTime.text = result.second.responseTime
