@@ -38,6 +38,9 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    viewBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -55,6 +58,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-ktx:23.0.5'
     implementation 'com.google.firebase:firebase-storage:20.0.1'
     implementation 'com.github.bumptech.glide:glide:4.12.0'
+    implementation 'com.google.firebase:firebase-storage-ktx'
     implementation 'androidx.databinding:databinding-runtime:4.2.2'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
@@ -75,9 +79,6 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
     /* mojo 추가한 부분 끝 */
 
-    // 파이어베이스 비동기 처리용 - await()
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.3.3'
-
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
@@ -85,4 +86,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    // 원형이미뷰
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 }

@@ -87,7 +87,12 @@
         <activity
             android:name=".ward.WardProfileActivity"
             android:windowSoftInputMode="adjustNothing" />
-
+        <activity
+            android:name=".result.ResultActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".result.ResultDetailActivity"
+            android:windowSoftInputMode="adjustNothing" />
         <service
             android:name=".service.MyFirebaseMessagingService"
             android:exported="false">

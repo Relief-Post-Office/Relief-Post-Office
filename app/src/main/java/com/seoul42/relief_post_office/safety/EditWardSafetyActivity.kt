@@ -20,7 +20,6 @@ import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.AddWardSafetyAdapter
 import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.model.SafetyDTO
-import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*

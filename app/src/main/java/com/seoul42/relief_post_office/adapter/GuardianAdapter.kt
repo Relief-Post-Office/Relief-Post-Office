@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.databinding.ItemUserBinding
 import com.seoul42.relief_post_office.model.UserDTO
+import com.seoul42.relief_post_office.result.ResultActivity
 import com.seoul42.relief_post_office.safety.WardSafetySettingActivity
 import java.text.SimpleDateFormat
 
@@ -86,7 +87,9 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
 
                     // 결과 보기 버튼 이벤트 처리
                     dialog.findViewById<Button>(R.id.guardian_dialog_result_button).setOnClickListener {
-
+                        val intent = Intent(context, ResultActivity::class.java)
+                        intent.putExtra("wardId", user.first)
+                        startActivity(context, intent, null)
                     }
 
                 }

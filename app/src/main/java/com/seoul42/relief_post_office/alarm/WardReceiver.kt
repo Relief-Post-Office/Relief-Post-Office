@@ -134,16 +134,18 @@ class WardReceiver() : BroadcastReceiver() {
     /* 보유한 안부중에 동일한 요일이 있을 경우 safetyList 에 추가하는 메서드 */
    private fun addSafetyList(curDay : Int, curTime : String, safetyId : String, safetyDTO : SafetyDTO) {
         for (safetyDay in safetyDTO.dayOfWeek) {
-            if (curDay == getDay(safetyDay.value)) {
-                val timeGap = getTimeGap(curTime, safetyDTO.time!!, 0)
-                recommendList.add(RecommendDTO(timeGap, safetyId, safetyDTO.name))
-            } else {
-                if (getDay(safetyDay.value) - curDay < 0) {
-                    val timeGap = getTimeGap(curTime, safetyDTO.time!!, (getDay(safetyDay.value) + 7) - curDay)
+            if (safetyDay.value){
+                if (curDay == getDay(safetyDay.key)) {
+                    val timeGap = getTimeGap(curTime, safetyDTO.time!!, 0)
                     recommendList.add(RecommendDTO(timeGap, safetyId, safetyDTO.name))
                 } else {
-                    val timeGap = getTimeGap(curTime, safetyDTO.time!!, getDay(safetyDay.value) - curDay)
-                    recommendList.add(RecommendDTO(timeGap, safetyId, safetyDTO.name))
+                    if (getDay(safetyDay.key) - curDay < 0) {
+                        val timeGap = getTimeGap(curTime, safetyDTO.time!!, (getDay(safetyDay.key) + 7) - curDay)
+                        recommendList.add(RecommendDTO(timeGap, safetyId, safetyDTO.name))
+                    } else {
+                        val timeGap = getTimeGap(curTime, safetyDTO.time!!, getDay(safetyDay.key) - curDay)
+                        recommendList.add(RecommendDTO(timeGap, safetyId, safetyDTO.name))
+                    }
                 }
             }
         }
