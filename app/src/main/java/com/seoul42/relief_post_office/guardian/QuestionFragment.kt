@@ -77,7 +77,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
             dialog.create()
             dialog.show()
 
-            // 녹음 기능 작동
+            // 녹음기능
             val recordActivity = RecordActivity(mView)
 
             recordActivity.initViews()
@@ -89,6 +89,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
 
                 val quesitonText = dialog.findViewById<EditText>(R.id.question_text)
 
+                // 질문 입력란 체크
                 if (quesitonText.text.isEmpty()) {
                     Toast.makeText(context, "질문을 입력해주세요.", Toast.LENGTH_SHORT).show()
                 } else {
@@ -113,7 +114,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                     // 녹음 파일 생성 및 스토리지 저장
                     var recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
                     val recordRef =
-                        storage.reference.child("questionRecord/${auth.currentUser?.uid}/${key.toString()}.3gp")
+                        storage.reference.child("questionRecord/${auth.currentUser?.uid}/${key.toString()}")
                     var uploadRecord = recordRef.putFile(recordFile)
 
                     uploadRecord.addOnSuccessListener {
