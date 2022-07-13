@@ -151,6 +151,7 @@ class ResultActivity : AppCompatActivity() {
                             val result = it.getValue(ResultDTO::class.java) as ResultDTO
                             if (result.date.replace("-", "/") == binding.btnResultSetDate.text.toString()) {
                                 resultList.add(Pair(it.key.toString(), result))
+                                resultList.sortBy{ it.second.safetyTime }
                                 adapter.notifyDataSetChanged()
                             }
                         }
