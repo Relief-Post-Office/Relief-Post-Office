@@ -8,17 +8,23 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.AddWardSafetyAdapter
 import com.seoul42.relief_post_office.adapter.SafetyQuestionSettingAdapter
 import com.seoul42.relief_post_office.adapter.WardSafetyAdapter
+import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.model.SafetyDTO
+import com.seoul42.relief_post_office.model.UserDTO
+import com.seoul42.relief_post_office.util.Ward
+import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -27,6 +33,7 @@ import kotlin.collections.ArrayList
 class AddWardSafetyActivity : AppCompatActivity() {
 
     private val database = Firebase.database
+    private val firebaseViewModel : FirebaseViewModel by viewModels()
     private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
     private lateinit var addWardSafetyAdapter : AddWardSafetyAdapter
     private lateinit var wardId : String
@@ -138,6 +145,16 @@ class AddWardSafetyActivity : AppCompatActivity() {
                 // 선택한 피보호자의 안부 목록에 방금 등록한 안부 아이디 추가
                 val wardSafetyRef = database.getReference("ward").child(wardId).child("safetyIdList")
                 wardSafetyRef.child(key).setValue(date)
+
+                /* 피보호자에게 안부 동기화 FCM 보내기 */
+                val wardRef = Firebase.database.reference.child("user").child(wardId)
+                wardRef.get().addOnSuccessListener {
+                    val wardDTO = it.getValue(UserDTO::class.java) as UserDTO
+                    val notificationData = NotificationDTO.NotificationData("safety"
+                        , "익명", "누군가 새로운 안부를 추가하였습니다")
+                    val notificationDTO = NotificationDTO(wardDTO.token!!, notificationData)
+                    firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                }
 
                 // 액티비티 종료
                 Toast.makeText(this, "안부 추가 완료", Toast.LENGTH_SHORT).show()

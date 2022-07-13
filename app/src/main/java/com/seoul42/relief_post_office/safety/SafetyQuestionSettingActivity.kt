@@ -34,7 +34,6 @@ import java.time.format.DateTimeFormatter
 
 class SafetyQuestionSettingActivity : AppCompatActivity() {
 
-    val checkboxStatus = SparseBooleanArray()
     private val database = Firebase.database
     private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
     private lateinit var checkedQuestions : ArrayList<String>
@@ -194,7 +193,6 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
         rv.adapter = safetyQuestionSettingAdapter
         rv.layoutManager = LinearLayoutManager(this)
         rv.setHasFixedSize(true)
-
     }
 
 }

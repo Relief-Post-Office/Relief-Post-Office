@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,8 +19,11 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.AddWardSafetyAdapter
+import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.model.SafetyDTO
+import com.seoul42.relief_post_office.model.UserDTO
+import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -30,11 +34,12 @@ class EditWardSafetyActivity : AppCompatActivity() {
     private val QuestionRef = database.getReference("question")
     private var time : String? = null
     private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
+    private val firebaseViewModel : FirebaseViewModel by viewModels()
     private lateinit var owner : String
     private lateinit var wardId : String
     private lateinit var safetyId : String
     private lateinit var safety : SafetyDTO
-    private lateinit var addWardSafetyAdapter : AddWardSafetyAdapter
+    private lateinit var editWardSafetyAdapter : AddWardSafetyAdapter
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -70,7 +75,7 @@ class EditWardSafetyActivity : AppCompatActivity() {
             for (q in safety.questionList.keys.toList()){
                 QuestionRef.child(q).get().addOnSuccessListener {
                     questionList.add(Pair(q, it.getValue(QuestionDTO::class.java)) as Pair<String, QuestionDTO>)
-                    addWardSafetyAdapter.notifyDataSetChanged()
+                    editWardSafetyAdapter.notifyDataSetChanged()
                 }
             }
 
@@ -110,8 +115,8 @@ class EditWardSafetyActivity : AppCompatActivity() {
 
         // 리사이클러 뷰 설정
         val rv = findViewById<RecyclerView>(R.id.edit_ward_safety_rv)
-        addWardSafetyAdapter = AddWardSafetyAdapter(questionList)
-        rv.adapter = addWardSafetyAdapter
+        editWardSafetyAdapter = AddWardSafetyAdapter(questionList)
+        rv.adapter = editWardSafetyAdapter
         rv.layoutManager = LinearLayoutManager(this)
         rv.setHasFixedSize(true)
 
@@ -150,6 +155,16 @@ class EditWardSafetyActivity : AppCompatActivity() {
                     .child(wardId)
                     .child("safetyIdList")
                     .child(safetyId).setValue(null)
+
+                /* 피보호자에게 안부 동기화 FCM 보내기 */
+                val wardRef = Firebase.database.reference.child("user").child(wardId)
+                wardRef.get().addOnSuccessListener {
+                    val wardDTO = it.getValue(UserDTO::class.java) as UserDTO
+                    val notificationData = NotificationDTO.NotificationData("safety"
+                        , "익명", "누군가 안부를 삭제하였습니다")
+                    val notificationDTO = NotificationDTO(wardDTO.token!!, notificationData)
+                    firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                }
 
                 // 액티비티 종료
                 Toast.makeText(this, "안부 삭제 완료", Toast.LENGTH_SHORT).show()
@@ -202,6 +217,16 @@ class EditWardSafetyActivity : AppCompatActivity() {
                 val wardSafetyRef = database.getReference("ward").child(wardId).child("safetyIdList")
                 wardSafetyRef.child(safetyId).setValue(date)
 
+                /* 피보호자에게 안부 동기화 FCM 보내기 */
+                val wardRef = Firebase.database.reference.child("user").child(wardId)
+                wardRef.get().addOnSuccessListener {
+                    val wardDTO = it.getValue(UserDTO::class.java) as UserDTO
+                    val notificationData = NotificationDTO.NotificationData("safety"
+                        , "익명", "누군가 안부를 수정하였습니다")
+                    val notificationDTO = NotificationDTO(wardDTO.token!!, notificationData)
+                    firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                }
+
                 // 액티비티 종료
                 Toast.makeText(this, "안부 수정 완료", Toast.LENGTH_SHORT).show()
                 finish()
@@ -215,13 +240,13 @@ class EditWardSafetyActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK){
             when (requestCode){
                 1 -> {
-                    addWardSafetyAdapter.notifyDataSetChanged()
+                    editWardSafetyAdapter.notifyDataSetChanged()
                     val checkQuestions = data?.getStringArrayListExtra("returnQuestionList")
                     val QuestionRef = database.getReference("question")
                     for (q in checkQuestions!!){
                         QuestionRef.child(q).get().addOnSuccessListener {
                             questionList.add(Pair(q, it.getValue(QuestionDTO::class.java)) as Pair<String, QuestionDTO>)
-                            addWardSafetyAdapter.notifyDataSetChanged()
+                            editWardSafetyAdapter.notifyDataSetChanged()
                         }
                     }
                 }
