@@ -92,9 +92,9 @@ class ResultDetailActivity : AppCompatActivity() {
                         if (it.value != null) {
                             val answer = it.getValue(AnswerDTO::class.java) as AnswerDTO
                             val userId = auth.uid.toString()
-                            if ((answer.questionSecret) and (answer.questionOwner == userId))
+                            if (!answer.questionSecret)
                                 answerList.add(Pair(answerId, answer))
-                            else
+                            else if ((answer.questionSecret) and (answer.questionOwner == userId))
                                 answerList.add(Pair(answerId, answer))
                             adapter.notifyDataSetChanged()
                         }
