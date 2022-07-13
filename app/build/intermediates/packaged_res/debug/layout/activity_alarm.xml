@@ -3,10 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:gravity="center"
     android:fitsSystemWindows="true"
-    android:background="@drawable/alarm_background">
+    android:background="@drawable/alarm_background"
+    tools:context=".ward.AlarmActivity">
 
     <TextView
         android:id="@+id/alarm_time"

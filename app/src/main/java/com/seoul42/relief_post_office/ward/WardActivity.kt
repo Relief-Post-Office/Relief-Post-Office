@@ -92,7 +92,6 @@ class WardActivity : AppCompatActivity() {
     /*
      * 주기적 작업을 수행할 수 있도록 설정
      * 단, 배터리 최적화 무시를 안할 경우 피보호자 측은 강제 알람을 띄울 수 없음
-     *
      */
     private fun setAlarm() {
         if (!isIgnoringBatteryOptimizations(this)) {

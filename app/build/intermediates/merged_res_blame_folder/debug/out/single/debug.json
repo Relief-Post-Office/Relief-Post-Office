@@ -12,20 +12,12 @@
         "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-52:\\drawable\\playbtn.png"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-merged_res-50:/layout_fragment_guardian.xml.flat",
-        "source": "com.seoul42.relief_post_office.app-main-52:/layout/fragment_guardian.xml"
-    },
-    {
-        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\drawable-ldpi_ic_launcher_foreground.png.flat",
-        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-pngs-45:\\drawable-ldpi\\ic_launcher_foreground.png"
-    },
-    {
         "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\mipmap-xxhdpi_ic_launcher.webp.flat",
         "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-52:\\mipmap-xxhdpi\\ic_launcher.webp"
     },
     {
-        "merged": "com.seoul42.relief_post_office.app-merged_res-50:/layout_item_guardian.xml.flat",
-        "source": "com.seoul42.relief_post_office.app-main-52:/layout/item_guardian.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\drawable-ldpi_ic_launcher_foreground.png.flat",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-pngs-45:\\drawable-ldpi\\ic_launcher_foreground.png"
     },
     {
         "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\mipmap-mdpi_ic_launcher.webp.flat",
@@ -52,20 +44,20 @@
         "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-52:\\drawable\\button_rounded_corner.xml"
     },
     {
-        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\drawable_safety.png.flat",
-        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-52:\\drawable\\safety.png"
-    },
-    {
-        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\drawable_border_line.xml.flat",
-        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-52:\\drawable\\border_line.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\layout_splash.xml.flat",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-52:\\layout\\splash.xml"
     },
     {
         "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\font_jua.ttf.flat",
         "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-52:\\font\\jua.ttf"
     },
     {
-        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\layout_splash.xml.flat",
-        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-52:\\layout\\splash.xml"
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\drawable_border_line.xml.flat",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-52:\\drawable\\border_line.xml"
+    },
+    {
+        "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\drawable_safety.png.flat",
+        "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-52:\\drawable\\safety.png"
     },
     {
         "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\menu_bottom_navigation_menu.xml.flat",
@@ -78,10 +70,6 @@
     {
         "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\drawable_question_item_border.xml.flat",
         "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-52:\\drawable\\question_item_border.xml"
-    },
-    {
-        "merged": "com.seoul42.relief_post_office.app-merged_res-50:/layout_item_safety.xml.flat",
-        "source": "com.seoul42.relief_post_office.app-main-52:/layout/item_safety.xml"
     },
     {
         "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\drawable_alarm_background.png.flat",
@@ -192,6 +180,10 @@
         "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-pngs-45:\\drawable-anydpi-v24\\ic_launcher_foreground.xml"
     },
     {
+        "merged": "com.seoul42.relief_post_office.app-merged_res-50:/layout_activity_alarm.xml.flat",
+        "source": "com.seoul42.relief_post_office.app-main-52:/layout/activity_alarm.xml"
+    },
+    {
         "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\drawable_edittext_rounded_corner_rectangle.xml.flat",
         "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-52:\\drawable\\edittext_rounded_corner_rectangle.xml"
     },
@@ -258,10 +250,6 @@
     {
         "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\layout_join.xml.flat",
         "source": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-main-52:\\layout\\join.xml"
-    },
-    {
-        "merged": "com.seoul42.relief_post_office.app-merged_res-50:/layout_dialog_request.xml.flat",
-        "source": "com.seoul42.relief_post_office.app-main-52:/layout/dialog_request.xml"
     },
     {
         "merged": "C:\\Users\\cmj09\\.gradle\\daemon\\7.3.3\\com.seoul42.relief_post_office.app-merged_res-50:\\mipmap-xhdpi_ic_launcher_round.webp.flat",

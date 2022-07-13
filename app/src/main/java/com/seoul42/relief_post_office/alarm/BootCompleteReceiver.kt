@@ -14,41 +14,71 @@ import com.seoul42.relief_post_office.model.ResultDTO
 import com.seoul42.relief_post_office.model.SafetyDTO
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.model.WardDTO
+import com.seoul42.relief_post_office.util.Alarm
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
 
 class BootCompleteReceiver : BroadcastReceiver() {
 
-    data class RecommendDTO(
-        val force: Boolean?,
-        val timeGap: Int?,
-        val safetyId: String?,
-        val safetyDTO: SafetyDTO?,
-        var resultId: String?,
-        var resultDTO: ResultDTO?
-    ) : Serializable
-
-    private val recommendList = ArrayList<RecommendDTO>() /* 추천할 수 있는 모든 항목들을 담음 */
-    private val resultMap : MutableMap<String, String> = mutableMapOf() /* key = safetyId, value = resultId */
-
     companion object {
-        const val REPEAT_FORCE = "com.rightline.backgroundrepeatapp.REPEAT_FORCE"
-        const val REPEAT_PUSH = "com.rightline.backgroundrepeatapp.REPEAT_PUSH"
+        const val REPEAT_START = "com.rightline.backgroundrepeatapp.REPEAT_START"
     }
 
-    override fun onReceive(context : Context?, intent : Intent?) {
-        if (intent!!.action.equals(Intent.ACTION_BOOT_COMPLETED) && Firebase.auth.currentUser != null) {
-            Log.d("Boot Complete", "check...")
-            val userId = Firebase.auth.uid.toString()
-            val userDB = Firebase.database.reference.child("user").child(userId)
+    /*
+     * 부팅 셋업 작업을 수행
+     *  1. 로그인 한 유저인지 확인
+     *  2. 배터리 최적화를 무시한 유저인지 확인
+     *
+     * 2 가지 조건을 만족하면 Alarm 을 수행하도록 처리
+     */
+    override fun onReceive(context : Context, intent : Intent) {
+        if (intent.action.equals(Intent.ACTION_BOOT_COMPLETED)) {
+            if (Firebase.auth.currentUser != null && Alarm.isIgnoringBatteryOptimizations(context)){
+                val userId = Firebase.auth.uid.toString()
+                val userDB = Firebase.database.reference.child("user").child(userId)
 
-            userDB.get().addOnSuccessListener {
-                val userDTO = it.getValue(UserDTO::class.java) as UserDTO
-                if (userDTO.guardian == false) {
-
+                userDB.get().addOnSuccessListener {
+                    val userDTO = it.getValue(UserDTO::class.java) as UserDTO
+                    setAlarm(context, userDTO.guardian!!)
                 }
             }
+        }
+    }
+
+    /*
+     * 보호자 또는 피보호자의 Alarm 작업을 수행하도록 함
+     *  - guardianFlag = true : 보호자 Alarm 을 수행
+     *  - guardianFlag = false : 피보호자 Alarm 을 수행
+     */
+    private fun setAlarm(context: Context, guardianFlag : Boolean) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val schedule = Intent(REPEAT_START)
+
+        if (guardianFlag) {
+            schedule.setClass(context, GuardianReceiver::class.java)
+        } else {
+            schedule.setClass(context, WardReceiver::class.java)
+        }
+
+        val sender = PendingIntent.getBroadcast(context, 0, schedule,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        val interval = Calendar.getInstance()
+
+        interval.timeInMillis = System.currentTimeMillis()
+        interval.add(Calendar.SECOND, 0)
+        alarmManager.cancel(sender)
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                interval.timeInMillis,
+                sender
+            )
+        } else if (Build.VERSION.SDK_INT >= 19) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, interval.timeInMillis, sender)
+        } else {
+            alarmManager[AlarmManager.RTC_WAKEUP, interval.timeInMillis] = sender
         }
     }
 }

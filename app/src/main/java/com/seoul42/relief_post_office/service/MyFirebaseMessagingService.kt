@@ -133,8 +133,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
             // 오레오 버전 예외처리
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                builder.setSmallIcon(R.drawable.ic_launcher_foreground)
-
                 val channelName = "매일 알람 채널"
                 val description = "매일 정해진 시간에 알람합니다."
                 val importance = NotificationManager.IMPORTANCE_HIGH
