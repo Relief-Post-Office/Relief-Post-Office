@@ -22,6 +22,8 @@ class ResultDetailActivity : AppCompatActivity() {
     private val auth : FirebaseAuth by lazy { Firebase.auth }
     private val database = Firebase.database
     private var answerList = mutableListOf<Pair<String, AnswerDTO>>()
+    private lateinit var adapter: ResultDetailAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -40,7 +42,14 @@ class ResultDetailActivity : AppCompatActivity() {
     }
 
     private fun setWardName(wardId: String) {
-        binding.textResultDetailWardName.text = wardId
+        var wardName: String? = null
+        database.getReference("user").child(wardId).child("name")
+            .get().addOnSuccessListener {
+            if (it.value != null) {
+                wardName = it.value.toString()
+            }
+        }
+        binding.textResultDetailWardName.text = wardName
     }
 
     private fun setDate(date: String) {
@@ -49,7 +58,7 @@ class ResultDetailActivity : AppCompatActivity() {
     }
 
     private fun setAdapter() {
-        val adapter = ResultDetailAdapter(this, answerList)
+        adapter = ResultDetailAdapter(this, answerList)
         with(binding) {
             resultDetailRecyclerView.adapter = adapter
             resultDetailRecyclerView.layoutManager = LinearLayoutManager(baseContext)
@@ -73,7 +82,7 @@ class ResultDetailActivity : AppCompatActivity() {
 
     private fun questionAnswerList(resultId: String) {
         answerList.clear()
-        val answerListRef = database.getReference("result").child(resultId).child("answerList")
+        val answerListRef = database.getReference("result").child(resultId).child("answerIdList")
         val answerRef = database.getReference("answer")
         answerListRef.get().addOnSuccessListener {
             if (it.value != null) {
@@ -87,6 +96,7 @@ class ResultDetailActivity : AppCompatActivity() {
                                 answerList.add(Pair(answerId, answer))
                             else
                                 answerList.add(Pair(answerId, answer))
+                            adapter.notifyDataSetChanged()
                         }
                     }
                 }

@@ -3,6 +3,7 @@ package com.seoul42.relief_post_office
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -12,6 +13,8 @@ import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.databinding.ItemResultBinding
 import com.seoul42.relief_post_office.model.ResultDTO
 import com.seoul42.relief_post_office.result.ResultDetailActivity
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ResultAdapter(private val context : Context,
                     private val resultList: MutableList<Pair<String, ResultDTO>>,
@@ -21,13 +24,20 @@ class ResultAdapter(private val context : Context,
         @SuppressLint("NotifyDataSetChanged", "ResourceAsColor")
         fun setResult(result: Pair<String, ResultDTO>, context: Context) {
             binding.itemResultSafetyName.text = result.second.safetyName
-            binding.itemResultAlarmTime.text = result.second.safetyTime
-            binding.itemResultResponseTime.text = result.second.responseTime
+            binding.itemResultAlarmTime.text = result.second.safetyTime.replace(":", " : ")
             if (!isResponsed(result.second.responseTime)) {
+                binding.itemResultResponseTime.text = result.second.responseTime
                 binding.itemResultSafetyLayout.setBackgroundResource(R.drawable.result_disable_background)
                 binding.itemResultResponseTime.setTextColor(R.color.red)
             }
             else {
+                val startTime = result.second.date + " " + result.second.safetyTime + ":00"
+                val endTime = result.second.responseTime
+                var dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                val time = dateFormat.parse(endTime).time - dateFormat.parse(startTime).time
+                dateFormat = SimpleDateFormat("HH시간mm분ss초")
+
+                binding.itemResultResponseTime.text = dateFormat.format(time)
                 binding.itemResultSafetyLayout.setOnClickListener {
                     val intent = Intent(context, ResultDetailActivity::class.java)
                     intent.putExtra("wardId", wardId)

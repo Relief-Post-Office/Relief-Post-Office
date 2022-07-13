@@ -149,7 +149,7 @@ class ResultActivity : AppCompatActivity() {
                     resultsRef.child(resultId).get().addOnSuccessListener {
                         if (it.value != null) {
                             val result = it.getValue(ResultDTO::class.java) as ResultDTO
-                            if (result.date == binding.btnResultSetDate.text.toString()) {
+                            if (result.date.replace("-", "/") == binding.btnResultSetDate.text.toString()) {
                                 resultList.add(Pair(it.key.toString(), result))
                                 adapter.notifyDataSetChanged()
                             }

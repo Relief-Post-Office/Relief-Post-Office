@@ -54,9 +54,9 @@ class ResultDetailAdapter (private val context : Context,
     private fun setAnswerReply(binding: ItemResultDetailBinding, answer: AnswerDTO) {
         val replyImg = binding.imgResultAnswer
         if (answer.reply == true)
-            replyImg.setBackgroundResource(R.drawable.positive_answer)
+            replyImg.setBackgroundResource(R.drawable.answer_positive)
         else
-            replyImg.setBackgroundResource(R.drawable.negative_answer)
+            replyImg.setBackgroundResource(R.drawable.answer_negative)
     }
 
 }

@@ -1,87 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/result_detail_activity"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="130dp"
-        android:background="#E4F0F2">
-        <!--tools:context=".ResultActivity">-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="#fffbf3"
+tools:context=".guardian.MainFragment">
 
-        <TextView
-            android:id="@+id/text_result_detail_date"
-            android:layout_width="120dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="83dp"
-            android:layout_marginBottom="17dp"
-            android:background="@drawable/result_background"
-            android:fontFamily="@font/bmjua"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="Date"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.926"
-            app:layout_constraintStart_toEndOf="@+id/text_result_detail_safetyName"
-            app:layout_constraintTop_toTopOf="parent" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/result_detail_recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/result_background"
+        app:layout_constraintBottom_toTopOf="@+id/horizontal_guideline6"
+        app:layout_constraintEnd_toStartOf="@+id/vertical_guideline6"
+        app:layout_constraintStart_toStartOf="@+id/vertical_guideline1"
+        app:layout_constraintTop_toTopOf="@+id/horizontal_guideline3">
 
-        <TextView
-            android:id="@+id/text_result_detail_safetyName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="아주긴안부이름"
-            android:textSize="34sp"
-            app:civ_border_color="#FF000000"
-            app:civ_border_width="2dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.08"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.recyclerview.widget.RecyclerView>
 
-        <TextView
-            android:id="@+id/text_result_detail_WardName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="-30dp"
-            android:fontFamily="@font/bmjua"
-            android:text="피보호자 이름"
-            android:textColor="#9F9F9F"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/text_result_detail_date"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/text_result_detail_safetyName"
-            app:layout_constraintTop_toBottomOf="@+id/text_result_detail_safetyName"
-            app:layout_constraintVertical_bias="0.07999998" />
+    <TextView
+        android:id="@+id/text_result_detail_safetyName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="아주긴안부이름"
+        android:textSize="34sp"
+        app:civ_border_color="#FF000000"
+        app:civ_border_width="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/horizontal_guideline2"
+        app:layout_constraintEnd_toStartOf="@+id/vertical_guideline6"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/vertical_guideline1"
+        app:layout_constraintTop_toTopOf="@+id/horizontal_guideline1" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/text_result_detail_WardName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="-50dp"
+        android:fontFamily="@font/bmjua"
+        android:text="피보호자 이름"
+        android:textColor="#9F9F9F"
+        app:layout_constraintBottom_toTopOf="@+id/horizontal_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/text_result_detail_date"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/text_result_detail_safetyName"
+        app:layout_constraintTop_toBottomOf="@+id/text_result_detail_safetyName"
+        app:layout_constraintVertical_bias="0.0" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#E4F0F2">
+    <TextView
+        android:id="@+id/text_result_detail_date"
+        android:layout_width="120dp"
+        android:layout_height="30dp"
+        android:background="@drawable/result_background"
+        android:fontFamily="@font/bmjua"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="Date"
+        app:layout_constraintBottom_toTopOf="@+id/horizontal_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/vertical_guideline6"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/vertical_guideline1"
+        app:layout_constraintTop_toTopOf="@+id/horizontal_guideline1"
+        app:layout_constraintVertical_bias="1.0" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/result_detail_recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/result_background"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0">
+    <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/horizontal_guideline2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="610dp"
+    android:orientation="horizontal"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintGuide_percent="0.14" />
 
-        </androidx.recyclerview.widget.RecyclerView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+<androidx.constraintlayout.widget.Guideline
+    android:id="@+id/horizontal_guideline"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="610dp"
+    android:orientation="horizontal"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintGuide_percent="0.15" />
 
-</LinearLayout>
+<androidx.constraintlayout.widget.Guideline
+    android:id="@+id/horizontal_guideline3"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_percent="0.16" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.97" />
+
+<androidx.constraintlayout.widget.Guideline
+    android:id="@+id/horizontal_guideline1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_percent="0.025" />
+
+<androidx.constraintlayout.widget.Guideline
+    android:id="@+id/horizontal_guideline6"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_percent="0.975" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.03" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
