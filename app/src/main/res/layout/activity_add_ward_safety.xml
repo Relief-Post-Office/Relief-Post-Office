@@ -11,8 +11,9 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         app:srcCompat="@drawable/backbtn"
+        android:layout_margin="5sp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/vertical_guideline1" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 
     <LinearLayout
@@ -116,7 +117,7 @@
             android:layout_gravity="center"/>
 
         <CheckBox
-            android:id="@+id/saturday"
+            android:id="@+id/add_ward_safety_saturday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -146,10 +147,11 @@
         app:layout_constraintEnd_toStartOf="@id/vertical_guideline6">
 
         <TextView
+            android:id="@+id/add_ward_safety_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="오전  00시  00분"
+            android:text="시간 설정"
             android:layout_marginStart="10sp"
             android:layout_margin="10sp"
             android:textSize="40sp"/>
@@ -180,6 +182,7 @@
                 android:text="질문 설정"/>
 
             <ImageView
+                android:id="@+id/add_ward_safety_question_setting"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="right"
@@ -187,7 +190,7 @@
         </FrameLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/ward_safety_setting_rv"
+            android:id="@+id/add_ward_safety_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="10dp"
@@ -196,11 +199,11 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/ward_safety_setting_add_button"
+        android:id="@+id/add_ward_safety_add_button"
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:layout_gravity="center"
-        android:text="저장"
+        android:text="저 장"
         android:textSize="30sp"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"

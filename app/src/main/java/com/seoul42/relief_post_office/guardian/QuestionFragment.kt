@@ -49,11 +49,8 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         // questionList 세팅
         setQuestionList()
 
-        // recycler 뷰 세팅
+        // recycler 뷰 세팅 - 자동 업데이트 기능 포함
         setRecyclerView(view)
-
-        // recycler 뷰 자동 업데이트
-        updateRV()
 
         // 질문 추가 버튼 이벤트
         val questionPlusBtn = view.findViewById<ImageView>(R.id.question_rv_item_plusBtn)
@@ -80,7 +77,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 val record = dialog.findViewById<Switch>(R.id.record_switch).isChecked
                 val src = null
 
-                // question 컬렉션에 추가할 QuestoinBody 생성
+                // question 컬렉션에 추가할 QuestoinDTO 생성
                 val newQuestion = QuestionDTO(secret, record, owner, date, questionText, src)
 
                 // question 컬렉션에 작성한 내용 추가
@@ -101,7 +98,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         }
     }
 
-    // questionList 실시간 세팅해주기
+    // questionList 실시간 세팅해주기 / 수정 및 변경 적용 포함
     private fun setQuestionList(){
         // 로그인한 유저의 질문 목록
         val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
@@ -113,12 +110,10 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 val questionId = snapshot.key.toString()
                 val questionToAdd = database.getReference("question").child(questionId)
 
-                Log.d("하하하", owner)
-
                 // 질문 컬렉션에서 각 질문 불러와서 questionList에 넣기
                 questionToAdd.get().addOnSuccessListener {
                     questionList.add(Pair(questionId, it.getValue(QuestionDTO::class.java) as QuestionDTO))
-                    // 내림차순으로 정렬(map -> list.sort -> map)
+                    // 내림차순으로 정렬
                     questionList.sortedByDescending { it.second.date }
                     // 리사이클러 뷰 어댑터에 알려주기
                     QuestionAdapter.notifyDataSetChanged()
@@ -126,48 +121,21 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-            }
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-            }
-
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-            }
-        })
-    }
-
-    // 질문 수정시 리사이클러 뷰 업데이트
-    private fun updateRV() {
-        val QuestionRef = database.getReference("guardian").child(owner).child("questionList")
-
-        QuestionRef.addChildEventListener(object : ChildEventListener{
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-            }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 // questionID 찾기
                 val questionId = snapshot.key.toString()
                 val questionInDB = database.getReference("question").child(questionId)
 
-                Log.d("하하하2", snapshot.toString())
-
                 // questionList에서 questionID에 해당하는 질문 찾아 수정해주기
-                for (q in questionList){
-                    if (q.first == questionId){
+                for (q in questionList) {
+                    if (q.first == questionId) {
                         questionInDB.get().addOnSuccessListener {
-                            Log.d("하하하3", questionList.toString())
                             q.second.text = it.child("text").getValue().toString()
                             q.second.record = it.child("record").getValue() as Boolean
                             q.second.secret = it.child("secret").getValue() as Boolean
                             q.second.date = it.child("date").getValue().toString()
-                            Log.d("하하하4", questionList.toString())
 
-                            Log.d("하하하5", questionList.toString())
                             // 가장 최근에 수정된 것이 리스트 상단으로 가게 하기
-                            // 내림차순으로 정렬(map -> list.sort -> map)
+                            // 내림차순으로 정렬
                             questionList.sortedByDescending { it.second.date }
 
                             // 리스트가 수정되었다고 어댑터에게 알려주기
@@ -186,10 +154,11 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 for (q in questionList){
                     if (q.first == questionId){
                         questionList.remove(q)
+                        // 리스트가 수정되었다고 어댑터에게 알려주기
+                        QuestionAdapter.notifyDataSetChanged()
+                        break
                     }
                 }
-                // 리스트가 수정되었다고 어댑터에게 알려주기
-                QuestionAdapter.notifyDataSetChanged()
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
@@ -197,7 +166,6 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
 
             override fun onCancelled(error: DatabaseError) {
             }
-
         })
     }
 

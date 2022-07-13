@@ -1,55 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
-    tools:context=".safety.EditSafetyActivity"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_background">
+
+    <ImageView
+        android:id="@+id/edit_safety_backBtn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/backbtn"
+        android:layout_margin="5sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf= "parent" />
+
+    <TextView
+        android:id="@+id/edit_safety_title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="안부 수정"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText"
+        tools:layout_editor_absoluteX="0dp" />
 
     <LinearLayout
+        android:id="@+id/edit_safety_linear1"
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="60sp"
+        app:layout_constraintTop_toBottomOf="@+id/edit_safety_title"
+        android:layout_marginStart="10sp"
+        android:layout_marginEnd="10sp"
+        android:orientation="horizontal">
 
         <TextView
-            android:text="Title"
-            android:gravity="center"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            android:text="안부 이름"
+            android:textSize="25sp"
+            android:layout_gravity="left|center"
+            android:layout_marginStart="5sp"/>
 
         <EditText
-            android:id="@+id/safety_edit_text"
-            android:text=""
-            android:hint="title"
+            android:id="@+id/edit_safety_name"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            android:hint="안부 이름을 작성해주세요"
+            android:layout_gravity="center"
+            android:layout_marginStart="30sp"
+            android:layout_marginEnd="30sp"/>
 
     </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="300dp"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
+        android:layout_width="0sp"
+        android:layout_height="0sp"
+        android:background="@drawable/recyclerview_border"
+        app:layout_constraintTop_toBottomOf="@+id/edit_safety_linear1"
+        app:layout_constraintBottom_toTopOf="@+id/edit_safety_linear3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="vertical"
+        android:layout_margin="10sp"
+        android:layout_marginTop="10sp">
 
-    <Button
-        android:id="@+id/safety_edit_btn"
-        android:text="수정"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/safety_del_btn"
-        android:text="삭제"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="25sp"
+                android:text="질문 설정"/>
+
+            <ImageView
+                android:id="@+id/edit_safety_setting"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:src="@drawable/optionbtn" />
+
+        </FrameLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/edit_safety_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:scrollbars="vertical" />
 
     </LinearLayout>
 
-</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/edit_safety_linear3"
+        android:layout_width="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="50dp"
+        android:layout_marginBottom="10sp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/edit_safety_save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="저 장"
+            android:textSize="25sp"
+            android:layout_marginStart="10sp"
+            android:layout_marginEnd="5sp"
+            android:layout_weight="1"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/edit_safety_delete_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="삭 제"
+            android:textSize="25sp"
+            android:layout_marginStart="5sp"
+            android:layout_marginEnd="10sp"
+            android:layout_weight="1"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

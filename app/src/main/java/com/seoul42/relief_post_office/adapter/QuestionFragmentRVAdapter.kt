@@ -19,7 +19,7 @@ import com.seoul42.relief_post_office.model.QuestionDTO
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class QuestionFragmentRVAdapter(private val context: Context, private val items: List<Pair<String, QuestionDTO>>)
+class QuestionFragmentRVAdapter(private val context: Context, private val items: ArrayList<Pair<String, QuestionDTO>>)
     : RecyclerView.Adapter<QuestionFragmentRVAdapter.ViewHolder>() {
 
     val database = Firebase.database
@@ -47,7 +47,6 @@ class QuestionFragmentRVAdapter(private val context: Context, private val items:
         // 데이터 매핑 해주기
         @RequiresApi(Build.VERSION_CODES.O)
         fun bindItems(item: Pair<String, QuestionDTO>){
-            Log.d("하하하", "123123")
             // 각 질문 별 텍스트
             val rvText = itemView.findViewById<TextView>(R.id.question_rv_item_text)
 
