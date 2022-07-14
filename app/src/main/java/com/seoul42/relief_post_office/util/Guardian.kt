@@ -1,5 +1,6 @@
 package com.seoul42.relief_post_office.util
 
+import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -37,6 +38,10 @@ class Guardian(user : UserDTO) {
 
     init {
         USER = user
+
+        if (LISTENER.isNotEmpty()) {
+            setLogout()
+        }
         setConnectedUser()
     }
 
@@ -48,7 +53,9 @@ class Guardian(user : UserDTO) {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val key = snapshot.key.toString()
                 val connectedUserId = snapshot.value.toString()
-                CONNECT_LIST[key] = connectedUserId
+                if (CONNECT_LIST[key] == null) {
+                    CONNECT_LIST[key] = connectedUserId
+                }
             }
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 val key = snapshot.key.toString()

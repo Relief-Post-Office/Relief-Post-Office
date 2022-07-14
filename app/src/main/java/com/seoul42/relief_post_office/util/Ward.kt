@@ -40,6 +40,10 @@ class Ward(user : UserDTO) {
 
     init {
         USER = user
+
+        if (LISTENER.isNotEmpty()) {
+            setLogout()
+        }
         setConnectedUser()
         setRequestedUser()
     }
@@ -52,7 +56,9 @@ class Ward(user : UserDTO) {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val key = snapshot.key.toString()
                 val connectedUserId = snapshot.value.toString()
-                CONNECT_LIST[key] = connectedUserId
+                if (CONNECT_LIST[key] == null) {
+                    CONNECT_LIST[key] = connectedUserId
+                }
             }
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 val key = snapshot.key.toString()
@@ -73,7 +79,9 @@ class Ward(user : UserDTO) {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val key = snapshot.key.toString()
                 val requestedUserId = snapshot.value.toString()
-                REQUEST_LIST[key] = requestedUserId
+                if (REQUEST_LIST[requestedUserId] == null) {
+                    REQUEST_LIST[requestedUserId] = key
+                }
             }
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 val key = snapshot.key.toString()

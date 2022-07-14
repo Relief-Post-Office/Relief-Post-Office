@@ -13,22 +13,24 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
 import androidx.core.graphics.drawable.IconCompat
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.seoul42.relief_post_office.R
+import com.seoul42.relief_post_office.alarm.GuardianReceiver
 import com.seoul42.relief_post_office.alarm.WardReceiver
+import com.seoul42.relief_post_office.util.Alarm
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     // 메세지가 수신되면 호출
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // 서버에서 직접 보냈을 때
+        // 서버에서 직접 보냈을 때(사용 x)
         if(remoteMessage.notification != null){
             sendNotification(remoteMessage.notification?.title,
                 remoteMessage.notification?.body!!)
         }
-
-        // 다른 기기에서 서버로 보냈을 때
+        // 다른 기기에서 서버로 보냈을 때(이 경우에 해당)
         else if(remoteMessage.data.isNotEmpty()){
             val title = remoteMessage.data["title"]!!
             val userId = remoteMessage.data["name"]!!
@@ -97,6 +99,25 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     // 다른 기기에서 서버로 보냈을 때
     @RequiresApi(Build.VERSION_CODES.P)
     private fun sendMessageNotification(title: String, name: String, body: String) {
+        /* 피보호자가 안부에 대한 푸시 알람을 받게 될 경우 알람 설정 */
+        if (title == "SafetyWard") {
+            if (Alarm.isIgnoringBatteryOptimizations(this) && Firebase.auth.currentUser != null) {
+                val start = Intent(WardReceiver.REPEAT_START)
+
+                start.setClass(this, WardReceiver::class.java)
+                sendBroadcast(start, WardReceiver.PERMISSION_REPEAT)
+            }
+        }
+        /* 보호자가 피보호자의 안부에 대한 변경 작업이 있을 때 알람 설정 */
+        else if (title == "SafetyGuardian") {
+            if (Alarm.isIgnoringBatteryOptimizations(this) && Firebase.auth.currentUser != null) {
+                val start = Intent(GuardianReceiver.REPEAT_START)
+
+                start.setClass(this, GuardianReceiver::class.java)
+                sendBroadcast(start, GuardianReceiver.PERMISSION_REPEAT)
+            }
+        }
+        /* 받은 푸시 알람을 띄우도록 설정 */
         val intent = Intent(this, CheckLoginService::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // 액티비티 중복 생성 방지
         val pendingIntent = PendingIntent.getActivity(this, 0 , intent,
@@ -121,8 +142,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         // 오레오 버전 예외처리
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder.setSmallIcon(R.drawable.ic_launcher_foreground)
-
             val channelName = "매일 알람 채널"
             val description = "매일 정해진 시간에 알람합니다."
             val importance = NotificationManager.IMPORTANCE_HIGH
@@ -141,12 +160,5 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setContentIntent(pendingIntent)
 
         notificationManager.notify(0 , builder.build()) // 알림 생성
-
-        /* 피보호자가 안부에 대한 푸시 알람을 받게 될 경우 주기적 알람 수행 */
-        /* val start = Intent(WardReceiver.REPEAT_START)
-
-        start.setClass(this, WardReceiver::class.java)
-        sendBroadcast(start, WardReceiver.PERMISSION_REPEAT)
-        */
     }
 }
