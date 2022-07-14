@@ -1,26 +1,16 @@
 package com.seoul42.relief_post_office.ward
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.Window
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.android.gms.common.internal.ServiceSpecificExtraArgs.CastExtraArgs.LISTENER
 import com.google.firebase.auth.FirebaseAuth
 import com.seoul42.relief_post_office.util.Ward.Companion.CONNECT_LIST
 import com.seoul42.relief_post_office.util.Ward.Companion.REQUEST_LIST
@@ -32,8 +22,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.seoul42.relief_post_office.BirthDialog
-import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.ResponseAdapter
 import com.seoul42.relief_post_office.adapter.WardAdapter
 import com.seoul42.relief_post_office.alarm.WardReceiver
@@ -43,7 +31,6 @@ import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.service.CheckLoginService
 import com.seoul42.relief_post_office.util.Alarm.isIgnoringBatteryOptimizations
-import com.seoul42.relief_post_office.util.Guardian
 import com.seoul42.relief_post_office.util.Ward
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 
@@ -241,7 +228,7 @@ class WardActivity : AppCompatActivity() {
             userDB.get().addOnSuccessListener {
                 val userDTO = it.getValue(UserDTO::class.java) as UserDTO
                 val notificationData = NotificationDTO.NotificationData("안심 집배원"
-                    , Guardian.USER.name!!, Guardian.USER.name + "님이 요청을 수락했습니다.")
+                    , USER.name!!, USER.name + "님이 요청을 수락했습니다.")
                 val notificationDTO = NotificationDTO(userDTO.token!!, notificationData)
                 firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
             }

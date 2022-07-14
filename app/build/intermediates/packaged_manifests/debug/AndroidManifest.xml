@@ -45,6 +45,18 @@
         android:theme="@style/Theme.Relief_post_office"
         android:usesCleartextTraffic="true" >
         <activity
+            android:name="com.seoul42.relief_post_office.safety.EditWardSafetyActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.seoul42.relief_post_office.safety.SafetyQuestionSettingActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.seoul42.relief_post_office.safety.AddWardSafetyActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.seoul42.relief_post_office.safety.WardSafetySettingActivity"
+            android:exported="false" />
+        <activity
             android:name="com.seoul42.relief_post_office.safety.EditSafetyActivity"
             android:exported="false" />
         <activity
@@ -87,6 +99,12 @@
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name="com.seoul42.relief_post_office.ward.WardProfileActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name="com.seoul42.relief_post_office.result.ResultActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name="com.seoul42.relief_post_office.result.ResultDetailActivity"
             android:windowSoftInputMode="adjustNothing" />
 
         <service
@@ -161,6 +179,9 @@
                 android:value="com.google.firebase.components.ComponentRegistrar" />
             <meta-data
                 android:name="com.google.firebase.components:com.google.firebase.messaging.ktx.FirebaseMessagingKtxRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.storage.ktx.FirebaseStorageKtxRegistrar"
                 android:value="com.google.firebase.components.ComponentRegistrar" />
             <meta-data
                 android:name="com.google.firebase.components:com.google.firebase.storage.StorageRegistrar"

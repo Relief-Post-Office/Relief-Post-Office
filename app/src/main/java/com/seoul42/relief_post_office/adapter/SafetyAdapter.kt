@@ -11,33 +11,44 @@ import androidx.recyclerview.widget.RecyclerView
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.SafetyDTO
 import com.seoul42.relief_post_office.safety.EditSafetyActivity
+import com.seoul42.relief_post_office.safety.EditWardSafetyActivity
 
-class SafetyAdapter(private val context : Context, private val dataList : ArrayList<SafetyDTO>) : RecyclerView.Adapter<SafetyAdapter.ItemViewHolder>() {
-	class ItemViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
-		private val text = itemView.findViewById<TextView>(R.id.safety_rv_item)
+class SafetyAdapter(private val context : Context, private val items : ArrayList<Pair<String, SafetyDTO>>)
+	: RecyclerView.Adapter<SafetyAdapter.ViewHolder>() {
 
-		fun bind(data : SafetyDTO, context: Context) {
-			//text.text = data.data!!.content
-			text.setOnClickListener {
-				val intent = Intent(context, EditSafetyActivity::class.java)
+	override fun onCreateViewHolder(
+		parent: ViewGroup,
+		viewType: Int
+	): SafetyAdapter.ViewHolder {
+		val view = LayoutInflater.from(parent.context).inflate(R.layout.safety_fragment_rv_item, parent, false)
 
-				intent.putExtra("safetyDTO", data)
+		return ViewHolder(view)
+	}
 
-				ContextCompat.startActivity(context, intent, null)
+	override fun onBindViewHolder(holder: SafetyAdapter.ViewHolder, position: Int) {
+		holder.bindItems(items[position])
+	}
+
+	// 전체 리사이클러 뷰의 아이템 개수
+	override fun getItemCount(): Int {
+		return items.size
+	}
+
+	inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
+
+		// 데이터 매핑 해주기
+		fun bindItems(item : Pair<String, SafetyDTO>){
+			// 안부 이름 매핑
+			val rvText = itemView.findViewById<TextView>(R.id.safety_fragment_rv_item_text)
+			rvText.text = item.second.name
+
+			// 아이템 클릭 시 수정 액티비티로 넘어가기
+			itemView.setOnClickListener{
+				val tmpIntent = Intent(context, EditSafetyActivity::class.java)
+				tmpIntent.putExtra("safetyId", item.first)
+				ContextCompat.startActivity(context, tmpIntent, null)
 			}
 		}
 	}
 
-	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-		val view = LayoutInflater.from(context).inflate(R.layout.item_safety, parent,false)
-		return ItemViewHolder(view)
-	}
-
-	override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-		holder.bind(dataList[position], context)
-	}
-
-	override fun getItemCount(): Int {
-		return dataList.size
-	}
 }

@@ -66,7 +66,7 @@ class GuardianProfileActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.guardian_profile)
+        setContentView(binding.root)
 
         /* 미리 저장된 정보들을 반영 */
         setPreProcessed()

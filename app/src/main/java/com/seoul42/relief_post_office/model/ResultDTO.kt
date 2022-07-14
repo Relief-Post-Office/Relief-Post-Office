@@ -10,5 +10,5 @@ data class ResultDTO(
     var responseTime: String,
     var answerIdList: MutableMap<String, String>
 ) : Serializable {
-    constructor() : this("", "", "", "", "", mutableMapOf())
+    constructor() : this("", "", "", "", "미응답", mutableMapOf())
 }

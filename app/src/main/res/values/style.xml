@@ -3,6 +3,17 @@
     <style name="NumberPicker">
         <item name="colorControlNormal">@color/black</item>
     </style>
+    <style name="MyDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
+        <item name="android:fontFamily">@font/bmjua</item>
+        <item name="android:colorAccent">@color/purple_200</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DatePickerTheme.ButtonBarNegativeButtonStyle</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/DatePickerTheme.ButtonBarPostiveButtonStyle</item>
+    </style>
 
-
+    <style name="DatePickerTheme.ButtonBarNegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@android:color/darker_gray</item>
+    </style>
+    <style name="DatePickerTheme.ButtonBarPostiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/purple_200</item>
+    </style>
 </resources>
