@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-121:12
-INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-121:12
-INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-121:12
-INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-121:12
+ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-131:12
+INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-131:12
+INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-131:12
+INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-131:12
 MERGED from [androidx.databinding:databinding-adapters:7.2.1] C:\Users\cmj09\.gradle\caches\transforms-3\ff0bc0afe12fd06cd20b67febefa901d\transformed\databinding-adapters-7.2.1\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.databinding:databinding-ktx:7.2.1] C:\Users\cmj09\.gradle\caches\transforms-3\0a0a09faaeab052b9040ef148c765795\transformed\databinding-ktx-7.2.1\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.databinding:databinding-runtime:7.2.1] C:\Users\cmj09\.gradle\caches\transforms-3\9507d4525913d519ca7cd76d4d1c69ab\transformed\databinding-runtime-7.2.1\AndroidManifest.xml:17:1-24:12
@@ -114,22 +114,22 @@ MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\cmj09\.gradle\caches\trans
 MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\cmj09\.gradle\caches\transforms-3\1ca2f99d26406102735fa099e1d3533a\transformed\documentfile-1.0.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.print:print:1.0.0] C:\Users\cmj09\.gradle\caches\transforms-3\a8595ef986b497bf5e7527edf9973af1\transformed\print-1.0.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.annotation:annotation-experimental:1.1.0] C:\Users\cmj09\.gradle\caches\transforms-3\b06328c4a2be198126d57a9fbf6c0b34\transformed\annotation-experimental-1.1.0\AndroidManifest.xml:17:1-24:12
-INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-121:12
-INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-121:12
-INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-121:12
+INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-131:12
+INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-131:12
+INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-131:12
 	package
 		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:4:5-45
 		INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml
 		INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml
 	android:versionName
 		INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml
-		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-121:12
+		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-131:12
 		INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml
 	xmlns:tools
 		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:3:5-51
 	android:versionCode
 		INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml
-		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-121:12
+		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:1-131:12
 		INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:2:11-69
@@ -248,7 +248,7 @@ ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\
 	android:name
 		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:22:9-82
 application
-ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:26:5-119:19
+ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:26:5-129:19
 MERGED from [androidx.window:window:1.0.0] C:\Users\cmj09\.gradle\caches\transforms-3\a6979d1aefcd7b86e058726147ecfcc2\transformed\window-1.0.0\AndroidManifest.xml:24:5-31:19
 MERGED from [androidx.window:window:1.0.0] C:\Users\cmj09\.gradle\caches\transforms-3\a6979d1aefcd7b86e058726147ecfcc2\transformed\window-1.0.0\AndroidManifest.xml:24:5-31:19
 MERGED from [com.google.firebase:firebase-auth-ktx:21.0.5] C:\Users\cmj09\.gradle\caches\transforms-3\8e852a68c4af4444419d4a650dbf08af\transformed\firebase-auth-ktx-21.0.5\AndroidManifest.xml:7:5-15:19
@@ -481,26 +481,34 @@ ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\
 		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:101:13-36
 	android:name
 		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:99:13-51
-receiver#com.seoul42.relief_post_office.alarm.BootCompleteReceiver
-ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:108:9-117:20
+receiver#com.seoul42.relief_post_office.alarm.NetworkReceiver
+ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:108:9-116:20
 	android:enabled
 		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:110:13-35
-	android:label
-		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:112:13-50
 	android:exported
-		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:111:13-37
+		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:111:13-36
 	android:name
-		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:109:13-55
+		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:109:13-50
+receiver#com.seoul42.relief_post_office.alarm.BootCompleteReceiver
+ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:118:9-127:20
+	android:enabled
+		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:120:13-35
+	android:label
+		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:122:13-50
+	android:exported
+		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:121:13-37
+	android:name
+		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:119:13-55
 intent-filter#action:name:android.intent.action.BOOT_COMPLETED+category:name:android.intent.category.DEFAULT
-ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:113:13-116:29
+ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:123:13-126:29
 action#android.intent.action.BOOT_COMPLETED
-ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:114:17-79
+ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:124:17-79
 	android:name
-		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:114:25-76
+		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:124:25-76
 category#android.intent.category.DEFAULT
-ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:115:17-76
+ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:125:17-76
 	android:name
-		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:115:27-73
+		ADDED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml:125:27-73
 uses-sdk
 INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\cmj09\AndroidStudioProjects\relief_post_office\app\src\main\AndroidManifest.xml

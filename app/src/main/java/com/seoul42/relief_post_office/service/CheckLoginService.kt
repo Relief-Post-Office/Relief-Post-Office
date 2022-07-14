@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -15,6 +17,7 @@ import com.seoul42.relief_post_office.MainActivity
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.util.Guardian
+import com.seoul42.relief_post_office.util.Network
 import com.seoul42.relief_post_office.util.Ward
 import com.seoul42.relief_post_office.ward.WardActivity
 

@@ -116,6 +116,15 @@
             </intent-filter>
         </receiver>
         <receiver
+            android:name="com.seoul42.relief_post_office.alarm.NetworkReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.rightline.backgroundrepeatapp.REPEAT_START" />
+                <action android:name="com.rightline.backgroundrepeatapp.REPEAT_STOP" />
+            </intent-filter>
+        </receiver>
+        <receiver
             android:name="com.seoul42.relief_post_office.alarm.BootCompleteReceiver"
             android:enabled="true"
             android:exported="false"

@@ -15,6 +15,7 @@ import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.*
 import com.seoul42.relief_post_office.util.Alarm
+import com.seoul42.relief_post_office.util.Network
 import com.seoul42.relief_post_office.ward.AlarmActivity
 import java.text.SimpleDateFormat
 import java.util.*
@@ -43,7 +44,6 @@ class WardReceiver() : BroadcastReceiver() {
         const val REPEAT_START = "com.rightline.backgroundrepeatapp.REPEAT_START"
         const val REPEAT_STOP = "com.rightline.backgroundrepeatapp.REPEAT_STOP"
         const val PRIMARY_CHANNEL_ID = "primary_notification_channel"
-        const val NOTIFICATION_ID = 0
     }
 
     /*
@@ -57,16 +57,55 @@ class WardReceiver() : BroadcastReceiver() {
      *  - 5. 보호자가 피보호자의 안부를 삭제한 경우
      */
     override fun onReceive(context: Context, intent: Intent) {
-        if (Firebase.auth.currentUser != null && Alarm.isIgnoringBatteryOptimizations(context)) {
-            when (intent.action) {
-                REPEAT_START -> {
-                    recommend(context)
-                }
-                REPEAT_STOP -> {
-                    val recommendDTO = intent.getSerializableExtra("recommendDTO") as WardRecommendDTO
-                    forceAlarm(context, recommendDTO)
+        Log.d("확인", "Ward")
+        if (!Network.isNetworkAvailable(context)) {
+            Log.d("확인", "피보호자측 네트워크 연결 실패")
+            setNetworkAlarm(context)
+        } else {
+            if (Firebase.auth.currentUser != null && Alarm.isIgnoringBatteryOptimizations(context)) {
+                Log.d("확인", "피보호자측 네트워크 연결 성공")
+                when (intent.action) {
+                    REPEAT_START -> {
+                        recommend(context)
+                    }
+                    REPEAT_STOP -> {
+                        val recommendDTO =
+                            intent.getSerializableExtra("recommendDTO") as WardRecommendDTO
+                        forceAlarm(context, recommendDTO)
+                    }
                 }
             }
+        }
+    }
+
+    /*
+     *  네트워크 연결이 안될 경우 실행하는 메서드
+     *  5분 단위로 네트워크 알람 요청을 수행
+     */
+    private fun setNetworkAlarm(context : Context) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val schedule = Intent(NetworkReceiver.REPEAT_START)
+
+        schedule.setClass(context, NetworkReceiver::class.java)
+
+        val sender = PendingIntent.getBroadcast(context, 0, schedule,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        val interval = Calendar.getInstance()
+
+        interval.timeInMillis = System.currentTimeMillis()
+        interval.add(Calendar.MINUTE, 5) /* Here! */
+        alarmManager.cancel(sender)
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                interval.timeInMillis,
+                sender
+            )
+        } else if (Build.VERSION.SDK_INT >= 19) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, interval.timeInMillis, sender)
+        } else {
+            alarmManager[AlarmManager.RTC_WAKEUP, interval.timeInMillis] = sender
         }
     }
 
@@ -358,48 +397,54 @@ class WardReceiver() : BroadcastReceiver() {
      *  피보호자 측에게 강제 알람을 띄우도록 하는 메서드
      *  recommendDTO 를 AlarmActivity 에서 받을 수 있도록 설정
      *  그리고 다시 알람 작업을 수행할 수 있도록 설정
+     *  안부 id 가 유효한지를 확인해서 강제 알람을 띄움
      */
     private fun forceAlarm(context : Context, recommendDTO : WardRecommendDTO) {
-        val notificationManager = context.getSystemService(
-            Context.NOTIFICATION_SERVICE) as NotificationManager
+        safetyDB.child(recommendDTO.safetyId).get().addOnSuccessListener {
+            if (it.getValue(SafetyDTO::class.java) != null) {
+                val notificationManager = context.getSystemService(
+                    Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(
-                PRIMARY_CHANNEL_ID,
-                "Stand up notification",
-                NotificationManager.IMPORTANCE_HIGH
-            )
-            notificationChannel.enableLights(true)
-            notificationChannel.lightColor = Color.RED
-            notificationChannel.enableVibration(true)
-            notificationChannel.description = "AlarmManager Tests"
-            notificationManager.createNotificationChannel(
-                notificationChannel)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val notificationChannel = NotificationChannel(
+                        PRIMARY_CHANNEL_ID,
+                        "Stand up notification",
+                        NotificationManager.IMPORTANCE_HIGH
+                    )
+                    notificationChannel.enableLights(true)
+                    notificationChannel.lightColor = Color.RED
+                    notificationChannel.enableVibration(true)
+                    notificationChannel.description = "AlarmManager Tests"
+                    notificationManager.createNotificationChannel(
+                        notificationChannel)
+                }
+
+                val contentIntent = Intent(context, AlarmActivity::class.java)
+
+                contentIntent.putExtra("recommendDTO", recommendDTO)
+
+                val safetyName = recommendDTO.safetyDTO.name
+                val contentPendingIntent = PendingIntent.getActivity(
+                    context,
+                    0,
+                    contentIntent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                val builder =
+                    NotificationCompat.Builder(context, PRIMARY_CHANNEL_ID)
+                        .setSmallIcon(R.drawable.relief_post_office)
+                        .setContentTitle(safetyName)
+                        .setContentText("$safetyName 안부에 대한 응답 시간입니다!")
+                        .setFullScreenIntent(contentPendingIntent, true)
+                        .setContentIntent(contentPendingIntent)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setAutoCancel(true)
+                        .setDefaults(NotificationCompat.DEFAULT_ALL)
+
+                notificationManager.notify(0, builder.build())
+            }
         }
 
-        val contentIntent = Intent(context, AlarmActivity::class.java)
-
-        contentIntent.putExtra("recommendDTO", recommendDTO)
-
-        val safetyName = recommendDTO.safetyDTO.name
-        val contentPendingIntent = PendingIntent.getActivity(
-            context,
-            NOTIFICATION_ID,
-            contentIntent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        val builder =
-            NotificationCompat.Builder(context, PRIMARY_CHANNEL_ID)
-                .setSmallIcon(R.drawable.relief_post_office)
-                .setContentTitle(safetyName)
-                .setContentText("$safetyName 안부에 대한 응답 시간입니다!")
-                .setFullScreenIntent(contentPendingIntent, true)
-                .setContentIntent(contentPendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
-
-        notificationManager.notify(NOTIFICATION_ID, builder.build())
         setAlarm(context, REPEAT_START, null)
     }
 

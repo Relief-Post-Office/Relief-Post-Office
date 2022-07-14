@@ -13,10 +13,12 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
 import androidx.core.graphics.drawable.IconCompat
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.seoul42.relief_post_office.R
+import com.seoul42.relief_post_office.alarm.GuardianReceiver
 import com.seoul42.relief_post_office.alarm.WardReceiver
 import com.seoul42.relief_post_office.util.Alarm
 
@@ -98,13 +100,22 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     @RequiresApi(Build.VERSION_CODES.P)
     private fun sendMessageNotification(title: String, name: String, body: String) {
         /* 피보호자가 안부에 대한 푸시 알람을 받게 될 경우 알람 설정 */
-        if (title == "Safety") {
-            /* 배터리 최적화를 무시하며 로그인된 피보호자일 경우 알람 설정 */
+        if (title == "safetyWard") {
             if (Alarm.isIgnoringBatteryOptimizations(this) && Firebase.auth.currentUser != null) {
+
                 val start = Intent(WardReceiver.REPEAT_START)
 
                 start.setClass(this, WardReceiver::class.java)
                 sendBroadcast(start, WardReceiver.PERMISSION_REPEAT)
+            }
+        }
+        /* 보호자가 피보호자의 안부에 대한 변경 작업이 있을 때 알람 설정 */
+        else if (title == "safetyGuardian") {
+            if (Alarm.isIgnoringBatteryOptimizations(this) && Firebase.auth.currentUser != null) {
+                val start = Intent(GuardianReceiver.REPEAT_START)
+
+                start.setClass(this, GuardianReceiver::class.java)
+                sendBroadcast(start, GuardianReceiver.PERMISSION_REPEAT)
             }
         }
         /* 받은 푸시 알람을 띄우도록 설정 */

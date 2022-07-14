@@ -106,6 +106,16 @@
         </receiver>
 
         <receiver
+            android:name=".alarm.NetworkReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.rightline.backgroundrepeatapp.REPEAT_START" />
+                <action android:name="com.rightline.backgroundrepeatapp.REPEAT_STOP" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
             android:name=".alarm.BootCompleteReceiver"
             android:enabled="true"
             android:exported="false"

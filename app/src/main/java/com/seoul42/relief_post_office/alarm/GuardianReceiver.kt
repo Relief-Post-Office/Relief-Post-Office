@@ -10,6 +10,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Handler
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
 import androidx.core.graphics.drawable.IconCompat
@@ -19,6 +20,7 @@ import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.*
 import com.seoul42.relief_post_office.util.Alarm
+import com.seoul42.relief_post_office.util.Network
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -36,7 +38,7 @@ class GuardianReceiver () : BroadcastReceiver() {
     private val safetyDB = Firebase.database.reference.child("safety")
     private val guardianDB = Firebase.database.reference.child("guardian")
 
-    /* Several notification Id : 상단 공지가 누적되는 것을 방지 */
+    /* Several notification Id : 상단에 공지가 누적되는 것을 방지 */
     private var notificationId : Int = 0
 
     /*
@@ -60,16 +62,55 @@ class GuardianReceiver () : BroadcastReceiver() {
      *  - 5. 연결된 피보호자의 안부가 삭제된 경우
      */
     override fun onReceive(context: Context, intent: Intent) {
-        if (Firebase.auth.currentUser != null && Alarm.isIgnoringBatteryOptimizations(context)) {
-            when (intent.action) {
-                REPEAT_START -> {
-                    recommend(context)
-                }
-                REPEAT_STOP -> {
-                    val recommendList = intent.getSerializableExtra("recommendList") as ArrayList<GuardianRecommendDTO>
-                    notifyAlarm(context, recommendList)
+        Log.d("확인", "Guardian")
+        if (!Network.isNetworkAvailable(context)) {
+            Log.d("확인", "보호자측 네트워크 연결 실패")
+            setNetworkAlarm(context)
+        } else {
+            if (Firebase.auth.currentUser != null && Alarm.isIgnoringBatteryOptimizations(context)) {
+                Log.d("확인", "보호자측 네트워크 연결 성공")
+                when (intent.action) {
+                    REPEAT_START -> {
+                        recommend(context)
+                    }
+                    REPEAT_STOP -> {
+                        val recommendList =
+                            intent.getSerializableExtra("recommendList") as ArrayList<GuardianRecommendDTO>
+                        notifyAlarm(context, recommendList)
+                    }
                 }
             }
+        }
+    }
+
+    /*
+     *  네트워크 연결이 안될 경우 실행하는 메서드
+     *  5분 단위로 네트워크 알람 요청을 수행
+     */
+    private fun setNetworkAlarm(context : Context) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val schedule = Intent(NetworkReceiver.REPEAT_START)
+
+        schedule.setClass(context, NetworkReceiver::class.java)
+
+        val sender = PendingIntent.getBroadcast(context, 0, schedule,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        val interval = Calendar.getInstance()
+
+        interval.timeInMillis = System.currentTimeMillis()
+        interval.add(Calendar.MINUTE, 5) /* Here! */
+        alarmManager.cancel(sender)
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                interval.timeInMillis,
+                sender
+            )
+        } else if (Build.VERSION.SDK_INT >= 19) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, interval.timeInMillis, sender)
+        } else {
+            alarmManager[AlarmManager.RTC_WAKEUP, interval.timeInMillis] = sender
         }
     }
 
@@ -109,7 +150,7 @@ class GuardianReceiver () : BroadcastReceiver() {
                         }
                         Log.d("확인용...", recommendList.toString())
                         /* 3. 통지 알람 세팅 */
-                        setAlarm(context, recommendList)
+                        setAlarm(context, REPEAT_STOP, recommendList)
                     }
                 }, 5000)
             }
@@ -166,12 +207,13 @@ class GuardianReceiver () : BroadcastReceiver() {
      *  통지 알람을 요청하는 작업을 수행하는 메서드
      *  추천 리스트를 intent 에 담아서 보내도록 함
      */
-    private fun setAlarm(context: Context, recommendList : ArrayList<GuardianRecommendDTO>) {
+    private fun setAlarm(context: Context, alarmFlag : String, recommendList : ArrayList<GuardianRecommendDTO>?) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val schedule = Intent(WardReceiver.REPEAT_STOP)
-        val timeGap = recommendList[0].timeGap
+        val schedule = Intent(alarmFlag)
 
-        schedule.putExtra("recommendList", recommendList)
+        if (alarmFlag == REPEAT_STOP) {
+            schedule.putExtra("recommendList", recommendList)
+        }
         schedule.setClass(context, GuardianReceiver::class.java)
 
         val sender = PendingIntent.getBroadcast(context, 0, schedule,
@@ -180,7 +222,13 @@ class GuardianReceiver () : BroadcastReceiver() {
 
         /* 알람 시간 설정(recommendDTO.timeGap) */
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.SECOND, timeGap)
+        if (alarmFlag == REPEAT_STOP) {
+            val timeGap = recommendList!![0].timeGap
+            interval.add(Calendar.SECOND, timeGap)
+        } else {
+            interval.add(Calendar.SECOND, 1)
+        }
+
         alarmManager.cancel(sender)
         if (Build.VERSION.SDK_INT >= 23) {
             alarmManager.setExactAndAllowWhileIdle(
@@ -221,6 +269,8 @@ class GuardianReceiver () : BroadcastReceiver() {
                 }
             }
         }
+
+        setAlarm(context, REPEAT_START, null)
     }
 
     /*

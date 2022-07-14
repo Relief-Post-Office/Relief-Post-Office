@@ -11,8 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.databinding.ActivityAlarmBinding
+import com.seoul42.relief_post_office.model.SafetyDTO
 import com.seoul42.relief_post_office.model.WardRecommendDTO
 import java.text.SimpleDateFormat
 import java.util.*
@@ -52,6 +55,7 @@ class AlarmActivity : AppCompatActivity() {
         val curTime = date.substring(12, 17)
         val finishTime : Long = 300000
         val recommendDTO = intent.getSerializableExtra("recommendDTO") as WardRecommendDTO
+        val safetyDB = Firebase.database.reference.child("safety")
 
         mediaPlayer = MediaPlayer.create(this, R.raw.alarm)
         mediaPlayer!!.start()
@@ -59,7 +63,14 @@ class AlarmActivity : AppCompatActivity() {
 
         binding.alarmDay.text = curDay
         binding.alarmTime.text = curTime
-        binding.alarmText.text = recommendDTO.safetyDTO.name
+
+        safetyDB.child(recommendDTO.safetyId).get().addOnSuccessListener {
+            if (it.getValue(SafetyDTO::class.java) != null) {
+                val safetyDTO = it.getValue(SafetyDTO::class.java) as SafetyDTO
+
+                binding.alarmText.text = safetyDTO.name
+            }
+        }
 
         /* 5분 뒤에 알람 종료 */
         Handler().postDelayed({
@@ -71,9 +82,7 @@ class AlarmActivity : AppCompatActivity() {
 
     /* 버튼 text = 피보호자가 진행해야 할 "안부" 이름 */
     private fun setButton() {
-        Log.d("확인용", "ㅇㅇㅇ")
         binding.alarmButton.setOnClickListener{
-            Log.d("확인용", "될까?")
             close()
         }
     }
