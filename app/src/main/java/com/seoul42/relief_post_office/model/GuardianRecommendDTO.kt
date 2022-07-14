@@ -5,5 +5,5 @@ import java.io.Serializable
 data class GuardianRecommendDTO(
     val timeGap: Int,
     val wardId: String,
-    val safetyId: String
+    val safetyId: String,
 ) : Serializable

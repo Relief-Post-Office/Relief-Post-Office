@@ -51,8 +51,10 @@ class BootCompleteReceiver : BroadcastReceiver() {
                 if (Firebase.auth.currentUser != null && Alarm.isIgnoringBatteryOptimizations(context)){
                     val uid = Firebase.auth.uid.toString()
                     userDB.child(uid).get().addOnSuccessListener {
-                        val userDTO = it.getValue(UserDTO::class.java) as UserDTO
-                        setAlarm(context, userDTO.guardian!!)
+                        if (it.getValue(UserDTO::class.java) != null) {
+                            val userDTO = it.getValue(UserDTO::class.java) as UserDTO
+                            setAlarm(context, userDTO.guardian!!)
+                        }
                     }
                 }
             }

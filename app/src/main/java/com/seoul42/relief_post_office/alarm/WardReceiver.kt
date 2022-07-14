@@ -15,6 +15,9 @@ import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.*
 import com.seoul42.relief_post_office.util.Alarm
+import com.seoul42.relief_post_office.util.Alarm.getDateToLong
+import com.seoul42.relief_post_office.util.Alarm.getDay
+import com.seoul42.relief_post_office.util.Alarm.getTimeGap
 import com.seoul42.relief_post_office.util.Network
 import com.seoul42.relief_post_office.ward.AlarmActivity
 import java.text.SimpleDateFormat
@@ -25,15 +28,15 @@ class WardReceiver() : BroadcastReceiver() {
     /* 추천할 수 있는 모든 객체들을 담음 */
     private val recommendList = ArrayList<WardRecommendDTO>()
 
-    /* 안부 id 에 대응하는 결과 id 를 가져오기 위한 용도 */
-    private val resultMap : MutableMap<String, String> = mutableMapOf()
-
     /* Access to Database */
     private val wardDB = Firebase.database.reference.child("ward")
     private val resultDB = Firebase.database.reference.child("result")
     private val safetyDB = Firebase.database.reference.child("safety")
     private val answerDB = Firebase.database.reference.child("answer")
     private val questionDB = Firebase.database.reference.child("question")
+
+    /* user Id */
+    private lateinit var uid : String
 
     /*
      *  - REPEAT_START : "강제 알람 요청", "요청 없음" 둘 중 하나를 결정하기 위한 플래그
@@ -44,6 +47,7 @@ class WardReceiver() : BroadcastReceiver() {
         const val REPEAT_START = "com.rightline.backgroundrepeatapp.REPEAT_START"
         const val REPEAT_STOP = "com.rightline.backgroundrepeatapp.REPEAT_STOP"
         const val PRIMARY_CHANNEL_ID = "primary_notification_channel"
+        const val NOTIFICATION_ID = 100
     }
 
     /*
@@ -64,6 +68,7 @@ class WardReceiver() : BroadcastReceiver() {
         } else {
             if (Firebase.auth.currentUser != null && Alarm.isIgnoringBatteryOptimizations(context)) {
                 Log.d("확인", "피보호자측 네트워크 연결 성공")
+                uid = Firebase.auth.uid.toString()
                 when (intent.action) {
                     REPEAT_START -> {
                         recommend(context)
@@ -84,7 +89,7 @@ class WardReceiver() : BroadcastReceiver() {
      */
     private fun setNetworkAlarm(context : Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val schedule = Intent(NetworkReceiver.REPEAT_START)
+        val schedule = Intent(REPEAT_START)
 
         schedule.setClass(context, NetworkReceiver::class.java)
 
@@ -124,20 +129,17 @@ class WardReceiver() : BroadcastReceiver() {
         val curTime = date.substring(11, 19)
         val curDay = date.split(" ")[2]
         val dateDTO = DateDTO(curDate, curTime, getDay(curDay))
-        val uid = Firebase.auth.uid.toString()
 
         wardDB.child(uid).get().addOnSuccessListener { snapshot ->
             if (snapshot.getValue(WardDTO::class.java) != null) {
-                var safetyId : String
-                var resultId : String
                 val wardDTO = snapshot.getValue(WardDTO::class.java) as WardDTO
 
                 for (safety in wardDTO.safetyIdList) {
-                    safetyId = safety.key
+                    val safetyId = safety.key
                     setSafety(dateDTO, safetyId)
                 }
                 for (result in wardDTO.resultIdList) {
-                    resultId = result.key
+                    val resultId = result.key
                     setResult(dateDTO, resultId)
                 }
 
@@ -145,7 +147,7 @@ class WardReceiver() : BroadcastReceiver() {
                 Handler().postDelayed({
                     if (recommendList.isNotEmpty()) {
                         val recommendDTO = recommendList.minBy { it.timeGap }
-                        Log.d("Recommend", recommendDTO.toString())
+                        Log.d("확인[Recommend]", recommendDTO.toString())
                         setForceAlarm(context, recommendDTO)
                     }
                 }, 5000)
@@ -167,20 +169,18 @@ class WardReceiver() : BroadcastReceiver() {
     private fun addSafetyToRecommendList(dateDTO : DateDTO, safetyId : String, safetyDTO : SafetyDTO) {
         val curTime = dateDTO.curTime
         val curDay = dateDTO.curDay
-        var safetyDay : Int
-        var timeGap : Int
 
         for (day in safetyDTO.dayOfWeek) {
             if (!day.value) {
                 continue
             }
-            safetyDay = getDay(day.key)
-            timeGap = if (curDay == safetyDay) {
-                getTimeGap(curTime, safetyDTO.time!!, 0)
+            val safetyDay = getDay(day.key)
+            val timeGap = if (curDay == safetyDay) {
+                getTimeGap(curTime, safetyDTO.time!!, 0, false)
             } else if (safetyDay - curDay < 0) {
-                getTimeGap(curTime, safetyDTO.time!!, (safetyDay + 7) - curDay)
+                getTimeGap(curTime, safetyDTO.time!!, (safetyDay + 7) - curDay, false)
             } else {
-                getTimeGap(curTime, safetyDTO.time!!, safetyDay - curDay)
+                getTimeGap(curTime, safetyDTO.time!!, safetyDay - curDay, false)
             }
             recommendList.add(WardRecommendDTO(timeGap, safetyId,null, safetyDTO))
         }
@@ -190,7 +190,7 @@ class WardReceiver() : BroadcastReceiver() {
      *  피보호자가 보유한 각각의 결과에 대해 결과가 존재할 경우, 조건에 따라 결과에 대한 수정 작업을 결정하는 메서드
      *  - (결과 날짜 < 현재 날짜) : 이전 결과이므로 수정 작업을 수행 x
      *  - (결과 날짜 = 현재 날짜) : 현재 진행될 수 있는 결과이므로 수정 작업을 수행 x
-     *  - (결과 날짜 > 현재 날짜) : 미리 만들어둔 결과이므로 수정 작업을 수행 o
+     *  - (결과 날짜 > 현재 날짜) : 미리 만들어둔 결과이므로 삭제 작업을 수행
      */
     private fun setResult(dateDTO : DateDTO, resultId : String) {
         val curDate = dateDTO.curDate
@@ -200,74 +200,10 @@ class WardReceiver() : BroadcastReceiver() {
             if (resultSnapshot.getValue(ResultDTO::class.java) != null) {
                 val resultDTO = resultSnapshot.getValue(ResultDTO::class.java) as ResultDTO
                 if (getDateToLong(resultDTO.date, resultDTO.safetyTime) > getDateToLong(curDate, curTime)) {
-                    updateAndRemoveResult(resultId, resultDTO)
-                }
-            }
-        }
-    }
-
-    /*
-     *  결과의 업데이트를 수행하는 메서드
-     *  - 결과에 대응하는 안부가 존재하지 않을 경우 : 결과 삭제
-     *  - 결과에 대응하는 안부와 시간이 동일하지 않을 경우 : 결과 삭제
-     *  - 결과에 대응하는 안부와 시간이 동일할 경우 : 결과 수정
-     */
-    private fun updateAndRemoveResult(resultId : String, resultDTO : ResultDTO) {
-        safetyDB.child(resultDTO.safetyId).get().addOnSuccessListener { safetySnapshot ->
-            if (safetySnapshot.getValue(SafetyDTO::class.java) != null) {
-                val safetyDTO = safetySnapshot.getValue(SafetyDTO::class.java) as SafetyDTO
-                if (resultDTO.safetyTime == safetyDTO.time) {
-                    updateResult(resultId, resultDTO, safetyDTO)
-                } else {
                     removeResult(resultId, resultDTO)
                 }
-            } else {
-                removeResult(resultId, resultDTO)
             }
         }
-    }
-
-    /*
-     *  결과 수정 작업 3 가지
-     *  1. 이름 변경 : 결과(result) 이름을 대응하는 안부의 이름으로 변경
-     *  2. 응답 목록 변경 : 응답(answer) 목록에 대응하는 안부의 질문 목록에 맞게 변경
-     *  3. 결과 반영 : resultId 에 변경된 값을 세팅
-     */
-    private fun updateResult(resultId : String, resultDTO : ResultDTO, safetyDTO : SafetyDTO) {
-        val questionList = safetyDTO.questionList
-
-        resultMap[resultDTO.safetyId] = resultId
-        /* 1. 이름 변경 */
-        resultDTO.safetyName = safetyDTO.name!!
-
-        /* 2. 응답 목록 변경 */
-        for (answer in resultDTO.answerIdList) {
-            val answerId = answer.value
-            answerDB.child(answerId).removeValue()
-        }
-        resultDTO.answerIdList.clear()
-
-        for (question in questionList) {
-            val questionId = question.key
-
-            questionDB.child(questionId).get().addOnSuccessListener { questionSnapshot ->
-                if (questionSnapshot.getValue(QuestionDTO::class.java) != null) {
-                    val questionDTO = questionSnapshot.getValue(QuestionDTO::class.java) as QuestionDTO
-                    val answerKey = answerDB.push()
-                    val answerId = answerKey.key.toString()
-                    val answerDTO = AnswerDTO(null, questionDTO.secret, questionDTO.record,
-                        questionDTO.owner!!, questionDTO.src!!, questionDTO.text!!, "")
-
-                    answerKey.setValue(answerDTO)
-                    resultDTO.answerIdList[questionId] = answerId /* answerIdList 채우기 [questionId, answerId] */
-                }
-            }
-        }
-
-        /* 비동기식 데이터 통신으로 인해 1초 후 결과 반영 */
-        Handler().postDelayed({
-            resultDB.child(resultId).setValue(resultDTO)
-        }, 1000)
     }
 
     /*
@@ -277,8 +213,6 @@ class WardReceiver() : BroadcastReceiver() {
      *  3. resultId 삭제 : ward -> uid -> resultIdList 에 존재하는 resultId 를 삭제
      */
     private fun removeResult(resultId : String, resultDTO : ResultDTO) {
-        val uid = Firebase.auth.uid.toString()
-
         /* 1. answers 삭제 */
         for (answer in resultDTO.answerIdList) {
             val answerId = answer.value
@@ -291,37 +225,46 @@ class WardReceiver() : BroadcastReceiver() {
     }
 
     /*
-     *  강제 알람을 세팅하는 작업 수행
-     *  - 안부 id 에 대응하는 결과 id 가 없는 경우 : 결과 생성 후 강제 알람 요청을 수행
-     *  - 안부 id 에 대응하는 결과 id 가 있는 경우 : resultId 를 추가하고 강제 알람 요청을 바로 수행
-     */
-    private fun setForceAlarm(context: Context, recommendDTO : WardRecommendDTO) {
-        if (resultMap[recommendDTO.safetyId] == null) {
-            makeResultAndSetAlarm(context, recommendDTO)
-        } else {
-            recommendDTO.resultId = resultMap[recommendDTO.safetyId]
-            setAlarm(context, REPEAT_STOP, recommendDTO)
-        }
-    }
-
-    /*
-     *  결과를 생성하는 메서드
+     *  강제 알람을 세팅하는 메서드
+     *  결과를 생성한 다음에 강제 알람을 요청
      *  1. result 의 answerList 생성 : 안부의 질문에 대응하는 answer 를 생성 및 추가
      *  2. result 생성
      *   - date = 현재 날짜 + ( 현재로부터 안부까지 timeGap )
      *   - responseTime = "미응답"
      */
-    private fun makeResultAndSetAlarm(context: Context, recommendDTO : WardRecommendDTO) {
-        val uid = Firebase.auth.uid.toString()
-        val questionList = recommendDTO.safetyDTO.questionList
+    private fun setForceAlarm(context: Context, recommendDTO : WardRecommendDTO) {
         val answerList : MutableMap<String, String> = mutableMapOf()
         val cal = Calendar.getInstance()
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
         cal.time = Date()
         cal.add(Calendar.SECOND, recommendDTO.timeGap)
+        Log.d("확인용", date.format(cal.time))
 
         /* 1. result 의 answerList 생성 */
+        makeAnswerList(recommendDTO.safetyDTO.questionList, answerList)
+
+        /* 2. result 생성 */
+        Handler().postDelayed({
+            val resultKey = resultDB.push()
+            val resultId = resultKey.key.toString()
+            val resultDTO = ResultDTO(date.format(cal.time).substring(0, 10),
+                recommendDTO.safetyId, recommendDTO.safetyDTO.name!!,
+                recommendDTO.safetyDTO.time!!, "미응답", answerList)
+
+            resultKey.setValue(resultDTO)
+            wardDB.child(uid).child("resultIdList").child(resultId).setValue(resultId)
+            recommendDTO.resultId = resultId
+            setAlarm(context, REPEAT_STOP, recommendDTO)
+        }, 5000)
+    }
+
+    /*
+     *  answerList 를 생성하는 메서드
+     *  - 질문에 대응하는 대답을 생성
+     *  - 생성한 질문 id 에 대해 answerList[질문 id] = 대답 id
+     */
+    private fun makeAnswerList(questionList : MutableMap<String, String>, answerList : MutableMap<String, String>) {
         for (question in questionList) {
             val questionId = question.key
 
@@ -338,20 +281,6 @@ class WardReceiver() : BroadcastReceiver() {
                 }
             }
         }
-
-        /* 2. result 생성 */
-        Handler().postDelayed({
-            val resultKey = resultDB.push()
-            val resultId = resultKey.key.toString()
-            val resultDTO = ResultDTO(date.format(cal.time).substring(0, 10),
-                recommendDTO.safetyId, recommendDTO.safetyDTO.name!!,
-                recommendDTO.safetyDTO.time!!, "미응답", answerList)
-
-            resultKey.setValue(resultDTO)
-            wardDB.child(uid).child("resultIdList").child(resultId).setValue(resultId)
-            recommendDTO.resultId = resultId
-            setAlarm(context, REPEAT_STOP, recommendDTO)
-        }, 1000)
     }
 
     /*
@@ -374,7 +303,13 @@ class WardReceiver() : BroadcastReceiver() {
         /* 알람 시간 설정(recommendDTO.timeGap) */
         interval.timeInMillis = System.currentTimeMillis()
         if (alarmFlag == REPEAT_STOP) {
-            interval.add(Calendar.SECOND, recommendDTO!!.timeGap)
+            val timeGap = if (recommendDTO!!.timeGap - 10 < 0) {
+                0
+            }
+            else {
+                recommendDTO.timeGap - 10
+            }
+            interval.add(Calendar.SECOND, timeGap)
         } else {
             interval.add(Calendar.SECOND, 1)
         }
@@ -426,7 +361,7 @@ class WardReceiver() : BroadcastReceiver() {
                 val safetyName = recommendDTO.safetyDTO.name
                 val contentPendingIntent = PendingIntent.getActivity(
                     context,
-                    0,
+                    NOTIFICATION_ID,
                     contentIntent,
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
@@ -441,51 +376,10 @@ class WardReceiver() : BroadcastReceiver() {
                         .setAutoCancel(true)
                         .setDefaults(NotificationCompat.DEFAULT_ALL)
 
-                notificationManager.notify(0, builder.build())
+                notificationManager.notify(NOTIFICATION_ID, builder.build())
             }
         }
 
         setAlarm(context, REPEAT_START, null)
     }
-
-    /* Start alarm util */
-    private fun getDay(curDay : String) : Int {
-        return when(curDay) {
-            "월" -> 1
-            "화" -> 2
-            "수" -> 3
-            "목" -> 4
-            "금" -> 5
-            "토" -> 6
-            else -> 7
-        }
-    }
-
-    private fun getTimeGap(curTime : String, safetyTime : String, dayGap : Int) : Int {
-        val curHour = curTime.substring(0, 2).toInt()
-        val curMin = curTime.substring(3, 5).toInt()
-        val curSecond = curTime.substring(6, 8).toInt()
-        val safetyHour = safetyTime.substring(0, 2).toInt()
-        val safetyMin = safetyTime.substring(3, 5).toInt()
-
-        return if (dayGap == 0) {
-            if ((safetyHour * 3600 + safetyMin * 60) - (curHour * 3600 + curMin * 60 + curSecond) < 0) {
-                ((safetyHour + 24 * 7) * 3600 + safetyMin * 60) - (curHour * 3600 + curMin * 60 + curSecond)
-            } else {
-                (safetyHour * 3600 + safetyMin * 60) - (curHour * 3600 + curMin * 60 + curSecond)
-            }
-        } else {
-            ((safetyHour + 24 * dayGap) * 3600 + safetyMin * 60) - (curHour * 3600 + curMin * 60 + curSecond)
-        }
-    }
-
-    private fun getDateToLong(date : String, time : String) : Long {
-        val dateArray = date.split("-")
-        val timeArray = time.split(":")
-        val dateTime = dateArray[0] + dateArray[1] + dateArray[2] +
-                timeArray[0] + timeArray[1]
-
-        return dateTime.toLong() /* date = "2022-07-12", time = "13:25" => 202207121325 (type : long) */
-    }
-    /* End alarm util */
 }
