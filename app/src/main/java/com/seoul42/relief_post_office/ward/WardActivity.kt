@@ -190,8 +190,8 @@ class WardActivity : AppCompatActivity() {
             if (responseAdapter.getCheckList().isNotEmpty()) {
                 Toast.makeText(this, "보호자가 추가되었습니다!", Toast.LENGTH_SHORT).show()
                 userConnection(responseAdapter.getCheckList())
+                binding.wardAddGuardian.text = "0"
             }
-            binding.wardAddGuardian.text = "0"
         }
     }
 
