@@ -100,6 +100,7 @@ class AlarmActivity : AppCompatActivity() {
         binding.alarmButton.setOnClickListener{
             binding.alarmProgressbar.isVisible = true
             binding.alarmTransformText.text = "답변 준비중..."
+            window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             setList()
             close()
             // voice

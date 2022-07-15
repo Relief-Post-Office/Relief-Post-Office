@@ -8,6 +8,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.model.AnswerDTO
 import com.seoul42.relief_post_office.model.QuestionDTO
+import java.text.SimpleDateFormat
 
 class AnswerActivity : AppCompatActivity() {
 
@@ -55,15 +56,7 @@ class AnswerActivity : AppCompatActivity() {
                 recordSrc = "녹음이 끝난 주소"
             }
             sendAnswer(reply, recordSrc)
-            if (currentIndex < listSize - 1) {
-                currentIndex += 1
-                setQuestion()
-            }
-            else {
-                // 액티비티 끝내기 질문 끝내기
-                startActivity(Intent(this, EndingActivity::class.java))
-                finish()
-            }
+            nextQuestion()
         }
         binding.wardSafetyYes.setOnClickListener {
             val reply: Boolean = true
@@ -74,15 +67,7 @@ class AnswerActivity : AppCompatActivity() {
                 recordSrc = "녹음이 끝난 주소"
             }
             sendAnswer(reply, recordSrc)
-            if (currentIndex < listSize - 1) {
-                currentIndex += 1
-                setQuestion()
-            }
-            else {
-                // 액티비티 끝내기 질문 끝내기
-                startActivity(Intent(this, EndingActivity::class.java))
-                finish()
-            }
+            nextQuestion()
         }
     }
 
@@ -102,5 +87,22 @@ class AnswerActivity : AppCompatActivity() {
             .child(answerList[currentIndex].first)
             .child("answerSrc")
             .setValue(recordSrc)
+    }
+
+    private fun nextQuestion() {
+        if (currentIndex < listSize - 1) {
+            currentIndex += 1
+            setQuestion()
+        }
+        else {
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            val date = sdf.format(System.currentTimeMillis())
+            database.getReference("result")
+                .child(resultId)
+                .child("responseTime")
+                .setValue(date)
+            startActivity(Intent(this, EndingActivity::class.java))
+            finish()
+        }
     }
 }
