@@ -102,7 +102,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 // 녹음 파일 생성 및 스토리지 저장
                 var recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
                 val recordRef =
-                    storage.reference.child("questionRecord/${auth.currentUser?.uid}/${key.toString()}")
+                    storage.reference.child("questionRecord/${auth.currentUser?.uid}/${auth.currentUser?.uid +LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
                 var uploadRecord = recordRef.putFile(recordFile)
 
                 uploadRecord.addOnSuccessListener {

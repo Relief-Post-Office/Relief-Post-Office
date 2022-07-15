@@ -4,13 +4,13 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatButton
 
-class RecordButton (
+class EditRecordButton (
     context : Context,
     attrs : AttributeSet
 ) : AppCompatButton(context, attrs) {
 
     init {
-        text = "녹음"
+        text = "재생"
     }
 
     fun updateIconWithState(state: RecordState) {

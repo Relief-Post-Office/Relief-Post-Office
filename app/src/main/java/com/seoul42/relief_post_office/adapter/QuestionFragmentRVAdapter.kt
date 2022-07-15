@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,18 +14,29 @@ import android.view.Window
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.QuestionDTO
+import com.seoul42.relief_post_office.record.EditRecordActivity
+import com.seoul42.relief_post_office.record.RecordActivity
+import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class QuestionFragmentRVAdapter(private val context: Context, private val items: ArrayList<Pair<String, QuestionDTO>>)
     : RecyclerView.Adapter<QuestionFragmentRVAdapter.ViewHolder>() {
 
+    private val storage: FirebaseStorage by lazy {
+        FirebaseStorage.getInstance()
+    }
+
+    private var auth : FirebaseAuth = Firebase.auth
+
     val database = Firebase.database
-    private lateinit var QuestionAdapter : QuestionFragmentRVAdapter
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
     : QuestionFragmentRVAdapter.ViewHolder {
@@ -80,22 +92,12 @@ class QuestionFragmentRVAdapter(private val context: Context, private val items:
                 // 질문 수정 다이얼로그 띄우기
                 dialog.show()
 
-                // 녹음 재생 버튼
-                var player: MediaPlayer? = null
+                // 녹음기능
+                val editRecordActivity = EditRecordActivity(src.toString(), mView)
 
-                dialog.findViewById<Button>(R.id.question_setting_playBtn2).setOnClickListener {
-
-                    player = MediaPlayer()
-                        .apply {
-                            setDataSource(src)
-                            prepare()
-                        }
-                    player?.setOnCompletionListener {
-                        player?.release()
-                        player = null
-                    }
-                    player?.start()
-                }
+                editRecordActivity.initViews()
+                editRecordActivity.bindViews(mView)
+                editRecordActivity.initVariables()
 
                 // 질문 수정 다이얼로그의 "저장" 버튼을 눌렀을 때 이벤트 처리
                 dialog.findViewById<Button>(R.id.save_question_btn).setOnClickListener {
@@ -109,8 +111,25 @@ class QuestionFragmentRVAdapter(private val context: Context, private val items:
                     question.child("text").setValue(editedQuestionText)
                     question.child("secret").setValue(editedSecret)
                     question.child("record").setValue(editedRecord)
+
+                    // EditRecordActivity에서 받은 녹음파일 변경주소 반영
+                    var editRecordFile = Uri.fromFile(File(editRecordActivity.returnRecordingFile()))
+                    val editRecordRef =
+                        storage.reference.child("questionRecord/${auth.currentUser?.uid}/${auth.currentUser?.uid + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
+                    var uploadEditRecord = editRecordRef.putFile(editRecordFile)
+
+                    uploadEditRecord.addOnSuccessListener {
+                        editRecordRef.downloadUrl.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                            question.child("src").setValue(task.result.toString())
+                            }
+                        }
+                    }
+
                     // 로그인한 보호자의 questionList와 question 컬렉션의 수정된 질문의 최종 수정날짜 수정
                     val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+
+
                     question.child("date").setValue(date)
                     database.getReference("guardian").child(item.second.owner.toString())
                         .child("questionList")

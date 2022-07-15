@@ -1,15 +1,18 @@
 package com.seoul42.relief_post_office.record
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.os.SystemClock
 import android.util.AttributeSet
+import android.util.Log
 import androidx.appcompat.widget.AppCompatTextView
 
-class RecordCountTime(
+class EditRecordDurationTime(
     context: Context,
     attributeSet: AttributeSet? = null
 ) : AppCompatTextView(context, attributeSet) {
 
+    private lateinit var playerDuration : MediaPlayer
     private var startTimeStamp: Long = 0L
 
     private val countUpAction: Runnable = object : Runnable {
@@ -27,12 +30,20 @@ class RecordCountTime(
         handler?.post(countUpAction)
     }
 
-    fun stopCountUp() {
+    fun setRecordDuration(recordingFilePath : String?) {
+        playerDuration = MediaPlayer().
+                apply {
+                    setDataSource(recordingFilePath)
+                    prepare()
+                }
+        val recordDuration: Int = playerDuration.duration
+        Log.d("src", recordDuration.toString())
+        updateCountTime((recordDuration - 300)/1000)
         handler?.removeCallbacks(countUpAction)
-        updateCountTime(0)
     }
 
     fun clearCountTime() {
+        playerDuration.release()
         updateCountTime(0)
     }
 

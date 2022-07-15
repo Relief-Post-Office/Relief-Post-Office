@@ -5,7 +5,7 @@ import android.os.SystemClock
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 
-class RecordCountTime(
+class EditRecordCountTime(
     context: Context,
     attributeSet: AttributeSet? = null
 ) : AppCompatTextView(context, attributeSet) {
@@ -29,7 +29,6 @@ class RecordCountTime(
 
     fun stopCountUp() {
         handler?.removeCallbacks(countUpAction)
-        updateCountTime(0)
     }
 
     fun clearCountTime() {
