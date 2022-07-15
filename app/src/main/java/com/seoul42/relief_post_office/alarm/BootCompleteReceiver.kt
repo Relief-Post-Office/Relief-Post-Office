@@ -48,7 +48,7 @@ class BootCompleteReceiver : BroadcastReceiver() {
         } else {
             Log.d("확인", "Network is available!")
             if (intent.action.equals(Intent.ACTION_BOOT_COMPLETED)) {
-                if (Firebase.auth.currentUser != null && Alarm.isIgnoringBatteryOptimizations(context)){
+                if (Firebase.auth.currentUser != null){
                     val uid = Firebase.auth.uid.toString()
                     userDB.child(uid).get().addOnSuccessListener {
                         if (it.getValue(UserDTO::class.java) != null) {

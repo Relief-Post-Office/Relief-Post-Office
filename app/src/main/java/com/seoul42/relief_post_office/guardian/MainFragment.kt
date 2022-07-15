@@ -88,18 +88,10 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
      * 단, 배터리 최적화 무시를 안할 경우 피보호자 측은 강제 알람을 띄울 수 없음
      */
     private fun setAlarm() {
-        if (!Alarm.isIgnoringBatteryOptimizations(context!!)) {
-            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-            val packageName = context!!.packageName
+        val start = Intent(GuardianReceiver.REPEAT_START)
 
-            intent.data = Uri.parse("package:$packageName")
-            startActivity(intent)
-        } else {
-            val start = Intent(GuardianReceiver.REPEAT_START)
-
-            start.setClass(context!!, GuardianReceiver::class.java)
-            context!!.sendBroadcast(start, GuardianReceiver.PERMISSION_REPEAT)
-        }
+        start.setClass(context!!, GuardianReceiver::class.java)
+        context!!.sendBroadcast(start, GuardianReceiver.PERMISSION_REPEAT)
     }
 
     private fun setLogout() {

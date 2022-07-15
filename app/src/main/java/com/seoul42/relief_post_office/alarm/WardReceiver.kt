@@ -69,7 +69,7 @@ class WardReceiver() : BroadcastReceiver() {
             Log.d("확인", "피보호자측 네트워크 연결 실패")
             setNetworkAlarm(context)
         } else {
-            if (Firebase.auth.currentUser != null && Alarm.isIgnoringBatteryOptimizations(context)) {
+            if (Firebase.auth.currentUser != null) {
                 Log.d("확인", "피보호자측 네트워크 연결 성공")
                 uid = Firebase.auth.uid.toString()
                 when (intent.action) {
