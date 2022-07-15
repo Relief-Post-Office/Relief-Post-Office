@@ -8,7 +8,8 @@ data class QuestionDTO(
     var owner: String?,      // 소유주
     var date: String?,        //  마지막 수정 날짜
     var text: String?,       // 텍스트
-    var src: String?         // 녹음 파일 주소
+    var src: String?,         // 녹음 파일 주소
+    var connectedSafetyList : MutableMap<String, String?>    // 연결된 피보호자 안부 목록
 ) : Serializable {
-    constructor() : this(false, false,"", "", "", "")
+    constructor() : this(false, false,"", "", "", "", mutableMapOf())
 }

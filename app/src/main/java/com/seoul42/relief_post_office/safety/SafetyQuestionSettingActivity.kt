@@ -13,7 +13,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -28,14 +30,17 @@ import com.seoul42.relief_post_office.adapter.QuestionFragmentRVAdapter
 import com.seoul42.relief_post_office.adapter.SafetyQuestionSettingAdapter
 import com.seoul42.relief_post_office.adapter.WardSafetyAdapter
 import com.seoul42.relief_post_office.model.QuestionDTO
+import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 import kotlinx.android.synthetic.main.activity_safety_question_setting.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class SafetyQuestionSettingActivity : AppCompatActivity() {
 
+    private val firebaseViewModel : FirebaseViewModel by viewModels()
     private val database = Firebase.database
     private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
+    private var deletedQuestionList = arrayListOf<String>()
     private lateinit var checkedQuestions : ArrayList<String>
     private lateinit var safetyQuestionSettingAdapter: SafetyQuestionSettingAdapter
     private lateinit var auth : FirebaseAuth
@@ -85,7 +90,7 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
                 val src = null
 
                 // question 컬렉션에 추가할 QuestoinDTO 생성
-                val newQuestion = QuestionDTO(secret, record, owner, date, questionText, src)
+                val newQuestion = QuestionDTO(secret, record, owner, date, questionText, src, mutableMapOf())
 
                 // question 컬렉션에 작성한 내용 추가
                 val questionRef = database.getReference("question")
@@ -108,6 +113,7 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
         findViewById<Button>(R.id.safety_question_setting_save_button).setOnClickListener {
             val returnIntent = Intent()
             returnIntent.putExtra("returnQuestionList", safetyQuestionSettingAdapter.checkedQuestions)
+            returnIntent.putExtra("deletedQuestionList", safetyQuestionSettingAdapter.deletedQuestions)
             setResult(Activity.RESULT_OK, returnIntent)
             finish()
         }
@@ -170,6 +176,7 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
                 for (q in questionList){
                     if (q.first == questionId){
                         questionList.remove(q)
+                        break
                     }
                 }
                 // 리스트가 수정되었다고 어댑터에게 알려주기
@@ -188,11 +195,18 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
     private fun setRecyclerView(){
         val rv = findViewById<RecyclerView>(R.id.safety_question_setting_rv)
         // 리사이클러 뷰 아답터에 리스트 넘긴 후 아답터 가져오기
-        safetyQuestionSettingAdapter = SafetyQuestionSettingAdapter(this, checkedQuestions ,questionList)
+        safetyQuestionSettingAdapter = SafetyQuestionSettingAdapter(
+            this, checkedQuestions, deletedQuestionList ,questionList, firebaseViewModel)
         // 리사이클러 뷰에 아답터 연결하기
         rv.adapter = safetyQuestionSettingAdapter
         rv.layoutManager = LinearLayoutManager(this)
         rv.setHasFixedSize(true)
+    }
+
+    override fun onBackPressed() {
+        // 뒤로가기 버튼 막기
+        Toast.makeText(this, "저장 버튼을 눌러주세요", Toast.LENGTH_SHORT).show()
+//        super.onBackPressed()
     }
 
 }

@@ -20,6 +20,7 @@ import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.AddWardSafetyAdapter
 import com.seoul42.relief_post_office.adapter.SafetyQuestionSettingAdapter
 import com.seoul42.relief_post_office.adapter.WardSafetyAdapter
+import com.seoul42.relief_post_office.guardian.QuestionFragment
 import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.model.SafetyDTO
@@ -145,6 +146,18 @@ class AddWardSafetyActivity : AppCompatActivity() {
                 val newPush = safetyRef.push()
                 val key = newPush.key.toString()
                 newPush.setValue(newSafety)
+
+                // 설정한 질문들의 connedSafetyList에 현재 안부 아이디 추가
+                for (q in questionList){
+                    val qRef = database.getReference("question").child(q.first)
+                        .child("connectedSafetyList")
+                        .child(key)
+                    qRef.setValue(date)
+
+                    // 해당하는 질문들 보호자 질문 목록에서 최종 수정일 변경하기
+                    database.getReference("guardian").child(Firebase.auth.currentUser!!.uid)
+                        .child("questionList").child(q.first).setValue(date)
+                }
 
                 // 선택한 피보호자의 안부 목록에 방금 등록한 안부 아이디 추가
                 val wardSafetyRef = database.getReference("ward").child(wardId).child("safetyIdList")

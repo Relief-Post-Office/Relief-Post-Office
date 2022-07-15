@@ -12,6 +12,7 @@ import android.view.Window
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -26,6 +27,7 @@ import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.QuestionFragmentRVAdapter
 import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.record.RecordActivity
+import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -36,6 +38,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         FirebaseStorage.getInstance()
     }
 
+    private val firebaseViewModel : FirebaseViewModel by viewModels()
     private val database = Firebase.database
     // 유저가 가지고 있는 질문들의 객체를 담은 리스트 선언
     private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
@@ -43,6 +46,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
     private lateinit var QuestionAdapter : QuestionFragmentRVAdapter
     private lateinit var auth : FirebaseAuth
     private lateinit var owner : String
+
 
     // 프래그먼트 실행시 동작
     @RequiresApi(Build.VERSION_CODES.O)
@@ -92,7 +96,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 var src: String? = null
 
                 // question 컬렉션에 추가할 QuestoinDTO 생성
-                val newQuestion = QuestionDTO(secret, record, owner, date, questionText, src)
+                val newQuestion = QuestionDTO(secret, record, owner, date, questionText, src, mutableMapOf())
 
                 // question 컬렉션에 작성한 내용 추가
                 val questionRef = database.getReference("question")
@@ -102,7 +106,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 // 녹음 파일 생성 및 스토리지 저장
                 var recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
                 val recordRef =
-                    storage.reference.child("questionRecord/${auth.currentUser?.uid}/${auth.currentUser?.uid +LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
+                    storage.reference.child("questionRecord/${owner}/${owner + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
                 var uploadRecord = recordRef.putFile(recordFile)
 
                 uploadRecord.addOnSuccessListener {
@@ -123,7 +127,6 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 // 다이얼로그 종료
                 Toast.makeText(context, "질문 추가 완료", Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
-
             }
         }
     }
@@ -163,6 +166,9 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                             q.second.record = it.child("record").getValue() as Boolean
                             q.second.secret = it.child("secret").getValue() as Boolean
                             q.second.date = it.child("date").getValue().toString()
+                            val tmpList = it.child("connectedSafetyList").getValue() as MutableMap<String, String?>?
+                            if (tmpList != null)
+                                q.second.connectedSafetyList = tmpList
 
                             // 가장 최근에 수정된 것이 리스트 상단으로 가게 하기
                             // 내림차순으로 정렬
@@ -203,7 +209,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
     private fun setRecyclerView(view : View){
         val recyclerView = view.findViewById<RecyclerView>(R.id.question_rv)
 
-        QuestionAdapter = QuestionFragmentRVAdapter(view.context, questionList)
+        QuestionAdapter = QuestionFragmentRVAdapter(view.context, questionList, firebaseViewModel)
         recyclerView.adapter = QuestionAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.setHasFixedSize(true)
