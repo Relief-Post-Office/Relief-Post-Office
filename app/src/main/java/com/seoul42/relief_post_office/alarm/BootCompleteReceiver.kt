@@ -55,6 +55,8 @@ class BootCompleteReceiver : BroadcastReceiver() {
                             val userDTO = it.getValue(UserDTO::class.java) as UserDTO
                             setAlarm(context, userDTO.guardian!!)
                         }
+                    }.addOnFailureListener {
+                        setNetworkAlarm(context)
                     }
                 }
             }

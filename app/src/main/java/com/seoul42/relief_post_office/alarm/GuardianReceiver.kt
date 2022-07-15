@@ -46,6 +46,9 @@ class GuardianReceiver () : BroadcastReceiver() {
     /* user Id */
     private lateinit var uid : String
 
+    /* Fail flag */
+    private var isFail : Boolean = false
+
     /*
      * REPEAT_START : "강제 알람 요청", "푸시 알람 요청", "요청 없음" 셋 중 하나를 결정하기 위한 플래그
      * REPEAT_STOP : 특정 안부에 대한 통지 알람 요청을 수행하기 위한 플래그
@@ -141,7 +144,7 @@ class GuardianReceiver () : BroadcastReceiver() {
                 /* 1. 피보호자 정보 */
                 for (ward in guardianDTO.connectList) {
                     val wardId = ward.value
-                    findWard(dateDTO, wardId)
+                    findWard(context, dateDTO, wardId)
                 }
                 /* 2. candidateList */
                 Handler().postDelayed({
@@ -159,19 +162,31 @@ class GuardianReceiver () : BroadcastReceiver() {
                     }
                 }, 5000)
             }
+        }.addOnFailureListener {
+            if (!isFail) {
+                Log.d("확인", "보호자측 네트워크 연결 실패")
+                isFail = true
+                setNetworkAlarm(context)
+            }
         }
     }
 
     /* 피보호자의 안부 리스트에 존재하는 안부를 추가하도록 돕는 메서드 */
-    private fun findWard(dateDTO : DateDTO, wardId : String) {
+    private fun findWard(context : Context, dateDTO : DateDTO, wardId : String) {
         wardDB.child(wardId).get().addOnSuccessListener {
             if (it.getValue(WardDTO::class.java) != null) {
                 val wardDTO = it.getValue(WardDTO::class.java) as WardDTO
 
                 for (safety in wardDTO.safetyIdList) {
                     val safetyId = safety.key
-                    addSafetyToRecommend(dateDTO, wardId, safetyId)
+                    addSafetyToRecommend(context, dateDTO, wardId, safetyId)
                 }
+            }
+        }.addOnFailureListener {
+            if (!isFail) {
+                Log.d("확인", "보호자측 네트워크 연결 실패")
+                isFail = true
+                setNetworkAlarm(context)
             }
         }
     }
@@ -179,7 +194,7 @@ class GuardianReceiver () : BroadcastReceiver() {
     /*
      *  안부를 추가하는 메서드
      */
-    private fun addSafetyToRecommend(dateDTO : DateDTO, wardId : String, safetyId : String) {
+    private fun addSafetyToRecommend(context : Context, dateDTO : DateDTO, wardId : String, safetyId : String) {
         val curTime = dateDTO.curTime
         val curDay = dateDTO.curDay
 
@@ -201,6 +216,12 @@ class GuardianReceiver () : BroadcastReceiver() {
                     }
                     candidateList.add(GuardianRecommendDTO(timeGap, wardId, safetyId))
                 }
+            }
+        }.addOnFailureListener {
+            if (!isFail) {
+                Log.d("확인", "보호자측 네트워크 연결 실패")
+                isFail = true
+                setNetworkAlarm(context)
             }
         }
     }
@@ -269,7 +290,19 @@ class GuardianReceiver () : BroadcastReceiver() {
                             val wardDTO = wardSnapshot.getValue(WardDTO::class.java) as WardDTO
                             compareSafetyAndResult(context, userDTO, wardDTO, recommendDTO)
                         }
+                    }.addOnFailureListener {
+                        if (!isFail) {
+                            Log.d("확인", "보호자측 네트워크 연결 실패")
+                            isFail = true
+                            setNetworkAlarm(context)
+                        }
                     }
+                }
+            }.addOnFailureListener {
+                if (!isFail) {
+                    Log.d("확인", "보호자측 네트워크 연결 실패")
+                    isFail = true
+                    setNetworkAlarm(context)
                 }
             }
         }
@@ -316,8 +349,20 @@ class GuardianReceiver () : BroadcastReceiver() {
 
                                 notifySafety(context, userDTO, safetyDTO)
                             }
+                        }.addOnFailureListener {
+                            if (!isFail) {
+                                Log.d("확인", "보호자측 네트워크 연결 실패")
+                                isFail = true
+                                setNetworkAlarm(context)
+                            }
                         }
                     }
+                }
+            }.addOnFailureListener {
+                if (!isFail) {
+                    Log.d("확인", "보호자측 네트워크 연결 실패")
+                    isFail = true
+                    setNetworkAlarm(context)
                 }
             }
         }

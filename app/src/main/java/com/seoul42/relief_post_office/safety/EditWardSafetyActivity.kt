@@ -37,6 +37,7 @@ class EditWardSafetyActivity : AppCompatActivity() {
     private val firebaseViewModel : FirebaseViewModel by viewModels()
     private lateinit var owner : String
     private lateinit var wardId : String
+    private lateinit var wardName : String
     private lateinit var safetyId : String
     private lateinit var safety : SafetyDTO
     private lateinit var editWardSafetyAdapter : AddWardSafetyAdapter
@@ -49,6 +50,7 @@ class EditWardSafetyActivity : AppCompatActivity() {
 
         // 수정할 안부 데이터 가져오고 첫 세팅 하기
         safetyId = intent.getStringExtra("safetyId").toString()
+        wardName = intent.getStringExtra("wardName").toString()
         val safetyRef = database.getReference("safety").child(safetyId)
         owner = Firebase.auth.currentUser?.uid.toString()
         safetyRef.get().addOnSuccessListener {
@@ -159,11 +161,27 @@ class EditWardSafetyActivity : AppCompatActivity() {
                 /* 피보호자에게 안부 동기화 FCM 보내기 */
                 val wardRef = Firebase.database.reference.child("user").child(wardId)
                 wardRef.get().addOnSuccessListener {
+                    // 피보호자에게 보내기
                     val wardDTO = it.getValue(UserDTO::class.java) as UserDTO
-                    val notificationData = NotificationDTO.NotificationData("safety"
-                        , "익명", "누군가 안부를 삭제하였습니다")
+                    val notificationData = NotificationDTO.NotificationData("SafetyWard"
+                        , "안심우체국", "누군가 안부를 삭제하였습니다")
                     val notificationDTO = NotificationDTO(wardDTO.token!!, notificationData)
                     firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                }
+
+                /* 피보호자와 연결된 보호자들에게 안부 동기화 FCM 보내기 */
+                val guardianListRef = database.getReference("ward").child(wardId).child("connectList")
+                guardianListRef.get().addOnSuccessListener {
+                    val guardianList = (it.getValue() as HashMap<String, String>).values.toList()
+                    val UserRef = database.getReference("user")
+                    for (guardianId in guardianList){
+                        UserRef.child(guardianId).child("token").get().addOnSuccessListener {
+                            val notificationData = NotificationDTO.NotificationData("SafetyGuardian",
+                                "안심우체국", "${wardName}님의 안부가 삭제되었습니다")
+                            val notificationDTO = NotificationDTO(it.getValue().toString()!!, notificationData)
+                            firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                        }
+                    }
                 }
 
                 // 액티비티 종료
@@ -220,11 +238,27 @@ class EditWardSafetyActivity : AppCompatActivity() {
                 /* 피보호자에게 안부 동기화 FCM 보내기 */
                 val wardRef = Firebase.database.reference.child("user").child(wardId)
                 wardRef.get().addOnSuccessListener {
+                    // 피보호자에게 보내기
                     val wardDTO = it.getValue(UserDTO::class.java) as UserDTO
-                    val notificationData = NotificationDTO.NotificationData("safety"
-                        , "익명", "누군가 안부를 수정하였습니다")
+                    val notificationData = NotificationDTO.NotificationData("SafetyWard"
+                        , "안심우체국", "누군가 안부를 변경하였습니다")
                     val notificationDTO = NotificationDTO(wardDTO.token!!, notificationData)
                     firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                }
+
+                /* 피보호자와 연결된 보호자들에게 안부 동기화 FCM 보내기 */
+                val guardianListRef = database.getReference("ward").child(wardId).child("connectList")
+                guardianListRef.get().addOnSuccessListener {
+                    val guardianList = (it.getValue() as HashMap<String, String>).values.toList()
+                    val UserRef = database.getReference("user")
+                    for (guardianId in guardianList){
+                        UserRef.child(guardianId).child("token").get().addOnSuccessListener {
+                            val notificationData = NotificationDTO.NotificationData("SafetyGuardian",
+                                "안심우체국", "${wardName}님의 안부가 변경되었습니다")
+                            val notificationDTO = NotificationDTO(it.getValue().toString()!!, notificationData)
+                            firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                        }
+                    }
                 }
 
                 // 액티비티 종료

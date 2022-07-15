@@ -42,6 +42,9 @@ class NetworkReceiver : BroadcastReceiver() {
                         val userDTO = it.getValue(UserDTO::class.java) as UserDTO
                         setAlarm(context, userDTO.guardian!!)
                     }
+                }.addOnFailureListener {
+                    Log.d("확인", "네트워크 연결 실패")
+                    setNetworkAlarm(context)
                 }
             }
         }
