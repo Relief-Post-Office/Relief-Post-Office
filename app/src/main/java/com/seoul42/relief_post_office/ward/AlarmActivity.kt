@@ -97,6 +97,16 @@ class AlarmActivity : AppCompatActivity() {
 
     /* 버튼 text = 피보호자가 진행해야 할 "안부" 이름 */
     private fun setButton() {
+        // 알람 소리 중지
+        mediaPlayer!!.release()
+        mediaPlayer = null
+        // 안부 시작 안내 보이스
+        val startGuideVoice = MediaPlayer.create(this, R.raw.startingsafety)
+        startGuideVoice.start()
+        startGuideVoice.setOnCompletionListener {
+            startGuideVoice.release()
+        }
+
         binding.alarmButton.setOnClickListener{
             binding.alarmProgressbar.isVisible = true
             binding.alarmTransformText.text = "답변 준비중..."
@@ -114,7 +124,7 @@ class AlarmActivity : AppCompatActivity() {
                 intent.putExtra("answerList", answerList)
                 startActivity(intent)
                 close()
-            }, 2500)
+            }, 15500)
         }
     }
 

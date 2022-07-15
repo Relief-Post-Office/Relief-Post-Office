@@ -1,6 +1,7 @@
 package com.seoul42.relief_post_office.ward
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.seoul42.relief_post_office.databinding.WardSafetyBinding
@@ -22,6 +23,7 @@ class AnswerActivity : AppCompatActivity() {
     private var listSize = 0
     private var currentIndex: Int = 0
     private lateinit var resultId : String
+    private lateinit var questionPlayer : MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +44,12 @@ class AnswerActivity : AppCompatActivity() {
         if (questionListSize == answerListSize) {
             listSize = questionListSize
             currentIndex = 0
+            // 녹음 플레이어 세팅
+            questionPlayer = MediaPlayer()
+            questionPlayer.setOnCompletionListener {
+                questionPlayer.stop()
+                questionPlayer.prepare()
+            }
             setQuestion()
         }
     }
@@ -73,8 +81,14 @@ class AnswerActivity : AppCompatActivity() {
 
     private fun setQuestion() {
         binding.wardSafetyQuestion.text = questionList[currentIndex].second.text
+        questionPlayer.setDataSource(questionList[currentIndex].second.src)
+        questionPlayer.prepare()
+        questionPlayer.start()
         binding.wardSafetyRepeat.setOnClickListener {
             // 오디오 다시 듣기 경로 셋팅
+            questionPlayer.stop()
+            questionPlayer.prepare()
+            questionPlayer.start()
         }
     }
 
