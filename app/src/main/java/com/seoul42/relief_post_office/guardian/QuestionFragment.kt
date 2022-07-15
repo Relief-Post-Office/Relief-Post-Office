@@ -2,6 +2,7 @@ package com.seoul42.relief_post_office.guardian
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -20,14 +21,20 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.QuestionFragmentRVAdapter
 import com.seoul42.relief_post_office.model.QuestionDTO
+import com.seoul42.relief_post_office.record.RecordActivity
+import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class QuestionFragment : Fragment(R.layout.fragment_question) {
 
+    private val storage: FirebaseStorage by lazy {
+        FirebaseStorage.getInstance()
+    }
 
     private val database = Firebase.database
     // 유저가 가지고 있는 질문들의 객체를 담은 리스트 선언
@@ -67,6 +74,13 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
             dialog.create()
             dialog.show()
 
+            // 녹음기능
+            val recordActivity = RecordActivity(mView)
+
+            recordActivity.initViews()
+            recordActivity.bindViews()
+            recordActivity.initVariables()
+
             // 질문 추가 다이얼로그의 "저장"버튼을 눌렀을 때 이벤트 처리
             dialog.findViewById<Button>(R.id.add_question_btn).setOnClickListener {
 
@@ -75,7 +89,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 val questionText = dialog.findViewById<EditText>(R.id.question_text).text.toString()
                 val secret = dialog.findViewById<Switch>(R.id.secret_switch).isChecked
                 val record = dialog.findViewById<Switch>(R.id.record_switch).isChecked
-                val src = null
+                var src: String? = null
 
                 // question 컬렉션에 추가할 QuestoinDTO 생성
                 val newQuestion = QuestionDTO(secret, record, owner, date, questionText, src)
@@ -84,6 +98,22 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 val questionRef = database.getReference("question")
                 val newPush = questionRef.push()
                 val key = newPush.key.toString()
+
+                // 녹음 파일 생성 및 스토리지 저장
+                var recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
+                val recordRef =
+                    storage.reference.child("questionRecord/${auth.currentUser?.uid}/${key.toString()}")
+                var uploadRecord = recordRef.putFile(recordFile)
+
+                uploadRecord.addOnSuccessListener {
+                    recordRef.downloadUrl.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            newQuestion.src = task.result.toString()
+                            newPush.setValue(newQuestion)
+                        }
+                    }
+                }
+
                 newPush.setValue(newQuestion)
 
                 // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가

@@ -16,7 +16,8 @@ import com.seoul42.relief_post_office.model.SafetyDTO
 import com.seoul42.relief_post_office.safety.EditWardSafetyActivity
 
 
-class WardSafetyAdapter(private val context: Context, private val items: ArrayList<Pair<String, SafetyDTO>>)
+class WardSafetyAdapter(private val context: Context, private val items: ArrayList<Pair<String, SafetyDTO>>,
+                        private val wardName: String)
     : RecyclerView.Adapter<WardSafetyAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -69,6 +70,7 @@ class WardSafetyAdapter(private val context: Context, private val items: ArrayLi
             itemView.setOnClickListener{
                 val tmpIntent = Intent(context, EditWardSafetyActivity::class.java)
                 tmpIntent.putExtra("safetyId", item.first)
+                tmpIntent.putExtra("wardName", wardName)
                 startActivity(context, tmpIntent, null)
             }
 

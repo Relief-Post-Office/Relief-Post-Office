@@ -3,6 +3,7 @@ package com.seoul42.relief_post_office.adapter
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaPlayer
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
@@ -60,6 +61,7 @@ class QuestionFragmentRVAdapter(private val context: Context, private val items:
                 val questionText = item.second.text
                 val secret = item.second.secret
                 val record = item.second.record
+                val src = item.second.src
 
                 val dialog = android.app.AlertDialog.Builder(context).create()
                 val eDialog : LayoutInflater = LayoutInflater.from(context)
@@ -78,6 +80,22 @@ class QuestionFragmentRVAdapter(private val context: Context, private val items:
                 // 질문 수정 다이얼로그 띄우기
                 dialog.show()
 
+                // 녹음 재생 버튼
+                var player: MediaPlayer? = null
+
+                dialog.findViewById<Button>(R.id.question_setting_playBtn2).setOnClickListener {
+
+                    player = MediaPlayer()
+                        .apply {
+                            setDataSource(src)
+                            prepare()
+                        }
+                    player?.setOnCompletionListener {
+                        player?.release()
+                        player = null
+                    }
+                    player?.start()
+                }
 
                 // 질문 수정 다이얼로그의 "저장" 버튼을 눌렀을 때 이벤트 처리
                 dialog.findViewById<Button>(R.id.save_question_btn).setOnClickListener {
