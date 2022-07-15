@@ -100,12 +100,6 @@ class AlarmActivity : AppCompatActivity() {
         // 알람 소리 중지
         mediaPlayer!!.release()
         mediaPlayer = null
-        // 안부 시작 안내 보이스
-        val startGuideVoice = MediaPlayer.create(this, R.raw.startingsafety)
-        startGuideVoice.start()
-        startGuideVoice.setOnCompletionListener {
-            startGuideVoice.release()
-        }
 
         binding.alarmButton.setOnClickListener{
             binding.alarmProgressbar.isVisible = true
@@ -114,7 +108,11 @@ class AlarmActivity : AppCompatActivity() {
             setList()
             close()
             // voice
-            Handler().postDelayed({
+            // 안부 시작 안내 보이스
+            val startGuideVoice = MediaPlayer.create(this, R.raw.startingsafety)
+            startGuideVoice.start()
+            startGuideVoice.setOnCompletionListener {
+                startGuideVoice.release()
                 val intent = Intent(this, AnswerActivity::class.java)
 
                 ActivityCompat.finishAffinity(this)
@@ -123,8 +121,7 @@ class AlarmActivity : AppCompatActivity() {
                 intent.putExtra("questionList", questionList)
                 intent.putExtra("answerList", answerList)
                 startActivity(intent)
-                close()
-            }, 15500)
+            }
         }
     }
 
