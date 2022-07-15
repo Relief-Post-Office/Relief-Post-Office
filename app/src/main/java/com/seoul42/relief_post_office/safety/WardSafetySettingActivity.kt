@@ -55,6 +55,7 @@ class WardSafetySettingActivity : AppCompatActivity() {
         // 추가 버튼 이벤트
         findViewById<ImageView>(R.id.ward_safety_setting_add_button).setOnClickListener {
             val tmpIntent = Intent(this, AddWardSafetyActivity::class.java)
+            tmpIntent.putExtra("wardName", wardName)
             tmpIntent.putExtra("wardId", wardId)
             startActivity(tmpIntent)
         }
@@ -129,7 +130,7 @@ class WardSafetySettingActivity : AppCompatActivity() {
         // 리사이클러 뷰 가져오기
         val rv = findViewById<RecyclerView>(R.id.ward_safety_setting_rv)
         // 리사이클러 뷰 아답터에 리스트 넘긴 후 아답터 가져오기
-        wardSafetyAdapter = WardSafetyAdapter(this, wardSafetyList)
+        wardSafetyAdapter = WardSafetyAdapter(this, wardSafetyList, wardName)
         // 리사이클러 뷰에 아답터 연결하기
         rv.adapter = wardSafetyAdapter
         rv.layoutManager = LinearLayoutManager(this)

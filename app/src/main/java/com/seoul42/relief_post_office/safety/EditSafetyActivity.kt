@@ -119,8 +119,8 @@ class EditSafetyActivity : AppCompatActivity() {
 				safetyRef.setValue(newSafety)
 
 				// 로그인한 보호자의 안부 목록에 방금 수정한 안부 아이디 최종 변경 시간 변경
-				val wardSafetyRef = database.getReference("ward").child(owner).child("safetyIdList")
-				wardSafetyRef.child(safetyId).setValue(date)
+				val guardianSafetyRef = database.getReference("guardian").child(owner).child("safetyList")
+				guardianSafetyRef.child(safetyId).setValue(date)
 
 				// 액티비티 종료
 				Toast.makeText(this, "안부 수정 완료", Toast.LENGTH_SHORT).show()
