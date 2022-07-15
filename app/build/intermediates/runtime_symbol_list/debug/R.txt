@@ -3398,11 +3398,15 @@ int id ward_safety_item_dayOfWeek 0x7f0902df
 int id ward_safety_item_name 0x7f0902e0
 int id ward_safety_item_time 0x7f0902e1
 int id ward_safety_item_vertical_guide1 0x7f0902e2
+int id ward_safety_no 0x7f0902f2
+int id ward_safety_question 0x7f0902f3
+int id ward_safety_repeat 0x7f0902f4
 int id ward_safety_setting_add_button 0x7f0902e3
 int id ward_safety_setting_exit_button 0x7f0902e4
 int id ward_safety_setting_rv 0x7f0902e5
 int id ward_safety_setting_text 0x7f0902e6
 int id ward_safety_setting_ward_photo 0x7f0902e7
+int id ward_safety_yes 0x7f0902f5
 int id west 0x7f0902e8
 int id wide 0x7f0902e9
 int id withText 0x7f0902ea
@@ -3634,6 +3638,7 @@ int layout text_view_without_line_height 0x7f0c0097
 int layout ward 0x7f0c0098
 int layout ward_profile 0x7f0c0099
 int layout ward_profile_dialog 0x7f0c009a
+int layout ward_safety 0x7f0c009c
 int layout ward_safety_item 0x7f0c009b
 int menu bottom_navigation_menu 0x7f0d0000
 int menu example_menu 0x7f0d0001

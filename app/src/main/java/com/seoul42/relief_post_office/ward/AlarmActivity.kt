@@ -2,6 +2,7 @@ package com.seoul42.relief_post_office.ward
 
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
@@ -13,6 +14,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.seoul42.relief_post_office.PhoneActivity
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.databinding.ActivityAlarmBinding
 import com.seoul42.relief_post_office.model.SafetyDTO
@@ -57,6 +59,9 @@ class AlarmActivity : AppCompatActivity() {
         val recommendDTO = intent.getSerializableExtra("recommendDTO") as WardRecommendDTO
         val safetyDB = Firebase.database.reference.child("safety")
 
+        intent.putExtra("safetyId", recommendDTO.safetyId)
+        intent.putExtra("resultId", recommendDTO.resultId)
+
         mediaPlayer = MediaPlayer.create(this, R.raw.alarm)
         mediaPlayer!!.start()
         mediaPlayer!!.isLooping = true
@@ -83,6 +88,7 @@ class AlarmActivity : AppCompatActivity() {
     /* 버튼 text = 피보호자가 진행해야 할 "안부" 이름 */
     private fun setButton() {
         binding.alarmButton.setOnClickListener{
+            startActivity(Intent(this, QuestionActivity::class.java))
             close()
         }
     }

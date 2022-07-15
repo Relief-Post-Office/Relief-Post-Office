@@ -106,6 +106,9 @@
         <activity
             android:name="com.seoul42.relief_post_office.result.ResultDetailActivity"
             android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name="com.seoul42.relief_post_office.ward.QuestionActivity"
+            android:windowSoftInputMode="adjustNothing" />
 
         <service
             android:name="com.seoul42.relief_post_office.service.MyFirebaseMessagingService"

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#fffbf3"
+    tools:context=".ward.QuestionActivity">
+
+    <TextView
+        android:id="@+id/ward_safety_question"
+        android:layout_width="0sp"
+        android:layout_height="0sp"
+        android:text="질문이 좀 길게 된다면 어떻게 될까? 흠... 질문이 좀 길게 된다면 어떻게 될까? 흠... 질문이 좀 길게 된다면 어떻게 될까? 흠..."
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"/>
+
+    <Button
+        android:id="@+id/ward_safety_yes"
+        android:layout_width="0sp"
+        android:layout_height="0sp"
+        android:background="#0100ff"
+        android:text="O"
+        android:textSize="150sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline3"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline4"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline2" />
+
+    <Button
+        android:id="@+id/ward_safety_no"
+        android:layout_width="0sp"
+        android:layout_height="0sp"
+        android:background="#ff0000"
+        android:text="X"
+        android:textSize="150sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline3"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline4"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline4" />
+
+    <Button
+        android:id="@+id/ward_safety_repeat"
+        android:layout_width="0sp"
+        android:layout_height="0sp"
+        android:background="#BDBDBD"
+        android:text="다시 듣기"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline4" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.01" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.19" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.79" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.80" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.99" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.025" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.4875" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5125" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.975" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

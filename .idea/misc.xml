@@ -14,10 +14,11 @@
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.1715" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/drawable/ic_notification.xml" value="0.1715" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/drawable/layout_rounded_corner.xml" value="0.201" />
+        <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/drawable/question_item_border.xml" value="0.21" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/drawable/rect_round_ffd464_radius_8.xml" value="0.1715" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/drawable/recyclerview_border.xml" value="0.2145" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/drawable/selector_text_color.xml" value="0.1715" />
-        <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/activity_alarm.xml" value="0.2" />
+        <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/activity_alarm.xml" value="0.264" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/activity_edit_safety.xml" value="0.19067028985507245" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/activity_edit_text.xml" value="0.19067028985507245" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/activity_safety_make.xml" value="0.23802083333333332" />
@@ -38,6 +39,7 @@
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/splash.xml" value="0.23802083333333332" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/ward.xml" value="0.264" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/ward_profile.xml" value="0.264" />
+        <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/layout/ward_safety.xml" value="0.264" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.2" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
         <entry key="..\:/Users/cmj09/AndroidStudioProjects/relief_post_office/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
