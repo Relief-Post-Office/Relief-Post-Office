@@ -84,8 +84,8 @@ class Ward(user : UserDTO) {
                 }
             }
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                val key = snapshot.key.toString()
-                REQUEST_LIST.remove(key)
+                val requestedUserId = snapshot.value.toString()
+                REQUEST_LIST.remove(requestedUserId)
             }
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
