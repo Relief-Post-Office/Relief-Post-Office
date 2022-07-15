@@ -17,7 +17,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.seoul42.relief_post_office.ResultAdapter
+import com.seoul42.relief_post_office.adapter.ResultAdapter
 import com.seoul42.relief_post_office.databinding.ActivityResultBinding
 import com.seoul42.relief_post_office.model.ResultDTO
 import java.text.SimpleDateFormat

@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <permission
         android:name="com.rightline.backgroundrepeatapp.permission.ACTION_REPEAT"
@@ -78,7 +79,7 @@
             android:name=".ward.WardActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity
-            android:name=".alarm.AlarmActivity"
+            android:name=".ward.AlarmActivity"
             android:theme="@style/TransparentStatusTheme"
             android:windowSoftInputMode="adjustNothing" />
         <activity
@@ -110,6 +111,26 @@
                 <action android:name="com.rightline.backgroundrepeatapp.REPEAT_STOP" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".alarm.GuardianReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.rightline.backgroundrepeatapp.REPEAT_START" />
+                <action android:name="com.rightline.backgroundrepeatapp.REPEAT_STOP" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".alarm.NetworkReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.rightline.backgroundrepeatapp.REPEAT_START" />
+                <action android:name="com.rightline.backgroundrepeatapp.REPEAT_STOP" />
+            </intent-filter>
+        </receiver>
+
         <receiver
             android:name=".alarm.BootCompleteReceiver"
             android:enabled="true"

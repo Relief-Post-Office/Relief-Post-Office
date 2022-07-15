@@ -1,4 +1,4 @@
-package com.seoul42.relief_post_office
+package com.seoul42.relief_post_office.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.databinding.ItemResultBinding
 import com.seoul42.relief_post_office.model.ResultDTO
 import com.seoul42.relief_post_office.result.ResultDetailActivity

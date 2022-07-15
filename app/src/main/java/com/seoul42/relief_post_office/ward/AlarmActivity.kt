@@ -1,47 +1,35 @@
-package com.seoul42.relief_post_office.alarm
+package com.seoul42.relief_post_office.ward
 
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
 import android.media.MediaPlayer
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.system.Os.close
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
-import com.seoul42.relief_post_office.GuardianBackgroundActivity
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
-import com.seoul42.relief_post_office.ward.WardActivity
-import kotlinx.android.synthetic.main.activity_alarm.view.*
+import com.seoul42.relief_post_office.databinding.ActivityAlarmBinding
+import com.seoul42.relief_post_office.model.SafetyDTO
+import com.seoul42.relief_post_office.model.WardRecommendDTO
 import java.text.SimpleDateFormat
 import java.util.*
 
 class AlarmActivity : AppCompatActivity() {
 
-    private val timeText : TextView by lazy {
-        findViewById<TextView>(R.id.alarm_time)
-    }
-    private val dayText : TextView by lazy {
-        findViewById<TextView>(R.id.alarm_day)
-    }
-    private val alarmText : TextView by lazy {
-        findViewById<TextView>(R.id.alarm_text)
-    }
-    private val alarmButton : ImageButton by lazy {
-        findViewById<ImageButton>(R.id.alarm_button)
+    private val binding: ActivityAlarmBinding by lazy {
+        ActivityAlarmBinding.inflate(layoutInflater)
     }
     private var mediaPlayer: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_alarm)
+        setContentView(binding.root)
 
         setAlarm()
         setButton()
@@ -66,14 +54,23 @@ class AlarmActivity : AppCompatActivity() {
         val curDay = date.substring(0, 11)
         val curTime = date.substring(12, 17)
         val finishTime : Long = 300000
+        val recommendDTO = intent.getSerializableExtra("recommendDTO") as WardRecommendDTO
+        val safetyDB = Firebase.database.reference.child("safety")
 
         mediaPlayer = MediaPlayer.create(this, R.raw.alarm)
         mediaPlayer!!.start()
         mediaPlayer!!.isLooping = true
 
-        dayText.text = curDay
-        timeText.text = curTime
-        alarmText.text = intent.getStringExtra("safetyName")
+        binding.alarmDay.text = curDay
+        binding.alarmTime.text = curTime
+
+        safetyDB.child(recommendDTO.safetyId).get().addOnSuccessListener {
+            if (it.getValue(SafetyDTO::class.java) != null) {
+                val safetyDTO = it.getValue(SafetyDTO::class.java) as SafetyDTO
+
+                binding.alarmText.text = safetyDTO.name
+            }
+        }
 
         /* 5분 뒤에 알람 종료 */
         Handler().postDelayed({
@@ -85,7 +82,7 @@ class AlarmActivity : AppCompatActivity() {
 
     /* 버튼 text = 피보호자가 진행해야 할 "안부" 이름 */
     private fun setButton() {
-        alarmButton.setOnClickListener{
+        binding.alarmButton.setOnClickListener{
             close()
         }
     }
