@@ -17,7 +17,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:layout_margin="15dp"
-        app:srcCompat="@drawable/playbtn" />
+        app:srcCompat="@drawable/playbtn2" />
 
     <TextView
         android:id="@+id/safety_question_item_text"

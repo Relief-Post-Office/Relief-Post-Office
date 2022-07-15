@@ -80,13 +80,23 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
 
             // 녹음기능
             val recordActivity = RecordActivity(mView)
-
             recordActivity.initViews()
             recordActivity.bindViews()
             recordActivity.initVariables()
 
+            // 다이얼로그 종료 시 이벤트
+            dialog.setOnDismissListener {
+                recordActivity.stopRecording()
+                recordActivity.stopPlaying()
+            }
+
             // 질문 추가 다이얼로그의 "저장"버튼을 눌렀을 때 이벤트 처리
             dialog.findViewById<Button>(R.id.add_question_btn).setOnClickListener {
+
+                // 녹음 중이라면 중단 후 저장
+                recordActivity.stopRecording()
+                // 재생 중이라면 재생 중단
+                recordActivity.stopPlaying()
 
                 // 생성 날짜, 텍스트, 비밀 옵션, 녹음 옵션, 녹음 파일 주소
                 val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
@@ -98,35 +108,36 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 // question 컬렉션에 추가할 QuestoinDTO 생성
                 val newQuestion = QuestionDTO(secret, record, owner, date, questionText, src, mutableMapOf())
 
-                // question 컬렉션에 작성한 내용 추가
-                val questionRef = database.getReference("question")
-                val newPush = questionRef.push()
-                val key = newPush.key.toString()
-
                 // 녹음 파일 생성 및 스토리지 저장
                 var recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
-                val recordRef =
-                    storage.reference.child("questionRecord/${owner}/${owner + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
-                var uploadRecord = recordRef.putFile(recordFile)
+                val recordRef = storage.reference
+                        .child("questionRecord/${owner}/${owner + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
 
-                uploadRecord.addOnSuccessListener {
+                // 녹음 업로드에 성공한 경우(녹음이 있는 경우)
+                recordRef.putFile(recordFile).addOnSuccessListener {
                     recordRef.downloadUrl.addOnCompleteListener { task ->
                         if (task.isSuccessful) {
+                            // question 컬렉션에 작성한 내용 추가
+                            val questionRef = database.getReference("question")
+                            val newPush = questionRef.push()
+                            val key = newPush.key.toString()
+
                             newQuestion.src = task.result.toString()
                             newPush.setValue(newQuestion)
+
+                            // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
+                            val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
+                            userQuestionRef.child(key).setValue(date)
+
+                            // 다이얼로그 종료
+                            Toast.makeText(context, "질문 추가 완료", Toast.LENGTH_SHORT).show()
+                            dialog.dismiss()
                         }
                     }
+                    // 녹음 업로드에 실패한 경우(녹음이 없는 경우 + @) 질문 추가 불가능
+                }.addOnFailureListener{
+                    Toast.makeText(context, "녹음 파일을 생성해 주세요", Toast.LENGTH_SHORT).show()
                 }
-
-                newPush.setValue(newQuestion)
-
-                // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
-                val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
-                userQuestionRef.child(key).setValue(date)
-
-                // 다이얼로그 종료
-                Toast.makeText(context, "질문 추가 완료", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
             }
         }
     }
@@ -169,6 +180,9 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                             val tmpList = it.child("connectedSafetyList").getValue() as MutableMap<String, String?>?
                             if (tmpList != null)
                                 q.second.connectedSafetyList = tmpList
+                            else
+                                q.second.connectedSafetyList = mutableMapOf()
+                            q.second.src = it.child("src").getValue().toString()
 
                             // 가장 최근에 수정된 것이 리스트 상단으로 가게 하기
                             // 내림차순으로 정렬

@@ -23,12 +23,12 @@
         android:layout_weight="1"/>
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/question_rv_item_playBtn"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="4"
-        android:layout_margin="15dp"
+        android:layout_margin="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:srcCompat="@drawable/playbtn" />
+        app:srcCompat="@drawable/playbtn2" />
 
 </LinearLayout>

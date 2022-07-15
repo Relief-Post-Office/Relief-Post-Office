@@ -98,7 +98,7 @@ class EditRecordActivity(var src: String?, view: View) {
         return recordingFilePath
     }
 
-    private fun startRecoding() {
+    fun startRecoding() {
 
         // 녹음 시작 시 초기화
         recorder = MediaRecorder()
@@ -115,7 +115,7 @@ class EditRecordActivity(var src: String?, view: View) {
         state = RecordState.ON_RECORDING
     }
 
-    private fun stopRecording() {
+    fun stopRecording() {
         recorder?.run {
             stop()
             release()
@@ -126,7 +126,7 @@ class EditRecordActivity(var src: String?, view: View) {
         state = RecordState.AFTER_RECORDING
     }
 
-    private fun startPlaying() {
+    fun startPlaying() {
         // MediaPlayer
         player = MediaPlayer()
             .apply {
@@ -146,7 +146,7 @@ class EditRecordActivity(var src: String?, view: View) {
         state = RecordState.ON_PLAYING
     }
 
-    private fun stopPlaying() {
+    fun stopPlaying() {
         player?.release()
         player = null
         recordTimeTextView.stopCountUp()

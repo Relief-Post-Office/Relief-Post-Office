@@ -103,7 +103,7 @@ class RecordActivity(view: View) {
 
 
     // 녹음 메써드
-    private fun startRecoding() {
+    fun startRecoding() {
 
         // 녹음 시작 시 초기화
         recorder = MediaRecorder()
@@ -121,7 +121,7 @@ class RecordActivity(view: View) {
     }
 
     // '녹음 중'일때 버튼 누를경우, 녹음 중단 및 메모리해제
-    private fun stopRecording() {
+    fun stopRecording() {
         recorder?.run {
             stop()
             release()
@@ -133,7 +133,7 @@ class RecordActivity(view: View) {
     }
 
     // 캐시에 저장된 녹음파일 실행
-    private fun startPlaying() {
+    fun startPlaying() {
         // MediaPlayer
         player = MediaPlayer()
             .apply {
@@ -152,7 +152,7 @@ class RecordActivity(view: View) {
         state = RecordState.ON_PLAYING
     }
 
-    private fun stopPlaying() {
+    fun stopPlaying() {
         player?.release()
         player = null
         recordTimeTextView.stopCountUp()
