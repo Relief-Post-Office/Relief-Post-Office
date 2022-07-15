@@ -75,7 +75,7 @@ class GuardianReceiver () : BroadcastReceiver() {
             Log.d("확인", "보호자측 네트워크 연결 실패")
             setNetworkAlarm(context)
         } else {
-            if (Firebase.auth.currentUser != null && Alarm.isIgnoringBatteryOptimizations(context)) {
+            if (Firebase.auth.currentUser != null) {
                 uid = Firebase.auth.uid.toString()
                 Log.d("확인", "보호자측 네트워크 연결 성공")
                 when (intent.action) {

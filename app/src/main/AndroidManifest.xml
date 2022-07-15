@@ -95,6 +95,13 @@
         <activity
             android:name=".result.ResultDetailActivity"
             android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".ward.AnswerActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".ward.EndingActivity"
+            android:windowSoftInputMode="adjustNothing" />
+
         <service
             android:name=".service.MyFirebaseMessagingService"
             android:exported="false">

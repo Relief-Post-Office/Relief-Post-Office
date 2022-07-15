@@ -2,9 +2,7 @@ package com.seoul42.relief_post_office.ward
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -30,7 +28,6 @@ import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.service.CheckLoginService
-import com.seoul42.relief_post_office.util.Alarm.isIgnoringBatteryOptimizations
 import com.seoul42.relief_post_office.util.Ward
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 
@@ -81,17 +78,10 @@ class WardActivity : AppCompatActivity() {
      * 단, 배터리 최적화 무시를 안할 경우 피보호자 측은 강제 알람을 띄울 수 없음
      */
     private fun setAlarm() {
-        if (!isIgnoringBatteryOptimizations(this)) {
-            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+        val start = Intent(WardReceiver.REPEAT_START)
 
-            intent.data = Uri.parse("package:$packageName")
-            startActivity(intent)
-        } else {
-            val start = Intent(WardReceiver.REPEAT_START)
-
-            start.setClass(this, WardReceiver::class.java)
-            sendBroadcast(start, WardReceiver.PERMISSION_REPEAT)
-        }
+        start.setClass(this, WardReceiver::class.java)
+        sendBroadcast(start, WardReceiver.PERMISSION_REPEAT)
     }
 
     private fun setLogout() {
