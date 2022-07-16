@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fffbf3"
+    tools:context=".guardian.MainFragment">
+
+    <TextView
+        android:id="@+id/text_result_safety_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="아주아주긴  안부이름"
+        android:textSize="34sp"
+        app:civ_border_color="#FF000000"
+        app:civ_border_width="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/horizontal_guideline2"
+        app:layout_constraintEnd_toStartOf="@+id/vertical_guideline6"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="@+id/vertical_guideline1"
+        app:layout_constraintTop_toTopOf="@+id/horizontal_guideline1" />
+
+    <TextView
+        android:id="@+id/result_question_detail_date"
+        android:layout_width="120dp"
+        android:layout_height="30dp"
+        android:background="@drawable/result_background"
+        android:fontFamily="@font/bmjua"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="Date"
+        app:layout_constraintBottom_toTopOf="@+id/horizontal_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/vertical_guideline6"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/vertical_guideline1"
+        app:layout_constraintTop_toTopOf="@+id/horizontal_guideline1"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/recyclerview_border"
+        app:layout_constraintBottom_toTopOf="@+id/horizontal_guideline6"
+        app:layout_constraintEnd_toStartOf="@+id/vertical_guideline6"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/vertical_guideline1"
+        app:layout_constraintTop_toTopOf="@+id/horizontal_guideline3"
+        app:layout_constraintVertical_bias="0.0">
+
+        <TextView
+            android:id="@+id/result_question_text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="질문 내용"
+            android:textColor="#838383"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/vertical_guideline14"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/vertical_guideline15"
+            app:layout_constraintTop_toTopOf="@+id/horizontal_guideline22"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/result_question_record_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="질문 녹음"
+            android:textColor="#838383"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toStartOf="@+id/vertical_guideline14"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/vertical_guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/result_question_text" />
+
+        <TextView
+            android:id="@+id/result_answer_record_btn_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="답변 녹음"
+            android:textColor="#838383"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toStartOf="@+id/vertical_guideline14"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/vertical_guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/result_answer_img" />
+
+        <TextView
+            android:id="@+id/result_answer_img_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="질문 답변"
+            android:textColor="#838383"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toStartOf="@+id/vertical_guideline14"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/vertical_guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/result_question_record_layout" />
+
+        <TextView
+            android:id="@+id/result_question_option_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="질문 옵션"
+            android:textColor="#838383"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toStartOf="@+id/vertical_guideline14"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/vertical_guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/result_answer_record_layout" />
+
+        <TextView
+            android:id="@+id/result_question_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/edittext_rounded_corner_rectangle"
+            android:padding="10dp"
+            android:text="어쩌구 저쩌구 왜야하면 제가 굳이 레이아웃을 안 사용하고 싶어서요"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/vertical_guideline14"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/vertical_guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/result_question_text_title" />
+
+        <ImageView
+            android:id="@+id/result_answer_img"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="3dp"
+            android:layout_weight="0"
+            android:src="@drawable/answer_negative"
+            app:layout_constraintEnd_toStartOf="@+id/vertical_guideline14"
+            app:layout_constraintStart_toStartOf="@+id/vertical_guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/result_answer_img_title" />
+
+        <LinearLayout
+            android:id="@+id/result_question_option_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/edittext_rounded_corner_rectangle"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/vertical_guideline14"
+            app:layout_constraintStart_toStartOf="@+id/vertical_guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/result_question_option_title">
+
+            <CheckBox
+                android:id="@+id/result_record_option"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:enabled="false"
+                android:text="답변 녹음 가능"
+                android:textSize="20sp" />
+
+            <CheckBox
+                android:id="@+id/result_secret_option"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:enabled="false"
+                android:text="비밀로 물어보기"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/result_question_record_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            app:layout_constraintEnd_toStartOf="@+id/vertical_guideline14"
+            app:layout_constraintStart_toStartOf="@+id/vertical_guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/result_question_record_title">
+
+            <Button
+                android:id="@+id/result_question_record_btn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/playbtn2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/result_answer_record_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            app:layout_constraintEnd_toStartOf="@+id/vertical_guideline14"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/vertical_guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/result_answer_record_btn_title">
+
+            <Button
+                android:id="@+id/result_answer_record_btn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/playbtn2" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontal_guideline22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.02" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontal_guideline24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.98" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/vertical_guideline14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.97" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/vertical_guideline15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.03" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="610dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintGuide_percent="0.14" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="610dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.18" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.97" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.025" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.975" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.03" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

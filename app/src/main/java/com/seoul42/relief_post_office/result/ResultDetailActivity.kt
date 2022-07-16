@@ -33,7 +33,7 @@ class ResultDetailActivity : AppCompatActivity() {
         setSafetyName(result.safetyName)
         setWardName(wardId)
         setDate(result.date)
-        setAdapter()
+        setAdapter(result.safetyName, result.date)
         setQuestionAnswerList(resultId)
     }
 
@@ -57,8 +57,8 @@ class ResultDetailActivity : AppCompatActivity() {
 
     }
 
-    private fun setAdapter() {
-        adapter = ResultDetailAdapter(this, answerList)
+    private fun setAdapter(safetyName: String, answerDate: String) {
+        adapter = ResultDetailAdapter(this, answerList, safetyName, answerDate)
         with(binding) {
             resultDetailRecyclerView.adapter = adapter
             resultDetailRecyclerView.layoutManager = LinearLayoutManager(baseContext)
