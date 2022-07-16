@@ -81,7 +81,13 @@ class AnswerActivity : AppCompatActivity() {
 
     private fun setQuestion() {
         binding.wardSafetyQuestion.text = questionList[currentIndex].second.text
-        questionPlayer.setDataSource(questionList[currentIndex].second.src)
+        questionPlayer = MediaPlayer().apply {
+            setDataSource(questionList[currentIndex].second.src)
+        }
+        questionPlayer.setOnCompletionListener {
+            questionPlayer.stop()
+            questionPlayer.prepare()
+        }
         questionPlayer.prepare()
         questionPlayer.start()
         binding.wardSafetyRepeat.setOnClickListener {
@@ -106,6 +112,7 @@ class AnswerActivity : AppCompatActivity() {
     private fun nextQuestion() {
         if (currentIndex < listSize - 1) {
             currentIndex += 1
+            questionPlayer.release()
             setQuestion()
         }
         else {
