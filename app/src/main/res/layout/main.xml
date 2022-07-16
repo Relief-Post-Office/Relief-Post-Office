@@ -32,14 +32,14 @@
         app:layout_constraintStart_toStartOf="@id/vertical_guideline2"
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline3" />
 
-    <Button
+    <info.hoang8f.widget.FButton
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:text="핸드폰 인증"
-        android:textColor="@color/white"
-        android:textSize="15sp"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        android:fontFamily="@font/bmjua"
         android:id="@+id/main_button"
-        android:background="@drawable/button_shadow"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
@@ -78,14 +78,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.65" />
+        app:layout_constraintGuide_percent="0.675" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.8" />
+        app:layout_constraintGuide_percent="0.775" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline1"

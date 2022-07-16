@@ -20,16 +20,17 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.ResponseAdapter
 import com.seoul42.relief_post_office.adapter.WardAdapter
 import com.seoul42.relief_post_office.alarm.WardReceiver
-import com.seoul42.relief_post_office.databinding.WardBinding
 import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.service.CheckLoginService
 import com.seoul42.relief_post_office.util.Ward
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
+import com.seoul42.relief_post_office.databinding.WardBinding
 
 class WardActivity : AppCompatActivity() {
 
@@ -85,6 +86,8 @@ class WardActivity : AppCompatActivity() {
     }
 
     private fun setLogout() {
+        binding.wardLogout.buttonColor = resources.getColor(R.color.gray)
+        binding.wardLogout.cornerRadius = 30
         binding.wardLogout.setOnClickListener {
             Ward.setLogout()
             auth.signOut()
@@ -157,6 +160,8 @@ class WardActivity : AppCompatActivity() {
     private fun setAddButton() {
         val requestDB = Firebase.database.reference.child("ward").child(myUserId).child("requestList")
 
+        binding.wardAddGuardian.buttonColor = resources.getColor(R.color.gray)
+        binding.wardAddGuardian.cornerRadius = 30
         binding.wardAddGuardian.setOnClickListener {
             if (REQUEST_LIST.isEmpty()) {
                 Toast.makeText(this, "추가하실 보호자 정보가 없습니다.", Toast.LENGTH_SHORT).show()

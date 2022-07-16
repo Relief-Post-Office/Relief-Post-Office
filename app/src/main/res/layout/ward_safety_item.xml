@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:text="안부 이름"
             android:textSize="35sp"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/ward_safety_item_vertical_guide1"
@@ -38,7 +39,7 @@
             app:layout_constraintEnd_toStartOf="@id/ward_safety_item_vertical_guide1"
             android:layout_marginTop="10sp"
             app:layout_constraintEnd_toEndOf="parent
-"
+"           android:textColor="@color/black"
             android:text="월 화 수 목 금 토 일"
             android:textSize="20sp" />
 
@@ -58,6 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:textSize="50sp"
+                android:textColor="@color/black"
                 android:text="09 : 45" />
         </LinearLayout>
 

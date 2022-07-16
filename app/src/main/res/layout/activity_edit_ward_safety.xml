@@ -7,7 +7,7 @@
     android:background="#fffbf3">
 
     <ImageView
-        android:id="@+id/edit_safety_backBtn"
+        android:id="@+id/edit_ward_safety_backBtn"
         android:layout_width="60dp"
         android:layout_height="50dp"
         android:layout_margin="10sp"

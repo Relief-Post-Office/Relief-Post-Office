@@ -123,6 +123,7 @@ class PhoneActivity : AppCompatActivity() {
                 val intent = Intent(this, JoinActivity::class.java)
                 intent.putExtra("tel", phoneNumber)
                 startActivity(intent)
+                binding.phoneProgressBar.visibility = View.INVISIBLE
             }
         }
     }

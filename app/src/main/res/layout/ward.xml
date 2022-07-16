@@ -29,11 +29,12 @@
         app:layout_constraintStart_toStartOf="@id/vertical_guideline2"
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline5"/>
 
-    <Button
+    <info.hoang8f.widget.FButton
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:text="로그아웃"
         android:id="@+id/ward_logout"
+        android:fontFamily="@font/bmjua"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline1.25"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline1.5"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline5.5"
@@ -57,14 +58,13 @@
 
     </LinearLayout>
 
-    <Button
+    <info.hoang8f.widget.FButton
         android:id="@+id/ward_add_guardian"
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:layout_gravity="center"
         android:text="0"
-        android:background="@drawable/button_rounded_corner"
-        android:backgroundTint="#3f91ff"
+        android:fontFamily="@font/bmjua"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
@@ -83,14 +83,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.04" />
+        app:layout_constraintGuide_percent="0.06" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline1.5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.12" />
+        app:layout_constraintGuide_percent="0.14" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline2"
@@ -146,14 +146,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.4" />
+        app:layout_constraintGuide_percent="0.38" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.6" />
+        app:layout_constraintGuide_percent="0.62" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline5"

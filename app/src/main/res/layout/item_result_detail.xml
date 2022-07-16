@@ -36,6 +36,7 @@
         android:gravity="center_vertical"
         android:maxLines="1"
         android:text="질문입니다. 질문"
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"

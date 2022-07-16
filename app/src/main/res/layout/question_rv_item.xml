@@ -9,7 +9,6 @@
     android:orientation="horizontal">
 
     <LinearLayout
-        android:id="@+id/item_user_layout"
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:orientation="horizontal"
@@ -26,13 +25,14 @@
         android:gravity="center_vertical"
         android:text="질문을 넣어주세요"
         android:textSize="25sp"
+        android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline6"/>
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/question_rv_item_playBtn"
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:layout_margin="12dp"

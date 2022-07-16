@@ -1,8 +1,10 @@
 package com.seoul42.relief_post_office.adapter
 
+import android.media.MediaPlayer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -49,7 +51,42 @@ class AddWardSafetyAdapter(private val items: ArrayList<Pair<String, QuestionDTO
                 // text 세팅
                 rvText.text = item.second.text
 
-                // 녹음 소스 매핑 필요
+                // 재생 버튼 클릭 이벤트
+                var playing = false
+                var player: MediaPlayer? = null
+                val playerBtn = itemView.findViewById<ImageView>(R.id.question_rv_item_playBtn)
+                playerBtn.setOnClickListener{
+                    // 재생 중이면 재생 버튼으로 이미지 변경
+                    if (playing){
+                        player?.release()
+                        player = null
+
+                        playerBtn.setImageResource(R.drawable.playbtn)
+                        playing = false
+                    }
+                    // 재생 중이 아니면 중지 버튼으로 이미지 변경
+                    else{
+                        // 녹음 소스 불러와서 미디어 플레이어 세팅
+                        player = MediaPlayer().apply {
+                            setDataSource(item.second.src)
+                            prepare()
+                        }
+
+                        player?.setOnCompletionListener {
+                            player?.release()
+                            player = null
+
+                            playerBtn.setImageResource(R.drawable.playbtn)
+                            playing = false
+                        }
+
+                        // 재생
+                        player?.start()
+
+                        playerBtn.setImageResource(R.drawable.stopbtn)
+                        playing = true
+                    }
+                }
             }
         }
     }

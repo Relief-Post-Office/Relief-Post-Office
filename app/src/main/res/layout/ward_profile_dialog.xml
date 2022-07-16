@@ -4,9 +4,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/dialog_background">
+    android:background="@drawable/dialog_background"
+    android:layout_gravity="center"
+    android:padding="20dp">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -17,6 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="프로필보기"
+            android:background="@drawable/button_rounded_gray"
             android:textSize="15sp"
             android:layout_gravity="right|top"
             android:layout_margin="10dp"/>
@@ -50,6 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="홍길동"
+            android:textColor="@color/black"
             android:textSize="20sp"
             android:layout_marginTop="4dp"/>
 
@@ -59,14 +63,13 @@
         android:layout_width="match_parent"
         android:layout_height="350dp"
         android:background="@drawable/recyclerview_border"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="5dp">
+        android:layout_margin="10dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="금일 안부별 응답현황"
+            android:textColor="@color/black"
             android:textSize="30sp"
             android:gravity="center"
             tools:ignore="HardcodedText" />
@@ -84,9 +87,9 @@
             android:layout_height="match_parent"
             android:text="안부 설정"
             android:textSize="25sp"
-            android:textColor="#4d443d"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="10dp"
+            android:background="@drawable/button_rounded_gray"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="15dp"
             android:layout_weight="1"
             android:layout_marginBottom="5dp"/>
 
@@ -95,10 +98,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="결과 보기"
-            android:textColor="#4d443d"
             android:textSize="25sp"
+            android:background="@drawable/button_rounded_gray"
             android:layout_marginStart="15dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="20dp"
             android:layout_weight="1"
             android:layout_marginBottom="5dp"/>
 

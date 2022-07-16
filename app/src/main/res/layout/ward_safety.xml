@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="#fffbf3"
-    tools:context=".ward.QuestionActivity">
+    tools:context=".ward.AnswerActivity">
 
     <TextView
         android:id="@+id/ward_safety_question"
@@ -27,7 +27,7 @@
         android:id="@+id/ward_safety_yes"
         android:layout_width="0sp"
         android:layout_height="0sp"
-        android:background="#0100ff"
+        android:background="#1e90ff"
         android:text="O"
         android:textSize="150sp"
         android:textStyle="bold"
@@ -42,7 +42,7 @@
         android:id="@+id/ward_safety_no"
         android:layout_width="0sp"
         android:layout_height="0sp"
-        android:background="#ff0000"
+        android:background="#f05056"
         android:text="X"
         android:textSize="150sp"
         android:textStyle="bold"
@@ -53,15 +53,14 @@
         app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline4" />
 
-    <Button
+    <info.hoang8f.widget.FButton
         android:id="@+id/ward_safety_repeat"
         android:layout_width="0sp"
         android:layout_height="0sp"
-        android:background="#BDBDBD"
         android:text="다시 듣기"
         android:textSize="50sp"
-        android:textStyle="bold"
         android:textColor="@color/black"
+        android:fontFamily="@font/bmjua"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline1"

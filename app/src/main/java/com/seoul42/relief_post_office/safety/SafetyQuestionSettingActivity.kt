@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,7 +14,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -23,19 +26,29 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.QuestionFragmentRVAdapter
 import com.seoul42.relief_post_office.adapter.SafetyQuestionSettingAdapter
 import com.seoul42.relief_post_office.adapter.WardSafetyAdapter
 import com.seoul42.relief_post_office.model.QuestionDTO
+import com.seoul42.relief_post_office.record.RecordActivity
+import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 import kotlinx.android.synthetic.main.activity_safety_question_setting.*
+import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class SafetyQuestionSettingActivity : AppCompatActivity() {
 
+    private val storage: FirebaseStorage by lazy {
+        FirebaseStorage.getInstance()
+    }
+
+    private val firebaseViewModel : FirebaseViewModel by viewModels()
     private val database = Firebase.database
     private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
+    private var deletedQuestionList = arrayListOf<String>()
     private lateinit var checkedQuestions : ArrayList<String>
     private lateinit var safetyQuestionSettingAdapter: SafetyQuestionSettingAdapter
     private lateinit var auth : FirebaseAuth
@@ -74,33 +87,60 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
             dialog.create()
             dialog.show()
 
+            // 녹음기능
+            val recordActivity = RecordActivity(mView)
+            recordActivity.initViews()
+            recordActivity.bindViews()
+            recordActivity.initVariables()
+
             // 질문 추가 다이얼로그의 "저장"버튼을 눌렀을 때 이벤트 처리
             dialog.findViewById<Button>(R.id.add_question_btn).setOnClickListener {
+
+                // 녹음 중이라면 중단 후 저장
+                recordActivity.stopRecording()
+                // 재생 중이라면 재생 중단
+                recordActivity.stopPlaying()
 
                 // 생성 날짜, 텍스트, 비밀 옵션, 녹음 옵션, 녹음 파일 주소
                 val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 val questionText = dialog.findViewById<EditText>(R.id.question_text).text.toString()
                 val secret = dialog.findViewById<Switch>(R.id.secret_switch).isChecked
                 val record = dialog.findViewById<Switch>(R.id.record_switch).isChecked
-                val src = null
+                var src: String? = null
 
                 // question 컬렉션에 추가할 QuestoinDTO 생성
-                val newQuestion = QuestionDTO(secret, record, owner, date, questionText, src)
+                val newQuestion = QuestionDTO(secret, record, owner, date, questionText, src, mutableMapOf())
 
-                // question 컬렉션에 작성한 내용 추가
-                val questionRef = database.getReference("question")
-                val newPush = questionRef.push()
-                val key = newPush.key.toString()
-                newPush.setValue(newQuestion)
+                // 녹음 파일 생성 및 스토리지 저장
+                var recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
+                val recordRef = storage.reference
+                    .child("questionRecord/${owner}/${owner + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
 
-                // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
-                val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
-                userQuestionRef.child(key).setValue(date)
+                // 녹음 업로드에 성공한 경우(녹음이 있는 경우)
+                recordRef.putFile(recordFile).addOnSuccessListener {
+                    recordRef.downloadUrl.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // question 컬렉션에 작성한 내용 추가
+                            val questionRef = database.getReference("question")
+                            val newPush = questionRef.push()
+                            val key = newPush.key.toString()
 
-                // 다이얼로그 종료
-                Toast.makeText(this, "질문 추가 완료", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
+                            newQuestion.src = task.result.toString()
+                            newPush.setValue(newQuestion)
 
+                            // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
+                            val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
+                            userQuestionRef.child(key).setValue(date)
+
+                            // 다이얼로그 종료
+                            Toast.makeText(this, "질문 추가 완료", Toast.LENGTH_SHORT).show()
+                            dialog.dismiss()
+                        }
+                    }
+                    // 녹음 업로드에 실패한 경우(녹음이 없는 경우 + @) 질문 추가 불가능
+                }.addOnFailureListener{
+                    Toast.makeText(this, "녹음 파일을 생성해 주세요", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -108,6 +148,7 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
         findViewById<Button>(R.id.safety_question_setting_save_button).setOnClickListener {
             val returnIntent = Intent()
             returnIntent.putExtra("returnQuestionList", safetyQuestionSettingAdapter.checkedQuestions)
+            returnIntent.putExtra("deletedQuestionList", safetyQuestionSettingAdapter.deletedQuestions)
             setResult(Activity.RESULT_OK, returnIntent)
             finish()
         }
@@ -149,6 +190,7 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
                             q.second.record = it.child("record").getValue() as Boolean
                             q.second.secret = it.child("secret").getValue() as Boolean
                             q.second.date = it.child("date").getValue().toString()
+                            q.second.src = it.child("src").getValue().toString()
 
                             // 가장 최근에 수정된 것이 리스트 상단으로 가게 하기
                             // 내림차순으로 정렬(map -> list.sort -> map)
@@ -170,6 +212,7 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
                 for (q in questionList){
                     if (q.first == questionId){
                         questionList.remove(q)
+                        break
                     }
                 }
                 // 리스트가 수정되었다고 어댑터에게 알려주기
@@ -188,11 +231,18 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
     private fun setRecyclerView(){
         val rv = findViewById<RecyclerView>(R.id.safety_question_setting_rv)
         // 리사이클러 뷰 아답터에 리스트 넘긴 후 아답터 가져오기
-        safetyQuestionSettingAdapter = SafetyQuestionSettingAdapter(this, checkedQuestions ,questionList)
+        safetyQuestionSettingAdapter = SafetyQuestionSettingAdapter(
+            this, checkedQuestions, deletedQuestionList ,questionList, firebaseViewModel)
         // 리사이클러 뷰에 아답터 연결하기
         rv.adapter = safetyQuestionSettingAdapter
         rv.layoutManager = LinearLayoutManager(this)
         rv.setHasFixedSize(true)
+    }
+
+    override fun onBackPressed() {
+        // 뒤로가기 버튼 막기
+        Toast.makeText(this, "저장 버튼을 눌러주세요", Toast.LENGTH_SHORT).show()
+//        super.onBackPressed()
     }
 
 }

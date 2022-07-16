@@ -34,6 +34,7 @@ class EditWardSafetyActivity : AppCompatActivity() {
     private val QuestionRef = database.getReference("question")
     private var time : String? = null
     private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
+    private var deletedQuestionList = arrayListOf<String>()
     private val firebaseViewModel : FirebaseViewModel by viewModels()
     private lateinit var owner : String
     private lateinit var wardId : String
@@ -152,11 +153,25 @@ class EditWardSafetyActivity : AppCompatActivity() {
             if (canDelete) {
                 // 해당 안부 id를 통해 데이터베이스에서 삭제
                 database.getReference("safety").child(safetyId).setValue(null)
+
                 // 피보호자의 안부 목록에서 해당 안부 삭제
                 database.getReference("ward")
                     .child(wardId)
                     .child("safetyIdList")
                     .child(safetyId).setValue(null)
+
+                // 삭제한 안부에 포함되어있던 질문들의 connectedSafetyList에서 삭제한 안부 삭제
+                for (q in questionList){
+                    database.getReference("question")
+                        .child(q.first)
+                        .child("connectedSafetyList")
+                        .child(safetyId).setValue(null)
+
+                    // 해당하는 질문들 보호자 질문 목록에서 최종 수정일 변경하기
+                    val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                    database.getReference("guardian").child(Firebase.auth.currentUser!!.uid)
+                        .child("questionList").child(q.first).setValue(date)
+                }
 
                 /* 피보호자에게 안부 동기화 FCM 보내기 */
                 val wardRef = Firebase.database.reference.child("user").child(wardId)
@@ -211,7 +226,7 @@ class EditWardSafetyActivity : AppCompatActivity() {
             // 생성 날짜 세팅
             val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 
-            // 시간을 설정한 경우에만 추가 가능
+            // 시간과 질문을 설정한 경우에만 추가 가능
             if (time == null){
                 Toast.makeText(this, "시간을 설정해 주세요", Toast.LENGTH_SHORT).show()
             }
@@ -230,6 +245,30 @@ class EditWardSafetyActivity : AppCompatActivity() {
                 // safety 컬렉션에 작성한 내용 수정
                 val safetyRef = database.getReference("safety").child(safetyId)
                 safetyRef.setValue(newSafety)
+
+                // 기존에 설정된 질문들과 새롭게 설정된 질문들의 connectedSafetyList 동기화
+                // 최종 저장되는 질문들 connectedSafetyList 동기화
+                for (q in questionList){
+                    val qRef = database.getReference("question").child(q.first)
+                        .child("connectedSafetyList")
+                        .child(safetyId)
+                    qRef.setValue(date)
+
+                    // 해당하는 질문들 보호자 질문 목록에서 최종 수정일 변경하기
+                    database.getReference("guardian").child(Firebase.auth.currentUser!!.uid)
+                        .child("questionList").child(q.first).setValue(date)
+                }
+                // 기존에 설정되었다가 이번 수정에서 빠진 질문들 connectedSafetyList 동기화
+                for (q in deletedQuestionList){
+                    val qRef = database.getReference("question").child(q)
+                        .child("connectedSafetyList")
+                        .child(safetyId)
+                    qRef.setValue(null)
+
+                    // 해당하는 질문들 보호자 질문 목록에서 최종 수정일 변경하기
+                    database.getReference("guardian").child(Firebase.auth.currentUser!!.uid)
+                        .child("questionList").child(q).setValue(date)
+                }
 
                 // 선택한 피보호자의 안부 목록에 방금 수정한 안부 아이디 최종 변경 시간 변경
                 val wardSafetyRef = database.getReference("ward").child(wardId).child("safetyIdList")
@@ -283,6 +322,7 @@ class EditWardSafetyActivity : AppCompatActivity() {
                             editWardSafetyAdapter.notifyDataSetChanged()
                         }
                     }
+                    deletedQuestionList = data?.getStringArrayListExtra("deletedQuestionList")!!
                 }
             }
         }

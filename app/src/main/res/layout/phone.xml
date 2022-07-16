@@ -67,16 +67,17 @@
     <com.dx.dxloadingbutton.lib.LoadingButton
         android:id="@+id/phone_request_button"
         android:layout_gravity="center"
-        android:layout_width="80sp"
-        android:layout_height="50sp"
+        android:layout_width="0sp"
+        android:layout_height="0sp"
         app:lb_resetAfterFailed="true"
         app:lb_btnRippleColor="#000000"
         app:lb_btnDisabledColor="#cccccc"
         app:lb_disabledTextColor="#999999"
+        app:lb_textColor="#000000"
         app:lb_rippleEnable="true"
         app:lb_btnText="인증 요청"
-        custom:lb_btnColor="#3f91ff"
-        app:layout_constraintTop_toTopOf="@id/horizontal_guideline4"
+        custom:lb_btnColor="#999590"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline4.5"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline5"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline5"
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline7"
@@ -201,6 +202,13 @@
         app:layout_constraintGuide_percent="0.315" />
 
     <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline4.5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.31" />
+
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -212,28 +220,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.365" />
+        app:layout_constraintGuide_percent="0.395" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline6.5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.45" />
+        app:layout_constraintGuide_percent="0.48" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.43" />
+        app:layout_constraintGuide_percent="0.46" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.485" />
+        app:layout_constraintGuide_percent="0.515" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline1"
