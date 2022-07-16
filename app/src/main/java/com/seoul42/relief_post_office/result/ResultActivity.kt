@@ -142,6 +142,7 @@ class ResultActivity : AppCompatActivity() {
         val resultsRef = database.getReference("result")
 
         resultList.clear()
+        adapter.notifyDataSetChanged()
         resultListRef.get().addOnSuccessListener {
             if (it.value != null) {
                 val resultIdList = it.getValue<MutableMap<String, String>>() as MutableMap<String, String>

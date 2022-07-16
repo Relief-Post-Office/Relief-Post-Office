@@ -31,6 +31,7 @@ class GuardianBackgroundActivity : AppCompatActivity() {
         userDTO = intent.getSerializableExtra("userDTO") as UserDTO
         mainFragment = MainFragment(userDTO)
         safetyFragment = SafetyFragment(userDTO)
+        questionFragment = QuestionFragment()
 
         setContentView(binding.root)
         setFragment(TAG_MAIN, mainFragment)

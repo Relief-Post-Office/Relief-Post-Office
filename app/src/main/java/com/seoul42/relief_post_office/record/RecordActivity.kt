@@ -30,7 +30,7 @@ class RecordActivity(view: View) {
         view.findViewById(R.id.question_setting_time)
     }
 
-    private val recordDurationTextView: EditRecordDurationTime by lazy {
+    private val recordDurationTextView: RecordDurationTime by lazy {
         view.findViewById(R.id.question_duration_time)
     }
 
@@ -122,14 +122,16 @@ class RecordActivity(view: View) {
 
     // '녹음 중'일때 버튼 누를경우, 녹음 중단 및 메모리해제
     fun stopRecording() {
-        recorder?.run {
-            stop()
-            release()
+        if (state == RecordState.ON_RECORDING) {
+            recorder?.run {
+                stop()
+                release()
+            }
+            recorder = null
+            recordDurationTextView.setRecordDuration(recordingFilePath)
+            recordTimeTextView.stopCountUp()
+            state = RecordState.AFTER_RECORDING
         }
-        recorder = null
-        recordDurationTextView.setRecordDuration(recordingFilePath)
-        recordTimeTextView.stopCountUp()
-        state = RecordState.AFTER_RECORDING
     }
 
     // 캐시에 저장된 녹음파일 실행
@@ -153,11 +155,13 @@ class RecordActivity(view: View) {
     }
 
     fun stopPlaying() {
-        player?.release()
-        player = null
-        recordTimeTextView.stopCountUp()
+        if (state == RecordState.ON_PLAYING) {
+            player?.release()
+            player = null
+            recordTimeTextView.stopCountUp()
 
-        state = RecordState.AFTER_RECORDING
+            state = RecordState.AFTER_RECORDING
+        }
     }
 
     // 상수로 우리가 요청할 오디오 권한의 코드를 따로 정의

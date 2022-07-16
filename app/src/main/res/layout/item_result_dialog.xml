@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline2"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/img_result_Profile"
+        android:id="@+id/img_result_dot"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:src="@drawable/result_dot"
@@ -29,40 +29,32 @@
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline10" />
 
     <TextView
-        android:id="@+id/text_result_quetion"
+        android:id="@+id/result_safety_name_text"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:ellipsize="end"
         android:gravity="center_vertical"
-        android:maxLines="2"
-        android:maxLength="50"
-        android:text="질문입니다. 질문입니다. 질문입니다. 질문입니다. 질문입니다. 질문입니다. 질문입니다. 질문입니다. 질문입니다."
+        android:maxLines="1"
+        android:text="안부의 이름 입니다"
+        android:textSize="24sp"
         android:textColor="@color/black"
-        android:textSize="18sp"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
         app:layout_constraintEnd_toEndOf="@+id/vertical_guideline8" />
 
-    <Button
-        android:id="@+id/btn_result_quetion_play"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/result_play"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/horizontal_guideline21"
-        app:layout_constraintEnd_toStartOf="@+id/vertical_guideline13"
-        app:layout_constraintStart_toStartOf="@+id/vertical_guideline9"
-        app:layout_constraintTop_toTopOf="@+id/horizontal_guideline3" />
 
-    <ImageView
-        android:id="@+id/img_result_answer"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/horizontal_guideline21"
+    <TextView
+        android:id="@+id/result_dialog_isAnswer_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="미응답"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/vertical_guideline6"
-        app:layout_constraintStart_toStartOf="@+id/vertical_guideline11"
-        app:layout_constraintTop_toTopOf="@+id/horizontal_guideline3" />
+        app:layout_constraintStart_toStartOf="@+id/vertical_guideline9"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline1"
@@ -105,13 +97,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.07" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/vertical_guideline8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.75" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline9"
@@ -161,6 +146,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.3" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline21"

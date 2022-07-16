@@ -33,7 +33,7 @@ class ResultDetailActivity : AppCompatActivity() {
         setSafetyName(result.safetyName)
         setWardName(wardId)
         setDate(result.date)
-        setAdapter()
+        setAdapter(result.safetyName, result.date)
         setQuestionAnswerList(resultId)
     }
 
@@ -53,19 +53,18 @@ class ResultDetailActivity : AppCompatActivity() {
     }
 
     private fun setDate(date: String) {
-        binding.textResultDetailDate.text = date
+        binding.textResultDetailDate.text = date.replace("-", "/")
 
     }
 
-    private fun setAdapter() {
-        adapter = ResultDetailAdapter(this, answerList)
+    private fun setAdapter(safetyName: String, answerDate: String) {
+        adapter = ResultDetailAdapter(this, answerList, safetyName, answerDate)
         with(binding) {
             resultDetailRecyclerView.adapter = adapter
             resultDetailRecyclerView.layoutManager = LinearLayoutManager(baseContext)
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun setQuestionAnswerList(resultId: String) {
         val answerListRef = database.getReference("result").child(resultId).child("answerList")
 
@@ -80,8 +79,10 @@ class ResultDetailActivity : AppCompatActivity() {
         })
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun questionAnswerList(resultId: String) {
         answerList.clear()
+        adapter.notifyDataSetChanged()
         val answerListRef = database.getReference("result").child(resultId).child("answerIdList")
         val answerRef = database.getReference("answer")
         answerListRef.get().addOnSuccessListener {

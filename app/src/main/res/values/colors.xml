@@ -10,5 +10,6 @@
     <color name="safety_enable_color">#FFFBF3</color>
     <color name="safety_disable_color">#4DC7BD9A</color>
     <color name="red">#FFFF0000</color>
+    <color name="green">#FF00FF00</color>
     <color name="gray">#999590</color>
 </resources>

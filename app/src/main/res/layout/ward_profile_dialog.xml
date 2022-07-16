@@ -63,7 +63,8 @@
         android:layout_width="match_parent"
         android:layout_height="350dp"
         android:background="@drawable/recyclerview_border"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
@@ -73,6 +74,12 @@
             android:textSize="30sp"
             android:gravity="center"
             tools:ignore="HardcodedText" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/result_dialog_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp" />
 
     </LinearLayout>
 

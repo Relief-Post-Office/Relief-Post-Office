@@ -3,7 +3,6 @@ package com.seoul42.relief_post_office.record
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Build
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import androidx.annotation.RequiresApi
@@ -27,11 +26,11 @@ class EditRecordActivity(var src: String?, view: View) {
         LocalDateTime.now()
     }
 
-    private val recordTimeTextView: EditRecordCountTime by lazy {
+    private val recordTimeTextView: RecordCountTime by lazy {
         view.findViewById(R.id.question_setting_time2)
     }
 
-    private val recordDurationTextView: EditRecordDurationTime by lazy {
+    private val recordDurationTextView: RecordDurationTime by lazy {
         view.findViewById(R.id.question_duration_time2)
     }
 
@@ -116,14 +115,16 @@ class EditRecordActivity(var src: String?, view: View) {
     }
 
     fun stopRecording() {
-        recorder?.run {
-            stop()
-            release()
+        if (state == RecordState.ON_RECORDING) {
+            recorder?.run {
+                stop()
+                release()
+            }
+            recorder = null
+            recordDurationTextView.setRecordDuration(recordingFilePath)
+            recordTimeTextView.stopCountUp()
+            state = RecordState.AFTER_RECORDING
         }
-        recorder = null
-        recordDurationTextView.setRecordDuration(recordingFilePath)
-        recordTimeTextView.stopCountUp()
-        state = RecordState.AFTER_RECORDING
     }
 
     fun startPlaying() {
@@ -147,11 +148,12 @@ class EditRecordActivity(var src: String?, view: View) {
     }
 
     fun stopPlaying() {
-        player?.release()
-        player = null
-        recordTimeTextView.stopCountUp()
-
-        state = RecordState.AFTER_RECORDING
+        if (state == RecordState.ON_PLAYING) {
+            player?.release()
+            player = null
+            recordTimeTextView.stopCountUp()
+            state = RecordState.AFTER_RECORDING
+        }
     }
 
     // 상수로 우리가 요청할 오디오 권한의 코드를 따로 정의

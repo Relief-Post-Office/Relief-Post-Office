@@ -17,7 +17,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <permission
         android:name="com.rightline.backgroundrepeatapp.permission.ACTION_REPEAT"
@@ -96,6 +96,9 @@
             android:name=".result.ResultDetailActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity
+            android:name=".result.ResultQuestionDetailActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
             android:name=".ward.AnswerActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity
@@ -128,7 +131,6 @@
                 <action android:name="com.rightline.backgroundrepeatapp.REPEAT_STOP" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".alarm.NetworkReceiver"
             android:enabled="true"
@@ -138,7 +140,6 @@
                 <action android:name="com.rightline.backgroundrepeatapp.REPEAT_STOP" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".alarm.BootCompleteReceiver"
             android:enabled="true"
