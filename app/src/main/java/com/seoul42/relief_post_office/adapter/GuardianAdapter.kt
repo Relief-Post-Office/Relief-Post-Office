@@ -97,6 +97,7 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
                                             if (result != null) {
                                                 if (result.date == today) {
                                                     resultList.add(Pair(it.key as String, result))
+                                                    resultList.sortBy{ it.second.safetyTime }
                                                     adapter.notifyDataSetChanged()
                                                 }
                                             }

@@ -20,9 +20,9 @@ class ResultQuestionDetailActivity : AppCompatActivity() {
         setSafetyName(safetyName)
         setDate(answerDate)
         setQuestionText(answer.second.questionText)
-        setQuestionRecord(answer.second.questionRecord, answer.second.questionSrc)
+        setQuestionRecord(answer.second.questionSrc)
         setAnswerReply(answer.second.reply)
-        setAnswerRecord(answer.second.answerSrc)
+        setAnswerRecord(answer.second.questionRecord, answer.second.answerSrc)
         setQuestionOption(answer.second.questionRecord, answer.second.questionSecret)
     }
 
@@ -38,8 +38,8 @@ class ResultQuestionDetailActivity : AppCompatActivity() {
         binding.resultQuestionText.text = questionText
     }
 
-    private fun setQuestionRecord(onRecord: Boolean, questionSrc: String) {
-        if (onRecord) {
+    private fun setQuestionRecord(questionSrc: String) {
+        if (questionSrc != "") {
             binding.resultQuestionRecordTitle.visibility = View.VISIBLE
             binding.resultQuestionRecordLayout.visibility = View.VISIBLE
             binding.resultQuestionRecordBtn.setOnClickListener {
@@ -62,8 +62,19 @@ class ResultQuestionDetailActivity : AppCompatActivity() {
             binding.resultAnswerImg.visibility = View.GONE
     }
 
-    private fun setAnswerRecord(answerSrc: String) {
+    private fun setAnswerRecord(onRecord: Boolean, answerSrc: String) {
         // 답변 녹음 재생 기능
+        if (onRecord) {
+            binding.resultAnswerRecordBtnTitle.visibility = View.VISIBLE
+            binding.resultAnswerRecordLayout.visibility = View.VISIBLE
+            binding.resultAnswerRecordBtn.setOnClickListener {
+                // 질문 녹음 재생 기능
+            }
+        }
+        else {
+            binding.resultAnswerRecordBtnTitle.visibility = View.GONE
+            binding.resultAnswerRecordLayout.visibility = View.GONE
+        }
     }
 
     private fun setQuestionOption(onRecord: Boolean, onSecret: Boolean) {
