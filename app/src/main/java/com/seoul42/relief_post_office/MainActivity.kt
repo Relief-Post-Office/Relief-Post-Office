@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.seoul42.relief_post_office.databinding.MainBinding
 import com.seoul42.relief_post_office.record.RecordActivity
 

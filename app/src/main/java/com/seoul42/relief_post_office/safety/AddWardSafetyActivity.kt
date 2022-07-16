@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -14,18 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.AddWardSafetyAdapter
-import com.seoul42.relief_post_office.adapter.SafetyQuestionSettingAdapter
-import com.seoul42.relief_post_office.adapter.WardSafetyAdapter
-import com.seoul42.relief_post_office.guardian.QuestionFragment
 import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.model.SafetyDTO
 import com.seoul42.relief_post_office.model.UserDTO
-import com.seoul42.relief_post_office.util.Ward
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

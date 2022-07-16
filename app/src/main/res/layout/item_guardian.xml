@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="120sp"
+        android:layout_height="100sp"
         tools:context=".adapter.ResponseAdapter" >
 
         <LinearLayout
@@ -32,7 +32,7 @@
 
         <TextView
             android:id="@+id/item_guardian_text"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:textColor="@color/black"
             android:text="조명재\n19살"
             android:layout_height="0sp"
@@ -130,14 +130,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.35" />
+            app:layout_constraintGuide_percent="0.4" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/vertical_guideline6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.65" />
+            app:layout_constraintGuide_percent="0.7" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/vertical_guideline7"

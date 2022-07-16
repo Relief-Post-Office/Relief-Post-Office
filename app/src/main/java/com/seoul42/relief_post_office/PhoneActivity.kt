@@ -9,7 +9,6 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.widget.addTextChangedListener
-import com.dx.dxloadingbutton.lib.LoadingButton
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
@@ -19,11 +18,10 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.seoul42.relief_post_office.model.UserDTO
-import com.seoul42.relief_post_office.util.Guardian
-import com.seoul42.relief_post_office.util.Ward
 import com.seoul42.relief_post_office.ward.WardActivity
 import java.util.concurrent.TimeUnit
 import com.seoul42.relief_post_office.databinding.PhoneBinding
+import com.seoul42.relief_post_office.model.WardDTO
 
 class PhoneActivity : AppCompatActivity() {
 
@@ -38,7 +36,6 @@ class PhoneActivity : AppCompatActivity() {
     private lateinit var verificationId : String
     private lateinit var phoneNumber: String
     private lateinit var callbacks : PhoneAuthProvider.OnVerificationStateChangedCallbacks
-    private lateinit var userDTO: UserDTO
 
     private var requestFlag: Boolean = false
 
@@ -135,8 +132,8 @@ class PhoneActivity : AppCompatActivity() {
     }
 
     private fun setInfo() {
-        val myUserId = auth.uid.toString()
-        val userDB = Firebase.database.reference.child("user").child(myUserId)
+        val uid = auth.uid.toString()
+        val userDB = Firebase.database.reference.child("user").child(uid)
         var userToken : String
 
         FirebaseMessaging.getInstance().token /* 토큰 획득 및 업데이트 */
@@ -145,24 +142,30 @@ class PhoneActivity : AppCompatActivity() {
                     userToken = task.result.toString()
                     /* 로그인한 유저가 보호자인지 피보호자인지 확인 */
                     userDB.get().addOnSuccessListener {
-                        userDTO = it.getValue(UserDTO::class.java) as UserDTO
-                        userDTO.token = userToken
-                        userDB.setValue(userDTO)
-                        if (userDTO.guardian == true) Guardian(userDTO)
-                        else Ward(userDTO)
-                        moveActivity()
+                        if (it.getValue(UserDTO::class.java) != null) {
+                            val userDTO = it.getValue(UserDTO::class.java) as UserDTO
+                            userDTO.token = userToken
+                            userDB.setValue(userDTO)
+                            moveActivity(userDTO)
+                        }
                     }
                 }
             }
     }
 
-    private fun moveActivity() {
+    private fun moveActivity(userDTO : UserDTO) {
+        val guardianIntent = Intent(this, GuardianBackgroundActivity::class.java)
+        val wardIntent = Intent(this, WardActivity::class.java)
+
         Handler().postDelayed({
             ActivityCompat.finishAffinity(this)
-            if (userDTO.guardian == true)
-                startActivity(Intent(this, GuardianBackgroundActivity::class.java))
-            else
-                startActivity(Intent(this, WardActivity::class.java))
+            if (userDTO.guardian) {
+                guardianIntent.putExtra("userDTO", userDTO)
+                startActivity(guardianIntent)
+            } else {
+                wardIntent.putExtra("userDTO", userDTO)
+                startActivity(wardIntent)
+            }
         }, 2000)
     }
     /* End verification assistant */

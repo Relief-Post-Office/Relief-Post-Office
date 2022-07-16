@@ -1,13 +1,9 @@
 package com.seoul42.relief_post_office.guardian
 
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.Window
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
@@ -23,15 +19,11 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.SafetyAdapter
-import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.model.SafetyDTO
+import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.safety.SafetyMake
-import com.seoul42.relief_post_office.util.Guardian
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatter.*
 
-class SafetyFragment : Fragment(R.layout.fragment_safety) {
+class SafetyFragment(private val userDTO: UserDTO) : Fragment(R.layout.fragment_safety) {
 
 	private val database = Firebase.database
 	private var safetyList = arrayListOf<Pair<String, SafetyDTO>>()
@@ -50,7 +42,7 @@ class SafetyFragment : Fragment(R.layout.fragment_safety) {
 
 		// 사진 세팅
 		Glide.with(this)
-			.load(Guardian.USER.photoUri) /* ★★★ USER is in class of Guardian ★★★ */
+			.load(userDTO.photoUri) /* ★★★ USER is in class of Guardian ★★★ */
 			.circleCrop()
 			.into(view.findViewById(R.id.safety_fragment_photo))
 

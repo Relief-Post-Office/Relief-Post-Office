@@ -9,27 +9,28 @@ import com.seoul42.relief_post_office.databinding.GuardianBackgroundBinding
 import com.seoul42.relief_post_office.guardian.MainFragment
 import com.seoul42.relief_post_office.guardian.QuestionFragment
 import com.seoul42.relief_post_office.guardian.SafetyFragment
+import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.util.Constants.Companion.TAG_MAIN
 import com.seoul42.relief_post_office.util.Constants.Companion.TAG_QUESTION
 import com.seoul42.relief_post_office.util.Constants.Companion.TAG_SAFETY
 
 class GuardianBackgroundActivity : AppCompatActivity() {
 
-    private val mainFragment : MainFragment by lazy {
-        MainFragment()
-    }
-    private val safetyFragment : SafetyFragment by lazy {
-        SafetyFragment()
-    }
-    private val questionFragment : QuestionFragment by lazy {
-        QuestionFragment()
-    }
     private val binding: GuardianBackgroundBinding by lazy {
         GuardianBackgroundBinding.inflate(layoutInflater)
     }
 
+    private lateinit var userDTO : UserDTO
+    private lateinit var mainFragment : MainFragment
+    private lateinit var safetyFragment : SafetyFragment
+    private lateinit var questionFragment : QuestionFragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        userDTO = intent.getSerializableExtra("userDTO") as UserDTO
+        mainFragment = MainFragment(userDTO)
+        safetyFragment = SafetyFragment(userDTO)
 
         setContentView(binding.root)
         setFragment(TAG_MAIN, mainFragment)

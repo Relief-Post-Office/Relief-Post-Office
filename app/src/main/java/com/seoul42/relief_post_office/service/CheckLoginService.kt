@@ -3,10 +3,9 @@ package com.seoul42.relief_post_office.service
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -14,11 +13,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.seoul42.relief_post_office.GuardianBackgroundActivity
 import com.seoul42.relief_post_office.MainActivity
-import com.seoul42.relief_post_office.R
+import com.seoul42.relief_post_office.databinding.SplashBinding
 import com.seoul42.relief_post_office.model.UserDTO
-import com.seoul42.relief_post_office.util.Guardian
-import com.seoul42.relief_post_office.util.Network
-import com.seoul42.relief_post_office.util.Ward
 import com.seoul42.relief_post_office.ward.WardActivity
 
 class CheckLoginService : AppCompatActivity() {
@@ -29,12 +25,16 @@ class CheckLoginService : AppCompatActivity() {
     private val auth: FirebaseAuth by lazy {
         Firebase.auth
     }
+    private val binding: SplashBinding by lazy {
+        SplashBinding.inflate(layoutInflater)
+    }
     private lateinit var userDTO: UserDTO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.splash)
+        setContentView(binding.root)
 
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         if (auth.currentUser == null) {
             processLogout()
         } else {
@@ -83,23 +83,25 @@ class CheckLoginService : AppCompatActivity() {
                         userDTO = it.getValue(UserDTO::class.java) as UserDTO
                         userDTO.token = userToken
                         userDB.setValue(userDTO)
-                        if (userDTO.guardian == true) Guardian(userDTO)
-                        else Ward(userDTO)
-                        moveActivity()
+                        moveActivity(userDTO)
                     }
                 }
             }
     }
 
-    private fun moveActivity() {
+    private fun moveActivity(userDTO : UserDTO) {
+        val guardianIntent = Intent(this, GuardianBackgroundActivity::class.java)
+        val wardIntent = Intent(this, WardActivity::class.java)
+
         Handler().postDelayed({
-            if (userDTO.guardian == true)
-                startActivity(Intent(this, GuardianBackgroundActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
-            else
-                startActivity(Intent(this, WardActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
-            finish()
+            ActivityCompat.finishAffinity(this)
+            if (userDTO.guardian) {
+                guardianIntent.putExtra("userDTO", userDTO)
+                startActivity(guardianIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
+            } else {
+                wardIntent.putExtra("userDTO", userDTO)
+                startActivity(wardIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
+            }
         }, 2000)
     }
 }
