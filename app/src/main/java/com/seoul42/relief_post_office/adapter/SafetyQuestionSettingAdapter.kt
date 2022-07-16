@@ -112,23 +112,25 @@ class SafetyQuestionSettingAdapter(
                 editRecordActivity.initVariables()
 
                 // 다이얼로그 종료 시 이벤트
-                dialog.setOnDismissListener {
-                    editRecordActivity.stopRecording()
-                    editRecordActivity.stopPlaying()
-                }
+//                dialog.setOnDismissListener {
+//                    editRecordActivity.stopRecording()
+//                    editRecordActivity.stopPlaying()
+//                }
 
                 // 질문 수정 다이얼로그의 "저장" 버튼을 눌렀을 때 이벤트 처리
                 dialog.findViewById<Button>(R.id.save_question_btn).setOnClickListener {
 
                     // 녹음 중이라면 중단 후 저장
-                    editRecordActivity.stopRecording()
+//                    editRecordActivity.stopRecording()
                     // 재생 중이라면 재생 중단
-                    editRecordActivity.stopPlaying()
+//                    editRecordActivity.stopPlaying()
 
                     // 텍스트, 비밀 옵션, 녹음 옵션
-                    val editedQuestionText = dialog.findViewById<EditText>(R.id.question_text2).text.toString()
+                    val editedQuestionText =
+                        dialog.findViewById<EditText>(R.id.question_text2).text.toString()
                     val editedSecret = dialog.findViewById<Switch>(R.id.secret_switch2).isChecked
                     val editedRecord = dialog.findViewById<Switch>(R.id.record_switch2).isChecked
+                    var recordContent: Pair<Int, String?> = editRecordActivity.returnRecordingFile()
 
                     // question 컬렉션에 수정된 질문 내용 수정
                     val question = database.getReference("question").child(item.first)
@@ -136,71 +138,101 @@ class SafetyQuestionSettingAdapter(
                     question.child("secret").setValue(editedSecret)
                     question.child("record").setValue(editedRecord)
 
-                    // EditRecordActivity에서 받은 녹음파일 변경주소 반영
-                    var editRecordFile = Uri.fromFile(File(editRecordActivity.returnRecordingFile()))
-                    val editRecordRef =
-                        storage.reference.child("questionRecord/${item.second.owner}/${item.second.owner + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
-                    var uploadEditRecord = editRecordRef.putFile(editRecordFile)
+                    if (recordContent.first == 1) {
+                        // EditRecordActivity에서 받은 녹음파일 변경주소 반영
+                        var editRecordFile =
+                            Uri.fromFile(File(recordContent.second))
+                        val editRecordRef =
+                            storage.reference.child(
+                                "questionRecord/${item.second.owner}/${
+                                    item.second.owner + LocalDateTime.now()
+                                        .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
+                                }"
+                            )
+                        var uploadEditRecord = editRecordRef.putFile(editRecordFile)
 
-                    uploadEditRecord.addOnSuccessListener {
-                        editRecordRef.downloadUrl.addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                question.child("src").setValue(task.result.toString())
+                        uploadEditRecord.addOnSuccessListener {
+                            editRecordRef.downloadUrl.addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    question.child("src").setValue(task.result.toString())
 
-                                // 로그인한 보호자의 questionList와 question 컬렉션의 수정된 질문의 최종 수정날짜 수정
-                                val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                                question.child("date").setValue(date)
-                                database.getReference("guardian").child(item.second.owner.toString())
-                                    .child("questionList")
-                                    .child(item.first).setValue(date)
+                                    // 로그인한 보호자의 questionList와 question 컬렉션의 수정된 질문의 최종 수정날짜 수정
+                                    val date = LocalDateTime.now()
+                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                                    question.child("date").setValue(date)
+                                    database.getReference("guardian")
+                                        .child(item.second.owner.toString())
+                                        .child("questionList")
+                                        .child(item.first).setValue(date)
 
-                                // 로그인한 보호자와 연결된 모든 피보호자에게 안부 동기화 fcm 전송
-                                val wardListRef = database.getReference("guardian").child(item.second.owner.toString()).child("connectList")
-                                wardListRef.get().addOnSuccessListener {
-                                    val wardList = (it.getValue() as HashMap<String, String>).values.toList()
-                                    val UserRef = database.getReference("user")
-                                    for (wardId in wardList){
-                                        UserRef.child(wardId).child("token").get().addOnSuccessListener {
-                                            val notificationData = NotificationDTO.NotificationData("SafetyWard",
-                                                "안심우체국", "안부를 동기화 합니다")
-                                            val notificationDTO = NotificationDTO(it.getValue().toString()!!, notificationData)
-                                            firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                                    // 로그인한 보호자와 연결된 모든 피보호자에게 안부 동기화 fcm 전송
+                                    val wardListRef = database.getReference("guardian")
+                                        .child(item.second.owner.toString()).child("connectList")
+                                    wardListRef.get().addOnSuccessListener {
+                                        val wardList =
+                                            (it.getValue() as HashMap<String, String>).values.toList()
+                                        val UserRef = database.getReference("user")
+                                        for (wardId in wardList) {
+                                            UserRef.child(wardId).child("token").get()
+                                                .addOnSuccessListener {
+                                                    val notificationData =
+                                                        NotificationDTO.NotificationData(
+                                                            "SafetyWard",
+                                                            "안심우체국", "안부를 동기화 합니다"
+                                                        )
+                                                    val notificationDTO = NotificationDTO(
+                                                        it.getValue().toString()!!,
+                                                        notificationData
+                                                    )
+                                                    firebaseViewModel.sendNotification(
+                                                        notificationDTO
+                                                    ) /* FCM 전송하기 */
+                                                }
                                         }
                                     }
-                                }
 
-                                // 다이얼로그 종료
-                                Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
-                                dialog.dismiss()
-                            }
-                        }
-                    // 수정하였지만 녹음을 바꾸진 않은 경우
-                    }.addOnFailureListener{
-                        // 로그인한 보호자의 questionList와 question 컬렉션의 수정된 질문의 최종 수정날짜 수정
-                        val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                        question.child("date").setValue(date)
-                        database.getReference("guardian").child(item.second.owner.toString())
-                            .child("questionList")
-                            .child(item.first).setValue(date)
-
-                        // 로그인한 보호자와 연결된 모든 피보호자에게 안부 동기화 fcm 전송
-                        val wardListRef = database.getReference("guardian").child(item.second.owner.toString()).child("connectList")
-                        wardListRef.get().addOnSuccessListener {
-                            val wardList = (it.getValue() as HashMap<String, String>).values.toList()
-                            val UserRef = database.getReference("user")
-                            for (wardId in wardList){
-                                UserRef.child(wardId).child("token").get().addOnSuccessListener {
-                                    val notificationData = NotificationDTO.NotificationData("SafetyWard",
-                                        "안심우체국", "안부를 동기화 합니다")
-                                    val notificationDTO = NotificationDTO(it.getValue().toString()!!, notificationData)
-                                    firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                                    // 다이얼로그 종료
+                                    Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
+                                    dialog.dismiss()
                                 }
                             }
-                        }
+                            // 수정하였지만 녹음을 바꾸진 않은 경우
+                        }.addOnFailureListener {
+                            // 로그인한 보호자의 questionList와 question 컬렉션의 수정된 질문의 최종 수정날짜 수정
+                            val date = LocalDateTime.now()
+                                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                            question.child("date").setValue(date)
+                            database.getReference("guardian").child(item.second.owner.toString())
+                                .child("questionList")
+                                .child(item.first).setValue(date)
 
-                        // 다이얼로그 종료
-                        Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
-                        dialog.dismiss()
+                            // 로그인한 보호자와 연결된 모든 피보호자에게 안부 동기화 fcm 전송
+                            val wardListRef = database.getReference("guardian")
+                                .child(item.second.owner.toString()).child("connectList")
+                            wardListRef.get().addOnSuccessListener {
+                                val wardList =
+                                    (it.getValue() as HashMap<String, String>).values.toList()
+                                val UserRef = database.getReference("user")
+                                for (wardId in wardList) {
+                                    UserRef.child(wardId).child("token").get()
+                                        .addOnSuccessListener {
+                                            val notificationData = NotificationDTO.NotificationData(
+                                                "SafetyWard",
+                                                "안심우체국", "안부를 동기화 합니다"
+                                            )
+                                            val notificationDTO = NotificationDTO(
+                                                it.getValue().toString()!!,
+                                                notificationData
+                                            )
+                                            firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                                        }
+                                }
+                            }
+
+                            // 다이얼로그 종료
+                            Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
+                            dialog.dismiss()
+                        }
                     }
                 }
 

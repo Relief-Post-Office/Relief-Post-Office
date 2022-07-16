@@ -107,39 +107,59 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
                 val secret = dialog.findViewById<Switch>(R.id.secret_switch).isChecked
                 val record = dialog.findViewById<Switch>(R.id.record_switch).isChecked
                 var src: String? = null
+                var recordContent: Pair<Int, String?> = recordActivity.returnRecordingFile()
 
                 // question 컬렉션에 추가할 QuestoinDTO 생성
                 val newQuestion = QuestionDTO(secret, record, owner, date, questionText, src, mutableMapOf())
 
-                // 녹음 파일 생성 및 스토리지 저장
-                var recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
-                val recordRef = storage.reference
-                    .child("questionRecord/${owner}/${owner + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
+                val questionRef = database.getReference("question")
+                val newPush = questionRef.push()
+                val key = newPush.key.toString()
 
-                // 녹음 업로드에 성공한 경우(녹음이 있는 경우)
-                recordRef.putFile(recordFile).addOnSuccessListener {
-                    recordRef.downloadUrl.addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            // question 컬렉션에 작성한 내용 추가
-                            val questionRef = database.getReference("question")
-                            val newPush = questionRef.push()
-                            val key = newPush.key.toString()
+                if (recordContent.first == 1) {
+                    // 녹음 파일 생성 및 스토리지 저장
+                    var recordFile = Uri.fromFile(File(recordContent.second))
+                    val recordRef = storage.reference
+                        .child(
+                            "questionRecord/${owner}/${
+                                owner + LocalDateTime.now()
+                                    .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
+                            }"
+                        )
 
-                            newQuestion.src = task.result.toString()
-                            newPush.setValue(newQuestion)
+                    // 녹음 업로드에 성공한 경우(녹음이 있는 경우)
+                    recordRef.putFile(recordFile).addOnSuccessListener {
+                        recordRef.downloadUrl.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                // question 컬렉션에 작성한 내용 추가
+                                newQuestion.src = task.result.toString()
+                                newPush.setValue(newQuestion)
 
-                            // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
-                            val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
-                            userQuestionRef.child(key).setValue(date)
+                                // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
+                                val userQuestionRef = database.getReference("guardian").child(owner)
+                                    .child("questionList")
+                                userQuestionRef.child(key).setValue(date)
 
-                            // 다이얼로그 종료
-                            Toast.makeText(this, "질문 추가 완료", Toast.LENGTH_SHORT).show()
-                            dialog.dismiss()
+                                // 다이얼로그 종료
+                                Toast.makeText(this, "질문 추가 완료", Toast.LENGTH_SHORT).show()
+                                dialog.dismiss()
+                            }
                         }
+                        // 녹음 업로드에 실패한 경우(녹음이 없는 경우 + @) 질문 추가 불가능
+                    }.addOnFailureListener {
+                        Toast.makeText(this, "녹음 파일을 생성해 주세요", Toast.LENGTH_SHORT).show()
                     }
-                    // 녹음 업로드에 실패한 경우(녹음이 없는 경우 + @) 질문 추가 불가능
-                }.addOnFailureListener{
-                    Toast.makeText(this, "녹음 파일을 생성해 주세요", Toast.LENGTH_SHORT).show()
+                } else {
+                    newPush.setValue(newQuestion)
+
+                    // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
+                    val userQuestionRef = database.getReference("guardian").child(owner)
+                        .child("questionList")
+                    userQuestionRef.child(key).setValue(date)
+
+                    // 다이얼로그 종료
+                    Toast.makeText(this, "질문 추가 완료", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
                 }
             }
         }

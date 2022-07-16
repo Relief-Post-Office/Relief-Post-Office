@@ -7,7 +7,7 @@ import android.util.AttributeSet
 import android.util.Log
 import androidx.appcompat.widget.AppCompatTextView
 
-class EditRecordDurationTime(
+class RecordDurationTime(
     context: Context,
     attributeSet: AttributeSet? = null
 ) : AppCompatTextView(context, attributeSet) {
@@ -30,16 +30,20 @@ class EditRecordDurationTime(
         handler?.post(countUpAction)
     }
 
-    fun setRecordDuration(recordingFilePath : String?) {
-        playerDuration = MediaPlayer().
-                apply {
-                    setDataSource(recordingFilePath)
-                    prepare()
-                }
-        val recordDuration: Int = playerDuration.duration
-        Log.d("src", recordDuration.toString())
-        updateCountTime((recordDuration - 300)/1000)
-        handler?.removeCallbacks(countUpAction)
+    fun setRecordDuration(recordSign: Int, recordingFilePath : String?) {
+        if (recordSign == 0) {
+            text = "00:00"
+        }
+        else {
+            playerDuration = MediaPlayer().apply {
+                setDataSource(recordingFilePath)
+                prepare()
+            }
+            val recordDuration: Int = playerDuration.duration
+            Log.d("src", recordDuration.toString())
+            updateCountTime((recordDuration - 300) / 1000)
+            handler?.removeCallbacks(countUpAction)
+        }
     }
 
     fun clearCountTime() {

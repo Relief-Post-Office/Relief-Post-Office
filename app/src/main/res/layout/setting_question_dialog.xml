@@ -17,20 +17,43 @@
         android:layout_marginTop="20dp"
         tools:ignore="HardcodedText" />
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="00:00 | 00:00"
-        android:textSize="30sp"
-        android:gravity="center"
-        android:layout_marginTop="20dp"
-        tools:ignore="HardcodedText" />
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+
+        <com.seoul42.relief_post_office.record.RecordCountTime
+            android:id="@+id/question_setting_time"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="00:00"
+            android:layout_marginHorizontal="10dp"
+            android:textSize="30sp"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            tools:ignore="HardcodedText" />
+
+        <com.seoul42.relief_post_office.record.EditRecordDurationTime
+            android:id="@+id/question_duration_time"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="00:00"
+            android:layout_marginHorizontal="10dp"
+            android:textSize="30sp"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp">
 
-        <Button
+        <com.seoul42.relief_post_office.record.RecordButton
             android:id="@+id/question_setting_playBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -3,7 +3,6 @@ package com.seoul42.relief_post_office.record
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Build
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import androidx.annotation.RequiresApi
@@ -27,11 +26,11 @@ class EditRecordActivity(var src: String?, view: View) {
         LocalDateTime.now()
     }
 
-    private val recordTimeTextView: EditRecordCountTime by lazy {
+    private val recordTimeTextView: RecordCountTime by lazy {
         view.findViewById(R.id.question_setting_time2)
     }
 
-    private val recordDurationTextView: EditRecordDurationTime by lazy {
+    private val recordDurationTextView: RecordDurationTime by lazy {
         view.findViewById(R.id.question_duration_time2)
     }
 
@@ -46,6 +45,9 @@ class EditRecordActivity(var src: String?, view: View) {
     // 요청할 권한들을 담을 배열에 음성 녹음 관련 권한을 담아줍니다.
     private var recordingFilePath: String? = src
 
+    // 녹음파일 있을 경우, QuestionFragment로 1 반환 / 없을 경우, 0 반환
+    private var recordSign: Int = 0
+
     private var state = RecordState.AFTER_RECORDING
         set(value) { // setter 설정
             field = value // 실제 프로퍼티에 대입
@@ -57,8 +59,12 @@ class EditRecordActivity(var src: String?, view: View) {
     private var player: MediaPlayer? = null
 
      fun initViews() {
+         if (src != "") {
+             recordSign = 1
+             state = RecordState.AFTER_RECORDING
+         }
+         recordDurationTextView.setRecordDuration(recordSign, recordingFilePath)
          recordButton.updateIconWithState(state)
-         recordDurationTextView.setRecordDuration(recordingFilePath)
     }
 
      fun bindViews(view : View) {
@@ -84,6 +90,7 @@ class EditRecordActivity(var src: String?, view: View) {
             stopPlaying()
             recordingFilePath = "${view.context.externalCacheDir?.absolutePath}/${auth.currentUser?.uid + dateAndTime.format(formatter)}.3gp"
             // clear
+            recordSign = 0
             recordDurationTextView.clearCountTime()
             recordTimeTextView.clearCountTime()
             state = RecordState.BEFORE_RECORDING
@@ -91,11 +98,17 @@ class EditRecordActivity(var src: String?, view: View) {
     }
 
     fun initVariables() {
-        state = RecordState.AFTER_RECORDING
+        if (src != "") {
+            recordSign = 1
+            state = RecordState.AFTER_RECORDING
+        } else {
+            recordSign = 0
+            state = RecordState.BEFORE_RECORDING
+        }
     }
 
-    fun returnRecordingFile() : String? {
-        return recordingFilePath
+    fun returnRecordingFile() : Pair<Int, String?> {
+        return Pair(recordSign, recordingFilePath)
     }
 
     fun startRecoding() {
@@ -121,9 +134,10 @@ class EditRecordActivity(var src: String?, view: View) {
             release()
         }
         recorder = null
-        recordDurationTextView.setRecordDuration(recordingFilePath)
+        recordDurationTextView.setRecordDuration(recordSign, recordingFilePath)
         recordTimeTextView.stopCountUp()
         state = RecordState.AFTER_RECORDING
+        recordSign = 1
     }
 
     fun startPlaying() {
@@ -141,7 +155,7 @@ class EditRecordActivity(var src: String?, view: View) {
         }
 
         player?.start() // 재생
-        recordDurationTextView.setRecordDuration(recordingFilePath)
+        recordDurationTextView.setRecordDuration(recordSign, recordingFilePath)
         recordTimeTextView.startCountUp()
         state = RecordState.ON_PLAYING
     }
