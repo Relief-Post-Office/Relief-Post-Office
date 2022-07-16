@@ -1,9 +1,12 @@
 package com.seoul42.relief_post_office.service
 
 import android.content.Intent
+import android.graphics.drawable.AnimatedImageDrawable
+import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.startActivity
@@ -31,9 +34,19 @@ class CheckLoginService : AppCompatActivity() {
     }
     private lateinit var userDTO: UserDTO
 
+    private lateinit var imageView : ImageView
+    private lateinit var animationDrawable: AnimationDrawable
+
+    @Override
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash)
+
+        imageView = findViewById(R.id.main_logo)
+        animationDrawable = imageView.background as AnimationDrawable
+
+        animationDrawable.start()
+
 
         if (auth.currentUser == null) {
             processLogout()

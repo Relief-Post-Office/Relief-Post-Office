@@ -14,7 +14,7 @@
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline2"
-        android:background="@drawable/splash" />
+        android:background="@drawable/splash_animation" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline1"
