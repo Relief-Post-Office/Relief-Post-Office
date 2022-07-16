@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.seoul42.relief_post_office.R
-import com.seoul42.relief_post_office.databinding.ActivityResultQuestionDetailBinding
 import com.seoul42.relief_post_office.databinding.ItemResultDetailBinding
 import com.seoul42.relief_post_office.model.AnswerDTO
 import com.seoul42.relief_post_office.result.ResultQuestionDetailActivity
