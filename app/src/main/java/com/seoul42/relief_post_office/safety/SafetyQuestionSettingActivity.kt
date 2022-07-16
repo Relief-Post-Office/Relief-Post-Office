@@ -13,6 +13,7 @@ import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
+import android.view.WindowManager
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -96,6 +97,11 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
             // 질문 추가 다이얼로그의 "저장"버튼을 눌렀을 때 이벤트 처리
             dialog.findViewById<Button>(R.id.add_question_btn).setOnClickListener {
 
+                // 프로그레스바 처리
+                dialog.window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                val progressBar = dialog.findViewById<ProgressBar>(R.id.setting_question_progressbar)
+                progressBar.visibility = View.VISIBLE
+
                 // 녹음 중이라면 중단 후 저장
                 recordActivity.stopRecording()
                 // 재생 중이라면 재생 중단
@@ -139,6 +145,8 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
                     }
                     // 녹음 업로드에 실패한 경우(녹음이 없는 경우 + @) 질문 추가 불가능
                 }.addOnFailureListener{
+                    progressBar.visibility = View.INVISIBLE
+                    dialog.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     Toast.makeText(this, "녹음 파일을 생성해 주세요", Toast.LENGTH_SHORT).show()
                 }
             }
