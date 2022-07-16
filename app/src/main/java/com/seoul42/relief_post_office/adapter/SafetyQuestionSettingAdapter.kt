@@ -8,14 +8,12 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.util.SparseBooleanArray
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
+import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.util.remove
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -43,6 +41,7 @@ class SafetyQuestionSettingAdapter(
     }
     val database = Firebase.database
     val checkboxStatus = SparseBooleanArray()
+    private val owner : String = Firebase.auth.currentUser!!.uid
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -55,7 +54,9 @@ class SafetyQuestionSettingAdapter(
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: SafetyQuestionSettingAdapter.ViewHolder, position: Int) {
-        holder.bindItems(items[position])
+        if (items[position].second.owner == owner) {
+            holder.bindItems(items[position])
+        }
     }
 
     override fun getItemCount(): Int {
@@ -119,6 +120,11 @@ class SafetyQuestionSettingAdapter(
 
                 // 질문 수정 다이얼로그의 "저장" 버튼을 눌렀을 때 이벤트 처리
                 dialog.findViewById<Button>(R.id.save_question_btn).setOnClickListener {
+
+                    // 프로그레스바 처리
+                    dialog.window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    val progressBar = dialog.findViewById<ProgressBar>(R.id.setting_question_progressbar2)
+                    progressBar.visibility = View.VISIBLE
 
                     // 녹음 중이라면 중단 후 저장
                     editRecordActivity.stopRecording()
@@ -206,6 +212,11 @@ class SafetyQuestionSettingAdapter(
 
                 // 질문 수정 다이얼로그의 "삭제" 버튼을 눌렀을 때 이벤트 처리
                 dialog.findViewById<Button>(R.id.delete_question_btn).setOnClickListener {
+
+                    // 프로그레스바 처리
+                    dialog.window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    val progressBar = dialog.findViewById<ProgressBar>(R.id.setting_question_progressbar2)
+                    progressBar.visibility = View.VISIBLE
 
                     // 만약 질문에 연결된 안부가 있다면 삭제 불가
                     if (item.second.connectedSafetyList.isEmpty()) {

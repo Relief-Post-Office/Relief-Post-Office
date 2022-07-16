@@ -7,7 +7,7 @@ import android.util.AttributeSet
 import android.util.Log
 import androidx.appcompat.widget.AppCompatTextView
 
-class EditRecordDurationTime(
+class RecordDurationTime(
     context: Context,
     attributeSet: AttributeSet? = null
 ) : AppCompatTextView(context, attributeSet) {
@@ -38,7 +38,7 @@ class EditRecordDurationTime(
                 }
         val recordDuration: Int = playerDuration.duration
         Log.d("src", recordDuration.toString())
-        updateCountTime((recordDuration - 300)/1000)
+        updateCountTime((recordDuration)/1000)
         handler?.removeCallbacks(countUpAction)
     }
 
