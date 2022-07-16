@@ -9,70 +9,103 @@
 
     <TextView
         android:id="@+id/safety_question_setting_title"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_width="0sp"
+        android:layout_height="0sp"
         android:text="안부에 질문 설정"
         android:textSize="40sp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="20dp"/>
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline0.05"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline0.95"/>
 
     <LinearLayout
         android:layout_width="0sp"
         android:layout_height="0sp"
-        app:layout_constraintTop_toBottomOf="@id/horizontal_guideline1.5"
-        app:layout_constraintBottom_toTopOf="@id/safety_question_setting_add_question"
-        app:layout_constraintStart_toEndOf="@id/vertical_guideline0.05"
-        app:layout_constraintEnd_toStartOf="@id/vertical_guideline0.95">
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline2"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline3"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline0.05"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline0.95">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/safety_question_setting_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="5dp" />
+            android:padding="10dp" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/safety_question_setting_add_question"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        app:layout_constraintBottom_toTopOf="@id/question_setting_button_layout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline4"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline5"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline2"
         app:srcCompat="@drawable/img" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/question_setting_button_layout"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-
-        <Button
-            android:id="@+id/safety_question_setting_save_button"
-            android:layout_width="150sp"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:text="저 장"
-            android:textSize="30sp"
-            app:srcCompat="@drawable/img" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <Button
+        android:id="@+id/safety_question_setting_save_button"
+        android:layout_width="0sp"
+        android:layout_height="0sp"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline6"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline7"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"
+        android:text="저 장"
+        android:background="@drawable/button_rounded_gray"
+        android:textSize="25sp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="18dp" />
+        app:layout_constraintGuide_percent="0.025" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontal_guideline1.5"
+        android:id="@+id/horizontal_guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.10" />
+        app:layout_constraintGuide_percent="0.1" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.77" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.86" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.88" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.97" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline0.05"
@@ -87,5 +120,33 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.4" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.6" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.275" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.725" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

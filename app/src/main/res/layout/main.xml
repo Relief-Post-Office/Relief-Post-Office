@@ -39,8 +39,7 @@
         android:textColor="@color/white"
         android:textSize="15sp"
         android:id="@+id/main_button"
-        android:background="@drawable/button_rounded_corner"
-        android:backgroundTint="#3f91ff"
+        android:background="@drawable/button_shadow"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
@@ -79,14 +78,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.70" />
+        app:layout_constraintGuide_percent="0.65" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.775" />
+        app:layout_constraintGuide_percent="0.8" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline1"

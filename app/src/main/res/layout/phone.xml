@@ -13,11 +13,11 @@
         android:layout_height="0sp"
         android:text="본인 확인을 위해\n전화번호 인증이 필요합니다!"
         android:textColor="#000000"
-        android:textSize="25sp"
+        android:textSize="30sp"
         android:textStyle="bold"
-        android:gravity="center_vertical"
-        app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
-        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline1.5"
+        android:gravity="bottom"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline2"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -26,11 +26,11 @@
         android:layout_height="0sp"
         android:text="전화번호는 절대 공개되지 않습니다."
         android:textColor="#8c8c8c"
-        android:textSize="15sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center_vertical"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline2"
-        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2.5"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline3"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline2"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -39,7 +39,7 @@
         android:layout_height="0sp"
         android:text="휴대전화번호"
         android:textColor="#000000"
-        android:textSize="15sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center_vertical"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline3"
@@ -75,7 +75,7 @@
         app:lb_disabledTextColor="#999999"
         app:lb_rippleEnable="true"
         app:lb_btnText="인증 요청"
-        custom:lb_btnColor="#3F51B5"
+        custom:lb_btnColor="#3f91ff"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline4"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline5"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline5"
@@ -87,7 +87,7 @@
         android:layout_height="0sp"
         android:text="인증번호"
         android:textColor="#000000"
-        android:textSize="15sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center_vertical"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline6"
@@ -176,14 +176,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.16" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontal_guideline2.5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.245" />
+        app:layout_constraintGuide_percent="0.18" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline3"

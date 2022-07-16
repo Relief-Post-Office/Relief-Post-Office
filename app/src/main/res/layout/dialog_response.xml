@@ -43,13 +43,12 @@
         android:gravity="center"
         android:orientation="horizontal" >
 
-        <Button
+        <info.hoang8f.widget.FButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/response_button"
-            android:background="@drawable/button_rounded_corner"
-            android:backgroundTint="#3f91ff"
-            android:text="등록"/>
+            android:text="등록"
+            android:fontFamily="@font/bmjua" />
 
     </LinearLayout>
 

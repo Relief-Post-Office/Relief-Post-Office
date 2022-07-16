@@ -17,14 +17,14 @@
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:text="프로필 편집"
-        android:textSize="25sp"
+        android:textSize="35sp"
         android:textStyle="bold"
         android:textColor="@color/black"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
-        app:layout_constraintStart_toStartOf="@id/vertical_guideline2"
-        app:layout_constraintEnd_toEndOf="@id/vertical_guideline4" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0sp"
@@ -315,7 +315,7 @@
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline19"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline20"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline6"
-        app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline7"
         />
 
     <LinearLayout
@@ -348,12 +348,13 @@
 
     </LinearLayout>
 
-    <Button
+    <info.hoang8f.widget.FButton
         android:id="@+id/guardian_profile_save"
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:background="#000000"
         android:text="확인"
+        android:fontFamily="@font/bmjua"
         android:textColor="@color/white"
         android:textSize="15sp"
         android:textStyle="bold"
@@ -367,14 +368,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.03" />
+        app:layout_constraintGuide_percent="0.0" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.09" />
+        app:layout_constraintGuide_percent="0.12" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline3"
@@ -493,14 +494,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.66" />
+        app:layout_constraintGuide_percent="0.645" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline20"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.77" />
+        app:layout_constraintGuide_percent="0.78" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline1"
@@ -544,5 +545,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.425" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.7" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

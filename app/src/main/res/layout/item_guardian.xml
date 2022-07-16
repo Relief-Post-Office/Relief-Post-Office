@@ -12,7 +12,6 @@
             android:layout_height="0sp"
             android:orientation="horizontal"
             android:background="@drawable/layout_rounded_corner"
-            android:backgroundTint="#EFEFEF"
             app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
             app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
             app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
@@ -33,7 +32,7 @@
 
         <TextView
             android:id="@+id/item_guardian_text"
-            android:textSize="16sp"
+            android:textSize="25sp"
             android:textColor="@color/black"
             android:text="조명재\n19살"
             android:layout_height="0sp"

@@ -13,7 +13,6 @@
             android:layout_height="0sp"
             android:orientation="horizontal"
             android:background="@drawable/layout_rounded_corner"
-            android:backgroundTint="#EFEFEF"
             app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
             app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
             app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
