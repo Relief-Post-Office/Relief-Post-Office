@@ -32,6 +32,7 @@ class ResultAdapter(private val context : Context,
                 binding.itemResultResponseTime.setTextColor(R.color.red)
             }
             else {
+                binding.itemResultSafetyLayout.setBackgroundResource(R.drawable.result_enable_background)
                 val startTime = result.second.date + " " + result.second.safetyTime + ":00"
                 val endTime = result.second.responseTime
                 var dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")

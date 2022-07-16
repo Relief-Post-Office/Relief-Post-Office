@@ -65,7 +65,6 @@ class ResultDetailActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun setQuestionAnswerList(resultId: String) {
         val answerListRef = database.getReference("result").child(resultId).child("answerList")
 
@@ -80,8 +79,10 @@ class ResultDetailActivity : AppCompatActivity() {
         })
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun questionAnswerList(resultId: String) {
         answerList.clear()
+        adapter.notifyDataSetChanged()
         val answerListRef = database.getReference("result").child(resultId).child("answerIdList")
         val answerRef = database.getReference("answer")
         answerListRef.get().addOnSuccessListener {
