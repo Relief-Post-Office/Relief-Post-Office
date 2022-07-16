@@ -37,9 +37,8 @@ class ResultAdapter(private val context : Context,
                 val endTime = result.second.responseTime
                 var dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                 val time = dateFormat.parse(endTime).time - dateFormat.parse(startTime).time
-                dateFormat = SimpleDateFormat("HH시간mm분ss초")
 
-                binding.itemResultResponseTime.text = dateFormat.format(time)
+                binding.itemResultResponseTime.text = millisToTimeString(time)
                 binding.itemResultSafetyLayout.setOnClickListener {
                     val intent = Intent(context, ResultDetailActivity::class.java)
                     intent.putExtra("wardId", wardId)
@@ -63,6 +62,14 @@ class ResultAdapter(private val context : Context,
 
     override fun getItemCount(): Int {
         return resultList.size
+    }
+
+    private fun millisToTimeString(millisTime: Long): String{
+        val timeSec = millisTime / 1000
+        val hour = timeSec / 360
+        val minute = (timeSec % 360) / 60
+        val second = (timeSec % 3600) % 60
+        return "${hour}시간 ${minute}분 ${second}초"
     }
 
     private fun isResponsed(responseTime: String): Boolean {

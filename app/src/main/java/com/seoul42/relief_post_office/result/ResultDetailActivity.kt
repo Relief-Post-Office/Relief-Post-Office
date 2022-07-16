@@ -53,7 +53,7 @@ class ResultDetailActivity : AppCompatActivity() {
     }
 
     private fun setDate(date: String) {
-        binding.textResultDetailDate.text = date
+        binding.textResultDetailDate.text = date.replace("-", "/")
 
     }
 
