@@ -14,16 +14,16 @@ class ResultQuestionDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val safetyName = intent.getSerializableExtra("safetyName") as String
-        val answer = intent.getSerializableExtra("answer") as AnswerDTO
+        val answer = intent.getSerializableExtra("answer") as Pair<String, AnswerDTO>
         val answerDate = intent.getSerializableExtra("answerDate") as String
 
         setSafetyName(safetyName)
         setDate(answerDate)
-        setQuestionText(answer.questionText)
-        setQuestionRecord(answer.questionRecord, answer.questionSrc)
-        setAnswerReply(answer.reply)
-        setAnswerRecord(answer.answerSrc)
-        setQuestionOption(answer.questionRecord, answer.questionSecret)
+        setQuestionText(answer.second.questionText)
+        setQuestionRecord(answer.second.questionRecord, answer.second.questionSrc)
+        setAnswerReply(answer.second.reply)
+        setAnswerRecord(answer.second.answerSrc)
+        setQuestionOption(answer.second.questionRecord, answer.second.questionSecret)
     }
 
     private fun setSafetyName(safetyName: String) {

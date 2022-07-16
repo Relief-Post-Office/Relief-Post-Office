@@ -12,6 +12,7 @@ import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.databinding.ActivityResultQuestionDetailBinding
 import com.seoul42.relief_post_office.databinding.ItemResultDetailBinding
 import com.seoul42.relief_post_office.model.AnswerDTO
+import com.seoul42.relief_post_office.result.ResultQuestionDetailActivity
 
 class ResultDetailAdapter (private val context : Context,
                            private val answerList: MutableList<Pair<String, AnswerDTO>>,
@@ -25,7 +26,7 @@ class ResultDetailAdapter (private val context : Context,
             setAnswerRecord(binding, answer.second)
             setAnswerReply(binding, answer.second)
             binding.textResultQuetion.setOnClickListener {
-                val intent = Intent(context, ActivityResultQuestionDetailBinding::class.java)
+                val intent = Intent(context, ResultQuestionDetailActivity::class.java)
                 intent.putExtra("safetyName", safetyName)
                 intent.putExtra("answer", answer)
                 intent.putExtra("answerDate", answerDate)
