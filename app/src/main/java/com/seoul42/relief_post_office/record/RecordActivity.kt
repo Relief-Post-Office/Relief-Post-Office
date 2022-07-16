@@ -3,6 +3,10 @@ package com.seoul42.relief_post_office.record
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Build
+<<<<<<< HEAD
+=======
+import android.util.Log
+>>>>>>> origin/seunjang
 import android.view.View
 import android.widget.Button
 import androidx.annotation.RequiresApi
@@ -30,10 +34,13 @@ class RecordActivity(view: View) {
         view.findViewById(R.id.question_setting_time)
     }
 
+<<<<<<< HEAD
     private val recordDurationTextView: EditRecordDurationTime by lazy {
         view.findViewById(R.id.question_duration_time)
     }
 
+=======
+>>>>>>> origin/seunjang
     private val resetButton: Button by lazy {
         view.findViewById(R.id.question_record_settingBtn)
     }
@@ -44,7 +51,11 @@ class RecordActivity(view: View) {
 
     // 요청할 권한들을 담을 배열에 음성 녹음 관련 권한을 담아줍니다.
     private val recordingFilePath: String by lazy {
+<<<<<<< HEAD
         "${view.context.externalCacheDir?.absolutePath}/${auth.currentUser?.uid + dateAndTime.format(formatter)}.3gp"
+=======
+        "${view.context.externalCacheDir?.absolutePath}/recording.3gp"
+>>>>>>> origin/seunjang
     }
 
     private var state = RecordState.BEFORE_RECORDING
@@ -57,6 +68,7 @@ class RecordActivity(view: View) {
     private var recorder: MediaRecorder? = null // 사용 하지 않을 때는 메모리해제 및  null 처리
     private var player: MediaPlayer? = null
 
+<<<<<<< HEAD
     // 초기 state에 따른 recordButton.text 설정
      fun initViews() {
         recordButton.updateIconWithState(state)
@@ -64,6 +76,14 @@ class RecordActivity(view: View) {
 
     // 현재 state에 따른 recordButton 눌렀을 때 작동할 메써드
      fun bindViews() {
+=======
+     fun initViews() {
+         recordButton.updateIconWithState(state)
+    }
+
+     fun bindViews() {
+
+>>>>>>> origin/seunjang
         recordButton.setOnClickListener {
             when (state) {
                 RecordState.BEFORE_RECORDING -> {
@@ -85,25 +105,38 @@ class RecordActivity(view: View) {
             stopPlaying()
             // clear
             recordTimeTextView.clearCountTime()
+<<<<<<< HEAD
             recordDurationTextView.clearCountTime()
+=======
+>>>>>>> origin/seunjang
             state = RecordState.BEFORE_RECORDING
         }
     }
 
+<<<<<<< HEAD
     // 처음 state init(BEFORE_RECORDING)으로 설정
+=======
+>>>>>>> origin/seunjang
     fun initVariables() {
         state = RecordState.BEFORE_RECORDING
     }
 
+<<<<<<< HEAD
     // 로컬에 저장된 녹음파일 캐시주소
     // QuestionFragments로 전달, firebase storage에 3pg 파일형태로 저장될 예정
+=======
+>>>>>>> origin/seunjang
     fun returnRecordingFile() : String {
         return recordingFilePath
     }
 
+<<<<<<< HEAD
 
     // 녹음 메써드
     fun startRecoding() {
+=======
+    private fun startRecoding() {
+>>>>>>> origin/seunjang
 
         // 녹음 시작 시 초기화
         recorder = MediaRecorder()
@@ -115,25 +148,39 @@ class RecordActivity(view: View) {
                 prepare()
             }
         recorder?.start()
+<<<<<<< HEAD
         recordDurationTextView.startCountUp()
+=======
+>>>>>>> origin/seunjang
         recordTimeTextView.startCountUp()
         state = RecordState.ON_RECORDING
     }
 
+<<<<<<< HEAD
     // '녹음 중'일때 버튼 누를경우, 녹음 중단 및 메모리해제
     fun stopRecording() {
+=======
+    private fun stopRecording() {
+>>>>>>> origin/seunjang
         recorder?.run {
             stop()
             release()
         }
         recorder = null
+<<<<<<< HEAD
         recordDurationTextView.setRecordDuration(recordingFilePath)
+=======
+>>>>>>> origin/seunjang
         recordTimeTextView.stopCountUp()
         state = RecordState.AFTER_RECORDING
     }
 
+<<<<<<< HEAD
     // 캐시에 저장된 녹음파일 실행
     fun startPlaying() {
+=======
+    private fun startPlaying() {
+>>>>>>> origin/seunjang
         // MediaPlayer
         player = MediaPlayer()
             .apply {
@@ -152,7 +199,11 @@ class RecordActivity(view: View) {
         state = RecordState.ON_PLAYING
     }
 
+<<<<<<< HEAD
     fun stopPlaying() {
+=======
+    private fun stopPlaying() {
+>>>>>>> origin/seunjang
         player?.release()
         player = null
         recordTimeTextView.stopCountUp()

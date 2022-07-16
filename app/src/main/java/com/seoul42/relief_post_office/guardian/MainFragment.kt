@@ -1,12 +1,8 @@
 package com.seoul42.relief_post_office.guardian
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -27,14 +23,11 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.GuardianAdapter
-import com.seoul42.relief_post_office.alarm.GuardianReceiver
-import com.seoul42.relief_post_office.alarm.WardReceiver
 import com.seoul42.relief_post_office.databinding.FragmentGuardianBinding
 import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.service.CheckLoginService
-import com.seoul42.relief_post_office.util.Alarm
 import com.seoul42.relief_post_office.util.Guardian
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 
@@ -63,7 +56,6 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setAlarm()
         setLogout()
         setGuardianPhoto()
         setRecyclerView()
@@ -81,17 +73,6 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
             listener = listenerInfo.listener
             reference.removeEventListener(listener)
         }
-    }
-
-    /*
-     * 주기적 작업을 수행할 수 있도록 설정
-     * 단, 배터리 최적화 무시를 안할 경우 피보호자 측은 강제 알람을 띄울 수 없음
-     */
-    private fun setAlarm() {
-        val start = Intent(GuardianReceiver.REPEAT_START)
-
-        start.setClass(context!!, GuardianReceiver::class.java)
-        context!!.sendBroadcast(start, GuardianReceiver.PERMISSION_REPEAT)
     }
 
     private fun setLogout() {

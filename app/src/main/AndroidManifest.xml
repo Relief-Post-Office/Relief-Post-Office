@@ -19,6 +19,10 @@
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+
     <permission
         android:name="com.rightline.backgroundrepeatapp.permission.ACTION_REPEAT"
         android:protectionLevel="signature"

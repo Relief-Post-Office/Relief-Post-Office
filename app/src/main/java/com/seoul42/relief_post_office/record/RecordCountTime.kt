@@ -29,7 +29,10 @@ class RecordCountTime(
 
     fun stopCountUp() {
         handler?.removeCallbacks(countUpAction)
+<<<<<<< HEAD
         updateCountTime(0)
+=======
+>>>>>>> origin/seunjang
     }
 
     fun clearCountTime() {

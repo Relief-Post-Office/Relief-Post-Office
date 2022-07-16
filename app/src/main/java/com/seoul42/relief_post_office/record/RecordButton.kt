@@ -19,13 +19,21 @@ class RecordButton (
                 "녹음"
             }
             RecordState.ON_RECORDING -> {
+<<<<<<< HEAD
                 "녹음중단"
+=======
+                "녹음 중"
+>>>>>>> origin/seunjang
             }
             RecordState.AFTER_RECORDING -> {
                 "재생"
             }
             RecordState.ON_PLAYING -> {
+<<<<<<< HEAD
                 "재생중단"
+=======
+                "재생 중"
+>>>>>>> origin/seunjang
             }
         }
     }
