@@ -82,4 +82,5 @@
     <string name="no">X</string>
     <string name="listen_repeat">다시 듣기</string>
     <string name="week">월 화 수 목 금 토 일</string>
+    <string name="safety_date">1월 1일 월요일</string>
 </resources>

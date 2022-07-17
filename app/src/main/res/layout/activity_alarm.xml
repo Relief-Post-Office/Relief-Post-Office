@@ -14,7 +14,7 @@
         android:id="@+id/alarm_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="12:12"
+        android:text="@string/safety_time"
         android:textSize="50sp"
         android:textStyle="bold"
         android:textColor="@color/white"
@@ -29,7 +29,7 @@
         android:id="@+id/alarm_day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="7월 10일 일요일"
+        android:text="@string/safety_date"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@color/white"
@@ -44,7 +44,7 @@
         android:id="@+id/alarm_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="점심"
+        android:text="@string/safety_name"
         android:textSize="35sp"
         android:textStyle="bold"
         android:textColor="@color/white"
@@ -52,20 +52,6 @@
         android:fontFamily="@font/bmjua"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
-        app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
-        app:layout_constraintEnd_toEndOf="@id/vertical_guideline2" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="안부 시작"
-        android:textSize="35sp"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:gravity="center"
-        android:fontFamily="@font/bmjua"
-        app:layout_constraintTop_toTopOf="@id/horizontal_guideline7"
-        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline9"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline2" />
 
@@ -96,7 +82,6 @@
             android:id="@+id/alarm_progressbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:visibility="invisible" />
 
         <TextView
