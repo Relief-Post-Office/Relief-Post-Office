@@ -10,7 +10,7 @@
         android:id="@+id/question_setting_title"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="질문 관리"
+        android:text="@string/question_management"
         android:textSize="40sp"
         android:textStyle="bold"
         android:textColor="@color/black"

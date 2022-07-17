@@ -17,7 +17,7 @@ class EndingActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // 보이스 재생 후 종료
-        var endingGuideVoice = MediaPlayer.create(this, R.raw.safetyending)
+        val endingGuideVoice = MediaPlayer.create(this, R.raw.safetyending)
         endingGuideVoice.setOnCompletionListener {
             endingGuideVoice.release()
             finish()

@@ -32,7 +32,7 @@
     <info.hoang8f.widget.FButton
         android:layout_width="0sp"
         android:layout_height="0sp"
-        android:text="로그아웃"
+        android:text="@string/logout"
         android:fontFamily="@font/bmjua"
         android:id="@+id/guardian_logout"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline1.25"

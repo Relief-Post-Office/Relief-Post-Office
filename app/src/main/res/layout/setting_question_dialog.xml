@@ -12,7 +12,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="질문 추가"
+        android:text="@string/question_add"
         android:textStyle="bold"
         android:textColor="@color/black"
         android:textSize="40sp"
@@ -30,7 +30,7 @@
             android:id="@+id/question_setting_time"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:text="00:00"
+            android:text="@string/question_set_time"
             android:fontFamily="@font/bmjua"
             android:textColor="@color/black"
             android:layout_marginHorizontal="10dp"
@@ -43,7 +43,7 @@
             android:id="@+id/question_duration_time"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:text="00:00"
+            android:text="@string/question_duration_time"
             android:fontFamily="@font/bmjua"
             android:textColor="@color/black"
             android:layout_marginHorizontal="10dp"
@@ -53,8 +53,6 @@
             tools:ignore="HardcodedText" />
 
     </LinearLayout>
-
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,8 +64,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:background="@drawable/button_rounded_weak_blue"
-            android:text="재생"
+            android:background="@drawable/button_rounded_gray"
+            android:text="@string/record"
             android:textSize="20sp"
             android:layout_weight="1"
             tools:ignore="ButtonStyle,HardcodedText" />
@@ -78,8 +76,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:background="@drawable/button_rounded_weak_blue"
-            android:text="수정"
+            android:background="@drawable/button_rounded_gray"
+            android:text="@string/update"
             android:textSize="20sp"
             android:layout_weight="1"
             tools:ignore="ButtonStyle,HardcodedText" />
@@ -95,10 +93,12 @@
             android:id="@+id/question_text"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:layout_margin="10dp"
+            android:layout_margin="15dp"
+            android:padding="15dp"
             android:gravity="center"
-            android:hint="작성해주세요"
+            android:hint="@string/question_hint"
             android:maxLength="50"
+            android:lineSpacingExtra="6sp"
             android:background="@drawable/edittext_rounded_corner_rectangle"
             android:textColorHint="#8E8D8D"
             tools:ignore="Autofill,HardcodedText,TextFields" />
@@ -117,7 +117,7 @@
         android:id="@+id/record_switch"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:text="녹음 회신"
+        android:text="@string/record_reply"
         android:fontFamily="@font/jua"
         android:textSize="20sp"
         android:layout_marginLeft="20dp"
@@ -128,7 +128,7 @@
         android:id="@+id/secret_switch"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:text="비밀"
+        android:text="@string/secret"
         android:fontFamily="@font/jua"
         android:textSize="20dp"
         android:layout_marginLeft="20dp"
@@ -149,9 +149,9 @@
             android:id="@+id/add_question_btn"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:text="저장"
+            android:text="@string/save"
             android:textSize="25sp"
-            android:background="@drawable/button_rounded_weak_blue"
+            android:background="@drawable/button_rounded_gray"
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
             tools:ignore="HardcodedText" />

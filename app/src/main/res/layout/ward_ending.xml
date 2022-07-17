@@ -13,7 +13,7 @@
         android:id="@+id/ending_text"
         android:layout_width="0sp"
         android:layout_height="0sp"
-        android:text="안부가 종료되었습니다.\n\n수고하셨습니다 ^^"
+        android:text="@string/safety_ending"
         android:gravity="center"
         android:textColor="@color/black"
         android:textSize="30sp"

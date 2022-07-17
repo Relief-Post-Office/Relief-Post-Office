@@ -148,8 +148,8 @@ class JoinActivity : AppCompatActivity() {
     }
 
     private fun setSave() {
-        binding.joinSave.buttonColor = resources.getColor(R.color.gray)
-        binding.joinSave.cornerRadius = 30
+//        binding.joinSave.buttonColor = resources.getColor(R.color.gray)
+//        binding.joinSave.cornerRadius = 30
         binding.joinSave.setOnClickListener {
             if (allCheck()) {
                 completeJoin()

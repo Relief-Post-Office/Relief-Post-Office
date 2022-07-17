@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp">
+        android:layout_height="80dp">
 
         <LinearLayout
             android:layout_width="0sp"
@@ -17,14 +17,14 @@
 
         <TextView
             android:id="@+id/safety_rv_item"
-            android:text="Test"
+            android:text="@string/safety_name"
             android:layout_width="0sp"
             android:layout_height="0sp"
             android:gravity="center_vertical"
-            android:textSize="20sp"
+            android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@color/black"
-            android:layout_marginLeft="15dp"
+            android:layout_marginStart="20dp"
             app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
             app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
             app:layout_constraintStart_toStartOf="@id/vertical_guideline1"

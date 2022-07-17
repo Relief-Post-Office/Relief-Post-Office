@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="안부 수정"
+            android:text="@string/safety_update"
             android:textSize="40sp"
             android:textStyle="bold"
             android:textColor="@color/black"
@@ -40,6 +40,8 @@
         android:id="@+id/edit_safety_linear2"
         android:layout_width="0sp"
         android:layout_height="40sp"
+        android:maxLength="10"
+        android:lineSpacingExtra="6sp"
         app:layout_constraintTop_toBottomOf="@+id/edit_safety_linear1"
         app:layout_constraintStart_toEndOf="@id/vertical_guideline1"
         app:layout_constraintEnd_toStartOf="@id/vertical_guideline6"
@@ -49,7 +51,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="안부 이름"
+            android:text="@string/safety_name"
             android:textSize="25sp"
             android:textColor="@color/black"
             android:layout_gravity="left|center"
@@ -59,7 +61,7 @@
             android:id="@+id/edit_safety_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="안부 이름을 작성해주세요"
+            android:hint="@string/safety_edit_hint"
             android:layout_gravity="center"
             android:layout_marginStart="30sp"
             android:layout_marginEnd="30sp"/>
@@ -88,7 +90,7 @@
                 android:layout_gravity="center"
                 android:textSize="25sp"
                 android:textColor="@color/black"
-                android:text="질문 설정"/>
+                android:text="@string/question_set"/>
 
             <ImageView
                 android:id="@+id/edit_safety_setting"
@@ -124,9 +126,9 @@
             android:id="@+id/edit_safety_save_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="저 장"
+            android:text="@string/save"
             android:textSize="25sp"
-            android:background="@drawable/button_rounded_weak_blue"
+            android:background="@drawable/button_rounded_gray"
             android:layout_weight="1"
             android:layout_marginRight="15dp"
             tools:ignore="HardcodedText" />
@@ -135,9 +137,9 @@
             android:id="@+id/edit_safety_delete_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="삭 제"
+            android:text="@string/remove"
             android:textSize="25sp"
-            android:background="@drawable/button_rounded_weak_blue"
+            android:background="@drawable/button_rounded_gray"
             android:layout_weight="1"
             android:layout_marginLeft="15dp"
             tools:ignore="HardcodedText" />

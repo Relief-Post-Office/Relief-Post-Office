@@ -9,7 +9,7 @@
         android:id="@+id/safety_fragment_text"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="안부 관리"
+        android:text="@string/safety_management"
         android:textSize="40sp"
         android:textStyle="bold"
         android:textColor="@color/black"

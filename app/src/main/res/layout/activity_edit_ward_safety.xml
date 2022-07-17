@@ -27,7 +27,7 @@
             android:id="@+id/edit_safety_setting_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="안부 수정"
+            android:text="@string/safety_update"
             android:textSize="40sp"
             android:textStyle="bold"
             android:textColor="@color/black"
@@ -48,7 +48,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="안부 이름"
+            android:text="@string/safety_name"
             android:textSize="25sp"
             android:textColor="@color/black"
             android:layout_gravity="left|center"
@@ -58,7 +58,7 @@
             android:id="@+id/edit_ward_safety_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="안부 이름을 작성해주세요"
+            android:hint="@string/safety_edit_hint"
             android:layout_marginStart="30sp"
             android:layout_marginEnd="30sp"/>
 
@@ -79,7 +79,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="월"
+            android:text="@string/monday"
             android:textSize="25sp"
             android:layout_gravity="center"/>
 
@@ -88,7 +88,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="화"
+            android:text="@string/tuesday"
             android:textSize="25sp"
             android:layout_gravity="center"/>
 
@@ -97,7 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="수"
+            android:text="@string/wednesday"
             android:textSize="25sp"
             android:layout_gravity="center"/>
 
@@ -106,7 +106,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="목"
+            android:text="@string/thursday"
             android:textSize="25sp"
             android:layout_gravity="center"/>
 
@@ -115,7 +115,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="금"
+            android:text="@string/friday"
             android:textSize="25sp"
             android:layout_gravity="center"/>
 
@@ -124,7 +124,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="토"
+            android:text="@string/saturday"
             android:textSize="25sp"
             android:layout_gravity="center"/>
 
@@ -133,7 +133,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="일"
+            android:text="@string/sunday"
             android:textSize="25sp"
             android:layout_gravity="center"/>
 
@@ -154,7 +154,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="시간 설정"
+            android:text="@string/time_set"
             android:textColor="@color/black"
             android:layout_marginStart="10sp"
             android:layout_margin="10sp"
@@ -184,7 +184,7 @@
                 android:layout_gravity="center"
                 android:textSize="25sp"
                 android:textColor="@color/black"
-                android:text="질문 설정"/>
+                android:text="@string/question_set"/>
 
             <ImageView
                 android:id="@+id/edit_ward_safety_question_setting"
@@ -219,10 +219,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:text="저 장"
+            android:text="@string/save"
             android:textSize="30sp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/button_rounded_weak_blue"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/button_rounded_gray"
             app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
             app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
             app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
@@ -234,10 +234,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:text="삭 제"
+            android:text="@string/remove"
             android:textSize="30sp"
-            android:background="@drawable/button_rounded_weak_blue"
-            android:layout_marginLeft="15dp"
+            android:background="@drawable/button_rounded_gray"
+            android:layout_marginStart="15dp"
             app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
             app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
             app:layout_constraintStart_toStartOf="@id/vertical_guideline3"

@@ -28,8 +28,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setLogin() {
-        binding.mainButton.buttonColor = resources.getColor(R.color.gray)
-        binding.mainButton.cornerRadius = 30
+//        binding.mainButton.buttonColor = resources.getColor(R.color.gray)
+//        binding.mainButton.cornerRadius = 30
         binding.mainButton.setOnClickListener {
             startActivity(Intent(this, PhoneActivity::class.java))
         }

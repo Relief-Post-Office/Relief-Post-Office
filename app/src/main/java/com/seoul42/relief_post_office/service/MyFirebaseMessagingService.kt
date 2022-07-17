@@ -151,9 +151,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 val channel = NotificationChannel("default", channelName, importance)
 
                 channel.description = description
-                if (notificationManager != null) {
-                    notificationManager.createNotificationChannel(channel)
-                }
+                notificationManager.createNotificationChannel(channel)
             }
             builder.setContentTitle(title) // 제목
                 .setContentText(body) // 내용

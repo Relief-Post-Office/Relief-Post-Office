@@ -23,8 +23,11 @@
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:gravity="center_vertical"
-        android:text="질문을 넣어주세요"
+        android:text="@string/question_content"
         android:textSize="18sp"
+        android:lineSpacingExtra="6sp"
+        android:maxLength="50"
+        android:maxLines="3"
         android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
@@ -124,7 +127,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.7" />
+        app:layout_constraintGuide_percent="0.725" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline7"

@@ -17,7 +17,7 @@
         android:id="@+id/join_text"
         android:layout_width="0sp"
         android:layout_height="0sp"
-        android:text="회원 가입"
+        android:text="@string/join"
         android:textSize="35sp"
         android:textStyle="bold"
         android:textColor="@color/black"
@@ -55,11 +55,11 @@
                 android:background="@drawable/check_box"
                 android:button="@null"
                 android:gravity="center"
-                android:text="피보호자\n회원가입"
+                android:text="@string/ward_join"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:layout_marginLeft="30sp"
-                android:layout_marginRight="10sp"
+                android:layout_marginStart="30sp"
+                android:layout_marginEnd="10sp"
                 android:layout_marginTop="10sp"
                 android:layout_marginBottom="10sp"/>
 
@@ -72,11 +72,11 @@
                 android:background="@drawable/check_box"
                 android:gravity="center"
                 android:button="@null"
-                android:text="보호자\n회원가입"
+                android:text="@string/guardian_join"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:layout_marginLeft="10sp"
-                android:layout_marginRight="30sp"
+                android:layout_marginStart="10sp"
+                android:layout_marginEnd="30sp"
                 android:layout_marginTop="10sp"
                 android:layout_marginBottom="10sp"/>
 
@@ -99,8 +99,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="이름"
-            android:layout_marginLeft="20dp"
+            android:text="@string/name"
+            android:layout_marginStart="20dp"
             android:textColor="@color/black"
             android:textSize="15sp"
             android:textStyle="bold"
@@ -112,9 +112,9 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:background="#00000000"
-            android:hint="이름을 입력하세요"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="20dp"
+            android:hint="@string/name_hint"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginVertical="5dp"
             android:maxLength="8"
             android:inputType="text"
@@ -137,8 +137,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="주소"
-            android:layout_marginLeft="20dp"
+            android:text="@string/address"
+            android:layout_marginStart="20dp"
             android:textColor="@color/black"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -147,9 +147,9 @@
             android:id="@+id/join_address"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="주소를 입력하세요"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="20dp"
+            android:hint="@string/address_hint"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="20dp"
             android:textColor="@color/black"
             android:gravity="center"
             android:background="#00000000"
@@ -172,8 +172,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="상세주소"
-            android:layout_marginLeft="20dp"
+            android:text="@string/detail_address"
+            android:layout_marginStart="20dp"
             android:textColor="@color/black"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -182,10 +182,10 @@
             android:id="@+id/join_detail_address"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="15sp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="20dp"
             android:layout_marginVertical="5dp"
-            android:hint="상세주소를 입력하세요"
+            android:hint="@string/detail_address_hint"
             android:gravity="center"
             android:background="#00000000"
             android:inputType="text"
@@ -208,8 +208,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="생년월일 "
-            android:layout_marginLeft="20dp"
+            android:text="@string/birth_date"
+            android:layout_marginStart="20dp"
             android:textColor="@color/black"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -218,10 +218,10 @@
             android:id="@+id/join_birth"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="15sp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="15sp"
+            android:layout_marginEnd="20dp"
             android:layout_marginVertical="5dp"
-            android:hint="생년월일을 입력하세요"
+            android:hint="@string/birth_date_hint"
             android:textColor="@color/black"
             android:gravity="center"
             android:background="#00000000"
@@ -244,8 +244,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="남/여 "
+            android:layout_marginStart="20dp"
+            android:text="@string/gender"
             android:textColor="@color/black"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -254,8 +254,8 @@
             android:id="@+id/join_gender_group"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginVertical="5dp"
             android:gravity="center"
             android:orientation="horizontal">
@@ -264,16 +264,16 @@
                 android:id="@+id/join_male"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="남자"
-                android:layout_marginRight="10dp"
+                android:text="@string/male"
+                android:layout_marginEnd="10dp"
                 android:textSize="13sp" />
 
             <RadioButton
                 android:id="@+id/join_female"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="여자"
-                android:layout_marginLeft="10dp"
+                android:text="@string/female"
+                android:layout_marginStart="10dp"
                 android:textSize="13sp" />
 
         </RadioGroup>
@@ -329,7 +329,6 @@
             android:id="@+id/join_progressbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:visibility="invisible" />
 
         <TextView
@@ -349,7 +348,7 @@
         android:layout_width="0sp"
         android:layout_height="50sp"
         android:layout_marginTop="20sp"
-        android:text="확인"
+        android:text="@string/check"
         android:fontFamily="@font/bmjua"
         android:textColor="@color/black"
         android:textSize="15sp"
