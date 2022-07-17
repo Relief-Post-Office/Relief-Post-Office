@@ -2,7 +2,7 @@
 <animation-list
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@drawable/splash_1" android:duration="200" />
-    <item android:drawable="@drawable/splash_2" android:duration="200" />
+    <item android:drawable="@drawable/splash1" android:duration="200" />
+    <item android:drawable="@drawable/splash2" android:duration="200" />
 
 </animation-list>
