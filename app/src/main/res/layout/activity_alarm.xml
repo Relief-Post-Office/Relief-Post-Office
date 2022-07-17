@@ -74,7 +74,7 @@
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:layout_gravity="center"
-        android:background="@drawable/relief_post_office"
+        android:background="@drawable/alarm_animation"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline8"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline10"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
