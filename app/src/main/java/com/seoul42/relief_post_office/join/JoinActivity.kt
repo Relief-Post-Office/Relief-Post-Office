@@ -1,4 +1,4 @@
-package com.seoul42.relief_post_office
+package com.seoul42.relief_post_office.join
 
 import android.app.Activity
 import android.app.Dialog
@@ -25,6 +25,8 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
+import com.seoul42.relief_post_office.guardian.GuardianBackgroundActivity
+import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.databinding.JoinBinding
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.ward.WardActivity

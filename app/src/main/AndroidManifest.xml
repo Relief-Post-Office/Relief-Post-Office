@@ -61,20 +61,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".login.MainActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity
-            android:name=".PhoneActivity"
+            android:name=".login.PhoneActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity
-            android:name=".JoinActivity"
+            android:name=".join.JoinActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".guardian.MainFragment"
             android:windowSoftInputMode="adjustNothing"
             tools:ignore="Instantiatable" />
         <activity
-            android:name=".GuardianBackgroundActivity"
+            android:name=".guardian.GuardianBackgroundActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".ward.WardActivity"

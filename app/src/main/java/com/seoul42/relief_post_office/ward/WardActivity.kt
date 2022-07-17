@@ -124,7 +124,7 @@ class WardActivity : AppCompatActivity() {
     }
 
     private fun setLogout() {
-        binding.wardLogout.buttonColor = resources.getColor(R.color.gray)
+        binding.wardLogout.buttonColor = resources.getColor(R.color.weak_blue)
         binding.wardLogout.cornerRadius = 30
         binding.wardLogout.setOnClickListener {
             auth.signOut()
@@ -185,7 +185,7 @@ class WardActivity : AppCompatActivity() {
     private fun setAddButton() {
         val requestDB = Firebase.database.reference.child("ward").child(myUserId).child("requestList")
 
-        binding.wardAddGuardian.buttonColor = resources.getColor(R.color.gray)
+        binding.wardAddGuardian.buttonColor = resources.getColor(R.color.weak_blue)
         binding.wardAddGuardian.cornerRadius = 30
         binding.wardAddGuardian.setOnClickListener {
             if (requestList.isEmpty()) {

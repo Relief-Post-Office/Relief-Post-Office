@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -17,15 +16,16 @@
         android:textColor="@color/black"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="20dp"/>
+        android:layout_margin="30dp"/>
 
     <LinearLayout
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
-        app:layout_constraintTop_toBottomOf="@id/horizontal_guideline1.5"
-        app:layout_constraintBottom_toTopOf="@id/horizontal_guideline0.85"
+        android:background="@drawable/recyclerview_border"
+        app:layout_constraintTop_toBottomOf="@id/question_setting_title"
+        app:layout_constraintBottom_toTopOf="@id/question_rv_item_plusBtn"
         app:layout_constraintStart_toEndOf="@id/vertical_guideline0.05"
         app:layout_constraintEnd_toStartOf="@id/vertical_guideline0.95">
 
@@ -39,12 +39,12 @@
 
     <ImageView
         android:id="@+id/question_rv_item_plusBtn"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/horizontal_guideline0.85"
-        app:layout_constraintBottom_toTopOf="@id/horizontal_guideline0.95"
-        app:layout_constraintStart_toEndOf="@id/vertical_guideline0.35"
-        app:layout_constraintEnd_toStartOf="@id/vertical_guideline0.65"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/img" />
 
     <androidx.constraintlayout.widget.Guideline

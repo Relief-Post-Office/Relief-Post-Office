@@ -1,14 +1,12 @@
-package com.seoul42.relief_post_office
+package com.seoul42.relief_post_office.guardian
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.databinding.GuardianBackgroundBinding
-import com.seoul42.relief_post_office.guardian.MainFragment
-import com.seoul42.relief_post_office.guardian.QuestionFragment
-import com.seoul42.relief_post_office.guardian.SafetyFragment
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.util.Constants.Companion.TAG_MAIN
 import com.seoul42.relief_post_office.util.Constants.Companion.TAG_QUESTION
@@ -30,7 +28,7 @@ class GuardianBackgroundActivity : AppCompatActivity() {
 
         userDTO = intent.getSerializableExtra("userDTO") as UserDTO
         mainFragment = MainFragment(userDTO)
-        safetyFragment = SafetyFragment(userDTO)
+        safetyFragment = SafetyFragment()
         questionFragment = QuestionFragment()
 
         setContentView(binding.root)

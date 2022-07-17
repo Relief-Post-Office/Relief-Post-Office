@@ -6,10 +6,6 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -17,9 +13,7 @@ import androidx.core.view.isVisible
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
-import com.seoul42.relief_post_office.PhoneActivity
 import com.seoul42.relief_post_office.R
-import com.seoul42.relief_post_office.alarm.WardReceiver
 import com.seoul42.relief_post_office.databinding.ActivityAlarmBinding
 import com.seoul42.relief_post_office.model.*
 import java.text.SimpleDateFormat

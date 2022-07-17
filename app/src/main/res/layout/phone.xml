@@ -6,7 +6,7 @@
     android:background="#fffbf3"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".PhoneActivity" >
+    tools:context=".login.PhoneActivity" >
 
     <TextView
         android:layout_width="0sp"
@@ -76,7 +76,7 @@
         app:lb_textColor="#000000"
         app:lb_rippleEnable="true"
         app:lb_btnText="인증 요청"
-        custom:lb_btnColor="#999590"
+        custom:lb_btnColor="@color/weak_blue"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline4.5"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline5"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline5"

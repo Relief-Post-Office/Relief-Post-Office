@@ -51,7 +51,7 @@
             android:layout_width="0sp"
             android:layout_height="0sp"
             android:checked="false"
-            android:background="@drawable/button_rounded_gray"
+            android:background="@drawable/button_rounded_weak_blue"
             app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
             app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
             app:layout_constraintStart_toStartOf="@id/vertical_guideline7"

@@ -1,10 +1,9 @@
-package com.seoul42.relief_post_office
+package com.seoul42.relief_post_office.join
 
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.Window
-import android.widget.Button
 import android.widget.NumberPicker
 import androidx.appcompat.app.AppCompatActivity
 import com.seoul42.relief_post_office.databinding.DialogBirthBinding

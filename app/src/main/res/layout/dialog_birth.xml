@@ -8,7 +8,7 @@
     android:layout_gravity="center"
     android:paddingHorizontal="50sp"
     android:paddingVertical="10sp"
-    tools:context=".BirthDialog">
+    tools:context=".join.BirthDialog">
 
     <LinearLayout
         android:layout_width="match_parent"

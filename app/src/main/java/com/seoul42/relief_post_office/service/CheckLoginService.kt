@@ -11,8 +11,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
-import com.seoul42.relief_post_office.GuardianBackgroundActivity
-import com.seoul42.relief_post_office.MainActivity
+import com.seoul42.relief_post_office.guardian.GuardianBackgroundActivity
+import com.seoul42.relief_post_office.login.MainActivity
 import com.seoul42.relief_post_office.databinding.SplashBinding
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.ward.WardActivity

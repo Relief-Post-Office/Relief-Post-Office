@@ -1,4 +1,4 @@
-package com.seoul42.relief_post_office
+package com.seoul42.relief_post_office.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -17,11 +17,12 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
+import com.seoul42.relief_post_office.guardian.GuardianBackgroundActivity
+import com.seoul42.relief_post_office.join.JoinActivity
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.ward.WardActivity
 import java.util.concurrent.TimeUnit
 import com.seoul42.relief_post_office.databinding.PhoneBinding
-import com.seoul42.relief_post_office.model.WardDTO
 
 class PhoneActivity : AppCompatActivity() {
 

@@ -6,7 +6,6 @@ import android.graphics.drawable.ColorDrawable
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.seoul42.relief_post_office.BirthDialog
 import com.seoul42.relief_post_office.adapter.ResponseAdapter
 import com.seoul42.relief_post_office.databinding.DialogResponseBinding
 
