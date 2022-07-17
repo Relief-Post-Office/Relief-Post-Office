@@ -42,7 +42,8 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
                     .load(user.second.photoUri)
                     .circleCrop()
                     .into(binding.itemUserImg)
-                binding.itemUserText.text = "$userName\n$userAge"
+                binding.itemUserName.text = userName
+                binding.itemUserAge.text = userAge.toString()
                 binding.itemUserCall.setOnClickListener {
                     /* 통화 바로 가능하도록 */
                     ContextCompat.startActivity(

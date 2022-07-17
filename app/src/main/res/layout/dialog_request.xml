@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:text="@string/ward_add"
             android:textColor="@color/black"
-            android:textSize="25sp"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
         <EditText
@@ -65,6 +65,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/request_button"
             android:text="@string/register"
+            android:textSize="20sp"
             android:fontFamily="@font/bmjua"/>
 
     </LinearLayout>

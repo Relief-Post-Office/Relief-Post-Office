@@ -37,7 +37,7 @@
         android:maxLines="1"
         android:maxLength="10"
         android:text="@string/safety_name"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/non_response"
-        android:textSize="16sp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/vertical_guideline6"
         app:layout_constraintStart_toStartOf="@+id/vertical_guideline9"
@@ -76,7 +76,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.925" />
+        app:layout_constraintGuide_percent="0.975" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline11"
@@ -104,7 +104,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.8" />
+        app:layout_constraintGuide_percent="0.75" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline12"

@@ -25,7 +25,7 @@ class NetworkReceiver : BroadcastReceiver() {
 
     /*
      *  네트워크가 연결되었는지 확인
-     *  - 연결이 안된 경우 : 5분 단위로 네트워크 알람을 재요청
+     *  - 연결이 안된 경우 : 30초 단위로 네트워크 알람을 재요청
      *  - 연결된 경우 : 로그인 된 유저 중 보호자, 피보호자에 따라 알람 요청
      */
     override fun onReceive(context : Context, intent : Intent) {
@@ -52,7 +52,7 @@ class NetworkReceiver : BroadcastReceiver() {
 
     /*
      *  네트워크 연결이 안될 경우 실행하는 메서드
-     *  5분 단위로 네트워크 알람 요청을 수행
+     *  30초 단위로 네트워크 알람 요청을 수행
      */
     private fun setNetworkAlarm(context : Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -65,7 +65,7 @@ class NetworkReceiver : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.MINUTE, 5) /* Here! */
+        interval.add(Calendar.SECOND, 30) /* Here! */
         alarmManager.cancel(sender)
 
         if (Build.VERSION.SDK_INT >= 23) {

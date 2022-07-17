@@ -56,8 +56,9 @@ class AnswerActivity : AppCompatActivity() {
     }
 
     private fun setButton() {
+        binding.wardSafetyYes.buttonColor = resources.getColor(R.color.yes)
+        binding.wardSafetyNo.buttonColor = resources.getColor(R.color.no)
         binding.wardSafetyRepeat.buttonColor = resources.getColor(R.color.gray)
-        binding.wardSafetyRepeat.cornerRadius = 30
         binding.wardSafetyNo.setOnClickListener {
             val reply: Boolean = false
             var recordSrc: String = ""

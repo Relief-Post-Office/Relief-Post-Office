@@ -5,6 +5,10 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -113,8 +117,7 @@ class WardActivity : AppCompatActivity() {
     }
 
     /*
-     * 주기적 작업을 수행할 수 있도록 설정
-     * 단, 배터리 최적화 무시를 안할 경우 피보호자 측은 강제 알람을 띄울 수 없음
+     * 알람 요청 작업을 수행할 수 있도록 설정
      */
     private fun setAlarm() {
         val start = Intent(WardReceiver.REPEAT_START)
@@ -124,7 +127,7 @@ class WardActivity : AppCompatActivity() {
     }
 
     private fun setLogout() {
-        binding.wardLogout.buttonColor = resources.getColor(R.color.weak_blue)
+        binding.wardLogout.buttonColor = resources.getColor(R.color.gray)
         binding.wardLogout.cornerRadius = 30
         binding.wardLogout.setOnClickListener {
             auth.signOut()
@@ -185,7 +188,7 @@ class WardActivity : AppCompatActivity() {
     private fun setAddButton() {
         val requestDB = Firebase.database.reference.child("ward").child(myUserId).child("requestList")
 
-        binding.wardAddGuardian.buttonColor = resources.getColor(R.color.weak_blue)
+        binding.wardAddGuardian.buttonColor = resources.getColor(R.color.gray)
         binding.wardAddGuardian.cornerRadius = 30
         binding.wardAddGuardian.setOnClickListener {
             if (requestList.isEmpty()) {
@@ -222,7 +225,7 @@ class WardActivity : AppCompatActivity() {
         val responseLayout = LinearLayoutManager(this)
 
         responseAdapter = ResponseAdapter(this, getRequestedGuardianList())
-        responseDialog.show(responseAdapter, responseLayout)
+        responseDialog.show(responseAdapter, responseLayout, resources)
         responseDialog.setOnAddClickedListener {
             if (responseAdapter.getCheckList().isNotEmpty()) {
                 Toast.makeText(this, "보호자가 추가되었습니다!", Toast.LENGTH_SHORT).show()

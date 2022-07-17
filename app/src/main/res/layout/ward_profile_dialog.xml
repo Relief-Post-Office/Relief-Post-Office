@@ -12,30 +12,30 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp">
+        android:layout_height="110dp">
 
         <Button
             android:id="@+id/guardian_dialog_profile_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/profile"
-            android:background="@drawable/button_rounded_gray"
+            android:background="@drawable/button_rounded_weak_blue"
             android:textSize="15sp"
             android:layout_gravity="right|top"
             android:layout_margin="10dp"/>
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/relief_post_office" 
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/relief_post_office"
             android:layout_gravity="center"
             app:civ_border_width="3dp"
             app:civ_border_color="#d5d5d5"/>
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/guardian_dialog_photo"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
             app:civ_border_width="3dp"
             app:civ_border_color="#d5d5d5"/>
@@ -61,7 +61,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="325dp"
         android:background="@drawable/recyclerview_border"
         android:layout_margin="10dp"
         android:orientation="vertical">
@@ -85,7 +85,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_height="40dp"
         android:orientation="horizontal">
 
         <Button
@@ -94,11 +95,10 @@
             android:layout_height="match_parent"
             android:text="@string/safety_set"
             android:textSize="25sp"
-            android:background="@drawable/button_rounded_weak_blue"
+            android:background="@drawable/button_rounded_gray"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="15dp"
-            android:layout_weight="1"
-            android:layout_marginBottom="5dp"/>
+            android:layout_weight="1"/>
 
         <Button
             android:id="@+id/guardian_dialog_result_button"
@@ -106,11 +106,10 @@
             android:layout_height="match_parent"
             android:text="@string/result_show"
             android:textSize="25sp"
-            android:background="@drawable/button_rounded_weak_blue"
+            android:background="@drawable/button_rounded_gray"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="20dp"
-            android:layout_weight="1"
-            android:layout_marginBottom="5dp"/>
+            android:layout_weight="1" />
 
     </LinearLayout>
 

@@ -25,7 +25,7 @@
         app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"/>
 
-    <Button
+    <info.hoang8f.widget.FButton
         android:id="@+id/ward_safety_yes"
         android:layout_width="0sp"
         android:layout_height="0sp"
@@ -40,7 +40,7 @@
         app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline2" />
 
-    <Button
+    <info.hoang8f.widget.FButton
         android:id="@+id/ward_safety_no"
         android:layout_width="0sp"
         android:layout_height="0sp"

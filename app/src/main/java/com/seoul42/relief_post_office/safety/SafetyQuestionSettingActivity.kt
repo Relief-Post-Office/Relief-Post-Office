@@ -25,6 +25,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -32,6 +33,7 @@ import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.QuestionFragmentRVAdapter
 import com.seoul42.relief_post_office.adapter.SafetyQuestionSettingAdapter
 import com.seoul42.relief_post_office.adapter.WardSafetyAdapter
+import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.record.RecordActivity
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
@@ -54,6 +56,7 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
     private lateinit var safetyQuestionSettingAdapter: SafetyQuestionSettingAdapter
     private lateinit var auth : FirebaseAuth
     private lateinit var owner : String
+    private lateinit var listenerDTO : ListenerDTO
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -163,13 +166,22 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        val reference : DatabaseReference = listenerDTO.reference
+        val listener : ChildEventListener = listenerDTO.listener
+
+        reference.removeEventListener(listener)
+    }
+
     // questionList 실시간 세팅해주기 / 수정 및 변경 적용 포함
     private fun setQuestionList(){
         // 로그인한 유저의 질문 목록
         val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
 
         // questionList에 로그인한 유저의 질문들 넣기
-        userQuestionRef.addChildEventListener(object : ChildEventListener {
+        val questionListener = userQuestionRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 // 로그인한 유저의 질문 하나씩 참조
                 val questionId = snapshot.key.toString()
@@ -233,6 +245,7 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {
             }
         })
+        listenerDTO = ListenerDTO(userQuestionRef, questionListener)
     }
 
     // 리사이클러 뷰 세팅함수

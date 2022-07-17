@@ -40,15 +40,9 @@ class ResultQuestionDetailActivity : AppCompatActivity() {
 
     private fun setQuestionRecord(questionSrc: String) {
         if (questionSrc != "") {
-            binding.resultQuestionRecordTitle.visibility = View.VISIBLE
-            binding.resultQuestionRecordLayout.visibility = View.VISIBLE
             binding.resultQuestionRecordBtn.setOnClickListener {
                 // 질문 녹음 재생 기능
             }
-        }
-        else {
-            binding.resultQuestionRecordTitle.visibility = View.GONE
-            binding.resultQuestionRecordLayout.visibility = View.GONE
         }
     }
 

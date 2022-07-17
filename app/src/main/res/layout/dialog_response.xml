@@ -24,7 +24,7 @@
             android:text="@string/guardian_register"
             android:padding="10dp"
             android:textColor="@color/black"
-            android:textSize="25sp"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -47,7 +47,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/response_button"
-            android:text="@string/register"
+            android:text="등록"
+            android:textSize="20sp"
             android:fontFamily="@font/bmjua" />
 
     </LinearLayout>

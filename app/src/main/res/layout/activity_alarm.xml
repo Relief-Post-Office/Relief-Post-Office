@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:fitsSystemWindows="true"
-    android:background="@drawable/alarm_background"
+    android:background="@drawable/alarm_background_another"
     tools:context=".ward.AlarmActivity">
 
     <TextView
@@ -17,7 +17,7 @@
         android:text="@string/safety_time"
         android:textSize="50sp"
         android:textStyle="bold"
-        android:textColor="@color/white"
+        android:textColor="#fffbf3"
         android:gravity="center"
         android:fontFamily="@font/bmjua"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
@@ -32,7 +32,7 @@
         android:text="@string/safety_date"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@color/white"
+        android:textColor="#fffbf3"
         android:gravity="center"
         android:fontFamily="@font/bmjua"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline3"
@@ -45,15 +45,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/safety_name"
-        android:textSize="35sp"
+        android:textSize="40sp"
         android:textStyle="bold"
-        android:textColor="@color/white"
+        android:textColor="#fffbf3"
         android:gravity="center"
         android:fontFamily="@font/bmjua"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
-        app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
-        app:layout_constraintEnd_toEndOf="@id/vertical_guideline2" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageButton
         android:id="@+id/alarm_button"

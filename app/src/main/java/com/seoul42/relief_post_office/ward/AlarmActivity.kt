@@ -67,10 +67,10 @@ class AlarmActivity : AppCompatActivity() {
 
     /* 알람 설정 */
     private fun setAlarm() {
-        val date = SimpleDateFormat("MM월 dd일 E요일 HH:mm")
+        val date = SimpleDateFormat("MM월 dd일 E요일 HH : mm")
             .format(Date(System.currentTimeMillis()))
         val curDay = date.substring(0, 11)
-        val curTime = date.substring(12, 17)
+        val curTime = date.substring(12, 19)
         val finishTime : Long = 300000
         val recommendDTO = intent.getSerializableExtra("recommendDTO") as WardRecommendDTO
         val safetyDB = Firebase.database.reference.child("safety")
@@ -104,8 +104,6 @@ class AlarmActivity : AppCompatActivity() {
     /* 버튼 text = 피보호자가 진행해야 할 "안부" 이름 */
     private fun setButton() {
         binding.alarmButton.setOnClickListener{
-//            if (animationDrawable.isRunning)
-//                animationDrawable.stop()
             binding.alarmProgressbar.isVisible = true
             binding.alarmTransformText.text = "답변 준비중..."
             window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)

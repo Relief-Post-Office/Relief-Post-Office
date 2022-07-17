@@ -33,6 +33,7 @@
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:text="@string/logout"
+        android:textSize="15sp"
         android:fontFamily="@font/bmjua"
         android:id="@+id/guardian_logout"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline1.25"

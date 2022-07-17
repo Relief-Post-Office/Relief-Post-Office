@@ -65,7 +65,7 @@ class BootCompleteReceiver : BroadcastReceiver() {
 
     /*
      *  네트워크 연결이 안될 경우 실행하는 메서드
-     *  5분 단위로 네트워크 알람 요청을 수행
+     *  30초 단위로 네트워크 알람 요청을 수행
      */
     private fun setNetworkAlarm(context : Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -78,7 +78,7 @@ class BootCompleteReceiver : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.MINUTE, 5) /* Here! */
+        interval.add(Calendar.SECOND, 30) /* Here! */
         alarmManager.cancel(sender)
 
         if (Build.VERSION.SDK_INT >= 23) {

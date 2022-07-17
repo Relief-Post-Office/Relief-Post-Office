@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:id="@+id/main_layout"
-    android:background="#fffbf3"
+    android:background="@drawable/alarm_background_another"
     tools:context=".ward.EndingActivity">
 
     <TextView
@@ -15,7 +15,7 @@
         android:layout_height="0sp"
         android:text="@string/safety_ending"
         android:gravity="center"
-        android:textColor="@color/black"
+        android:textColor="#fffbf3"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"

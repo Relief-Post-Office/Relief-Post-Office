@@ -113,8 +113,7 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
         }
     }
     /*
-     * 주기적 작업을 수행할 수 있도록 설정
-     * 단, 배터리 최적화 무시를 안할 경우 피보호자 측은 강제 알람을 띄울 수 없음
+     * 알람 요청 작업을 수행할 수 있도록 설정
      */
     private fun setAlarm() {
         val start = Intent(GuardianReceiver.REPEAT_START)
@@ -124,6 +123,8 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
     }
 
     private fun setLogout() {
+        binding.guardianLogout.buttonColor = resources.getColor(R.color.gray)
+        binding.guardianLogout.cornerRadius = 30
         binding.guardianLogout.setOnClickListener {
             auth.signOut()
             ActivityCompat.finishAffinity(requireActivity())

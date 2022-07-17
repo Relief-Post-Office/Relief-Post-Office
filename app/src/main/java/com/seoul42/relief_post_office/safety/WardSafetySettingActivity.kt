@@ -14,11 +14,13 @@ import com.bumptech.glide.Glide
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.QuestionFragmentRVAdapter
 import com.seoul42.relief_post_office.adapter.WardSafetyAdapter
+import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.SafetyDTO
 
 class WardSafetySettingActivity : AppCompatActivity() {
@@ -29,6 +31,7 @@ class WardSafetySettingActivity : AppCompatActivity() {
     private lateinit var wardId : String
     private lateinit var wardName : String
     private lateinit var photoUri : String
+    private lateinit var listenerDTO : ListenerDTO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +68,7 @@ class WardSafetySettingActivity : AppCompatActivity() {
         val wardSafetyRef = database.getReference("ward").child(wardId).child("safetyIdList")
 
         // wardSafetyList에 선택한 피보호자의 안부들 넣기
-        wardSafetyRef.addChildEventListener(object : ChildEventListener{
+        val safetyListener = wardSafetyRef.addChildEventListener(object : ChildEventListener{
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 // 선택한 피보호자의 안부 하나씩 참조
                 val safetyId = snapshot.key.toString()
@@ -125,6 +128,7 @@ class WardSafetySettingActivity : AppCompatActivity() {
             }
 
         })
+        listenerDTO = ListenerDTO(wardSafetyRef, safetyListener)
 
         // 리사이클러 뷰 설정
         // 리사이클러 뷰 가져오기
@@ -135,5 +139,14 @@ class WardSafetySettingActivity : AppCompatActivity() {
         rv.adapter = wardSafetyAdapter
         rv.layoutManager = LinearLayoutManager(this)
         rv.setHasFixedSize(true)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        val reference : DatabaseReference = listenerDTO.reference
+        val listener : ChildEventListener = listenerDTO.listener
+
+        reference.removeEventListener(listener)
     }
 }

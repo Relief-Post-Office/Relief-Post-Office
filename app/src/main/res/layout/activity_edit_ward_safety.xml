@@ -59,6 +59,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/safety_edit_hint"
+            android:maxLength="10"
+            android:lineSpacingExtra="6sp"
             android:layout_marginStart="30sp"
             android:layout_marginEnd="30sp"/>
 
@@ -145,6 +147,7 @@
         android:layout_height="60sp"
         android:background="@drawable/question_item_border"
         app:layout_constraintTop_toBottomOf="@+id/edit_ward_safety_linear3"
+        android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintStart_toEndOf="@id/vertical_guideline1"
         app:layout_constraintEnd_toStartOf="@id/vertical_guideline6">
@@ -158,7 +161,7 @@
             android:textColor="@color/black"
             android:layout_marginStart="10sp"
             android:layout_margin="10sp"
-            android:textSize="35sp"/>
+            android:textSize="30sp"/>
 
     </LinearLayout>
 
