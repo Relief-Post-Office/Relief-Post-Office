@@ -3,6 +3,7 @@ package com.seoul42.relief_post_office.ward
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.AnimationDrawable
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
@@ -11,6 +12,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
@@ -37,11 +40,20 @@ class AlarmActivity : AppCompatActivity() {
     private lateinit var safetyId : String
     private lateinit var resultId : String
 
+//    private lateinit var imageView : ImageButton
+//    private lateinit var animationDrawable: AnimationDrawable
+
     private var mediaPlayer: MediaPlayer? = null
 
+    @Override
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+//        imageView = findViewById(R.id.alarm_button)
+//        animationDrawable = imageView.background as AnimationDrawable
+//
+//        animationDrawable.start()
 
         setAlarm()
         setButton()
@@ -98,6 +110,8 @@ class AlarmActivity : AppCompatActivity() {
     /* 버튼 text = 피보호자가 진행해야 할 "안부" 이름 */
     private fun setButton() {
         binding.alarmButton.setOnClickListener{
+//            if (animationDrawable.isRunning)
+//                animationDrawable.stop()
             binding.alarmProgressbar.isVisible = true
             binding.alarmTransformText.text = "답변 준비중..."
             window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
