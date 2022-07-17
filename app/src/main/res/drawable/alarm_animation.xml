@@ -6,5 +6,7 @@
     <item android:drawable="@drawable/alarm2" android:duration="150" />
     <item android:drawable="@drawable/alarm3" android:duration="150" />
     <item android:drawable="@drawable/alarm4" android:duration="150" />
+    <item android:drawable="@drawable/alarm5" android:duration="150" />
+    <item android:drawable="@drawable/alarm6" android:duration="150" />
 
 </animation-list>

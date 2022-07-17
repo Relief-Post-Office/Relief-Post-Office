@@ -40,8 +40,8 @@ class AlarmActivity : AppCompatActivity() {
     private lateinit var safetyId : String
     private lateinit var resultId : String
 
-//    private lateinit var imageView : ImageButton
-//    private lateinit var animationDrawable: AnimationDrawable
+    private lateinit var imageView : ImageButton
+    private lateinit var animationDrawable: AnimationDrawable
 
     private var mediaPlayer: MediaPlayer? = null
 
@@ -50,10 +50,10 @@ class AlarmActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-//        imageView = findViewById(R.id.alarm_button)
-//        animationDrawable = imageView.background as AnimationDrawable
-//
-//        animationDrawable.start()
+        imageView = binding.alarmButton
+        animationDrawable = imageView.background as AnimationDrawable
+
+        animationDrawable.start()
 
         setAlarm()
         setButton()
