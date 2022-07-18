@@ -250,7 +250,7 @@ class SafetyQuestionSettingAdapter(
             if (checkboxStatus[adapterPosition] != null)
                 itemCheckBox.isChecked = checkboxStatus[adapterPosition]
             itemCheckBox.setOnClickListener {
-                if (!itemCheckBox.isChecked) {
+                if (!(itemCheckBox.isChecked)) {
                     deletedQuestions.add(item.first)
                     checkboxStatus.put(adapterPosition, false)
                     checkedQuestions.remove(item.first)
