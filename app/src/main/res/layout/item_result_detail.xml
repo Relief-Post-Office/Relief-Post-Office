@@ -40,7 +40,7 @@
         android:maxLines="3"
         android:text="@string/question_content"
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline3"

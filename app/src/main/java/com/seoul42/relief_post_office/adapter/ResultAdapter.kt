@@ -3,6 +3,7 @@ package com.seoul42.relief_post_office.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -64,9 +65,9 @@ class ResultAdapter(private val context : Context,
 
     private fun millisToTimeString(millisTime: Long): String{
         val timeSec = millisTime / 1000
-        val hour = timeSec / 360
-        val minute = (timeSec % 360) / 60
-        val second = (timeSec % 3600) % 60
+        val hour = timeSec / 3600
+        val minute = (timeSec % 3600) / 60
+        val second = timeSec % 60
         return "${hour}시간 ${minute}분 ${second}초"
     }
 

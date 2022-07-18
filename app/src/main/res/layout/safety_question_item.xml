@@ -34,7 +34,7 @@
         android:gravity="center_vertical"
         android:text="@string/question_content"
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:lineSpacingExtra="6sp"
         android:maxLength="50"
         android:maxLines="3"
