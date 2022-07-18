@@ -17,12 +17,12 @@
         <Button
             android:id="@+id/guardian_dialog_profile_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:text="@string/profile"
             android:background="@drawable/button_rounded_weak_blue"
             android:textSize="15sp"
             android:layout_gravity="right|top"
-            android:layout_margin="10dp"/>
+            android:layout_marginTop="15dp"/>
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="100dp"
@@ -44,7 +44,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="20dp"
         android:orientation="vertical">
 
         <TextView
@@ -54,24 +54,25 @@
             android:layout_gravity="center"
             android:text="@string/name"
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:layout_marginTop="4dp"/>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="325dp"
+        android:layout_height="300dp"
         android:background="@drawable/recyclerview_border"
         android:layout_margin="10dp"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
             android:text="@string/response_today_safety"
             android:textColor="@color/black"
-            android:textSize="30sp"
+            android:textSize="24sp"
             android:gravity="center"
             tools:ignore="HardcodedText" />
 
@@ -86,7 +87,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_marginTop="10dp"
-        android:layout_height="40dp"
+        android:layout_height="35dp"
         android:orientation="horizontal">
 
         <Button
@@ -94,7 +95,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/safety_set"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:background="@drawable/button_rounded_gray"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="15dp"
@@ -105,7 +106,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/result_show"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:background="@drawable/button_rounded_gray"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="20dp"
