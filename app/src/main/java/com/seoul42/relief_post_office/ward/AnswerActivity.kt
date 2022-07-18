@@ -104,6 +104,8 @@ class AnswerActivity : AppCompatActivity() {
             if (questionList[currentIndex].second.record) {
                 // 화면 터치 방지
                 window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                // 질문 녹음 재생 중지
+                questionPlayer.stop()
 
                 // 녹음 안내 가이드 보이스
                 val recordGuide = MediaPlayer.create(this, R.raw.recordguide)
@@ -137,15 +139,8 @@ class AnswerActivity : AppCompatActivity() {
                     dialog.setOnDismissListener {
                         // 화면 터치 풀기
                         window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                        nextQuestion()
-                        recordGuide.release()
-                        answerRecordActivity.stopRecording()
-                    }
-
-                    dialog.findViewById<Button>(R.id.record_stop_btn).setOnClickListener {
                         // 녹음 중이라면 중단 후 저장
                         answerRecordActivity.stopRecording()
-                        Log.d("record", answerRecordRef.toString())
                         uploadAnswerRecord.addOnSuccessListener {
                             answerRecordRef.downloadUrl.addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
@@ -155,11 +150,21 @@ class AnswerActivity : AppCompatActivity() {
                             }
                             dialog.dismiss()
                         }
+                        recordGuide.release()
+                        Handler().postDelayed({
+                            nextQuestion()
+                        }, 1000)
+                    }
+
+                    dialog.findViewById<Button>(R.id.record_stop_btn).setOnClickListener {
+                        dialog.dismiss()
                     }
                 }, 13000)
             }
-            else
+            else {
+                sendAnswer(reply, recordSrc)
                 nextQuestion()
+            }
         }
     }
 
