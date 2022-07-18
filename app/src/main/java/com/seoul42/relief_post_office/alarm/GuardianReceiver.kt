@@ -220,6 +220,7 @@ class GuardianReceiver () : BroadcastReceiver() {
      *  추천 리스트를 intent 에 담아서 보내도록 함
      */
     private fun setAlarm(context: Context, alarmFlag : String, recommendList : ArrayList<GuardianRecommendDTO>?) {
+
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val schedule = Intent(alarmFlag)
 
@@ -235,13 +236,14 @@ class GuardianReceiver () : BroadcastReceiver() {
         /* 알람 시간 설정(recommendDTO.timeGap) */
         interval.timeInMillis = System.currentTimeMillis()
         if (alarmFlag == REPEAT_STOP) {
-            val timeGap = if (recommendList!![0].timeGap - 5 < 0) {
-                0
+            /* 현재 시간이 [(안부시간 + 30(분)) - 10(초), (응답시간 + 30(분)] 인 경우 => 무시 */
+            if (recommendList!![0].timeGap - 5 <= 0) {
+                Log.d("확인", "세상에 이런일이")
+                setAlarm(context, WardReceiver.REPEAT_START, null)
+                return
             } else {
-                recommendList[0].timeGap - 5
+                interval.add(Calendar.SECOND, recommendList[0].timeGap - 5)
             }
-
-            interval.add(Calendar.SECOND, timeGap)
         } else {
             interval.add(Calendar.SECOND, 1)
         }
@@ -328,7 +330,7 @@ class GuardianReceiver () : BroadcastReceiver() {
                             if (safetySnapshot.getValue(SafetyDTO::class.java) != null) {
                                 val safetyDTO = safetySnapshot.getValue(SafetyDTO::class.java) as SafetyDTO
 
-                                notifySafety(context, userDTO, safetyDTO)
+                                executeNotifyAlarm(context, userDTO, safetyDTO)
                             }
                         }.addOnFailureListener {
                             if (!isFail) setNetworkAlarm(context)
@@ -345,7 +347,7 @@ class GuardianReceiver () : BroadcastReceiver() {
      *  최종적으로 보호자에게 통지 알람을 보내는 메서드
      *  피보호자가 "미응답"한 안부를 보호자 핸드폰의 상단에 메시지가 띄워지도록 함
      */
-    private fun notifySafety(context : Context, userDTO : UserDTO, safetyDTO : SafetyDTO) {
+    private fun executeNotifyAlarm(context : Context, userDTO : UserDTO, safetyDTO : SafetyDTO) {
         val user: Person = Person.Builder()
             .setName(userDTO.name)
             .setIcon(IconCompat.createWithResource(context, R.drawable.relief_post_office))

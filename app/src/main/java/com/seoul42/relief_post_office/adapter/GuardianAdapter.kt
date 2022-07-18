@@ -34,7 +34,7 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
                 val curYear = SimpleDateFormat("yyyy-MM-dd hh:mm")
                     .format(System.currentTimeMillis())
                     .split("-")[0].toInt()
-                val userYear = user.second.birth!!.split("/")[0].toInt()
+                val userYear = user.second.birth.split("/")[0].toInt()
                 val userAge = curYear - userYear + 1
                 val userName = user.second.name
 
@@ -75,7 +75,7 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
                         .into(dialog.findViewById<ImageView>(R.id.guardian_dialog_photo))
 
                     // 리사이클 뷰 설정
-                    var resultList: MutableList<Pair<String, ResultDTO>> = mutableListOf()
+                    val resultList: MutableList<Pair<String, ResultDTO>> = mutableListOf()
                     val adapter = ResultDialogAdapter(resultList)
                     dialog.findViewById<RecyclerView>(R.id.result_dialog_recycler).adapter = adapter
                     dialog.findViewById<RecyclerView>(R.id.result_dialog_recycler).layoutManager = LinearLayoutManager(context)

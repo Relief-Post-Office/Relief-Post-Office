@@ -44,7 +44,6 @@ class AnswerActivity : AppCompatActivity() {
 
     private var auth : FirebaseAuth = Firebase.auth
     private val database = Firebase.database
-    private lateinit var questionList: ArrayList<Pair<String, QuestionDTO>>
     private lateinit var answerList: ArrayList<Pair<String, AnswerDTO>>
     private var listSize = 0
     private var currentIndex: Int = 0
@@ -58,29 +57,26 @@ class AnswerActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         getId()
-        setSize(questionList.size, answerList.size)
+        setSize(answerList.size)
         setButton()
     }
 
     private fun getId() {
         answerBell = MediaPlayer.create(this, R.raw.bell)
         resultId = intent.getStringExtra("resultId").toString()
-        questionList = intent.getSerializableExtra("questionList") as ArrayList<Pair<String, QuestionDTO>>
         answerList = intent.getSerializableExtra("answerList") as ArrayList<Pair<String, AnswerDTO>>
     }
 
-    private fun setSize(questionListSize: Int, answerListSize : Int) {
-        if (questionListSize == answerListSize) {
-            listSize = questionListSize
-            currentIndex = 0
-            // 녹음 플레이어 세팅
-            questionPlayer = MediaPlayer()
-            questionPlayer.setOnCompletionListener {
-                questionPlayer.stop()
-                questionPlayer.prepare()
-            }
-            setQuestion()
+    private fun setSize(answerListSize : Int) {
+        listSize = answerListSize
+        currentIndex = 0
+        // 녹음 플레이어 세팅
+        questionPlayer = MediaPlayer()
+        questionPlayer.setOnCompletionListener {
+            questionPlayer.stop()
+            questionPlayer.prepare()
         }
+        setQuestion()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -101,7 +97,7 @@ class AnswerActivity : AppCompatActivity() {
             answerBell.start()
             val reply: Boolean = true
             var recordSrc: String = ""
-            if (questionList[currentIndex].second.record) {
+            if (answerList[currentIndex].second.questionRecord) {
                 // 화면 터치 방지
                 window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 // 질문 녹음 재생 중지
@@ -169,9 +165,9 @@ class AnswerActivity : AppCompatActivity() {
     }
 
     private fun setQuestion() {
-        binding.wardSafetyQuestion.text = questionList[currentIndex].second.text
+        binding.wardSafetyQuestion.text = answerList[currentIndex].second.questionText
         questionPlayer = MediaPlayer().apply {
-            setDataSource(questionList[currentIndex].second.src)
+            setDataSource(answerList[currentIndex].second.questionSrc)
         }
         questionPlayer.setOnCompletionListener {
             questionPlayer.stop()

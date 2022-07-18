@@ -60,41 +60,39 @@ class ResultDetailAdapter (private val context : Context,
     private fun setAnswerRecord(binding: ItemResultDetailBinding, answer: AnswerDTO) {
         if (answer.questionRecord) {
             val recordBtn = binding.btnResultQuetionPlay
-            if (answer.answerSrc != "") {
-                recordBtn.visibility = View.VISIBLE
-                var playing = false
-                var player: MediaPlayer? = null
-                recordBtn.setOnClickListener {
-                    // 녹음 재생
-                    if (playing){
+            recordBtn.visibility = View.VISIBLE
+            var playing = false
+            var player: MediaPlayer? = null
+            recordBtn.setOnClickListener {
+                // 질문 녹음 재생 기능
+                if (playing){
+                    player?.release()
+                    player = null
+
+                    recordBtn.setBackgroundResource(R.drawable.playbtn5)
+                    playing = false
+                }
+                // 재생 중이 아니면 중지 버튼으로 이미지 변경
+                else{
+                    // 녹음 소스 불러와서 미디어 플레이어 세팅
+                    player = MediaPlayer().apply {
+                        setDataSource(answer.answerSrc)
+                        prepare()
+                    }
+
+                    player?.setOnCompletionListener {
                         player?.release()
                         player = null
 
-                        recordBtn.setBackgroundResource(R.drawable.result_play)
+                        recordBtn.setBackgroundResource(R.drawable.playbtn5)
                         playing = false
                     }
-                    // 재생 중이 아니면 중지 버튼으로 이미지 변경
-                    else{
-                        // 녹음 소스 불러와서 미디어 플레이어 세팅
-                        player = MediaPlayer().apply {
-                            setDataSource(answer.answerSrc)
-                            prepare()
-                        }
 
-                        player?.setOnCompletionListener {
-                            player?.release()
-                            player = null
+                    // 재생
+                    player?.start()
 
-                            recordBtn.setBackgroundResource(R.drawable.result_play)
-                            playing = false
-                        }
-
-                        // 재생
-                        player?.start()
-
-                        recordBtn.setBackgroundResource(R.drawable.stopbtn)
-                        playing = true
-                    }
+                    recordBtn.setBackgroundResource(R.drawable.stopbtn)
+                    playing = true
                 }
             }
         }

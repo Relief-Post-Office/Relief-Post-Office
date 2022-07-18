@@ -135,9 +135,9 @@
                     android:id="@+id/result_question_record_btn"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="4"
                     android:layout_margin="10sp"
-                    android:background="@drawable/playbtn3" />
+                    android:layout_weight="4"
+                    android:background="@drawable/playbtn5" />
 
             </LinearLayout>
 
@@ -204,7 +204,7 @@
                     android:id="@+id/result_answer_record_btn"
                     android:layout_width="60dp"
                     android:layout_height="75dp"
-                    android:background="@drawable/playbtn4" />
+                    android:background="@drawable/playbtn5" />
 
             </LinearLayout>
 
