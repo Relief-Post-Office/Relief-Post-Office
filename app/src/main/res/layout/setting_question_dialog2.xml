@@ -98,6 +98,7 @@
         android:layout_margin="10dp"
         android:padding="15dp"
         android:gravity="center"
+        android:maxLines="3"
         android:hint="@string/question_hint"
         android:maxLength="50"
         android:textSize="16sp"
