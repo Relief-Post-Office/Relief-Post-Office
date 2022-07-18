@@ -71,7 +71,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     fun showDatePickerDialog(v: View) {
-        val newFragment = DatePickerFragment()
+        val newFragment = DatePickerFragment(binding.btnResultSetDate.text.toString())
         newFragment.show(supportFragmentManager, "datePicker")
     }
 
