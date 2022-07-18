@@ -132,7 +132,6 @@ class GuardianProfileActivity : AppCompatActivity() {
     }
 
     private fun setSave() {
-        binding.guardianProfileSave.buttonColor = resources.getColor(R.color.gray)
         binding.guardianProfileSave.cornerRadius = 30
         binding.guardianProfileSave.setOnClickListener {
             if (allCheck()) {

@@ -100,6 +100,7 @@
             android:gravity="center"
             android:hint="@string/question_hint"
             android:maxLength="50"
+            android:maxLines="3"
             android:lineSpacingExtra="6sp"
             android:textSize="16sp"
             android:background="@drawable/edittext_rounded_corner_rectangle"
