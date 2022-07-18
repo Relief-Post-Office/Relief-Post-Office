@@ -1,35 +1,35 @@
-package com.seoul42.relief_post_office
+package com.seoul42.relief_post_office.guardian
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.databinding.GuardianBackgroundBinding
-import com.seoul42.relief_post_office.guardian.MainFragment
-import com.seoul42.relief_post_office.guardian.QuestionFragment
-import com.seoul42.relief_post_office.guardian.SafetyFragment
+import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.util.Constants.Companion.TAG_MAIN
 import com.seoul42.relief_post_office.util.Constants.Companion.TAG_QUESTION
 import com.seoul42.relief_post_office.util.Constants.Companion.TAG_SAFETY
 
 class GuardianBackgroundActivity : AppCompatActivity() {
 
-    private val mainFragment : MainFragment by lazy {
-        MainFragment()
-    }
-    private val safetyFragment : SafetyFragment by lazy {
-        SafetyFragment()
-    }
-    private val questionFragment : QuestionFragment by lazy {
-        QuestionFragment()
-    }
     private val binding: GuardianBackgroundBinding by lazy {
         GuardianBackgroundBinding.inflate(layoutInflater)
     }
 
+    private lateinit var userDTO : UserDTO
+    private lateinit var mainFragment : MainFragment
+    private lateinit var safetyFragment : SafetyFragment
+    private lateinit var questionFragment : QuestionFragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        userDTO = intent.getSerializableExtra("userDTO") as UserDTO
+        mainFragment = MainFragment(userDTO)
+        safetyFragment = SafetyFragment()
+        questionFragment = QuestionFragment()
 
         setContentView(binding.root)
         setFragment(TAG_MAIN, mainFragment)

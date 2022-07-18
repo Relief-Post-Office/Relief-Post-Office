@@ -6,14 +6,6 @@ import android.os.PowerManager
 
 internal object Alarm {
 
-    fun isIgnoringBatteryOptimizations(context: Context): Boolean {
-        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
-
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            powerManager.isIgnoringBatteryOptimizations(context.packageName)
-        } else true
-    }
-
     fun getDay(curDay : String) : Int {
         return when(curDay) {
             "월" -> 1

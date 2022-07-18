@@ -4,35 +4,39 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/dialog_background">
+    android:background="@drawable/dialog_background"
+    android:layout_gravity="center"
+    android:padding="20dp">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp">
+        android:layout_height="110dp">
 
         <Button
             android:id="@+id/guardian_dialog_profile_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="프로필보기"
+            android:layout_height="35dp"
+            android:text="@string/profile"
+            android:background="@drawable/button_rounded_gray"
+            android:textColor="@color/black"
             android:textSize="15sp"
             android:layout_gravity="right|top"
-            android:layout_margin="10dp"/>
+            android:layout_marginTop="15dp"/>
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/relief_post_office" 
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/relief_post_office"
             android:layout_gravity="center"
             app:civ_border_width="3dp"
             app:civ_border_color="#d5d5d5"/>
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/guardian_dialog_photo"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
             app:civ_border_width="3dp"
             app:civ_border_color="#d5d5d5"/>
@@ -41,7 +45,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="20dp"
         android:orientation="vertical">
 
         <TextView
@@ -49,58 +53,67 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="홍길동"
-            android:textSize="20sp"
+            android:text="@string/name"
+            android:textColor="@color/black"
+            android:textSize="16sp"
             android:layout_marginTop="4dp"/>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="300dp"
         android:background="@drawable/recyclerview_border"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="5dp">
+        android:layout_margin="10dp"
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="금일 안부별 응답현황"
-            android:textSize="30sp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/response_today_safety"
+            android:textColor="@color/black"
+            android:textSize="24sp"
             android:gravity="center"
             tools:ignore="HardcodedText" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/result_dialog_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_height="35dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/guardian_dialog_safety_setting_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="안부 설정"
-            android:textSize="25sp"
-            android:textColor="#4d443d"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1"
-            android:layout_marginBottom="5dp"/>
+            android:text="@string/safety_set"
+            android:textSize="20sp"
+            android:background="@drawable/button_rounded_pink"
+            android:textColor="#ffd8de"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="15dp"
+            android:layout_weight="1"/>
 
         <Button
             android:id="@+id/guardian_dialog_result_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="결과 보기"
-            android:textColor="#4d443d"
-            android:textSize="25sp"
+            android:text="@string/result_show"
+            android:textSize="20sp"
+            android:background="@drawable/button_rounded_pink"
+            android:textColor="#ffd8de"
             android:layout_marginStart="15dp"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1"
-            android:layout_marginBottom="5dp"/>
+            android:layout_marginEnd="20dp"
+            android:layout_weight="1" />
 
     </LinearLayout>
 

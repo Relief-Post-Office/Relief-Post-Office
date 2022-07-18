@@ -1,41 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/add_ward_safety_item_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
-    android:background="@drawable/question_item_border"
-    android:orientation="horizontal"
-    android:padding="5dp"
-    android:weightSum="10">
+    android:layout_height="100sp">
+
+    <LinearLayout
+        android:layout_width="0sp"
+        android:layout_height="0sp"
+        android:orientation="horizontal"
+        android:background="@drawable/layout_rounded_corner"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline2" />
 
     <ImageView
         android:id="@+id/safety_question_item_play_button"
         android:layout_width="0sp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:layout_margin="15dp"
-        app:srcCompat="@drawable/playbtn" />
+        android:layout_height="0sp"
+        android:layout_margin="4dp"
+        app:srcCompat="@drawable/playbtn"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline4" />
 
     <TextView
         android:id="@+id/safety_question_item_text"
         android:layout_width="0sp"
         android:layout_height="match_parent"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:gravity="center_vertical"
-        android:text="질문"
-        android:textSize="25sp"
-        android:layout_weight="8"/>
+        android:text="@string/question_content"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:lineSpacingExtra="6sp"
+        android:maxLength="50"
+        android:maxLines="3"
+        android:ellipsize="end"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline5"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline6"/>
 
     <Switch
         android:id="@+id/safety_question_item_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_weight="1" />
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline7"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline8"/>
 
-</LinearLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.025" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.975" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.04" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.16" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.18" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.82" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -14,17 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.AddWardSafetyAdapter
-import com.seoul42.relief_post_office.adapter.SafetyQuestionSettingAdapter
-import com.seoul42.relief_post_office.adapter.WardSafetyAdapter
 import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.model.SafetyDTO
 import com.seoul42.relief_post_office.model.UserDTO
-import com.seoul42.relief_post_office.util.Ward
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -100,7 +95,6 @@ class AddWardSafetyActivity : AppCompatActivity() {
         findViewById<ImageView>(R.id.add_ward_safety_question_setting).setOnClickListener{
             val tmpIntent = Intent(this, SafetyQuestionSettingActivity::class.java)
             tmpIntent.putExtra("questionList", questionList.toMap().keys.toCollection(ArrayList<String>()))
-            questionList.clear()
             startActivityForResult(tmpIntent, 1)
         }
 
@@ -145,6 +139,18 @@ class AddWardSafetyActivity : AppCompatActivity() {
                 val newPush = safetyRef.push()
                 val key = newPush.key.toString()
                 newPush.setValue(newSafety)
+
+                // 설정한 질문들의 connedSafetyList에 현재 안부 아이디 추가
+                for (q in questionList){
+                    val qRef = database.getReference("question").child(q.first)
+                        .child("connectedSafetyList")
+                        .child(key)
+                    qRef.setValue(date)
+
+                    // 해당하는 질문들 보호자 질문 목록에서 최종 수정일 변경하기
+                    database.getReference("guardian").child(Firebase.auth.currentUser!!.uid)
+                        .child("questionList").child(q.first).setValue(date)
+                }
 
                 // 선택한 피보호자의 안부 목록에 방금 등록한 안부 아이디 추가
                 val wardSafetyRef = database.getReference("ward").child(wardId).child("safetyIdList")
@@ -191,6 +197,7 @@ class AddWardSafetyActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK){
             when (requestCode){
                 1 -> {
+                    questionList.clear()
                     addWardSafetyAdapter.notifyDataSetChanged()
                     val checkQuestions = data?.getStringArrayListExtra("returnQuestionList")
                     val QuestionRef = database.getReference("question")

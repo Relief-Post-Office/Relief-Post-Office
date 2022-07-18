@@ -8,7 +8,26 @@
     android:layout_gravity="center"
     android:paddingHorizontal="50sp"
     android:paddingVertical="10sp"
-    tools:context=".BirthDialog">
+    tools:context=".join.BirthDialog">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingTop="10sp" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/birth_date"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,13 +70,13 @@
         android:orientation="horizontal"
         android:paddingTop="10sp" >
 
-        <Button
+        <info.hoang8f.widget.FButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/birth_save"
-            android:background="@drawable/button_rounded_corner"
-            android:backgroundTint="#3f91ff"
-            android:text="확인"/>
+            android:text="@string/check"
+            android:textSize="20sp"
+            android:fontFamily="@font/bmjua"/>
 
     </LinearLayout>
 

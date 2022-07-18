@@ -1,4 +1,4 @@
-package com.seoul42.relief_post_office
+package com.seoul42.relief_post_office.join
 
 import android.app.Activity
 import android.app.Dialog
@@ -25,10 +25,10 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
+import com.seoul42.relief_post_office.guardian.GuardianBackgroundActivity
+import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.databinding.JoinBinding
 import com.seoul42.relief_post_office.model.UserDTO
-import com.seoul42.relief_post_office.util.Guardian
-import com.seoul42.relief_post_office.util.Ward
 import com.seoul42.relief_post_office.ward.WardActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -198,24 +198,23 @@ class JoinActivity : AppCompatActivity() {
     private fun completeJoin() {
         setInsert()
         insertUser()
-        setInfo()
-    }
-
-    private fun setInfo() {
-        /* 보호자 및 피보호자에 대한 현재 유저 세팅 */
-        if (userDTO.guardian == true) Guardian(userDTO)
-        else Ward(userDTO)
         moveActivity()
     }
 
     private fun moveActivity() {
+        val guardianIntent = Intent(this, GuardianBackgroundActivity::class.java)
+        val wardIntent = Intent(this, WardActivity::class.java)
+
         Handler().postDelayed({
             ActivityCompat.finishAffinity(this)
-            if (userDTO.guardian == true)
-                startActivity(Intent(this, GuardianBackgroundActivity::class.java))
-            else
-                startActivity(Intent(this, WardActivity::class.java))
-        }, 3000)
+            if (userDTO.guardian) {
+                guardianIntent.putExtra("userDTO", userDTO)
+                startActivity(guardianIntent)
+            } else {
+                wardIntent.putExtra("userDTO", userDTO)
+                startActivity(wardIntent)
+            }
+        }, 2000)
     }
     /* End save assistant */
 

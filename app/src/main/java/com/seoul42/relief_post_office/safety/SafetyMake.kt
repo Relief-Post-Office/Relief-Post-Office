@@ -80,11 +80,22 @@ class SafetyMake : AppCompatActivity() {
 				val newSafety = SafetyDTO(owner, name, date, "",
 					questionList.map {it.first to it.second.date}.toMap() as MutableMap<String, String>, mutableMapOf())
 
-
 				// safety 컬렉션에 작성한 내용 추가
 				val newPush = safetyRef.push()
 				val key = newPush.key.toString()
 				newPush.setValue(newSafety)
+
+				// 선택한 질문들의 connectedSafetyList에 안부 추가
+				for (q in questionList){
+					val qRef = database.getReference("question").child(q.first)
+						.child("connectedSafetyList")
+						.child(key)
+					qRef.setValue(date)
+
+					// 해당하는 질문들 보호자 질문 목록에서 최종 수정일 변경하기
+					database.getReference("guardian").child(owner)
+						.child("questionList").child(q.first).setValue(date)
+				}
 
 				// 로그인한 보호자의 안부 목록에 방금 등록한 안부 아이디 추가
 				val wardSafetyRef = database.getReference("guardian").child(owner).child("safetyList")

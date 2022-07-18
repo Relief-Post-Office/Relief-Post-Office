@@ -1,14 +1,14 @@
 package com.seoul42.relief_post_office.guardian
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.*
 import android.widget.*
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -16,8 +16,6 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
-import com.seoul42.relief_post_office.util.Guardian.Companion.USER
-import com.seoul42.relief_post_office.util.Guardian.Companion.CONNECT_LIST
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -28,17 +26,16 @@ import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.GuardianAdapter
 import com.seoul42.relief_post_office.alarm.GuardianReceiver
-import com.seoul42.relief_post_office.alarm.WardReceiver
 import com.seoul42.relief_post_office.databinding.FragmentGuardianBinding
+import com.seoul42.relief_post_office.model.GuardianDTO
 import com.seoul42.relief_post_office.model.ListenerDTO
-import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.UserDTO
+import com.seoul42.relief_post_office.model.WardDTO
 import com.seoul42.relief_post_office.service.CheckLoginService
-import com.seoul42.relief_post_office.util.Alarm
-import com.seoul42.relief_post_office.util.Guardian
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
+import com.seoul42.relief_post_office.ward.WardProfileActivity
 
-class MainFragment : Fragment(R.layout.fragment_guardian) {
+class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_guardian) {
 
     private val auth: FirebaseAuth by lazy {
         Firebase.auth
@@ -51,23 +48,32 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
     private val connectedWardList = ArrayList<Pair<String, UserDTO>>()
     private val listenerList = ArrayList<ListenerDTO>()
 
+    private lateinit var connectList : MutableMap<String, String>
     private lateinit var guardianAdapter : GuardianAdapter
     private lateinit var binding : FragmentGuardianBinding
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?) : View? {
+        savedInstanceState: Bundle?) : View {
         binding = FragmentGuardianBinding.inflate(inflater, container, false)
+        activityResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+            {
+                if (it.resultCode == AppCompatActivity.RESULT_OK) {
+                    userDTO = it.data?.getSerializableExtra("userDTO") as UserDTO
+                    Glide.with(this)
+                        .load(userDTO.photoUri)
+                        .circleCrop()
+                        .into(binding.guardianPhoto)
+                }
+            }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setAlarm()
-        setLogout()
-        setGuardianPhoto()
-        setRecyclerView()
-        setRequestButton()
+        getGuardian()
     }
 
     override fun onDestroy() {
@@ -83,28 +89,43 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
         }
     }
 
+    private fun getGuardian() {
+        val guardianDB = Firebase.database.reference.child("guardian").child(myUserId)
+
+        guardianDB.get().addOnSuccessListener {
+            if (it.getValue(GuardianDTO::class.java) != null) {
+                val guardianDTO = it.getValue(GuardianDTO::class.java) as GuardianDTO
+
+                connectList = guardianDTO.connectList
+                setAlarm()
+                setLogout()
+                setGuardianPhoto()
+                setRecyclerView()
+                setRequestButton()
+            } else {
+                connectList = mutableMapOf()
+                setAlarm()
+                setLogout()
+                setGuardianPhoto()
+                setRecyclerView()
+                setRequestButton()
+            }
+        }
+    }
     /*
-     * 주기적 작업을 수행할 수 있도록 설정
-     * 단, 배터리 최적화 무시를 안할 경우 피보호자 측은 강제 알람을 띄울 수 없음
+     * 알람 요청 작업을 수행할 수 있도록 설정
      */
     private fun setAlarm() {
-        if (!Alarm.isIgnoringBatteryOptimizations(context!!)) {
-            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-            val packageName = context!!.packageName
+        val start = Intent(GuardianReceiver.REPEAT_START)
 
-            intent.data = Uri.parse("package:$packageName")
-            startActivity(intent)
-        } else {
-            val start = Intent(GuardianReceiver.REPEAT_START)
-
-            start.setClass(context!!, GuardianReceiver::class.java)
-            context!!.sendBroadcast(start, GuardianReceiver.PERMISSION_REPEAT)
-        }
+        start.setClass(context!!, GuardianReceiver::class.java)
+        context!!.sendBroadcast(start, GuardianReceiver.PERMISSION_REPEAT)
     }
 
     private fun setLogout() {
+        binding.guardianLogout.buttonColor = resources.getColor(R.color.pink)
+        binding.guardianLogout.cornerRadius = 30
         binding.guardianLogout.setOnClickListener {
-            Guardian.setLogout()
             auth.signOut()
             ActivityCompat.finishAffinity(requireActivity())
             startActivity(Intent(context, CheckLoginService::class.java))
@@ -112,38 +133,22 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
     }
 
     private fun setGuardianPhoto() {
-        val userDB = Firebase.database.reference.child("user").child(myUserId)
-
         Glide.with(this)
-            .load(USER.photoUri) /* ★★★ USER is in class of Guardian ★★★ */
+            .load(userDTO.photoUri)
             .circleCrop()
             .into(binding.guardianPhoto)
         binding.guardianPhoto.setOnClickListener {
-            startActivity(Intent(context, GuardianProfileActivity::class.java))
-        }
+            val intent = Intent(context, GuardianProfileActivity::class.java)
 
-        /* 프로필 편집이 완료될 경우 업데이트된 사진을 적용하도록 리스너 설정 */
-        val userListener = userDB.addChildEventListener(object : ChildEventListener {
-            @SuppressLint("NotifyDataSetChanged")
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                Glide.with(this@MainFragment)
-                    .load(USER.photoUri)
-                    .circleCrop()
-                    .into(binding.guardianPhoto)
-            }
-            override fun onChildRemoved(snapshot: DataSnapshot) {}
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {}
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-            override fun onCancelled(error: DatabaseError) {}
-        })
-        listenerList.add(ListenerDTO(userDB, userListener))
+            intent.putExtra("userDTO", userDTO)
+            activityResultLauncher.launch(intent)
+        }
     }
 
     private fun setRecyclerView() {
         val wardLayout = LinearLayoutManager(context)
         val connectDB = Firebase.database.reference.child("guardian").child(myUserId).child("connectList")
 
-        setConnectedWardList()
         guardianAdapter = GuardianAdapter(requireContext(), connectedWardList)
 
         binding.guardianRecyclerView.adapter = guardianAdapter
@@ -154,12 +159,16 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
         val connectListener = connectDB.addChildEventListener(object : ChildEventListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val connectedUserId = snapshot.value.toString()
+                val connectedUserId = snapshot.key.toString()
+
+                connectList[connectedUserId] = connectedUserId
                 addConnectedWardList(connectedWardList, connectedUserId)
             }
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 val connectedUserId = snapshot.value.toString()
+
+                connectList.remove(connectedUserId)
                 connectedWardList.removeIf {
                     it.first == connectedUserId
                 }
@@ -174,7 +183,7 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
 
     private fun setRequestButton() {
         binding.guardianAdd.setOnClickListener {
-            val requestDialog = RequestDialog(context as AppCompatActivity, firebaseViewModel)
+            val requestDialog = RequestDialog(context as AppCompatActivity, firebaseViewModel, userDTO, connectList)
 
             requestDialog.show(activity!!.window)
             requestDialog.setOnRequestListener { requestCase ->
@@ -188,19 +197,16 @@ class MainFragment : Fragment(R.layout.fragment_guardian) {
         }
     }
 
-    private fun setConnectedWardList() {
-        for (ward in CONNECT_LIST) {
-            addConnectedWardList(connectedWardList, ward.value)
-        }
-    }
-
     private fun addConnectedWardList(connectedWardList : ArrayList<Pair<String, UserDTO>>, connectedUserId : String) {
         val userDB = Firebase.database.reference.child("user").child(connectedUserId)
 
         userDB.get().addOnSuccessListener {
-            if (!connectedWardList.contains(Pair(connectedUserId, it.getValue(UserDTO::class.java) as UserDTO))) {
-                connectedWardList.add(Pair(connectedUserId, it.getValue(UserDTO::class.java) as UserDTO))
-                guardianAdapter.notifyDataSetChanged()
+            if (it.getValue(UserDTO::class.java) != null) {
+                val ward = it.getValue(UserDTO::class.java) as UserDTO
+                if (!connectedWardList.contains(Pair(connectedUserId, ward))) {
+                    connectedWardList.add(Pair(connectedUserId, ward))
+                    guardianAdapter.notifyDataSetChanged()
+                }
             }
         }
     }

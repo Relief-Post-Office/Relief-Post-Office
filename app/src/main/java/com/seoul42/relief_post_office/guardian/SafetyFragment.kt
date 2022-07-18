@@ -48,9 +48,6 @@ class SafetyFragment : Fragment(R.layout.fragment_safety) {
 		auth = Firebase.auth
 		owner = auth.currentUser?.uid.toString()
 
-		// 이름 세팅
-		//view.findViewById<TextView>()
-
 		// 사진 세팅
 		Glide.with(this)
 			.load(Guardian.USER.photoUri) /* ★★★ USER is in class of Guardian ★★★ */

@@ -50,8 +50,8 @@ class GuardianReceiver () : BroadcastReceiver() {
     private var isFail : Boolean = false
 
     /*
-     * REPEAT_START : "강제 알람 요청", "푸시 알람 요청", "요청 없음" 셋 중 하나를 결정하기 위한 플래그
-     * REPEAT_STOP : 특정 안부에 대한 통지 알람 요청을 수행하기 위한 플래그
+     *  REPEAT_START : "통지 알람 요청", "요청 없음" 둘 중 하나를 결정하기 위한 플래그
+     *  REPEAT_STOP : 특정 안부에 대한 통지 알람 요청을 수행하기 위한 플래그
      */
     companion object {
         const val PERMISSION_REPEAT = "com.rightline.backgroundrepeatapp.permission.ACTION_REPEAT"
@@ -72,12 +72,11 @@ class GuardianReceiver () : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("확인", "Guardian")
         if (!Network.isNetworkAvailable(context)) {
-            Log.d("확인", "보호자측 네트워크 연결 실패")
             setNetworkAlarm(context)
         } else {
-            if (Firebase.auth.currentUser != null && Alarm.isIgnoringBatteryOptimizations(context)) {
-                uid = Firebase.auth.uid.toString()
+            if (Firebase.auth.currentUser != null) {
                 Log.d("확인", "보호자측 네트워크 연결 성공")
+                uid = Firebase.auth.uid.toString()
                 when (intent.action) {
                     REPEAT_START -> {
                         recommend(context)
@@ -94,12 +93,14 @@ class GuardianReceiver () : BroadcastReceiver() {
 
     /*
      *  네트워크 연결이 안될 경우 실행하는 메서드
-     *  5분 단위로 네트워크 알람 요청을 수행
+     *  30초 단위로 네트워크 알람 요청을 수행
      */
     private fun setNetworkAlarm(context : Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val schedule = Intent(REPEAT_START)
 
+        Log.d("확인", "보호자측 네트워크 연결 실패")
+        isFail = true
         schedule.setClass(context, NetworkReceiver::class.java)
 
         val sender = PendingIntent.getBroadcast(context, 0, schedule,
@@ -107,7 +108,7 @@ class GuardianReceiver () : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.MINUTE, 5) /* Here! */
+        interval.add(Calendar.SECOND, 30) /* Here! */
         alarmManager.cancel(sender)
 
         if (Build.VERSION.SDK_INT >= 23) {
@@ -163,11 +164,7 @@ class GuardianReceiver () : BroadcastReceiver() {
                 }, 5000)
             }
         }.addOnFailureListener {
-            if (!isFail) {
-                Log.d("확인", "보호자측 네트워크 연결 실패")
-                isFail = true
-                setNetworkAlarm(context)
-            }
+            if (!isFail) setNetworkAlarm(context)
         }
     }
 
@@ -183,11 +180,7 @@ class GuardianReceiver () : BroadcastReceiver() {
                 }
             }
         }.addOnFailureListener {
-            if (!isFail) {
-                Log.d("확인", "보호자측 네트워크 연결 실패")
-                isFail = true
-                setNetworkAlarm(context)
-            }
+            if (!isFail) setNetworkAlarm(context)
         }
     }
 
@@ -218,11 +211,7 @@ class GuardianReceiver () : BroadcastReceiver() {
                 }
             }
         }.addOnFailureListener {
-            if (!isFail) {
-                Log.d("확인", "보호자측 네트워크 연결 실패")
-                isFail = true
-                setNetworkAlarm(context)
-            }
+            if (!isFail) setNetworkAlarm(context)
         }
     }
 
@@ -291,19 +280,11 @@ class GuardianReceiver () : BroadcastReceiver() {
                             compareSafetyAndResult(context, userDTO, wardDTO, recommendDTO)
                         }
                     }.addOnFailureListener {
-                        if (!isFail) {
-                            Log.d("확인", "보호자측 네트워크 연결 실패")
-                            isFail = true
-                            setNetworkAlarm(context)
-                        }
+                        if (!isFail) setNetworkAlarm(context)
                     }
                 }
             }.addOnFailureListener {
-                if (!isFail) {
-                    Log.d("확인", "보호자측 네트워크 연결 실패")
-                    isFail = true
-                    setNetworkAlarm(context)
-                }
+                if (!isFail) setNetworkAlarm(context)
             }
         }
 
@@ -350,20 +331,12 @@ class GuardianReceiver () : BroadcastReceiver() {
                                 notifySafety(context, userDTO, safetyDTO)
                             }
                         }.addOnFailureListener {
-                            if (!isFail) {
-                                Log.d("확인", "보호자측 네트워크 연결 실패")
-                                isFail = true
-                                setNetworkAlarm(context)
-                            }
+                            if (!isFail) setNetworkAlarm(context)
                         }
                     }
                 }
             }.addOnFailureListener {
-                if (!isFail) {
-                    Log.d("확인", "보호자측 네트워크 연결 실패")
-                    isFail = true
-                    setNetworkAlarm(context)
-                }
+                if (!isFail) setNetworkAlarm(context)
             }
         }
     }

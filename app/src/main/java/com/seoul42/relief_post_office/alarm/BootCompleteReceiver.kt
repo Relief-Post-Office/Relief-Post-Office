@@ -31,7 +31,7 @@ class BootCompleteReceiver : BroadcastReceiver() {
 
     /*
      *  네트워크가 연결되었는지 확인
-     *  - 연결이 안된 경우 : 5분 단위로 네트워크 알람을 재요청
+     *  - 연결이 안된 경우 : 30초 단위로 네트워크 알람을 재요청
      *  - 연결된 경우 : 부팅 셋업 작업을 수행
      *
      *  부팅 셋업 작업
@@ -48,12 +48,12 @@ class BootCompleteReceiver : BroadcastReceiver() {
         } else {
             Log.d("확인", "Network is available!")
             if (intent.action.equals(Intent.ACTION_BOOT_COMPLETED)) {
-                if (Firebase.auth.currentUser != null && Alarm.isIgnoringBatteryOptimizations(context)){
+                if (Firebase.auth.currentUser != null){
                     val uid = Firebase.auth.uid.toString()
                     userDB.child(uid).get().addOnSuccessListener {
                         if (it.getValue(UserDTO::class.java) != null) {
                             val userDTO = it.getValue(UserDTO::class.java) as UserDTO
-                            setAlarm(context, userDTO.guardian!!)
+                            setAlarm(context, userDTO.guardian)
                         }
                     }.addOnFailureListener {
                         setNetworkAlarm(context)
@@ -65,7 +65,7 @@ class BootCompleteReceiver : BroadcastReceiver() {
 
     /*
      *  네트워크 연결이 안될 경우 실행하는 메서드
-     *  5분 단위로 네트워크 알람 요청을 수행
+     *  30초 단위로 네트워크 알람 요청을 수행
      */
     private fun setNetworkAlarm(context : Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -78,7 +78,7 @@ class BootCompleteReceiver : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.MINUTE, 5) /* Here! */
+        interval.add(Calendar.SECOND, 30) /* Here! */
         alarmManager.cancel(sender)
 
         if (Build.VERSION.SDK_INT >= 23) {

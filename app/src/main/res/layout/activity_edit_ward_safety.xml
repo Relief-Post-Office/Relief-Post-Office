@@ -8,11 +8,12 @@
 
     <ImageView
         android:id="@+id/edit_ward_safety_backBtn"
-        android:layout_width="50dp"
+        android:layout_width="60dp"
         android:layout_height="50dp"
+        android:layout_margin="10sp"
         app:srcCompat="@drawable/backbtn"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/vertical_guideline1" />
+        app:layout_constraintStart_toStartOf= "parent" />
 
 
     <LinearLayout
@@ -26,8 +27,10 @@
             android:id="@+id/edit_safety_setting_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="안부 수정"
+            android:text="@string/safety_update"
             android:textSize="40sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
             android:layout_gravity="center"/>
 
     </LinearLayout>
@@ -45,8 +48,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="안부 이름"
+            android:text="@string/safety_name"
             android:textSize="25sp"
+            android:textColor="@color/black"
             android:layout_gravity="left|center"
             android:layout_marginStart="5sp"/>
 
@@ -54,7 +58,9 @@
             android:id="@+id/edit_ward_safety_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="안부 이름을 작성해주세요"
+            android:hint="@string/safety_edit_hint"
+            android:maxLength="10"
+            android:lineSpacingExtra="6sp"
             android:layout_marginStart="30sp"
             android:layout_marginEnd="30sp"/>
 
@@ -75,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="월"
+            android:text="@string/monday"
             android:textSize="25sp"
             android:layout_gravity="center"/>
 
@@ -84,7 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="화"
+            android:text="@string/tuesday"
             android:textSize="25sp"
             android:layout_gravity="center"/>
 
@@ -93,7 +99,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="수"
+            android:text="@string/wednesday"
             android:textSize="25sp"
             android:layout_gravity="center"/>
 
@@ -102,7 +108,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="목"
+            android:text="@string/thursday"
             android:textSize="25sp"
             android:layout_gravity="center"/>
 
@@ -111,7 +117,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="금"
+            android:text="@string/friday"
             android:textSize="25sp"
             android:layout_gravity="center"/>
 
@@ -120,7 +126,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="토"
+            android:text="@string/saturday"
             android:textSize="25sp"
             android:layout_gravity="center"/>
 
@@ -129,7 +135,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="일"
+            android:text="@string/sunday"
             android:textSize="25sp"
             android:layout_gravity="center"/>
 
@@ -141,6 +147,7 @@
         android:layout_height="60sp"
         android:background="@drawable/question_item_border"
         app:layout_constraintTop_toBottomOf="@+id/edit_ward_safety_linear3"
+        android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintStart_toEndOf="@id/vertical_guideline1"
         app:layout_constraintEnd_toStartOf="@id/vertical_guideline6">
@@ -150,10 +157,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="시간 설정"
+            android:text="@string/time_set"
+            android:textColor="@color/black"
             android:layout_marginStart="10sp"
             android:layout_margin="10sp"
-            android:textSize="40sp"/>
+            android:textSize="25sp"/>
 
     </LinearLayout>
 
@@ -161,12 +169,12 @@
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:background="@drawable/recyclerview_border"
+        app:layout_constraintTop_toBottomOf="@+id/edit_ward_safety_linear4"
+        app:layout_constraintBottom_toTopOf="@id/horizontal_guideline4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:orientation="vertical"
-        android:layout_marginTop="10sp"
-        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline4"
-        app:layout_constraintEnd_toEndOf="@id/vertical_guideline6"
-        app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
-        app:layout_constraintTop_toBottomOf="@id/edit_ward_safety_linear4">
+        android:layout_margin="20sp">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -178,13 +186,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textSize="25sp"
-                android:text="질문 설정"/>
+                android:textColor="@color/black"
+                android:text="@string/question_set"/>
 
             <ImageView
                 android:id="@+id/edit_ward_safety_question_setting"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:layout_gravity="right"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
                 android:src="@drawable/optionbtn" />
         </FrameLayout>
 
@@ -200,22 +211,23 @@
     <LinearLayout
         android:layout_width="0sp"
         android:layout_height="0sp"
-        app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
-        app:layout_constraintEnd_toStartOf="@id/vertical_guideline6"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline2"
+        app:layout_constraintEnd_toStartOf="@id/vertical_guideline3"
         app:layout_constraintTop_toBottomOf="@id/horizontal_guideline4"
         app:layout_constraintBottom_toTopOf="@id/horizontal_guideline6"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/edit_ward_safety_save_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:text="저 장"
-            android:textSize="30sp"
-            android:layout_marginTop="5sp"
-            android:layout_marginEnd="5sp"
-            app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
+            android:text="@string/save"
+            android:textSize="25sp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/button_rounded_pink"
+            android:textColor="#ffd8de"
+            app:layout_constraintTop_toTopOf="@id/horizontal_guideline4"
             app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
             app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
             app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"
@@ -223,34 +235,21 @@
 
         <Button
             android:id="@+id/edit_ward_safety_delete_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:text="삭 제"
-            android:textSize="30sp"
-            android:layout_marginTop="5sp"
-            android:layout_marginStart="5sp"
-            app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
+            android:text="@string/remove"
+            android:textSize="25sp"
+            android:background="@drawable/button_rounded_pink"
+            android:textColor="#ffd8de"
+            android:layout_marginStart="15dp"
+            app:layout_constraintTop_toTopOf="@id/horizontal_guideline4"
             app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
             app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
             app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"
             android:layout_weight="1"/>
 
     </LinearLayout>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontal_guideline1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.025" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontal_guideline1.5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.17" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline2"
@@ -261,13 +260,6 @@
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.90" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontal_guideline5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -288,24 +280,24 @@
         app:layout_constraintGuide_percent="0.05" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/vertical_guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.0" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/vertical_guideline4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.7" />
-
-    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.1" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

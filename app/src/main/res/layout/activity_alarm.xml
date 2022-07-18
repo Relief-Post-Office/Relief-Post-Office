@@ -7,18 +7,19 @@
     android:orientation="vertical"
     android:gravity="center"
     android:fitsSystemWindows="true"
-    android:background="@drawable/alarm_background"
+    android:background="@drawable/alarm_background_another"
     tools:context=".ward.AlarmActivity">
 
     <TextView
         android:id="@+id/alarm_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="12:12"
+        android:text="@string/safety_time"
         android:textSize="50sp"
         android:textStyle="bold"
-        android:textColor="@color/white"
+        android:textColor="#fffbf3"
         android:gravity="center"
+        android:fontFamily="@font/bmjua"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
@@ -28,11 +29,12 @@
         android:id="@+id/alarm_day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="7월 10일 일요일"
+        android:text="@string/safety_date"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@color/white"
+        android:textColor="#fffbf3"
         android:gravity="center"
+        android:fontFamily="@font/bmjua"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline3"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline4"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
@@ -42,27 +44,57 @@
         android:id="@+id/alarm_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="점심"
-        android:textSize="35sp"
+        android:text="@string/safety_name"
+        android:textSize="40sp"
         android:textStyle="bold"
-        android:textColor="@color/white"
+        android:textColor="#fffbf3"
         android:gravity="center"
+        android:fontFamily="@font/bmjua"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
-        app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
-        app:layout_constraintEnd_toEndOf="@id/vertical_guideline2" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageButton
         android:id="@+id/alarm_button"
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:layout_gravity="center"
-        android:background="@drawable/relief_post_office"
-        app:layout_constraintTop_toTopOf="@id/horizontal_guideline7"
-        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline8"
+        android:background="@drawable/alarm_animation"
+        app:layout_constraintTop_toTopOf="@id/horizontal_guideline8"
+        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline10"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"
         />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:id="@+id/alarm_progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/alarm_transform_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline1"
@@ -111,14 +143,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.7" />
+        app:layout_constraintGuide_percent="0.5" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.9" />
+        app:layout_constraintGuide_percent="0.65" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.7" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.85" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guideline1"
