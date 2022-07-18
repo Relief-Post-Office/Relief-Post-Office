@@ -155,17 +155,19 @@ class QuestionFragmentRVAdapter(
                                     .child("questionList")
                                     .child(item.first).setValue(date)
 
-                                // 로그인한 보호자와 연결된 모든 피보호자에게 안부 동기화 fcm 전송
-                                val wardListRef = database.getReference("guardian").child(item.second.owner.toString()).child("connectList")
-                                wardListRef.get().addOnSuccessListener {
-                                    val wardList = (it.getValue() as HashMap<String, String>).values.toList()
+                                // 질문과 연결된 안부를 가진 피보호자들에게 안부 동기화 fcm 전송
+                                val safetyListRef = database.getReference("question").child(item.first).child("connectedSafetyList")
+                                safetyListRef.get().addOnSuccessListener {
+                                    val safetyList = (it.getValue() as HashMap<String, String>).values.toList()
                                     val UserRef = database.getReference("user")
-                                    for (wardId in wardList){
-                                        UserRef.child(wardId).child("token").get().addOnSuccessListener {
-                                            val notificationData = NotificationDTO.NotificationData("SafetyWard",
-                                                "안심우체국", "안부를 동기화 합니다")
-                                            val notificationDTO = NotificationDTO(it.getValue().toString()!!, notificationData)
-                                            firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                                    for (safetyId in safetyList){
+                                        database.getReference("safety").child("uid").get().addOnSuccessListener {
+                                            UserRef.child(it.getValue().toString()).child("token").get().addOnSuccessListener {
+                                                val notificationData = NotificationDTO.NotificationData("SafetyWard",
+                                                    "안심우체국", "안부를 동기화 합니다")
+                                                val notificationDTO = NotificationDTO(it.getValue().toString()!!, notificationData)
+                                                firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                                            }
                                         }
                                     }
                                 }
@@ -184,26 +186,19 @@ class QuestionFragmentRVAdapter(
                             .child("questionList")
                             .child(item.first).setValue(date)
 
-                        // 로그인한 보호자와 연결된 모든 피보호자에게 안부 동기화 fcm 전송
-                        val wardListRef = database.getReference("guardian").child(item.second.owner.toString()).child("connectList")
-                        wardListRef.get().addOnSuccessListener {
-                            if (it.getValue() != null) {
-                                val wardList =
-                                    (it.getValue() as HashMap<String, String>).values.toList()
-                                val UserRef = database.getReference("user")
-                                for (wardId in wardList) {
-                                    UserRef.child(wardId).child("token").get()
-                                        .addOnSuccessListener {
-                                            val notificationData = NotificationDTO.NotificationData(
-                                                "SafetyWard",
-                                                "안심우체국", "안부를 동기화 합니다"
-                                            )
-                                            val notificationDTO = NotificationDTO(
-                                                it.getValue().toString()!!,
-                                                notificationData
-                                            )
-                                            firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
-                                        }
+                        // 질문과 연결된 안부를 가진 피보호자들에게 안부 동기화 fcm 전송
+                        val safetyListRef = database.getReference("question").child(item.first).child("connectedSafetyList")
+                        safetyListRef.get().addOnSuccessListener {
+                            val safetyList = (it.getValue() as HashMap<String, String>).values.toList()
+                            val UserRef = database.getReference("user")
+                            for (safetyId in safetyList){
+                                database.getReference("safety").child("uid").get().addOnSuccessListener {
+                                    UserRef.child(it.getValue().toString()).child("token").get().addOnSuccessListener {
+                                        val notificationData = NotificationDTO.NotificationData("SafetyWard",
+                                            "안심우체국", "안부를 동기화 합니다")
+                                        val notificationDTO = NotificationDTO(it.getValue().toString()!!, notificationData)
+                                        firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                                    }
                                 }
                             }
                         }

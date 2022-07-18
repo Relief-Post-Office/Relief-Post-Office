@@ -33,6 +33,9 @@
         android:theme="@style/Theme.Relief_post_office"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".safety.GetGuardianSafetyActivity"
+            android:exported="false" />
+        <activity
             android:name=".safety.EditWardSafetyActivity"
             android:exported="false" />
         <activity

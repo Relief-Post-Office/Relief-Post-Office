@@ -305,6 +305,12 @@ class EditWardSafetyActivity : AppCompatActivity() {
                 finish()
             }
         }
+
+        // 내 안부 가져오기 버튼 이벤트
+        findViewById<Button>(R.id.edit_ward_safety_get_button).setOnClickListener{
+            val tmpIntent = Intent(this, GetGuardianSafetyActivity::class.java)
+            startActivityForResult(tmpIntent, 2)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -324,6 +330,19 @@ class EditWardSafetyActivity : AppCompatActivity() {
                         }
                     }
                     deletedQuestionList = data?.getStringArrayListExtra("deletedQuestionList")!!
+                }
+                2 -> {
+                    val QuestionsFromSafety = data?.getStringArrayListExtra("questionsFromSafety")
+                    val QuestionRef = database.getReference("question")
+                    val qIdList = questionList.toMap().keys
+                    for (q in QuestionsFromSafety!!){
+                        if (!qIdList.contains(q)){
+                            QuestionRef.child(q).get().addOnSuccessListener {
+                                questionList.add(Pair(q, it.getValue(QuestionDTO::class.java)) as Pair<String, QuestionDTO>)
+                                editWardSafetyAdapter.notifyDataSetChanged()
+                            }
+                        }
+                    }
                 }
             }
         }

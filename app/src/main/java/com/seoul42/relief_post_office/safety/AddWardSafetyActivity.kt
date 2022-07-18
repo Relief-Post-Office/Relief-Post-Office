@@ -188,6 +188,12 @@ class AddWardSafetyActivity : AppCompatActivity() {
             }
         }
 
+        // 내 안부 가져오기 버튼 이벤트
+        findViewById<Button>(R.id.add_ward_safety_get_button).setOnClickListener{
+            val tmpIntent = Intent(this, GetGuardianSafetyActivity::class.java)
+            startActivityForResult(tmpIntent, 2)
+        }
+
     }
 
     // 질문 설정 후 받은 체크된 질문들 리스트에 추가

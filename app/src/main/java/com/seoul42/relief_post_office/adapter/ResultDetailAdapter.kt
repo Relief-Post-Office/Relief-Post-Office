@@ -3,6 +3,7 @@ package com.seoul42.relief_post_office.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.media.MediaPlayer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,9 +60,42 @@ class ResultDetailAdapter (private val context : Context,
     private fun setAnswerRecord(binding: ItemResultDetailBinding, answer: AnswerDTO) {
         if (answer.questionRecord) {
             val recordBtn = binding.btnResultQuetionPlay
-            recordBtn.visibility = View.VISIBLE
-            recordBtn.setOnClickListener {
-                // 녹음 재생
+            if (answer.answerSrc != "") {
+                recordBtn.visibility = View.VISIBLE
+                var playing = false
+                var player: MediaPlayer? = null
+                recordBtn.setOnClickListener {
+                    // 녹음 재생
+                    if (playing){
+                        player?.release()
+                        player = null
+
+                        recordBtn.setBackgroundResource(R.drawable.result_play)
+                        playing = false
+                    }
+                    // 재생 중이 아니면 중지 버튼으로 이미지 변경
+                    else{
+                        // 녹음 소스 불러와서 미디어 플레이어 세팅
+                        player = MediaPlayer().apply {
+                            setDataSource(answer.answerSrc)
+                            prepare()
+                        }
+
+                        player?.setOnCompletionListener {
+                            player?.release()
+                            player = null
+
+                            recordBtn.setBackgroundResource(R.drawable.result_play)
+                            playing = false
+                        }
+
+                        // 재생
+                        player?.start()
+
+                        recordBtn.setBackgroundResource(R.drawable.stopbtn)
+                        playing = true
+                    }
+                }
             }
         }
     }

@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/monday"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:layout_gravity="center"/>
 
         <CheckBox
@@ -91,7 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/tuesday"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:layout_gravity="center"/>
 
         <CheckBox
@@ -100,7 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/wednesday"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:layout_gravity="center"/>
 
         <CheckBox
@@ -109,7 +109,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/thursday"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:layout_gravity="center"/>
 
         <CheckBox
@@ -118,7 +118,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/friday"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:layout_gravity="center"/>
 
         <CheckBox
@@ -127,7 +127,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/saturday"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:layout_gravity="center"/>
 
         <CheckBox
@@ -136,45 +136,69 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/sunday"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:layout_gravity="center"/>
 
     </LinearLayout>
 
+    <FrameLayout
+        android:id="@+id/edit_ward_safety_frame1"
+        android:layout_width="match_parent"
+        android:layout_height="60sp"
+        app:layout_constraintTop_toBottomOf="@+id/edit_ward_safety_linear3"
+        app:layout_constraintBottom_toTopOf="@+id/edit_ward_safety_linear4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp">
+
+        <FrameLayout
+            android:id="@+id/edit_ward_safety_frame2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/question_item_border"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/edit_ward_safety_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/time_set"
+                android:textColor="@color/black"
+                android:layout_margin="15sp"
+                android:textSize="25sp"/>
+
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/edit_ward_safety_get_button"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="right|bottom"
+            android:text="안부 가져오기"
+            android:textSize="15sp"
+            android:layout_marginEnd="10sp"
+            android:background="@drawable/button_rounded_gray"
+            android:textColor="#ffffff" />
+
+    </FrameLayout>
+
     <LinearLayout
         android:id="@+id/edit_ward_safety_linear4"
-        android:layout_width="wrap_content"
-        android:layout_height="60sp"
-        android:background="@drawable/question_item_border"
-        app:layout_constraintTop_toBottomOf="@+id/edit_ward_safety_linear3"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintStart_toEndOf="@id/vertical_guideline1"
-        app:layout_constraintEnd_toStartOf="@id/vertical_guideline6">
-
-        <TextView
-            android:id="@+id/edit_ward_safety_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/time_set"
-            android:textColor="@color/black"
-            android:layout_marginStart="10sp"
-            android:layout_margin="10sp"
-            android:textSize="25sp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:background="@drawable/recyclerview_border"
-        app:layout_constraintTop_toBottomOf="@+id/edit_ward_safety_linear4"
+        app:layout_constraintTop_toBottomOf="@+id/edit_ward_safety_frame1"
         app:layout_constraintBottom_toTopOf="@id/horizontal_guideline4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:orientation="vertical"
-        android:layout_margin="20sp">
+        android:layout_marginTop="5sp"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp"
+        android:layout_marginBottom="20sp">
 
         <FrameLayout
             android:layout_width="match_parent"
