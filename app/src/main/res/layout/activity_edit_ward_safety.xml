@@ -161,7 +161,7 @@
             android:textColor="@color/black"
             android:layout_marginStart="10sp"
             android:layout_margin="10sp"
-            android:textSize="30sp"/>
+            android:textSize="25sp"/>
 
     </LinearLayout>
 
@@ -223,10 +223,11 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:text="@string/save"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:layout_marginEnd="15dp"
-            android:background="@drawable/button_rounded_gray"
-            app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
+            android:background="@drawable/button_rounded_pink"
+            android:textColor="#ffd8de"
+            app:layout_constraintTop_toTopOf="@id/horizontal_guideline4"
             app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
             app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
             app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"
@@ -238,10 +239,11 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:text="@string/remove"
-            android:textSize="30sp"
-            android:background="@drawable/button_rounded_gray"
+            android:textSize="25sp"
+            android:background="@drawable/button_rounded_pink"
+            android:textColor="#ffd8de"
             android:layout_marginStart="15dp"
-            app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
+            app:layout_constraintTop_toTopOf="@id/horizontal_guideline4"
             app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
             app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
             app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"
