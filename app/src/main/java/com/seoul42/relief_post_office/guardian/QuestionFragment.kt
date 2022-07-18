@@ -94,6 +94,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
 
             // 질문 추가 다이얼로그의 "저장"버튼을 눌렀을 때 이벤트 처리
             dialog.findViewById<Button>(R.id.add_question_btn).setOnClickListener {
+                it.isClickable = false
 
                 // 프로그레스바 처리
                 dialog.window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)

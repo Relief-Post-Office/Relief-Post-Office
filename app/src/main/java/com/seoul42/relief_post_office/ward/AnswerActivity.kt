@@ -133,7 +133,6 @@ class AnswerActivity : AppCompatActivity() {
                     val answerRecordRef =
                         storage.reference.child("answerRecord/${auth.currentUser?.uid + LocalDateTime.now().format(
                             DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
-                    var uploadAnswerRecord = answerRecordRef.putFile(answerRecordFile)
 
                     // 다이얼로그 종료 시 이벤트
                     dialog.setOnDismissListener {
@@ -141,6 +140,7 @@ class AnswerActivity : AppCompatActivity() {
                         window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                         // 녹음 중이라면 중단 후 저장
                         answerRecordActivity.stopRecording()
+                        var uploadAnswerRecord = answerRecordRef.putFile(answerRecordFile)
                         uploadAnswerRecord.addOnSuccessListener {
                             answerRecordRef.downloadUrl.addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
