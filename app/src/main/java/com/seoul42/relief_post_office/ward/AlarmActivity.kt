@@ -98,6 +98,7 @@ class AlarmActivity : AppCompatActivity() {
             if (mediaPlayer != null) {
                 close()
             }
+            finish()
         }, finishTime)
     }
 

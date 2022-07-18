@@ -22,7 +22,7 @@ class ResponseAdapter(private val context: Context, private val dataList: ArrayL
             val curYear = SimpleDateFormat("yyyy-MM-dd hh:mm")
                 .format(System.currentTimeMillis())
                 .split("-")[0].toInt()
-            val userYear = user.second.birth!!.split("/")[0].toInt()
+            val userYear = user.second.birth.split("/")[0].toInt()
             val userAge = curYear - userYear + 1
             val userName = user.second.name
 
