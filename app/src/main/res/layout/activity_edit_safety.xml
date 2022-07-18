@@ -129,8 +129,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/save"
-            android:textSize="30sp"
-            android:background="@drawable/button_rounded_gray"
+            android:textSize="25sp"
+            android:background="@drawable/button_rounded_pink"
+            android:textColor="#ffd8de"
             android:layout_weight="1"
             android:layout_marginRight="15dp"
             tools:ignore="HardcodedText" />
@@ -140,8 +141,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/remove"
-            android:textSize="30sp"
-            android:background="@drawable/button_rounded_gray"
+            android:textSize="25sp"
+            android:background="@drawable/button_rounded_pink"
+            android:textColor="#ffd8de"
             android:layout_weight="1"
             android:layout_marginLeft="15dp"
             tools:ignore="HardcodedText" />

@@ -132,6 +132,7 @@ class WardProfileActivity  : AppCompatActivity() {
     }
 
     private fun setSave() {
+        binding.wardProfileSave.cornerRadius = 30
         binding.wardProfileSave.setOnClickListener {
             if (allCheck()) {
                 completeJoin()

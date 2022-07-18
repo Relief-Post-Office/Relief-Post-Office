@@ -50,14 +50,15 @@
     <Button
         android:id="@+id/safety_question_setting_save_button"
         android:layout_width="0sp"
-        android:layout_height="60sp"
+        android:layout_height="50sp"
         android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"
         android:text="저 장"
-        android:background="@drawable/button_rounded_gray"
-        android:textSize="30sp" />
+        android:background="@drawable/button_rounded_pink"
+        android:textColor="#ffd8de"
+        android:textSize="25sp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline1"

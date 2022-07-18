@@ -24,7 +24,7 @@
         android:layout_height="0sp"
         android:gravity="center_vertical"
         android:text="@string/question_content"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:lineSpacingExtra="6sp"
         android:maxLength="50"
         android:maxLines="3"

@@ -64,9 +64,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:background="@drawable/button_rounded_gray"
+            android:background="@drawable/button_rounded_weak_blue"
             android:text="@string/record"
             android:textSize="20sp"
+            android:textColor="@color/white"
             android:layout_weight="1"
             tools:ignore="ButtonStyle,HardcodedText" />
 
@@ -76,9 +77,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:background="@drawable/button_rounded_gray"
+            android:background="@drawable/button_rounded_weak_blue"
             android:text="@string/update"
             android:textSize="20sp"
+            android:textColor="@color/white"
             android:layout_weight="1"
             tools:ignore="ButtonStyle,HardcodedText" />
 
@@ -98,7 +100,9 @@
             android:gravity="center"
             android:hint="@string/question_hint"
             android:maxLength="50"
+            android:maxLines="3"
             android:lineSpacingExtra="6sp"
+            android:textSize="16sp"
             android:background="@drawable/edittext_rounded_corner_rectangle"
             android:textColorHint="#8E8D8D"
             tools:ignore="Autofill,HardcodedText,TextFields" />
@@ -122,6 +126,7 @@
         android:textSize="20sp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
         tools:ignore="HardcodedText,UseSwitchCompatOrMaterialXml" />
 
     <Switch
@@ -150,10 +155,11 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:text="@string/save"
-            android:textSize="25sp"
-            android:background="@drawable/button_rounded_gray"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
+            android:textSize="20sp"
+            android:background="@drawable/button_rounded_pink"
+            android:textColor="#ffd8de"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
             tools:ignore="HardcodedText" />
 
     </LinearLayout>

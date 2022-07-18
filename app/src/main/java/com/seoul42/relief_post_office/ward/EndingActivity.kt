@@ -2,6 +2,7 @@ package com.seoul42.relief_post_office.ward
 
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.databinding.WardEndingBinding
@@ -23,5 +24,11 @@ class EndingActivity : AppCompatActivity() {
             finish()
         }
         endingGuideVoice.start()
+        setStatusBarTransparent()
+    }
+
+    private fun setStatusBarTransparent() {
+        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
 }

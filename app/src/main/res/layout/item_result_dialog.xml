@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="60dp"
     tools:context=".guardian.MainFragment">
 
     <LinearLayout
@@ -37,7 +37,7 @@
         android:maxLines="1"
         android:maxLength="10"
         android:text="@string/safety_name"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/non_response"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/vertical_guideline6"
         app:layout_constraintStart_toStartOf="@+id/vertical_guideline9"

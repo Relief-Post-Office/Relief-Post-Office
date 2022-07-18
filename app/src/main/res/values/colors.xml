@@ -13,7 +13,8 @@
     <color name="red">#FFFF0000</color>
     <color name="green">#FF00FF00</color>
     <color name="gray">#999590</color>
-    <color name="weak_blue">#52b2de</color>
+    <color name="weak_blue">#01b7e5</color>
     <color name="yes">#1e90ff</color>
     <color name="no">#f05056</color>
+    <color name="pink">#fe7088</color>
 </resources>

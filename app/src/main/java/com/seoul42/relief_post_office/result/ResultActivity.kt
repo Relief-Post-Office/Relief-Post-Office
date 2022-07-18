@@ -140,6 +140,8 @@ class ResultActivity : AppCompatActivity() {
     private fun resetResultList(wardId: String) {
         val resultListRef = database.getReference("ward").child(wardId).child("resultIdList")
         val resultsRef = database.getReference("result")
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
+        val curTime = Calendar.getInstance()
 
         resultList.clear()
         adapter.notifyDataSetChanged()
@@ -151,9 +153,13 @@ class ResultActivity : AppCompatActivity() {
                         if (it.value != null) {
                             val result = it.getValue(ResultDTO::class.java) as ResultDTO
                             if (result.date.replace("-", "/") == binding.btnResultSetDate.text.toString()) {
-                                resultList.add(Pair(it.key.toString(), result))
-                                resultList.sortBy{ it.second.safetyTime }
-                                adapter.notifyDataSetChanged()
+                                val safetyTime = dateFormat.parse(result.date + " " + result.safetyTime)
+
+                                if (curTime.time.time - safetyTime.time >= 0) {
+                                    resultList.add(Pair(it.key.toString(), result))
+                                    resultList.sortBy { it.second.safetyTime }
+                                    adapter.notifyDataSetChanged()
+                                }
                             }
                         }
                     }

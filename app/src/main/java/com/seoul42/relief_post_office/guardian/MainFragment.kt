@@ -123,7 +123,7 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
     }
 
     private fun setLogout() {
-        binding.guardianLogout.buttonColor = resources.getColor(R.color.gray)
+        binding.guardianLogout.buttonColor = resources.getColor(R.color.pink)
         binding.guardianLogout.cornerRadius = 30
         binding.guardianLogout.setOnClickListener {
             auth.signOut()
@@ -201,7 +201,6 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
         val userDB = Firebase.database.reference.child("user").child(connectedUserId)
 
         userDB.get().addOnSuccessListener {
-            Log.d("확인", connectedUserId)
             if (it.getValue(UserDTO::class.java) != null) {
                 val ward = it.getValue(UserDTO::class.java) as UserDTO
                 if (!connectedWardList.contains(Pair(connectedUserId, ward))) {

@@ -3,6 +3,7 @@ package com.seoul42.relief_post_office.result
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -30,6 +31,7 @@ class ResultDetailActivity : AppCompatActivity() {
         val wardId = intent.getSerializableExtra("wardId") as String
         val resultId = intent.getSerializableExtra("resultId") as String
         val result = intent.getSerializableExtra("result") as ResultDTO
+        Log.d("확인", wardId+" / " + resultId+" / " + result.toString())
         setSafetyName(result.safetyName)
         setWardName(wardId)
         setDate(result.date)
@@ -42,14 +44,13 @@ class ResultDetailActivity : AppCompatActivity() {
     }
 
     private fun setWardName(wardId: String) {
-        var wardName: String? = null
         database.getReference("user").child(wardId).child("name")
             .get().addOnSuccessListener {
             if (it.value != null) {
-                wardName = it.value.toString()
+                val wardName = it.value.toString()
+                binding.textResultDetailWardName.text = wardName
             }
         }
-        binding.textResultDetailWardName.text = wardName
     }
 
     private fun setDate(date: String) {

@@ -67,7 +67,8 @@
             android:text="@string/play"
             android:textSize="20sp"
             android:fontFamily="@font/jua"
-            android:background="@drawable/button_rounded_gray"
+            android:background="@drawable/button_rounded_weak_blue"
+            android:textColor="@color/white"
             android:layout_weight="1"
             tools:ignore="ButtonStyle,HardcodedText" />
 
@@ -79,7 +80,8 @@
             android:layout_marginRight="20dp"
             android:text="@string/update"
             android:textSize="20sp"
-            android:background="@drawable/button_rounded_gray"
+            android:textColor="@color/white"
+            android:background="@drawable/button_rounded_weak_blue"
             android:layout_weight="1"
             tools:ignore="ButtonStyle,HardcodedText" />
 
@@ -96,8 +98,10 @@
         android:layout_margin="10dp"
         android:padding="15dp"
         android:gravity="center"
+        android:maxLines="3"
         android:hint="@string/question_hint"
         android:maxLength="50"
+        android:textSize="16sp"
         android:lineSpacingExtra="6sp"
         android:background="@drawable/edittext_rounded_corner_rectangle"
         android:textColorHint="#8E8D8D"
@@ -122,6 +126,7 @@
         android:textSize="20sp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
         tools:ignore="HardcodedText,UseSwitchCompatOrMaterialXml" />
 
     <Switch
@@ -151,11 +156,12 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:text="@string/save"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="15dp"
             android:layout_weight="1"
-            android:background="@drawable/button_rounded_gray"
+            android:background="@drawable/button_rounded_pink"
+            android:textColor="#ffd8de"
             tools:ignore="ButtonStyle,HardcodedText" />
 
         <Button
@@ -163,11 +169,12 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:text="@string/remove"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="20dp"
             android:layout_weight="1"
-            android:background="@drawable/button_rounded_gray"
+            android:background="@drawable/button_rounded_pink"
+            android:textColor="#ffd8de"
             tools:ignore="ButtonStyle,HardcodedText" />
 
     </LinearLayout>
