@@ -24,7 +24,7 @@ class ResultQuestionDetailActivity : AppCompatActivity() {
         setQuestionText(answer.second.questionText)
         setQuestionRecord(answer.second.questionSrc)
         setAnswerReply(answer.second.reply)
-        setAnswerRecord(answer.second.questionRecord, answer.second.answerSrc)
+        setAnswerRecord(onRecord(answer.second), answer.second.answerSrc)
         setQuestionOption(answer.second.questionRecord, answer.second.questionSecret)
     }
 
@@ -50,7 +50,7 @@ class ResultQuestionDetailActivity : AppCompatActivity() {
                     player?.release()
                     player = null
 
-                    binding.resultQuestionRecordBtn.setBackgroundResource(R.drawable.playbtn4)
+                    binding.resultQuestionRecordBtn.setBackgroundResource(R.drawable.playbtn5)
                     playing = false
                 }
                 // 재생 중이 아니면 중지 버튼으로 이미지 변경
@@ -65,7 +65,7 @@ class ResultQuestionDetailActivity : AppCompatActivity() {
                         player?.release()
                         player = null
 
-                        binding.resultQuestionRecordBtn.setBackgroundResource(R.drawable.playbtn4)
+                        binding.resultQuestionRecordBtn.setBackgroundResource(R.drawable.playbtn5)
                         playing = false
                     }
 
@@ -89,10 +89,13 @@ class ResultQuestionDetailActivity : AppCompatActivity() {
             binding.resultAnswerImg.visibility = View.GONE
     }
 
+    private fun onRecord(answer: AnswerDTO): Boolean {
+        return (answer.answerSrc != "") && (answer.reply == true) && answer.questionRecord
+    }
+
     private fun setAnswerRecord(onRecord: Boolean, answerSrc: String) {
         // 답변 녹음 재생 기능
-        if (onRecord && answerSrc != "") {
-            Log.d("하하하", answerSrc)
+        if (onRecord) {
             binding.resultAnswerRecordBtnTitle.visibility = View.VISIBLE
             binding.resultAnswerRecordLayout.visibility = View.VISIBLE
             var playing = false
@@ -103,7 +106,7 @@ class ResultQuestionDetailActivity : AppCompatActivity() {
                     player?.release()
                     player = null
 
-                    binding.resultAnswerRecordBtn.setBackgroundResource(R.drawable.playbtn4)
+                    binding.resultAnswerRecordBtn.setBackgroundResource(R.drawable.playbtn5)
                     playing = false
                 }
                 // 재생 중이 아니면 중지 버튼으로 이미지 변경
@@ -118,7 +121,7 @@ class ResultQuestionDetailActivity : AppCompatActivity() {
                         player?.release()
                         player = null
 
-                        binding.resultAnswerRecordBtn.setBackgroundResource(R.drawable.playbtn4)
+                        binding.resultAnswerRecordBtn.setBackgroundResource(R.drawable.playbtn5)
                         playing = false
                     }
 
