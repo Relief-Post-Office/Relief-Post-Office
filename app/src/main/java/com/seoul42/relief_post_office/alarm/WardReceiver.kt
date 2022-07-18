@@ -66,7 +66,6 @@ class WardReceiver() : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("확인", "Ward")
         if (!Network.isNetworkAvailable(context)) {
-            Log.d("확인", "피보호자측 네트워크 연결 실패")
             setNetworkAlarm(context)
         } else {
             if (Firebase.auth.currentUser != null) {
@@ -94,6 +93,8 @@ class WardReceiver() : BroadcastReceiver() {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val schedule = Intent(REPEAT_START)
 
+        Log.d("확인", "보호자측 네트워크 연결 실패")
+        isFail = true
         schedule.setClass(context, NetworkReceiver::class.java)
 
         val sender = PendingIntent.getBroadcast(context, 0, schedule,
@@ -156,11 +157,7 @@ class WardReceiver() : BroadcastReceiver() {
                 }, 5000)
             }
         }.addOnFailureListener {
-            if (!isFail) {
-                Log.d("확인", "피보호자측 네트워크 연결 실패")
-                isFail = true
-                setNetworkAlarm(context)
-            }
+            if (!isFail) setNetworkAlarm(context)
         }
     }
 
@@ -172,11 +169,7 @@ class WardReceiver() : BroadcastReceiver() {
                 addSafetyToRecommendList(dateDTO, safetyId, safetyDTO)
             }
         }.addOnFailureListener {
-            if (!isFail) {
-                Log.d("확인", "피보호자측 네트워크 연결 실패")
-                isFail = true
-                setNetworkAlarm(context)
-            }
+            if (!isFail) setNetworkAlarm(context)
         }
     }
 
@@ -219,11 +212,7 @@ class WardReceiver() : BroadcastReceiver() {
                 }
             }
         }.addOnFailureListener {
-            if (!isFail) {
-                Log.d("확인", "피보호자측 네트워크 연결 실패")
-                isFail = true
-                setNetworkAlarm(context)
-            }
+            if (!isFail) setNetworkAlarm(context)
         }
     }
 
@@ -247,45 +236,49 @@ class WardReceiver() : BroadcastReceiver() {
 
     /*
      *  강제 알람을 세팅하는 메서드
-     *  결과를 생성한 다음에 강제 알람을 요청
-     *  1. result 의 answerList 생성 : 안부의 질문에 대응하는 answer 를 생성 및 추가
-     *  2. result 생성
-     *   - date = 현재 날짜 + ( 현재로부터 안부까지 timeGap )
-     *   - responseTime = "미응답"
+     *  다음과 같은 순서로 result 및 answer 를 세팅 후 강제 알람을 요청
+     *
+     *  1. Create : resultIdList -> resultId
+     *  2. Create : resultId -> resultDTO
+     *  3. Create : resultDTO.answerList -> [question, answerId]
+     *  4. Create : answerId -> answerDTO
      */
     private fun setForceAlarm(context: Context, recommendDTO : WardRecommendDTO) {
-        val answerList : MutableMap<String, String> = mutableMapOf()
         val cal = Calendar.getInstance()
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
         cal.time = Date()
         cal.add(Calendar.SECOND, recommendDTO.timeGap)
-        Log.d("확인용", date.format(cal.time))
 
-        /* 1. result 의 answerList 생성 */
-        makeAnswerList(context, recommendDTO.safetyDTO.questionList, answerList)
+        val resultKey = resultDB.push()
+        val resultId = resultKey.key.toString()
+        val resultDTO = ResultDTO(date.format(cal.time).substring(0, 10),
+            recommendDTO.safetyId, recommendDTO.safetyDTO.name!!,
+            recommendDTO.safetyDTO.time!!, "미응답", mutableMapOf())
 
-        /* 2. result 생성 */
-        Handler().postDelayed({
-            val resultKey = resultDB.push()
-            val resultId = resultKey.key.toString()
-            val resultDTO = ResultDTO(date.format(cal.time).substring(0, 10),
-                recommendDTO.safetyId, recommendDTO.safetyDTO.name!!,
-                recommendDTO.safetyDTO.time!!, "미응답", answerList)
+        recommendDTO.resultId = resultId
 
-            resultKey.setValue(resultDTO)
-            wardDB.child(uid).child("resultIdList").child(resultId).setValue(resultId)
-            recommendDTO.resultId = resultId
-            setAlarm(context, REPEAT_STOP, recommendDTO)
-        }, 5000)
+        /* 1. Create : resultIdList -> resultId */
+        wardDB.child(uid).child("resultIdList").child(resultId).setValue(resultId)
+            .addOnFailureListener {
+            if (!isFail) setNetworkAlarm(context)
+        }
+        /* 2. Create : resultId -> resultDTO */
+        resultKey.setValue(resultDTO).addOnFailureListener {
+            if (!isFail) setNetworkAlarm(context)
+        }
+        /* 3, 4 순서를 수행 */
+        makeAnswerList(context, recommendDTO)
     }
 
     /*
      *  answerList 를 생성하는 메서드
-     *  - 질문에 대응하는 대답을 생성
      *  - 생성한 질문 id 에 대해 answerList[질문 id] = 대답 id
+     *  - 질문에 대응하는 대답을 생성
      */
-    private fun makeAnswerList(context : Context, questionList : MutableMap<String, String>, answerList : MutableMap<String, String>) {
+    private fun makeAnswerList(context : Context, recommendDTO : WardRecommendDTO) {
+        val questionList : MutableMap<String, String> = recommendDTO.safetyDTO.questionList
+
         for (question in questionList) {
             val questionId = question.key
 
@@ -297,17 +290,26 @@ class WardReceiver() : BroadcastReceiver() {
                     val answerDTO = AnswerDTO(null, questionDTO.secret, questionDTO.record,
                         questionDTO.owner!!, questionDTO.src!!, questionDTO.text!!, "")
 
-                    answerKey.setValue(answerDTO) /* answer 새로 생성 */
-                    answerList[questionId] = answerId /* answerIdList 채우기 [questionId, answerId] */
+                    /* 3. Create : answerList -> [question, answerId] */
+                    resultDB.child(recommendDTO.resultId!!).child("answerIdList").child(questionId).setValue(answerId)
+                        .addOnFailureListener {
+                            if (!isFail) setNetworkAlarm(context)
+                        }
+                    /* 4. Create : answerId -> answerDTO */
+                    answerKey.setValue(answerDTO)
+                        .addOnFailureListener {
+                            if (!isFail) setNetworkAlarm(context)
+                        }
                 }
             }.addOnFailureListener {
-                if (!isFail) {
-                    Log.d("확인", "피보호자측 네트워크 연결 실패")
-                    isFail = true
-                    setNetworkAlarm(context)
-                }
+                if (!isFail) setNetworkAlarm(context)
             }
         }
+
+        /* 비동기식 데이터 통신으로 인해 5초 후 추천 시작 */
+        Handler().postDelayed({
+            setAlarm(context, REPEAT_STOP, recommendDTO)
+        }, 5000)
     }
 
     /*
@@ -415,11 +417,7 @@ class WardReceiver() : BroadcastReceiver() {
                 }
             }
         }.addOnFailureListener {
-            if (!isFail) {
-                Log.d("확인", "피보호자측 네트워크 연결 실패")
-                isFail = true
-                setNetworkAlarm(context)
-            }
+            if (!isFail) setNetworkAlarm(context)
         }
 
         setAlarm(context, REPEAT_START, null)

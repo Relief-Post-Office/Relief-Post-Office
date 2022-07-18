@@ -31,7 +31,7 @@ class BootCompleteReceiver : BroadcastReceiver() {
 
     /*
      *  네트워크가 연결되었는지 확인
-     *  - 연결이 안된 경우 : 5분 단위로 네트워크 알람을 재요청
+     *  - 연결이 안된 경우 : 30초 단위로 네트워크 알람을 재요청
      *  - 연결된 경우 : 부팅 셋업 작업을 수행
      *
      *  부팅 셋업 작업
@@ -53,7 +53,7 @@ class BootCompleteReceiver : BroadcastReceiver() {
                     userDB.child(uid).get().addOnSuccessListener {
                         if (it.getValue(UserDTO::class.java) != null) {
                             val userDTO = it.getValue(UserDTO::class.java) as UserDTO
-                            setAlarm(context, userDTO.guardian!!)
+                            setAlarm(context, userDTO.guardian)
                         }
                     }.addOnFailureListener {
                         setNetworkAlarm(context)

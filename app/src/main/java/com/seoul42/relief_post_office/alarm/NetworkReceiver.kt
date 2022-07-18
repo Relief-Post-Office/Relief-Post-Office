@@ -40,7 +40,7 @@ class NetworkReceiver : BroadcastReceiver() {
                 userDB.child(uid).get().addOnSuccessListener {
                     if (it.getValue(UserDTO::class.java) != null) {
                         val userDTO = it.getValue(UserDTO::class.java) as UserDTO
-                        setAlarm(context, userDTO.guardian!!)
+                        setAlarm(context, userDTO.guardian)
                     }
                 }.addOnFailureListener {
                     Log.d("확인", "네트워크 연결 실패")
