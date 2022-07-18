@@ -118,18 +118,24 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
 
                     // 안부 설정 버튼 이벤트 처리
                     dialog.findViewById<Button>(R.id.guardian_dialog_safety_setting_button).setOnClickListener {
+                        // 여러번 클릭 방지
+                        it.isClickable = false
                         val intent = Intent(context, WardSafetySettingActivity::class.java)
                         intent.putExtra("photoUri", user.second.photoUri)
                         intent.putExtra("wardId", user.first)
                         intent.putExtra("wardName", user.second.name)
                         startActivity(context, intent, null)
+                        it.isClickable = true
                     }
 
                     // 결과 보기 버튼 이벤트 처리
                     dialog.findViewById<Button>(R.id.guardian_dialog_result_button).setOnClickListener {
+                        // 여러번 클릭 방지
+                        it.isClickable = false
                         val intent = Intent(context, ResultActivity::class.java)
                         intent.putExtra("wardId", user.first)
                         startActivity(context, intent, null)
+                        it.isClickable = true
                     }
 
                 }

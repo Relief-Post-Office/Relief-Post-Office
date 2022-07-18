@@ -95,7 +95,6 @@ class AddWardSafetyActivity : AppCompatActivity() {
         findViewById<ImageView>(R.id.add_ward_safety_question_setting).setOnClickListener{
             val tmpIntent = Intent(this, SafetyQuestionSettingActivity::class.java)
             tmpIntent.putExtra("questionList", questionList.toMap().keys.toCollection(ArrayList<String>()))
-            questionList.clear()
             startActivityForResult(tmpIntent, 1)
         }
 
@@ -198,6 +197,7 @@ class AddWardSafetyActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK){
             when (requestCode){
                 1 -> {
+                    questionList.clear()
                     addWardSafetyAdapter.notifyDataSetChanged()
                     val checkQuestions = data?.getStringArrayListExtra("returnQuestionList")
                     val QuestionRef = database.getReference("question")

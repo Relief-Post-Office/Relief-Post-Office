@@ -75,6 +75,9 @@ class WardSafetyAdapter(private val context: Context, private val items: ArrayLi
 
             // 안부 클릭시 안부 수정 액티비티로 이동
             itemView.setOnClickListener{
+                // 여러번 클릭 방지
+                it.isClickable = false
+
                 // 선택한 안부를 누군가 수정중인지 확인
                 val accessedGuardian = database.getReference("safety").child(item.first).child("Access")
                 accessedGuardian.get().addOnSuccessListener {
@@ -95,6 +98,7 @@ class WardSafetyAdapter(private val context: Context, private val items: ArrayLi
                             Toast.makeText(context, it.getValue().toString() + "님이 수정중입니다", Toast.LENGTH_LONG).show()
                         }
                     }
+                    itemView.isClickable = true
                 }
             }
         }

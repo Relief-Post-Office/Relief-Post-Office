@@ -44,9 +44,12 @@ class SafetyAdapter(private val context : Context, private val items : ArrayList
 
 			// 아이템 클릭 시 수정 액티비티로 넘어가기
 			itemView.setOnClickListener{
+				// 아이템 여러번 클릭 방지
+				it.isClickable = false
 				val tmpIntent = Intent(context, EditSafetyActivity::class.java)
 				tmpIntent.putExtra("safetyId", item.first)
 				ContextCompat.startActivity(context, tmpIntent, null)
+				it.isClickable = true
 			}
 		}
 	}

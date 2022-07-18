@@ -259,11 +259,4 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
         rv.layoutManager = LinearLayoutManager(this)
         rv.setHasFixedSize(true)
     }
-
-    override fun onBackPressed() {
-        // 뒤로가기 버튼 막기
-        Toast.makeText(this, "저장 버튼을 눌러주세요", Toast.LENGTH_SHORT).show()
-//        super.onBackPressed()
-    }
-
 }

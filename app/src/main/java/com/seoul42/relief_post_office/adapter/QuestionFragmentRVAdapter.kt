@@ -19,6 +19,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.seoul42.relief_post_office.R
+import com.seoul42.relief_post_office.guardian.QuestionFragment
 import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.record.EditRecordActivity
@@ -33,7 +34,7 @@ import java.time.format.DateTimeFormatter
 class QuestionFragmentRVAdapter(
     private val context: Context,
     private val items: ArrayList<Pair<String, QuestionDTO>>,
-    private val firebaseViewModel: FirebaseViewModel
+    private val firebaseViewModel: FirebaseViewModel,
 )
     : RecyclerView.Adapter<QuestionFragmentRVAdapter.ViewHolder>() {
 
@@ -71,6 +72,9 @@ class QuestionFragmentRVAdapter(
 
             // 아이템 눌렀을 때 이벤트
             rvText.setOnClickListener{
+                // 아이템 여러번 눌리는 것 방지
+                rvText.isClickable = false
+
                 // 질문 수정 다이얼로그 세팅
                 val questionText = item.second.text
                 val secret = item.second.secret
@@ -104,6 +108,8 @@ class QuestionFragmentRVAdapter(
                 dialog.setOnDismissListener {
                     editRecordActivity.stopRecording()
                     editRecordActivity.stopPlaying()
+                    // 아이템 터치 다시 가능하게 하기
+                    rvText.isClickable = true
                 }
 
                 // 질문 수정 다이얼로그의 "저장" 버튼을 눌렀을 때 이벤트 처리

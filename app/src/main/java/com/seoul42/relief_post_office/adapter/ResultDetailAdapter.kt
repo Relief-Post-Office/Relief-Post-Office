@@ -25,11 +25,14 @@ class ResultDetailAdapter (private val context : Context,
             setAnswerRecord(binding, answer.second)
             setAnswerReply(binding, answer.second)
             binding.textResultQuetion.setOnClickListener {
+                // 여러번 클릭 방지
+                it.isClickable = false
                 val intent = Intent(context, ResultQuestionDetailActivity::class.java)
                 intent.putExtra("safetyName", safetyName)
                 intent.putExtra("answer", answer)
                 intent.putExtra("answerDate", answerDate)
                 startActivity(context, intent, null)
+                it.isClickable = true
             }
         }
     }

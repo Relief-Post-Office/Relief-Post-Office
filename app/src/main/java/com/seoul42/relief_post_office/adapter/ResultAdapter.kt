@@ -32,11 +32,14 @@ class ResultAdapter(private val context : Context,
                 binding.itemResultSafetyLayout.setBackgroundResource(R.drawable.result_enable_background)
                 binding.itemResultResponseTime.text = millisToTimeString(calTimeDiff(result))
                 binding.itemResultSafetyLayout.setOnClickListener {
+                    // 여러번 클릭 방지
+                    it.isClickable = false
                     val intent = Intent(context, ResultDetailActivity::class.java)
                     intent.putExtra("wardId", wardId)
                     intent.putExtra("resultId", result.first)
                     intent.putExtra("result", result.second)
                     ContextCompat.startActivity(context, intent, null)
+                    it.isClickable = true
                 }
             }
         }

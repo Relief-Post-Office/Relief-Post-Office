@@ -83,6 +83,9 @@ class SafetyQuestionSettingAdapter(
 
             // 아이템 눌렀을 때 이벤트
             rvText.setOnClickListener{
+                // 아이템 여러번 눌리는 것 방지
+                it.isClickable = false
+
                 // 질문 수정 다이얼로그 세팅
                 val questionText = item.second.text
                 val secret = item.second.secret
@@ -116,6 +119,8 @@ class SafetyQuestionSettingAdapter(
                 dialog.setOnDismissListener {
                     editRecordActivity.stopRecording()
                     editRecordActivity.stopPlaying()
+                    // 아이템 클릭 방지 해제
+                    rvText.isClickable = true
                 }
 
                 // 질문 수정 다이얼로그의 "저장" 버튼을 눌렀을 때 이벤트 처리
@@ -299,7 +304,6 @@ class SafetyQuestionSettingAdapter(
                     playing = true
                 }
             }
-
         }
     }
 }
