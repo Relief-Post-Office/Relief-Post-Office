@@ -26,7 +26,6 @@ import com.seoul42.relief_post_office.adapter.SafetyAdapter
 import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.model.SafetyDTO
 import com.seoul42.relief_post_office.safety.SafetyMake
-import com.seoul42.relief_post_office.util.Guardian
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.*
@@ -47,12 +46,6 @@ class SafetyFragment : Fragment(R.layout.fragment_safety) {
 		// 로그인 한 사람 uid 가져오기
 		auth = Firebase.auth
 		owner = auth.currentUser?.uid.toString()
-
-		// 사진 세팅
-		Glide.with(this)
-			.load(Guardian.USER.photoUri) /* ★★★ USER is in class of Guardian ★★★ */
-			.circleCrop()
-			.into(view.findViewById(R.id.safety_fragment_photo))
 
 		// safetyList 세팅
 		setSafetyList()
