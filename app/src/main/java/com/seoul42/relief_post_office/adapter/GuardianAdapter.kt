@@ -21,6 +21,7 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.databinding.ItemUserBinding
+import com.seoul42.relief_post_office.guardian.ProfileActivity
 import com.seoul42.relief_post_office.model.ResultDTO
 import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.result.ResultActivity
@@ -113,7 +114,10 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
 
                     // 프로필 보기 버튼 이벤트 처리
                     dialog.findViewById<Button>(R.id.guardian_dialog_profile_button).setOnClickListener {
+                        val intent = Intent(context, ProfileActivity::class.java)
 
+                        intent.putExtra("userDTO", user.second)
+                        startActivity(context, intent, null)
                     }
 
                     // 안부 설정 버튼 이벤트 처리

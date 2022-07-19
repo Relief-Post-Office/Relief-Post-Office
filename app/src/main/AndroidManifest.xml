@@ -107,6 +107,9 @@
         <activity
             android:name=".ward.EndingActivity"
             android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".guardian.ProfileActivity"
+            android:windowSoftInputMode="adjustNothing" />
 
         <service
             android:name=".service.MyFirebaseMessagingService"
