@@ -58,7 +58,7 @@ class ResultDetailAdapter (private val context : Context,
     }
 
     private fun setAnswerRecord(binding: ItemResultDetailBinding, answer: AnswerDTO) {
-        if (answer.questionRecord) {
+        if (answer.answerSrc != "") {
             val recordBtn = binding.btnResultQuetionPlay
             recordBtn.visibility = View.VISIBLE
             var playing = false

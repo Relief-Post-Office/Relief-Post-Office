@@ -214,6 +214,19 @@ class AddWardSafetyActivity : AppCompatActivity() {
                         }
                     }
                 }
+                2 -> {
+                    val QuestionsFromSafety = data?.getStringArrayListExtra("questionsFromSafety")
+                    val QuestionRef = database.getReference("question")
+                    val qIdList = questionList.toMap().keys
+                    for (q in QuestionsFromSafety!!){
+                        if (!qIdList.contains(q)){
+                            QuestionRef.child(q).get().addOnSuccessListener {
+                                questionList.add(Pair(q, it.getValue(QuestionDTO::class.java)) as Pair<String, QuestionDTO>)
+                                addWardSafetyAdapter.notifyDataSetChanged()
+                            }
+                        }
+                    }
+                }
             }
         }
     }

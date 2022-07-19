@@ -90,7 +90,7 @@ class ResultQuestionDetailActivity : AppCompatActivity() {
     }
 
     private fun onRecord(answer: AnswerDTO): Boolean {
-        return (answer.answerSrc != "") && (answer.reply == true) && answer.questionRecord
+        return (answer.answerSrc != "")
     }
 
     private fun setAnswerRecord(onRecord: Boolean, answerSrc: String) {

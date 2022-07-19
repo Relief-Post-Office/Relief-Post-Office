@@ -46,7 +46,6 @@ class SafetyMake : AppCompatActivity() {
 		findViewById<ImageView>(R.id.safety_make_question_setting).setOnClickListener{
 			val tmpIntent = Intent(this, SafetyQuestionSettingActivity::class.java)
 			tmpIntent.putExtra("questionList", questionList.toMap().keys.toCollection(ArrayList<String>()))
-			questionList.clear() /* 바꾸기 */
 			startActivityForResult(tmpIntent, 1)
 		}
 
@@ -115,6 +114,7 @@ class SafetyMake : AppCompatActivity() {
 		if (resultCode == Activity.RESULT_OK){
 			when (requestCode){
 				1 -> {
+					questionList.clear()
 					safetyMakeAdapter.notifyDataSetChanged()
 					val checkQuestions = data?.getStringArrayListExtra("returnQuestionList")
 					val QuestionRef = database.getReference("question")
@@ -122,6 +122,19 @@ class SafetyMake : AppCompatActivity() {
 						QuestionRef.child(q).get().addOnSuccessListener {
 							questionList.add(Pair(q, it.getValue(QuestionDTO::class.java)) as Pair<String, QuestionDTO>)
 							safetyMakeAdapter.notifyDataSetChanged()
+						}
+					}
+				}
+				2 -> {
+					val QuestionsFromSafety = data?.getStringArrayListExtra("questionsFromSafety")
+					val QuestionRef = database.getReference("question")
+					val qIdList = questionList.toMap().keys
+					for (q in QuestionsFromSafety!!){
+						if (!qIdList.contains(q)){
+							QuestionRef.child(q).get().addOnSuccessListener {
+								questionList.add(Pair(q, it.getValue(QuestionDTO::class.java)) as Pair<String, QuestionDTO>)
+								safetyMakeAdapter.notifyDataSetChanged()
+							}
 						}
 					}
 				}

@@ -69,7 +69,6 @@ class EditSafetyActivity : AppCompatActivity() {
 		findViewById<ImageView>(R.id.edit_safety_setting).setOnClickListener{
 			val tmpIntent = Intent(this, SafetyQuestionSettingActivity::class.java)
 			tmpIntent.putExtra("questionList", questionList.toMap().keys.toCollection(ArrayList<String>()))
-			questionList.clear() /* 수정 */
 			startActivityForResult(tmpIntent, 1)
 		}
 
@@ -173,6 +172,7 @@ class EditSafetyActivity : AppCompatActivity() {
 		if (resultCode == Activity.RESULT_OK) {
 			when (requestCode) {
 				1 -> {
+					questionList.clear()
 					editSafetyAdapter.notifyDataSetChanged()
 					val checkQuestions = data?.getStringArrayListExtra("returnQuestionList")
 					val QuestionRef = database.getReference("question")
@@ -183,6 +183,19 @@ class EditSafetyActivity : AppCompatActivity() {
 						}
 					}
 					deletedQuestionList = data?.getStringArrayListExtra("deletedQuestionList")!!
+				}
+				2 -> {
+					val QuestionsFromSafety = data?.getStringArrayListExtra("questionsFromSafety")
+					val QuestionRef = database.getReference("question")
+					val qIdList = questionList.toMap().keys
+					for (q in QuestionsFromSafety!!){
+						if (!qIdList.contains(q)){
+							QuestionRef.child(q).get().addOnSuccessListener {
+								questionList.add(Pair(q, it.getValue(QuestionDTO::class.java)) as Pair<String, QuestionDTO>)
+								editSafetyAdapter.notifyDataSetChanged()
+							}
+						}
+					}
 				}
 			}
 		}
