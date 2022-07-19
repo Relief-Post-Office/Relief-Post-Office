@@ -24,7 +24,7 @@ class WardAdapter(private val context: Context, private val dataList: ArrayList<
             val curYear = SimpleDateFormat("yyyy-MM-dd hh:mm")
                 .format(System.currentTimeMillis())
                 .split("-")[0].toInt()
-            val userYear = user.second.birth!!.split("/")[0].toInt()
+            val userYear = user.second.birth.split("/")[0].toInt()
             val userAge = curYear - userYear + 1
             val userName = user.second.name
 
@@ -41,10 +41,6 @@ class WardAdapter(private val context: Context, private val dataList: ArrayList<
                     Intent(Intent.ACTION_VIEW, Uri.parse("tel:" + user.second.tel)),
                     null
                 )
-            }
-            binding.itemUserLayout.setOnClickListener {
-                /* 보호자 정보 확인 */
-                Toast.makeText(context, "안부 확인", Toast.LENGTH_SHORT).show()
             }
         }
     }

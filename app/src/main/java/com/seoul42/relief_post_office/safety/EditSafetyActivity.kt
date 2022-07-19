@@ -69,7 +69,7 @@ class EditSafetyActivity : AppCompatActivity() {
 		findViewById<ImageView>(R.id.edit_safety_setting).setOnClickListener{
 			val tmpIntent = Intent(this, SafetyQuestionSettingActivity::class.java)
 			tmpIntent.putExtra("questionList", questionList.toMap().keys.toCollection(ArrayList<String>()))
-			questionList.clear()
+			questionList.clear() /* 수정 */
 			startActivityForResult(tmpIntent, 1)
 		}
 
