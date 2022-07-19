@@ -85,21 +85,23 @@ class AnswerActivity : AppCompatActivity() {
         binding.wardSafetyNo.buttonColor = resources.getColor(R.color.no)
         binding.wardSafetyRepeat.buttonColor = resources.getColor(R.color.gray)
         binding.wardSafetyNo.setOnClickListener {
+            window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             answerBell.start()
             val reply: Boolean = false
             var recordSrc: String = ""
 
             sendAnswer(reply, recordSrc)
-            nextQuestion()
+            Handler().postDelayed({
+                nextQuestion()
+            }, 1500)
         }
 
         binding.wardSafetyYes.setOnClickListener {
+            window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             answerBell.start()
             val reply: Boolean = true
             var recordSrc: String = ""
             if (answerList[currentIndex].second.questionRecord) {
-                // 화면 터치 방지
-                window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 // 질문 녹음 재생 중지
                 questionPlayer.stop()
 
@@ -132,8 +134,6 @@ class AnswerActivity : AppCompatActivity() {
 
                     // 다이얼로그 종료 시 이벤트
                     dialog.setOnDismissListener {
-                        // 화면 터치 풀기
-                        window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                         // 녹음 중이라면 중단 후 저장
                         answerRecordActivity.stopRecording()
                         var uploadAnswerRecord = answerRecordRef.putFile(answerRecordFile)
@@ -149,7 +149,7 @@ class AnswerActivity : AppCompatActivity() {
                         recordGuide.release()
                         Handler().postDelayed({
                             nextQuestion()
-                        }, 1000)
+                        }, 1500)
                     }
 
                     dialog.findViewById<Button>(R.id.record_stop_btn).setOnClickListener {
@@ -159,7 +159,9 @@ class AnswerActivity : AppCompatActivity() {
             }
             else {
                 sendAnswer(reply, recordSrc)
-                nextQuestion()
+                Handler().postDelayed({
+                    nextQuestion()
+                }, 1500)
             }
         }
     }
@@ -181,6 +183,7 @@ class AnswerActivity : AppCompatActivity() {
             questionPlayer.prepare()
             questionPlayer.start()
         }
+        window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
     private fun sendAnswer(reply: Boolean, recordSrc: String) {

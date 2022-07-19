@@ -65,9 +65,9 @@ class GuardianReceiver () : BroadcastReceiver() {
      *  알람 요청을 받는 5 가지 케이스
      *  - 1. 보호자가 메인 화면으로 이동
      *  - 2. 보호자가 재부팅한 경우
-     *  - 3. 연결된 피보호자의 안부가 추가된 경우
-     *  - 4. 연결된 피보호자의 안부가 수정된 경우
-     *  - 5. 연결된 피보호자의 안부가 삭제된 경우
+     *  - 3. 연결된 피보호자의 안부 or 질문이 추가된 경우
+     *  - 4. 연결된 피보호자의 안부 or 질문이 수정된 경우
+     *  - 5. 연결된 피보호자의 안부 or 질문이 삭제된 경우
      */
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("확인", "Guardian")

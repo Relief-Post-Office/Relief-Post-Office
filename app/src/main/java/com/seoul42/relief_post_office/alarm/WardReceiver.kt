@@ -60,9 +60,9 @@ class WardReceiver() : BroadcastReceiver() {
      *  알람 요청을 받는 5 가지 케이스
      *  - 1. 피보호자가 메인 화면으로 이동
      *  - 2. 피보호자가 재부팅한 경우
-     *  - 3. 보호자가 피호보자의 안부를 추가한 경우
-     *  - 4. 보호자가 피보호자의 안부를 수정한 경우
-     *  - 5. 보호자가 피보호자의 안부를 삭제한 경우
+     *  - 3. 보호자가 피호보자의 안부 or 질문을 추가한 경우
+     *  - 4. 보호자가 피보호자의 안부 or 질문을 수정한 경우
+     *  - 5. 보호자가 피보호자의 안부 or 질문을 삭제한 경우
      */
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("확인", "Ward")
@@ -208,9 +208,21 @@ class WardReceiver() : BroadcastReceiver() {
         resultDB.child(resultId).get().addOnSuccessListener { resultSnapshot ->
             if (resultSnapshot.getValue(ResultDTO::class.java) != null) {
                 val resultDTO = resultSnapshot.getValue(ResultDTO::class.java) as ResultDTO
-                if (getDateToLong(resultDTO.date, resultDTO.safetyTime) > getDateToLong(curDate, curTime)) {
+                /*
+                 *  answerIdList 가 비어있는 경우 : resultDTO 까지 세팅되고 answer 들이 만들어지지 않은 경우
+                 *  answerIdList 가 있는 경우 : 완벽하게 만들어진 경우
+                 */
+                if (resultDTO.answerIdList.isEmpty()) {
+                    removeResult(resultId, null)
+                } else if (getDateToLong(resultDTO.date, resultDTO.safetyTime) > getDateToLong(curDate, curTime)) {
                     removeResult(resultId, resultDTO)
                 }
+            }
+            /*  resultIdList 에 resultId 는 있지만 값이 존재하지 않는 경우
+             *  resultId 삭제 : ward -> uid -> resultIdList 에 존재하는 resultId 삭제
+             */
+            else {
+                wardDB.child(uid).child("resultIdList").child(resultId).removeValue()
             }
         }.addOnFailureListener {
             if (!isFail) setNetworkAlarm(context)
@@ -218,21 +230,32 @@ class WardReceiver() : BroadcastReceiver() {
     }
 
     /*
-     *  결과 삭제 작업 3 가지
-     *  1. answers 삭제 : answer 에 존재하는 answerIdList 의 모든 answerId 의 값 삭제
-     *  2. result 삭제 : result 에 존재하는 resultId 의 값 삭제
-     *  3. resultId 삭제 : ward -> uid -> resultIdList 에 존재하는 resultId 를 삭제
+     *  - resultDTO 에 answer 존재 시 삭제 과정
+     *  1. answers 삭제 : answer 에 존재하는 answerIdList 의 모든 answerId 값 삭제
+     *  2. result 삭제 : result 에 존재하는 resultId 값 삭제
+     *  3. resultId 삭제 : ward -> uid -> resultIdList 에 존재하는 resultId 삭제
+     *
+     *  - resultDTO 에 answer 없을 시 삭제 과정
+     *  1. result 삭제 : result 에 존재하는 resultId 값 삭제
+     *  2. resultId 삭제 : ward -> uid -> resultIdList 에 존재하는 resultId 삭제
      */
-    private fun removeResult(resultId : String, resultDTO : ResultDTO) {
-        /* 1. answers 삭제 */
-        for (answer in resultDTO.answerIdList) {
-            val answerId = answer.value
-            answerDB.child(answerId).removeValue()
+    private fun removeResult(resultId : String, resultDTO : ResultDTO?) {
+        if (resultDTO != null) {
+            /* 1. answers 삭제 */
+            for (answer in resultDTO.answerIdList) {
+                val answerId = answer.value
+                answerDB.child(answerId).removeValue()
+            }
+            /* 2. result 삭제 */
+            resultDB.child(resultId).removeValue()
+            /* 3. resultId 삭제 */
+            wardDB.child(uid).child("resultIdList").child(resultId).removeValue()
+        } else {
+            /* 1. result 삭제 */
+            resultDB.child(resultId).removeValue()
+            /* 2. resultId 삭제 */
+            wardDB.child(uid).child("resultIdList").child(resultId).removeValue()
         }
-        /* 2. result 삭제 */
-        resultDB.child(resultId).removeValue()
-        /* 3. resultId 삭제 */
-        wardDB.child(uid).child("resultIdList").child(resultId).removeValue()
     }
 
     /*

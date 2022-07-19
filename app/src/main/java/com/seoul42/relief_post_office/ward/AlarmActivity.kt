@@ -28,7 +28,6 @@ class AlarmActivity : AppCompatActivity() {
         ActivityAlarmBinding.inflate(layoutInflater)
     }
     private val database = Firebase.database
-    private val questionList: ArrayList<Pair<String, QuestionDTO>> = arrayListOf()
     private val answerList: ArrayList<Pair<String, AnswerDTO>> = arrayListOf()
 
     private lateinit var safetyId : String
@@ -121,7 +120,6 @@ class AlarmActivity : AppCompatActivity() {
                 ActivityCompat.finishAffinity(this)
 
                 intent.putExtra("resultId", resultId)
-                intent.putExtra("questionList", questionList)
                 intent.putExtra("answerList", answerList)
                 startActivity(intent)
             }
@@ -142,13 +140,6 @@ class AlarmActivity : AppCompatActivity() {
                                 val answer = it.getValue<AnswerDTO>()
                                 if (answer != null) {
                                     answerList.add(Pair(answerId, answer))
-                                }
-                            }
-                        database.getReference("question")
-                            .child(questionId).get().addOnSuccessListener {
-                                val question = it.getValue<QuestionDTO>()
-                                if (question != null) {
-                                    questionList.add(Pair(questionId, question))
                                 }
                             }
                     }
