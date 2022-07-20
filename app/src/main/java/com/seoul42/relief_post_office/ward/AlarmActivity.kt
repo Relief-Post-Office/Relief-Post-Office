@@ -77,7 +77,7 @@ class AlarmActivity : AppCompatActivity() {
         safetyId = recommendDTO.safetyId
         resultId = recommendDTO.resultId!!
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.alarm)
+        mediaPlayer = MediaPlayer.create(this, R.raw.alarmbell)
         mediaPlayer!!.start()
         mediaPlayer!!.isLooping = true
 
