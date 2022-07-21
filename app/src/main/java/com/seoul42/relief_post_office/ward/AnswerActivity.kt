@@ -207,12 +207,15 @@ class AnswerActivity : AppCompatActivity() {
             Handler().postDelayed({
                 val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                 val date = sdf.format(System.currentTimeMillis())
+                val intent = Intent(this, EndingActivity::class.java)
+
                 answerBell.release()
                 database.getReference("result")
                     .child(resultId)
                     .child("responseTime")
                     .setValue(date)
-                startActivity(Intent(this, EndingActivity::class.java))
+                intent.putExtra("resultId", resultId)
+                startActivity(intent)
                 finish()
             }, 800)
         }
