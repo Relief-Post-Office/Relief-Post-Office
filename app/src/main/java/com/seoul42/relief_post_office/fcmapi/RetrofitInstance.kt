@@ -1,5 +1,6 @@
 package com.seoul42.relief_post_office.fcmapi
 
+import android.util.Log
 import com.seoul42.relief_post_office.util.Constants.Companion.FCM_KEY
 import com.seoul42.relief_post_office.util.Constants.Companion.FCM_URL
 import okhttp3.Interceptor

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.widget.*
 import androidx.activity.viewModels
@@ -274,35 +275,9 @@ class EditWardSafetyActivity : AppCompatActivity() {
                 val wardSafetyRef = database.getReference("ward").child(wardId).child("safetyIdList")
                 wardSafetyRef.child(safetyId).setValue(date)
 
-                /* 피보호자에게 안부 동기화 FCM 보내기 */
-                val wardRef = Firebase.database.reference.child("user").child(wardId)
-                wardRef.get().addOnSuccessListener {
-                    // 피보호자에게 보내기
-                    val wardDTO = it.getValue(UserDTO::class.java) as UserDTO
-                    val notificationData = NotificationDTO.NotificationData("SafetyWard"
-                        , "안심우체국", "누군가 안부를 변경하였습니다")
-                    val notificationDTO = NotificationDTO(wardDTO.token!!, notificationData)
-                    firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
-                }
-
-                /* 피보호자와 연결된 보호자들에게 안부 동기화 FCM 보내기 */
-                val guardianListRef = database.getReference("ward").child(wardId).child("connectList")
-                guardianListRef.get().addOnSuccessListener {
-                    val guardianList = (it.getValue() as HashMap<String, String>).values.toList()
-                    val UserRef = database.getReference("user")
-                    for (guardianId in guardianList){
-                        UserRef.child(guardianId).child("token").get().addOnSuccessListener {
-                            val notificationData = NotificationDTO.NotificationData("SafetyGuardian",
-                                "안심우체국", "${wardName}님의 안부가 변경되었습니다")
-                            val notificationDTO = NotificationDTO(it.getValue().toString()!!, notificationData)
-                            firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
-                        }
-                    }
-                }
-
-                // 액티비티 종료
-                Toast.makeText(this, "안부 수정 완료", Toast.LENGTH_SHORT).show()
-                finish()
+                Handler().postDelayed({
+                    wardSafetySync()
+                }, 500)
             }
         }
 
@@ -311,6 +286,42 @@ class EditWardSafetyActivity : AppCompatActivity() {
             val tmpIntent = Intent(this, GetGuardianSafetyActivity::class.java)
             startActivityForResult(tmpIntent, 2)
         }
+    }
+
+    private fun wardSafetySync() {
+        /* 피보호자에게 안부 동기화 FCM 보내기 */
+        val wardRef = Firebase.database.reference.child("user").child(wardId)
+        wardRef.get().addOnSuccessListener {
+            // 피보호자에게 보내기
+            val wardDTO = it.getValue(UserDTO::class.java) as UserDTO
+            val notificationData = NotificationDTO.NotificationData("SafetyWard"
+                , "안심우체국", "누군가 안부를 변경하였습니다")
+            val notificationDTO = NotificationDTO(wardDTO.token!!, notificationData)
+            firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+            guardianSafetySync()
+        }
+    }
+
+    private fun guardianSafetySync() {
+        /* 피보호자와 연결된 보호자들에게 안부 동기화 FCM 보내기 */
+        val guardianListRef = database.getReference("ward").child(wardId).child("connectList")
+        guardianListRef.get().addOnSuccessListener {
+            val guardianList = (it.getValue() as HashMap<String, String>).values.toList()
+            val UserRef = database.getReference("user")
+            for (guardianId in guardianList){
+                UserRef.child(guardianId).child("token").get().addOnSuccessListener {
+                    val notificationData = NotificationDTO.NotificationData("SafetyGuardian",
+                        "안심우체국", "${wardName}님의 안부가 변경되었습니다")
+                    val notificationDTO = NotificationDTO(it.getValue().toString()!!, notificationData)
+                    firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                }
+            }
+        }
+        Handler().postDelayed({
+            // 액티비티 종료
+            Toast.makeText(this, "안부 수정 완료", Toast.LENGTH_SHORT).show()
+            finish()
+        }, 1500)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
