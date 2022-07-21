@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.Relief_post_office" parent="Theme.AppCompat.DayNight">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">@color/weak_blue</item>
         <item name="colorPrimaryVariant">#fffbf3</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->

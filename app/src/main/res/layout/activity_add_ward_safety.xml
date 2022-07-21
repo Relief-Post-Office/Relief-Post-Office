@@ -184,8 +184,8 @@
             android:layout_gravity="right|bottom"
             android:text="안부 가져오기"
             android:textSize="15sp"
-            android:layout_marginEnd="10sp"
-            android:background="@drawable/button_rounded_gray"
+            android:padding="5dp"
+            android:background="@drawable/button_rounded_weak_blue"
             android:textColor="#ffffff" />
 
     </FrameLayout>
