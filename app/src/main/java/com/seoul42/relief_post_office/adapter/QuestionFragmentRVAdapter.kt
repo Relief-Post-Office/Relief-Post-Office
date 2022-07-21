@@ -114,9 +114,8 @@ class QuestionFragmentRVAdapter(
 
                 // 질문 수정 다이얼로그의 "저장" 버튼을 눌렀을 때 이벤트 처리
                 dialog.findViewById<Button>(R.id.save_question_btn).setOnClickListener {
-                    it.isClickable = false
-
                     // 프로그레스바 처리
+                    it.isClickable = false
                     dialog.window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     val progressBar = dialog.findViewById<ProgressBar>(R.id.setting_question_progressbar2)
                     progressBar.visibility = View.VISIBLE
@@ -215,8 +214,10 @@ class QuestionFragmentRVAdapter(
                         }
 
                         // 다이얼로그 종료
-                        Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
-                        dialog.dismiss()
+                        Handler().postDelayed({
+                            Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
+                            dialog.dismiss()
+                        }, 300)
                     }
                 }
 

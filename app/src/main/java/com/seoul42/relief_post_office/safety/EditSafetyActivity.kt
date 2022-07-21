@@ -6,6 +6,9 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.view.View
+import android.view.WindowManager
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,6 +41,27 @@ class EditSafetyActivity : AppCompatActivity() {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_edit_safety)
 
+		/* 초기 세팅 */
+		setData()
+
+		/* 리사이클러 뷰 세팅 */
+		setRecyclerView()
+
+		/* 질문 설정 버튼 세팅 */
+		setEditSafetyQuestionButton()
+
+		/* 삭제 버튼 세팅 */
+		setDeleteButton()
+
+		/* 저장 버튼 세팅  */
+		setSaveButton()
+
+		/* 뒤로가기 버튼 세팅 */
+		setBackButton()
+	}
+
+	/* 초기 세팅 */
+	private fun setData() {
 		// 수정할 안부 데이터 가져오고 첫 세팅 하기
 		safetyId = intent.getStringExtra("safetyId").toString()
 		val safetyRef = database.getReference("safety").child(safetyId)
@@ -57,28 +81,43 @@ class EditSafetyActivity : AppCompatActivity() {
 				}
 			}
 		}
+	}
 
-		// 리사이클러 뷰 설정
-		val rv = findViewById<RecyclerView>(R.id.edit_safety_rv)
-		editSafetyAdapter = AddWardSafetyAdapter(questionList)
-		rv.adapter = editSafetyAdapter
-		rv.layoutManager = LinearLayoutManager(this)
-		rv.setHasFixedSize(true)
-
-		// 질문 설정 이벤트
+	/* 질문 설정 버튼 세팅 */
+	private fun setEditSafetyQuestionButton() {
 		findViewById<ImageView>(R.id.edit_safety_setting).setOnClickListener{
 			val tmpIntent = Intent(this, SafetyQuestionSettingActivity::class.java)
 			tmpIntent.putExtra("questionList", questionList.toMap().keys.toCollection(ArrayList<String>()))
 			startActivityForResult(tmpIntent, 1)
 		}
+	}
 
-		// 뒤로 가기 버튼 이벤트
+	/* 리사이클러 뷰 세팅 */
+	private fun setRecyclerView() {
+		val rv = findViewById<RecyclerView>(R.id.edit_safety_rv)
+		editSafetyAdapter = AddWardSafetyAdapter(questionList)
+		rv.adapter = editSafetyAdapter
+		rv.layoutManager = LinearLayoutManager(this)
+		rv.setHasFixedSize(true)
+	}
+
+	/* 뒤로가기 버튼 세팅 */
+	private fun setBackButton() {
 		findViewById<ImageView>(R.id.edit_safety_backBtn).setOnClickListener{
 			finish()
 		}
+	}
 
-		// 삭제 버튼 클릭 이벤트
+	/* 삭제 버튼 세팅 */
+	@RequiresApi(Build.VERSION_CODES.O)
+	private fun setDeleteButton() {
 		findViewById<Button>(R.id.edit_safety_delete_button).setOnClickListener{
+			// 프로그레스바 처리
+			it.isClickable = false
+			window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+			val progressBar = findViewById<ProgressBar>(R.id.edit_safety_progress)
+			progressBar.visibility = View.VISIBLE
+
 			// 해당 안부 id를 통해 데이터베이스에서 삭제
 			database.getReference("safety").child(safetyId).setValue(null)
 			// 로그인한 보호자의 안부 목록에서 해당 안부 삭제
@@ -100,13 +139,23 @@ class EditSafetyActivity : AppCompatActivity() {
 					.child("questionList").child(q.first).setValue(date)
 			}
 
-			// 액티비티 종료
-			Toast.makeText(this, "안부 삭제 완료", Toast.LENGTH_SHORT).show()
-			finish()
+			Handler().postDelayed({
+				// 액티비티 종료
+				Toast.makeText(this, "안부 삭제 완료", Toast.LENGTH_SHORT).show()
+				finish()
+			}, 100)
 		}
+	}
 
-		// 저장 버튼 클릭 이벤트
+	/* 저장 버튼 세팅 */
+	@RequiresApi(Build.VERSION_CODES.O)
+	private fun setSaveButton() {
 		findViewById<Button>(R.id.edit_safety_save_button).setOnClickListener {
+			// 프로그레스바 처리
+			it.isClickable = false
+			window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+			val progressBar = findViewById<ProgressBar>(R.id.edit_safety_progress)
+			progressBar.visibility = View.VISIBLE
 
 			// 안부 이름 세팅
 			var name = findViewById<EditText>(R.id.edit_safety_name).text.toString()
@@ -131,18 +180,39 @@ class EditSafetyActivity : AppCompatActivity() {
 				val safetyRef = database.getReference("safety").child(safetyId)
 				safetyRef.setValue(newSafety)
 
-				// 기존에 설정된 질문들과 새롭게 설정된 질문들의 connectedSafetyList 동기화
-				// 최종 저장되는 질문들 connectedSafetyList 동기화
-				for (q in questionList){
-					val qRef = database.getReference("question").child(q.first)
-						.child("connectedSafetyList")
-						.child(safetyId)
-					qRef.setValue(date)
+				/* 안부에 연결 및 연결 해제된 질문들 connectedSafetyList 동기화 */
+				connectedSafetyListSync(date, 1)
 
+				// 로그인한 보호자의 안부 목록에 방금 수정한 안부 아이디 최종 변경 시간 변경
+				val guardianSafetyRef = database.getReference("guardian").child(owner).child("safetyList")
+				guardianSafetyRef.child(safetyId).setValue(date)
+
+				Handler().postDelayed({
+					// 액티비티 종료
+					Toast.makeText(this, "안부 수정 완료", Toast.LENGTH_SHORT).show()
+					finish()
+				}, 200)
+			}
+		}
+	}
+
+	/* 안부에 연결 및 연결 해제된 질문들 connectedSafetyList 동기화 */
+	/* flag -> 1(안부 수정 시), -> 2(안부 삭제 시) */
+	private fun connectedSafetyListSync(date : String, flag : Int) {
+		when(flag){
+			1-> { for (q in questionList){  // 최종 저장되는 질문들 connectedSafetyList 동기화
+				val qRef = database.getReference("question").child(q.first)
+					.child("connectedSafetyList")
+					.child(safetyId)
+				qRef.setValue(date)
+
+				if (q.second.owner == owner) {
 					// 해당하는 질문들 보호자 질문 목록에서 최종 수정일 변경하기
 					database.getReference("guardian").child(Firebase.auth.currentUser!!.uid)
 						.child("questionList").child(q.first).setValue(date)
 				}
+			}
+
 				// 기존에 설정되었다가 이번 수정에서 빠진 질문들 connectedSafetyList 동기화
 				for (q in deletedQuestionList){
 					val qRef = database.getReference("question").child(q)
@@ -154,24 +224,30 @@ class EditSafetyActivity : AppCompatActivity() {
 					database.getReference("guardian").child(Firebase.auth.currentUser!!.uid)
 						.child("questionList").child(q).setValue(date)
 				}
+			}
+			2-> {
+				// 삭제한 안부에 포함되어있던 질문들의 connectedSafetyList에서 삭제한 안부 삭제
+				for (q in questionList){
+					database.getReference("question")
+						.child(q.first)
+						.child("connectedSafetyList")
+						.child(safetyId).setValue(null)
 
-				// 로그인한 보호자의 안부 목록에 방금 수정한 안부 아이디 최종 변경 시간 변경
-				val guardianSafetyRef = database.getReference("guardian").child(owner).child("safetyList")
-				guardianSafetyRef.child(safetyId).setValue(date)
-
-				// 액티비티 종료
-				Toast.makeText(this, "안부 수정 완료", Toast.LENGTH_SHORT).show()
-				finish()
+					// 해당하는 질문들 보호자 질문 목록에서 최종 수정일 변경하기
+					database.getReference("guardian").child(Firebase.auth.currentUser!!.uid)
+						.child("questionList").child(q.first).setValue(date)
+				}
 			}
 		}
 	}
 
+	/* 질문 설정 작업 결과 가져오기 */
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 
 		if (resultCode == Activity.RESULT_OK) {
 			when (requestCode) {
-				1 -> {
+				1 -> { // 질문 설정이 변경되었을 경우
 					questionList.clear()
 					editSafetyAdapter.notifyDataSetChanged()
 					val checkQuestions = data?.getStringArrayListExtra("returnQuestionList")
@@ -183,19 +259,6 @@ class EditSafetyActivity : AppCompatActivity() {
 						}
 					}
 					deletedQuestionList = data?.getStringArrayListExtra("deletedQuestionList")!!
-				}
-				2 -> {
-					val QuestionsFromSafety = data?.getStringArrayListExtra("questionsFromSafety")
-					val QuestionRef = database.getReference("question")
-					val qIdList = questionList.toMap().keys
-					for (q in QuestionsFromSafety!!){
-						if (!qIdList.contains(q)){
-							QuestionRef.child(q).get().addOnSuccessListener {
-								questionList.add(Pair(q, it.getValue(QuestionDTO::class.java)) as Pair<String, QuestionDTO>)
-								editSafetyAdapter.notifyDataSetChanged()
-							}
-						}
-					}
 				}
 			}
 		}

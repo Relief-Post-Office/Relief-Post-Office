@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.View
+import android.view.WindowManager
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -49,18 +51,43 @@ class EditWardSafetyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_ward_safety)
 
-        // 수정할 안부 데이터 가져오고 첫 세팅 하기
+        // 안부 데이터 가져오기 및 초기 세팅
+        setData()
+
+        // 리사이클러 뷰 세팅
+        setRecyclerView()
+
+        // 보호자 안부 가져오기 버튼 이벤트 세팅
+        setGetSafetyButton()
+
+        // 질문 설정 버튼 세팅
+        setEditSafetyQuestionButton()
+
+        // 저장 버튼 세팅
+        setSaveButton()
+
+        // 삭제 버튼 세팅
+        setDeleteButton()
+
+        // 뒤로 가기 버튼 세팅
+        setBackButton()
+    }
+
+    /* 안부 수정 화면 초기 세팅 */
+    private fun setData() {
         safetyId = intent.getStringExtra("safetyId").toString()
         wardName = intent.getStringExtra("wardName").toString()
-        val safetyRef = database.getReference("safety").child(safetyId)
         owner = Firebase.auth.currentUser?.uid.toString()
+
+        val safetyRef = database.getReference("safety").child(safetyId)
         safetyRef.get().addOnSuccessListener {
             safety = it.getValue(SafetyDTO::class.java)!!
             wardId = safety.uid.toString()
 
-            // 수정할 안부 데이터 세팅
+            /* 수정할 안부 데이터 세팅 */
             // 이름 세팅
             findViewById<EditText>(R.id.edit_ward_safety_name).setText(safety.name)
+
             // 요일 세팅
             var dayOfWeek = safety.dayOfWeek
             findViewById<CheckBox>(R.id.edit_ward_safety_monday).isChecked = dayOfWeek["월"]!!
@@ -70,10 +97,12 @@ class EditWardSafetyActivity : AppCompatActivity() {
             findViewById<CheckBox>(R.id.edit_ward_safety_friday).isChecked = dayOfWeek["금"]!!
             findViewById<CheckBox>(R.id.edit_ward_safety_saturday).isChecked = dayOfWeek["토"]!!
             findViewById<CheckBox>(R.id.edit_ward_safety_sunday).isChecked = dayOfWeek["일"]!!
+
             // 시간 세팅
             findViewById<TextView>(R.id.edit_ward_safety_time).text =
                 safety.time.toString().substring(0..1) + "시 " +
                         safety.time.toString().substring(3..4).toString() + "분"
+
             // questionList 초기 세팅
             for (q in safety.questionList.keys.toList()){
                 QuestionRef.child(q).get().addOnSuccessListener {
@@ -82,7 +111,7 @@ class EditWardSafetyActivity : AppCompatActivity() {
                 }
             }
 
-            // 시간 설정 이벤트 / timepicker 다이얼로그
+            // 시간 설정 버튼 (timepicker 다이얼로그)
             val timeText = findViewById<TextView>(R.id.edit_ward_safety_time)
             time = safety.time
             timeText.setOnClickListener{
@@ -115,41 +144,45 @@ class EditWardSafetyActivity : AppCompatActivity() {
                 picker.show()
             }
         }
+    }
 
-        // 리사이클러 뷰 설정
+    /* 리사이클러 뷰 세팅 */
+    private fun setRecyclerView() {
         val rv = findViewById<RecyclerView>(R.id.edit_ward_safety_rv)
         editWardSafetyAdapter = AddWardSafetyAdapter(questionList)
         rv.adapter = editWardSafetyAdapter
         rv.layoutManager = LinearLayoutManager(this)
         rv.setHasFixedSize(true)
+    }
 
-        // 질문 설정 이벤트
+    /* 질문 설정 버튼 세팅 */
+    private fun setEditSafetyQuestionButton() {
         findViewById<ImageView>(R.id.edit_ward_safety_question_setting).setOnClickListener{
             val tmpIntent = Intent(this, SafetyQuestionSettingActivity::class.java)
             tmpIntent.putExtra("questionList", questionList.toMap().keys.toCollection(ArrayList<String>()))
             startActivityForResult(tmpIntent, 1)
         }
+    }
 
-        // 뒤로 가기 버튼 이벤트
+    /* 뒤로 가기 버튼 세팅 */
+    private fun setBackButton() {
         findViewById<ImageView>(R.id.edit_ward_safety_backBtn).setOnClickListener{
             finish()
         }
+    }
 
-        // 삭제 버튼 클릭 이벤트
+    /* 삭제 버튼 세팅 */
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setDeleteButton() {
         findViewById<Button>(R.id.edit_ward_safety_delete_button).setOnClickListener{
-            // 질문 목록에 내 소유 질문들만 있는지 확인
-            var canDelete = true
-            for (q in questionList){
-                // 내 소유가 아닌 질문을 찾으면
-                if (q.second.owner.toString() != owner){
-                    Toast.makeText(this, "안부에 다른 보호자의 질문이 있습니다", Toast.LENGTH_SHORT).show()
-                    canDelete = false
-                    break
-                }
-            }
-
             // 질문 목록에 내 소유 질문들만 있을 경우에 삭제
-            if (canDelete) {
+            if (canDelete()) {
+                // 프로그레스바 처리
+                it.isClickable = false
+                window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                val progressBar = findViewById<ProgressBar>(R.id.edit_ward_safety_progress)
+                progressBar.visibility = View.VISIBLE
+
                 // 해당 안부 id를 통해 데이터베이스에서 삭제
                 database.getReference("safety").child(safetyId).setValue(null)
 
@@ -159,59 +192,30 @@ class EditWardSafetyActivity : AppCompatActivity() {
                     .child("safetyIdList")
                     .child(safetyId).setValue(null)
 
-                // 삭제한 안부에 포함되어있던 질문들의 connectedSafetyList에서 삭제한 안부 삭제
-                for (q in questionList){
-                    database.getReference("question")
-                        .child(q.first)
-                        .child("connectedSafetyList")
-                        .child(safetyId).setValue(null)
+                /* 안부에 연결된 질문들 connectedSafetyList 동기화 */
+                val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                connectedSafetyListSync(date, 2)
 
-                    // 해당하는 질문들 보호자 질문 목록에서 최종 수정일 변경하기
-                    val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                    database.getReference("guardian").child(Firebase.auth.currentUser!!.uid)
-                        .child("questionList").child(q.first).setValue(date)
-                }
-
-                /* 피보호자에게 안부 동기화 FCM 보내기 */
-                val wardRef = Firebase.database.reference.child("user").child(wardId)
-                wardRef.get().addOnSuccessListener {
-                    // 피보호자에게 보내기
-                    val wardDTO = it.getValue(UserDTO::class.java) as UserDTO
-                    val notificationData = NotificationDTO.NotificationData("SafetyWard"
-                        , "안심우체국", "누군가 안부를 삭제하였습니다")
-                    val notificationDTO = NotificationDTO(wardDTO.token!!, notificationData)
-                    firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
-                }
-
-                /* 피보호자와 연결된 보호자들에게 안부 동기화 FCM 보내기 */
-                val guardianListRef = database.getReference("ward").child(wardId).child("connectList")
-                guardianListRef.get().addOnSuccessListener {
-                    val guardianList = (it.getValue() as HashMap<String, String>).values.toList()
-                    val UserRef = database.getReference("user")
-                    for (guardianId in guardianList){
-                        UserRef.child(guardianId).child("token").get().addOnSuccessListener {
-                            val notificationData = NotificationDTO.NotificationData("SafetyGuardian",
-                                "안심우체국", "${wardName}님의 안부가 삭제되었습니다")
-                            val notificationDTO = NotificationDTO(it.getValue().toString()!!, notificationData)
-                            firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
-                        }
-                    }
-                }
-
-                // 액티비티 종료
-                Toast.makeText(this, "안부 삭제 완료", Toast.LENGTH_SHORT).show()
-                finish()
+                // 피보호자에게 동기화 FCM 보내기
+                wardSafetySync("삭제 되었습니다")
             }
         }
+    }
 
-
-        // 저장 버튼 클릭 이벤트
+    /* 저장 버튼 세팅 */
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setSaveButton() {
         findViewById<Button>(R.id.edit_ward_safety_save_button).setOnClickListener {
+            // 프로그레스바 처리
+            it.isClickable = false
+            window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            val progressBar = findViewById<ProgressBar>(R.id.edit_ward_safety_progress)
+            progressBar.visibility = View.VISIBLE
 
-            // 안부 이름 세팅
+            // 안부 이름 가져오기
             var name = findViewById<EditText>(R.id.edit_ward_safety_name).text.toString()
 
-            // 안부 요일 세팅
+            // 안부 요일 가져오기
             val dayOfWeeks = mutableMapOf<String, Boolean>(
                 Pair("월", findViewById<CheckBox>(R.id.edit_ward_safety_monday).isChecked),
                 Pair("화", findViewById<CheckBox>(R.id.edit_ward_safety_tuesday).isChecked),
@@ -222,7 +226,7 @@ class EditWardSafetyActivity : AppCompatActivity() {
                 Pair("일", findViewById<CheckBox>(R.id.edit_ward_safety_sunday).isChecked)
             )
 
-            // 생성 날짜 세팅
+            // 생성 날짜 가져오기
             val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 
             // 시간과 질문을 설정한 경우에만 추가 가능
@@ -241,13 +245,28 @@ class EditWardSafetyActivity : AppCompatActivity() {
                 val newSafety = SafetyDTO(wardId, name, date, time,
                     questionList.map {it.first to it.second.date}.toMap() as MutableMap<String, String>, dayOfWeeks)
 
-                // safety 컬렉션에 작성한 내용 수정
+                // safety 컬렉션에 수정된 safetyDTO 적용
                 val safetyRef = database.getReference("safety").child(safetyId)
                 safetyRef.setValue(newSafety)
 
-                // 기존에 설정된 질문들과 새롭게 설정된 질문들의 connectedSafetyList 동기화
-                // 최종 저장되는 질문들 connectedSafetyList 동기화
-                for (q in questionList){
+                /* 안부에 연결 및 연결 해제된 질문들 connectedSafetyList 동기화 */
+                connectedSafetyListSync(date, 1)
+
+                // 선택한 피보호자의 안부 목록에 방금 수정한 안부 아이디 최종 변경 시간 변경
+                val wardSafetyRef = database.getReference("ward").child(wardId).child("safetyIdList")
+                wardSafetyRef.child(safetyId).setValue(date)
+
+                // 피보호자에게 동기화 FCM 보내기
+                wardSafetySync("변경 되었습니다")
+            }
+        }
+    }
+
+    /* 안부에 연결 및 연결 해제된 질문들 connectedSafetyList 동기화 */
+    /* flag -> 1(안부 수정 시), -> 2(안부 삭제 시) */
+    private fun connectedSafetyListSync(date : String, flag : Int) {
+        when(flag){
+            1-> { for (q in questionList){  // 최종 저장되는 질문들 connectedSafetyList 동기화
                     val qRef = database.getReference("question").child(q.first)
                         .child("connectedSafetyList")
                         .child(safetyId)
@@ -259,6 +278,7 @@ class EditWardSafetyActivity : AppCompatActivity() {
                             .child("questionList").child(q.first).setValue(date)
                     }
                 }
+
                 // 기존에 설정되었다가 이번 수정에서 빠진 질문들 connectedSafetyList 동기화
                 for (q in deletedQuestionList){
                     val qRef = database.getReference("question").child(q)
@@ -270,40 +290,61 @@ class EditWardSafetyActivity : AppCompatActivity() {
                     database.getReference("guardian").child(Firebase.auth.currentUser!!.uid)
                         .child("questionList").child(q).setValue(date)
                 }
+            }
+            2-> {
+                // 삭제한 안부에 포함되어있던 질문들의 connectedSafetyList에서 삭제한 안부 삭제
+                for (q in questionList){
+                    database.getReference("question")
+                        .child(q.first)
+                        .child("connectedSafetyList")
+                        .child(safetyId).setValue(null)
 
-                // 선택한 피보호자의 안부 목록에 방금 수정한 안부 아이디 최종 변경 시간 변경
-                val wardSafetyRef = database.getReference("ward").child(wardId).child("safetyIdList")
-                wardSafetyRef.child(safetyId).setValue(date)
-
-                Handler().postDelayed({
-                    wardSafetySync()
-                }, 500)
+                    // 해당하는 질문들 보호자 질문 목록에서 최종 수정일 변경하기
+                    database.getReference("guardian").child(Firebase.auth.currentUser!!.uid)
+                        .child("questionList").child(q.first).setValue(date)
+                }
             }
         }
+    }
 
-        // 내 안부 가져오기 버튼 이벤트
+    /* 삭제 가능한지 확인 (질문 목록에 로그인한 보호자의 질문들만 있는지 확인) */
+    private fun canDelete() : Boolean {
+        for (q in questionList){
+            // 내 소유가 아닌 질문을 찾으면
+            if (q.second.owner.toString() != owner){
+                Toast.makeText(this, "안부에 다른 보호자의 질문이 있습니다", Toast.LENGTH_SHORT).show()
+                return false
+            }
+        }
+        return true
+    }
+
+    /* 보호자 안부 가져오기 버튼 세팅 */
+    private fun setGetSafetyButton() {
         findViewById<Button>(R.id.edit_ward_safety_get_button).setOnClickListener{
             val tmpIntent = Intent(this, GetGuardianSafetyActivity::class.java)
             startActivityForResult(tmpIntent, 2)
         }
     }
 
-    private fun wardSafetySync() {
-        /* 피보호자에게 안부 동기화 FCM 보내기 */
+    /* 피보호자에게 안부 동기화 FCM 보내기 */
+    private fun wardSafetySync(message : String) {
         val wardRef = Firebase.database.reference.child("user").child(wardId)
         wardRef.get().addOnSuccessListener {
             // 피보호자에게 보내기
             val wardDTO = it.getValue(UserDTO::class.java) as UserDTO
             val notificationData = NotificationDTO.NotificationData("SafetyWard"
-                , "안심우체국", "누군가 안부를 변경하였습니다")
+                , "안심우체국", "안부에 변경사항이 있습니다")
             val notificationDTO = NotificationDTO(wardDTO.token!!, notificationData)
             firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
-            guardianSafetySync()
+
+            // 피보호자와 연결된 보호자에게 동기화 FCM 보내기
+            guardianSafetySync(message)
         }
     }
 
-    private fun guardianSafetySync() {
-        /* 피보호자와 연결된 보호자들에게 안부 동기화 FCM 보내기 */
+    /* 피보호자와 연결된 보호자들에게 안부 동기화 FCM 보내기 */
+    private fun guardianSafetySync(message : String) {
         val guardianListRef = database.getReference("ward").child(wardId).child("connectList")
         guardianListRef.get().addOnSuccessListener {
             val guardianList = (it.getValue() as HashMap<String, String>).values.toList()
@@ -311,7 +352,7 @@ class EditWardSafetyActivity : AppCompatActivity() {
             for (guardianId in guardianList){
                 UserRef.child(guardianId).child("token").get().addOnSuccessListener {
                     val notificationData = NotificationDTO.NotificationData("SafetyGuardian",
-                        "안심우체국", "${wardName}님의 안부가 변경되었습니다")
+                        "안심우체국", "${wardName}님의 안부가 ${message}")
                     val notificationDTO = NotificationDTO(it.getValue().toString()!!, notificationData)
                     firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
                 }
@@ -319,19 +360,21 @@ class EditWardSafetyActivity : AppCompatActivity() {
         }
         Handler().postDelayed({
             // 액티비티 종료
-            Toast.makeText(this, "안부 수정 완료", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "안부가 ${message}", Toast.LENGTH_SHORT).show()
             finish()
         }, 1500)
     }
 
+    /* 질문 설정, 안부 가져오기 작업 결과 가져오기 */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK){
             when (requestCode){
-                1 -> {
+                1 -> {  // 질문 설정이 변경되었을 경우
                     questionList.clear()
                     editWardSafetyAdapter.notifyDataSetChanged()
+                    deletedQuestionList = data?.getStringArrayListExtra("deletedQuestionList")!!
                     val checkQuestions = data?.getStringArrayListExtra("returnQuestionList")
                     val QuestionRef = database.getReference("question")
                     for (q in checkQuestions!!){
@@ -340,9 +383,8 @@ class EditWardSafetyActivity : AppCompatActivity() {
                             editWardSafetyAdapter.notifyDataSetChanged()
                         }
                     }
-                    deletedQuestionList = data?.getStringArrayListExtra("deletedQuestionList")!!
                 }
-                2 -> {
+                2 -> {  // 보호자 안부가 적용되었을 경우
                     val QuestionsFromSafety = data?.getStringArrayListExtra("questionsFromSafety")
                     val QuestionRef = database.getReference("question")
                     val qIdList = questionList.toMap().keys
@@ -359,6 +401,7 @@ class EditWardSafetyActivity : AppCompatActivity() {
         }
     }
 
+    /* 액티비티 종료 시 뮤텍스 반환 */
     override fun onDestroy() {
         super.onDestroy()
         database.getReference("safety").child(safetyId).child("Access")

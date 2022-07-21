@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
 import android.util.Log
 import android.util.SparseBooleanArray
 import android.view.*
@@ -184,8 +185,10 @@ class SafetyQuestionSettingAdapter(
                                 }
 
                                 // 다이얼로그 종료
-                                Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
-                                dialog.dismiss()
+                                Handler().postDelayed({
+                                    Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
+                                    dialog.dismiss()
+                                }, 300)
                             }
                         }
                     // 수정하였지만 녹음을 바꾸진 않은 경우

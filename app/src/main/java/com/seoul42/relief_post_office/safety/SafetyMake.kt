@@ -5,6 +5,9 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.view.View
+import android.view.WindowManager
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,27 +40,53 @@ class SafetyMake : AppCompatActivity() {
 		// 로그인 한 보호자 아이디 가져오기
 		owner = Firebase.auth.currentUser?.uid.toString()
 
-		// 뒤로 가기 버튼 이벤트
+		/* 질문 설정 버튼 세팅 */
+		setEditSafetyQuestionButton()
+
+		/* 리사이클러 뷰 세팅 */
+		setRecyclerView()
+
+		/* 저장 버튼 세팅*/
+		setSaveButton()
+
+		/* 뒤로 가기 버튼 세팅 */
+		setBackButton()
+	}
+
+	/* 뒤로 가기 버튼 세팅 */
+	private fun setBackButton(){
 		findViewById<ImageView>(R.id.safety_make_backBtn).setOnClickListener{
 			finish()
 		}
+	}
 
-		// 질문 설정 이벤트
+	/* 질문 설정 버튼 세팅 */
+	private fun setEditSafetyQuestionButton(){
 		findViewById<ImageView>(R.id.safety_make_question_setting).setOnClickListener{
 			val tmpIntent = Intent(this, SafetyQuestionSettingActivity::class.java)
 			tmpIntent.putExtra("questionList", questionList.toMap().keys.toCollection(ArrayList<String>()))
 			startActivityForResult(tmpIntent, 1)
 		}
+	}
 
-		// 리사이클러 뷰 세팅
+	/* 리사이클러 뷰 세팅 */
+	private fun setRecyclerView() {
 		val rv = findViewById<RecyclerView>(R.id.safety_make_rv)
 		safetyMakeAdapter = AddWardSafetyAdapter(questionList)
 		rv.adapter = safetyMakeAdapter
 		rv.layoutManager = LinearLayoutManager(this)
 		rv.setHasFixedSize(true)
+	}
 
-		// 저장 버튼 이벤트
+	/* 저장 버튼 세팅*/
+	@RequiresApi(Build.VERSION_CODES.O)
+	private fun setSaveButton() {
 		findViewById<Button>(R.id.safety_make_save_button).setOnClickListener {
+			// 프로그레스 바 처리
+			it.isClickable = false
+			window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+			val progressBar = findViewById<ProgressBar>(R.id.safety_make_progress)
+			progressBar.visibility = View.VISIBLE
 
 			// 안부 이름 세팅
 			var name = findViewById<EditText>(R.id.safety_make_name).text.toString()
@@ -100,14 +129,17 @@ class SafetyMake : AppCompatActivity() {
 				val wardSafetyRef = database.getReference("guardian").child(owner).child("safetyList")
 				wardSafetyRef.child(key).setValue(date)
 
-				// 액티비티 종료
-				Toast.makeText(this, "안부 추가 완료", Toast.LENGTH_SHORT).show()
-				finish()
+				Handler().postDelayed({
+					// 액티비티 종료
+					Toast.makeText(this, "안부 추가 완료", Toast.LENGTH_SHORT).show()
+					finish()
+				}, 200)
 			}
 		}
 	}
 
-	// 질문 설정 후 받은 체크된 질문들 리스트에 추가
+
+	/* 질문 설정 작업 결과 가져오기 */
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 
@@ -122,19 +154,6 @@ class SafetyMake : AppCompatActivity() {
 						QuestionRef.child(q).get().addOnSuccessListener {
 							questionList.add(Pair(q, it.getValue(QuestionDTO::class.java)) as Pair<String, QuestionDTO>)
 							safetyMakeAdapter.notifyDataSetChanged()
-						}
-					}
-				}
-				2 -> {
-					val QuestionsFromSafety = data?.getStringArrayListExtra("questionsFromSafety")
-					val QuestionRef = database.getReference("question")
-					val qIdList = questionList.toMap().keys
-					for (q in QuestionsFromSafety!!){
-						if (!qIdList.contains(q)){
-							QuestionRef.child(q).get().addOnSuccessListener {
-								questionList.add(Pair(q, it.getValue(QuestionDTO::class.java)) as Pair<String, QuestionDTO>)
-								safetyMakeAdapter.notifyDataSetChanged()
-							}
 						}
 					}
 				}

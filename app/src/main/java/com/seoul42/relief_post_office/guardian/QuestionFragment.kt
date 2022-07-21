@@ -42,9 +42,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
 
     private val firebaseViewModel : FirebaseViewModel by viewModels()
     private val database = Firebase.database
-    // 유저가 가지고 있는 질문들의 객체를 담은 리스트 선언
     private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
-    // 리스트를 가진 아답터를 담은 변수 초기화
     private lateinit var QuestionAdapter : QuestionFragmentRVAdapter
     private lateinit var auth : FirebaseAuth
     private lateinit var owner : String
@@ -66,6 +64,12 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         setRecyclerView(view)
 
         // 질문 추가 버튼 이벤트
+        setAddQuestionButton(view)
+    }
+
+    /* 질문 추가 버튼 세팅 */
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setAddQuestionButton(view: View) {
         val questionPlusBtn = view.findViewById<ImageView>(R.id.question_rv_item_plusBtn)
         questionPlusBtn.setOnClickListener{
 
@@ -119,7 +123,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 // 녹음 파일 생성 및 스토리지 저장
                 var recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
                 val recordRef = storage.reference
-                        .child("questionRecord/${owner}/${owner + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
+                    .child("questionRecord/${owner}/${owner + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
 
                 // 녹음 업로드에 성공한 경우(녹음이 있는 경우)
                 recordRef.putFile(recordFile).addOnSuccessListener {
@@ -152,7 +156,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         }
     }
 
-    // questionList 실시간 세팅해주기 / 수정 및 변경 적용 포함
+    /* questionList 실시간 세팅 (수정 및 변경 적용 포함 )*/
     private fun setQuestionList(){
         // 로그인한 유저의 질문 목록
         val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")

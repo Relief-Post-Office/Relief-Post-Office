@@ -252,6 +252,18 @@
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline4"
         />
 
+    <ProgressBar
+        android:id="@+id/add_ward_safety_progress"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        tools:layout_editor_absoluteX="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guideline1"
         android:layout_width="wrap_content"
