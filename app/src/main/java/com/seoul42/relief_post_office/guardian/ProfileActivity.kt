@@ -1,42 +1,12 @@
 package com.seoul42.relief_post_office.guardian
 
-import android.app.Activity
-import android.app.Dialog
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.Matrix
-import android.media.ExifInterface
-import android.net.Uri
-import android.net.http.SslError
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
-import android.webkit.*
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.adapters.TextViewBindingAdapter.setText
 import com.bumptech.glide.Glide
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.seoul42.relief_post_office.databinding.GuardianProfileBinding
 import com.seoul42.relief_post_office.databinding.ProfileBinding
 import com.seoul42.relief_post_office.model.UserDTO
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.IOException
 
 class ProfileActivity : AppCompatActivity() {
 

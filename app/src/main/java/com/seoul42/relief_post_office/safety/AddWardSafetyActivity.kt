@@ -163,7 +163,7 @@ class AddWardSafetyActivity : AppCompatActivity() {
                     val wardDTO = it.getValue(UserDTO::class.java) as UserDTO
                     val notificationData = NotificationDTO.NotificationData("SafetyWard"
                         , "안심우체국", "누군가 새로운 안부를 추가하였습니다")
-                    val notificationDTO = NotificationDTO(wardDTO.token!!, notificationData)
+                    val notificationDTO = NotificationDTO(wardDTO.token!!, "high",notificationData)
                     firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
                 }
 
@@ -176,7 +176,7 @@ class AddWardSafetyActivity : AppCompatActivity() {
                         UserRef.child(guardianId).child("token").get().addOnSuccessListener {
                             val notificationData = NotificationDTO.NotificationData("SafetyGuardian",
                             "안심우체국", "${wardName}님에게 새로운 안부가 추가되었습니다")
-                            val notificationDTO = NotificationDTO(it.getValue().toString()!!, notificationData)
+                            val notificationDTO = NotificationDTO(it.getValue().toString()!!,"high", notificationData)
                             firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
                         }
                     }

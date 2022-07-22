@@ -125,7 +125,7 @@ class RequestDialog(context : AppCompatActivity, firebaseViewModel: FirebaseView
                     val token = userDTO.token
                     val notificationData = NotificationDTO.NotificationData("안심 집배원"
                         , userDTO.name, userDTO.name + "님이 요청을 보냈습니다.")
-                    val notificationDTO = NotificationDTO(token, notificationData)
+                    val notificationDTO = NotificationDTO(token, "high", notificationData)
                     wardDB.child(myUserId).setValue(myUserId) /* 피보호자 요청 목록에 현재 보호자의 uid 추가 */
                     firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
                     break

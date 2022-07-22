@@ -95,7 +95,7 @@ class EndingActivity : AppCompatActivity() {
                     val userDTO = it.getValue(UserDTO::class.java) as UserDTO
                     val notificationData = NotificationDTO.NotificationData("안심우체국",
                         myName, "$myName 님이 $safety 안부를 완료했습니다.")
-                    val notificationDTO = NotificationDTO(userDTO.token, notificationData)
+                    val notificationDTO = NotificationDTO(userDTO.token,"high", notificationData)
                     firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
                 }
             }

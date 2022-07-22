@@ -1,20 +1,20 @@
 package com.seoul42.relief_post_office.ward
 
 import android.annotation.SuppressLint
-import android.app.Activity
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.view.Gravity
-import android.view.ViewGroup
-import android.view.Window
-import android.view.WindowManager
+import android.os.PowerManager
+import android.provider.Settings
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.registerForActivityResult
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsClient.getPackageName
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -30,10 +30,11 @@ import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.ResponseAdapter
 import com.seoul42.relief_post_office.adapter.WardAdapter
 import com.seoul42.relief_post_office.alarm.WardReceiver
-import com.seoul42.relief_post_office.service.CheckLoginService
-import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 import com.seoul42.relief_post_office.databinding.WardBinding
 import com.seoul42.relief_post_office.model.*
+import com.seoul42.relief_post_office.service.CheckLoginService
+import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
+
 
 class WardActivity : AppCompatActivity() {
 
@@ -62,6 +63,7 @@ class WardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        ignoreBatteryOptimization()
         activityResultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult())
             {
@@ -86,6 +88,18 @@ class WardActivity : AppCompatActivity() {
             reference = listenerInfo.reference
             listener = listenerInfo.listener
             reference.removeEventListener(listener)
+        }
+    }
+
+    private fun ignoreBatteryOptimization() {
+        val intent = Intent()
+        val packageName = packageName
+        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+
+        if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+            intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+            intent.data = Uri.parse("package:$packageName")
+            startActivity(intent)
         }
     }
 
@@ -259,7 +273,7 @@ class WardActivity : AppCompatActivity() {
                 val guardian = it.getValue(UserDTO::class.java) as UserDTO
                 val notificationData = NotificationDTO.NotificationData("안심 집배원"
                     , userDTO.name, userDTO.name + "님이 요청을 수락했습니다.")
-                val notificationDTO = NotificationDTO(guardian.token, notificationData)
+                val notificationDTO = NotificationDTO(guardian.token, "high",notificationData)
                 firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
             }
         }

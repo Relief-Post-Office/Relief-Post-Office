@@ -165,7 +165,7 @@ class QuestionFragmentRVAdapter(
                                             UserRef.child(it.getValue().toString()).child("token").get().addOnSuccessListener {
                                                 val notificationData = NotificationDTO.NotificationData("SafetyWard",
                                                     "안심우체국", "안부를 동기화 합니다")
-                                                val notificationDTO = NotificationDTO(it.getValue().toString()!!, notificationData)
+                                                val notificationDTO = NotificationDTO(it.getValue().toString()!!, "high", notificationData)
                                                 firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
                                             }
                                         }
@@ -205,7 +205,7 @@ class QuestionFragmentRVAdapter(
                                                     )
                                                 val notificationDTO = NotificationDTO(
                                                     it.getValue().toString()!!,
-                                                    notificationData
+                                                    "high", notificationData
                                                 )
                                                 firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
                                             }

@@ -33,7 +33,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // 다른 기기에서 서버로 보냈을 때(이 경우에 해당)
         else if(remoteMessage.data.isNotEmpty()){
             val title = remoteMessage.data["title"]!!
-            val userId = remoteMessage.data["name"]!!
+            val userId = remoteMessage.data["text"]!!
             val message = remoteMessage.data["message"]!!
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
