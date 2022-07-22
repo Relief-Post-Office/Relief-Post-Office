@@ -273,7 +273,7 @@ class WardActivity : AppCompatActivity() {
                 val guardian = it.getValue(UserDTO::class.java) as UserDTO
                 val notificationData = NotificationDTO.NotificationData("안심 집배원"
                     , userDTO.name, userDTO.name + "님이 요청을 수락했습니다.")
-                val notificationDTO = NotificationDTO(guardian.token, "high",notificationData)
+                val notificationDTO = NotificationDTO(guardian.token, "high", notificationData)
                 firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
             }
         }

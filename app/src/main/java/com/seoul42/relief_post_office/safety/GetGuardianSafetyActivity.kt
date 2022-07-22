@@ -41,7 +41,12 @@ class GetGuardianSafetyActivity : AppCompatActivity() {
         // 리사이클러 뷰 세팅
         setRecyclerView()
 
-        // 안부 추가 버튼 이벤트
+        /* 안부 추가 버튼 세팅 */
+        setAddSafety()
+    }
+
+    /* 안부 추가 버튼 세팅 */
+    private fun setAddSafety() {
         val safetyAddBtn = findViewById<ImageView>(R.id.get_guardian_safety_button)
         safetyAddBtn.setOnClickListener{
             startActivity(Intent(this, SafetyMake::class.java))

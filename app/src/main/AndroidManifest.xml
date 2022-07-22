@@ -149,7 +149,7 @@
         <receiver
             android:name=".alarm.BootCompleteReceiver"
             android:enabled="true"
-            android:exported="false"
+            android:exported="true"
             android:label="BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

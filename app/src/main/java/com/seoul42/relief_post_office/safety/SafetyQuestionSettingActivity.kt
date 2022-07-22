@@ -54,7 +54,6 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
     private var deletedQuestionList = arrayListOf<String>()
     private lateinit var checkedQuestions : ArrayList<String>
     private lateinit var safetyQuestionSettingAdapter: SafetyQuestionSettingAdapter
-    private lateinit var auth : FirebaseAuth
     private lateinit var owner : String
     private lateinit var listenerDTO : ListenerDTO
 
@@ -67,16 +66,36 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
         checkedQuestions = intent.getStringArrayListExtra("questionList") as ArrayList<String>
 
         // 로그인 한 사람 uid 가져오기
-        auth = Firebase.auth
-        owner = auth.currentUser?.uid.toString()
+        owner = Firebase.auth.currentUser?.uid.toString()
 
-        // questionList 세팅
+        /* questionList 세팅 */
         setQuestionList()
 
-        // recycler 뷰 세팅
+        /* recycler 뷰 세팅 */
         setRecyclerView()
 
-        // 질문 추가 버튼 이벤트
+        /* 질문 추가 버튼 세팅 */
+        setAddQuestionButton()
+
+        /* 저장 버튼 세팅 */
+        setSaveButton()
+    }
+
+    /* 저장 버튼 세팅 */
+    private fun setSaveButton() {
+        findViewById<Button>(R.id.safety_question_setting_save_button).setOnClickListener {
+            it.isClickable = false
+            val returnIntent = Intent()
+            returnIntent.putExtra("returnQuestionList", safetyQuestionSettingAdapter.checkedQuestions)
+            returnIntent.putExtra("deletedQuestionList", safetyQuestionSettingAdapter.deletedQuestions)
+            setResult(Activity.RESULT_OK, returnIntent)
+            finish()
+        }
+    }
+
+    /* 질문 추가 버튼 세팅 */
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setAddQuestionButton() {
         val questionPlusBtn = findViewById<ImageView>(R.id.safety_question_setting_add_question)
         questionPlusBtn.setOnClickListener{
 
@@ -154,28 +173,9 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
                 }
             }
         }
-
-        // 저장 버튼 이벤트
-        findViewById<Button>(R.id.safety_question_setting_save_button).setOnClickListener {
-            val returnIntent = Intent()
-            returnIntent.putExtra("returnQuestionList", safetyQuestionSettingAdapter.checkedQuestions)
-            returnIntent.putExtra("deletedQuestionList", safetyQuestionSettingAdapter.deletedQuestions)
-            setResult(Activity.RESULT_OK, returnIntent)
-            finish()
-        }
-
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-        val reference : DatabaseReference = listenerDTO.reference
-        val listener : ChildEventListener = listenerDTO.listener
-
-        reference.removeEventListener(listener)
-    }
-
-    // questionList 실시간 세팅해주기 / 수정 및 변경 적용 포함
+    /* questionList 실시간 업데이트 (수정 및 변경 적용 포함) */
     private fun setQuestionList(){
         // 로그인한 유저의 질문 목록
         val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
@@ -196,7 +196,6 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
                     safetyQuestionSettingAdapter.notifyDataSetChanged()
                 }
             }
-
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 // questionID 찾기
                 val questionId = snapshot.key.toString()
@@ -223,7 +222,6 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
                     }
                 }
             }
-
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 // questionID 찾기
                 val questionId = snapshot.key.toString()
@@ -238,17 +236,15 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
                 // 리스트가 수정되었다고 어댑터에게 알려주기
                 safetyQuestionSettingAdapter.notifyDataSetChanged()
             }
-
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
             }
-
             override fun onCancelled(error: DatabaseError) {
             }
         })
         listenerDTO = ListenerDTO(userQuestionRef, questionListener)
     }
 
-    // 리사이클러 뷰 세팅함수
+    /* 리사이클러 뷰 세팅 */
     private fun setRecyclerView(){
         val rv = findViewById<RecyclerView>(R.id.safety_question_setting_rv)
         // 리사이클러 뷰 아답터에 리스트 넘긴 후 아답터 가져오기
@@ -258,5 +254,14 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
         rv.adapter = safetyQuestionSettingAdapter
         rv.layoutManager = LinearLayoutManager(this)
         rv.setHasFixedSize(true)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        val reference : DatabaseReference = listenerDTO.reference
+        val listener : ChildEventListener = listenerDTO.listener
+
+        reference.removeEventListener(listener)
     }
 }

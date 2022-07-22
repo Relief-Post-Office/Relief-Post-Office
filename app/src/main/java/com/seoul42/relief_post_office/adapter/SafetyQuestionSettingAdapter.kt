@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
 import android.util.Log
 import android.util.SparseBooleanArray
 import android.view.*
@@ -176,16 +177,12 @@ class SafetyQuestionSettingAdapter(
                                             UserRef.child(it.getValue().toString()).child("token").get().addOnSuccessListener {
                                                 val notificationData = NotificationDTO.NotificationData("SafetyWard",
                                                     "안심우체국", "안부를 동기화 합니다")
-                                                val notificationDTO = NotificationDTO(it.getValue().toString()!!, "high", notificationData)
+                                                val notificationDTO = NotificationDTO(it.getValue().toString(), "high", notificationData)
                                                 firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
                                             }
                                         }
                                     }
                                 }
-
-                                // 다이얼로그 종료
-                                Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
-                                dialog.dismiss()
                             }
                         }
                     // 수정하였지만 녹음을 바꾸진 않은 경우
@@ -215,7 +212,7 @@ class SafetyQuestionSettingAdapter(
                                                         "안심우체국", "안부를 동기화 합니다"
                                                     )
                                                 val notificationDTO = NotificationDTO(
-                                                    it.getValue().toString()!!,
+                                                    it.getValue().toString(),
                                                     "high", notificationData
                                                 )
                                                 firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
@@ -226,8 +223,10 @@ class SafetyQuestionSettingAdapter(
                         }
 
                         // 다이얼로그 종료
-                        Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
-                        dialog.dismiss()
+                        Handler().postDelayed({
+                            Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
+                            dialog.dismiss()
+                        }, 1000)
                     }
                 }
 

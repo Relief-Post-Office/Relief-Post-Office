@@ -348,6 +348,7 @@ class WardReceiver() : BroadcastReceiver() {
             schedule.putExtra("recommendDTO", recommendDTO)
         }
         schedule.setClass(context, WardReceiver::class.java)
+        schedule.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
 
         val sender = PendingIntent.getBroadcast(context, 0, schedule,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)

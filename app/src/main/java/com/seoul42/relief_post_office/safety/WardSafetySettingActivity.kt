@@ -37,6 +37,24 @@ class WardSafetySettingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ward_safety_setting)
 
+        /* 데이터 세팅 */
+        setData()
+
+        /* 리사이클러 뷰 세팅 */
+        setRecyclerView()
+
+        /* 피보호자 안부 목록 리스너 설정 */
+        setWardSafetyListener()
+
+        /* 종료 버튼 세팅 */
+        setExitButton()
+
+        /* 추가 버튼 세팅 */
+        setAddButton()
+    }
+
+    /* 사전 세팅 */
+    private fun setData() {
         wardId = intent.getStringExtra("wardId").toString()
         wardName = intent.getStringExtra("wardName").toString()
         photoUri = intent.getStringExtra("photoUri").toString()
@@ -49,20 +67,27 @@ class WardSafetySettingActivity : AppCompatActivity() {
             .load(photoUri)
             .circleCrop()
             .into(findViewById(R.id.ward_safety_setting_ward_photo))
+    }
 
-        // 종료 버튼 이벤트
+    /* 종료 버튼 세팅 */
+    private fun setExitButton() {
         findViewById<ImageView>(R.id.ward_safety_setting_exit_button).setOnClickListener {
             finish()
         }
+    }
 
-        // 추가 버튼 이벤트
+    /* 추가 버튼 세팅 */
+    private fun setAddButton() {
         findViewById<ImageView>(R.id.ward_safety_setting_add_button).setOnClickListener {
             val tmpIntent = Intent(this, AddWardSafetyActivity::class.java)
             tmpIntent.putExtra("wardName", wardName)
             tmpIntent.putExtra("wardId", wardId)
             startActivity(tmpIntent)
         }
+    }
 
+    /* 피보호자 안부 목록 리스너 설정 */
+    private fun setWardSafetyListener() {
         // wardSafetyList 세팅 및 업데이트 하기
         // 현재 선택한 피보호자의 안부 목록
         val wardSafetyRef = database.getReference("ward").child(wardId).child("safetyIdList")
@@ -83,7 +108,6 @@ class WardSafetySettingActivity : AppCompatActivity() {
                     wardSafetyAdapter.notifyDataSetChanged()
                 }
             }
-
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 // safetyId 찾기
                 val safetyId = snapshot.key.toString()
@@ -105,7 +129,6 @@ class WardSafetySettingActivity : AppCompatActivity() {
                     }
                 }
             }
-
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 // safetyId 찾기
                 val safetyId = snapshot.key.toString()
@@ -120,22 +143,18 @@ class WardSafetySettingActivity : AppCompatActivity() {
                     }
                 }
             }
-
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
             }
-
             override fun onCancelled(error: DatabaseError) {
             }
-
         })
         listenerDTO = ListenerDTO(wardSafetyRef, safetyListener)
+    }
 
-        // 리사이클러 뷰 설정
-        // 리사이클러 뷰 가져오기
+    /* 리사이클러 뷰 세팅 */
+    private fun setRecyclerView() {
         val rv = findViewById<RecyclerView>(R.id.ward_safety_setting_rv)
-        // 리사이클러 뷰 아답터에 리스트 넘긴 후 아답터 가져오기
         wardSafetyAdapter = WardSafetyAdapter(this, wardSafetyList, wardName)
-        // 리사이클러 뷰에 아답터 연결하기
         rv.adapter = wardSafetyAdapter
         rv.layoutManager = LinearLayoutManager(this)
         rv.setHasFixedSize(true)
