@@ -1,26 +1,34 @@
 package com.seoul42.relief_post_office.alarm
 
-import android.app.*
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
+import android.os.PowerManager
+import android.service.autofill.Validators.or
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.Person
+import androidx.core.graphics.drawable.IconCompat
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
-import com.seoul42.relief_post_office.alarm.WardReceiver.Companion.PRIMARY_CHANNEL_ID
 import com.seoul42.relief_post_office.model.*
-import com.seoul42.relief_post_office.util.Alarm
 import com.seoul42.relief_post_office.util.Alarm.getDateToLong
 import com.seoul42.relief_post_office.util.Alarm.getDay
 import com.seoul42.relief_post_office.util.Alarm.getTimeGap
 import com.seoul42.relief_post_office.util.Network
 import com.seoul42.relief_post_office.ward.AlarmActivity
+import kotlinx.coroutines.NonCancellable.start
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,13 +50,18 @@ class WardReceiver() : BroadcastReceiver() {
     /* Fail flag */
     private var isFail : Boolean = false
 
+    /* WakeLock */
+    private var screenWakeLock : PowerManager.WakeLock? = null
+
     /*
      *  - REPEAT_START : "강제 알람 요청", "요청 없음" 둘 중 하나를 결정하기 위한 플래그
+     *  - REPEAT_NOTIFY : 10분 전에 공지 알람 요청을 수행하기 위한 플래그
      *  - REPEAT_STOP : 특정 안부에 대한 강제 알람 요청을 수행하기 위한 플래그
      */
     companion object {
         const val PERMISSION_REPEAT = "com.rightline.backgroundrepeatapp.permission.ACTION_REPEAT"
         const val REPEAT_START = "com.rightline.backgroundrepeatapp.REPEAT_START"
+        const val REPEAT_NOTIFY = "com.rightline.backgroundrepeatapp.REPEAT_NOTIFY"
         const val REPEAT_STOP = "com.rightline.backgroundrepeatapp.REPEAT_STOP"
         const val PRIMARY_CHANNEL_ID = "primary_notification_channel"
         const val NOTIFICATION_ID = 100
@@ -56,6 +69,8 @@ class WardReceiver() : BroadcastReceiver() {
 
     /*
      *  알람 요청을 받고 플래그에 따라 특정 작업을 수행하는 메서드
+     *  doze 모드에서 알람이 수행하기 위한 방법
+     *  - doze 모드에서 빠져나올 수 있도록 wakeLock 을 깨움
      *
      *  알람 요청을 받는 5 가지 케이스
      *  - 1. 피보호자가 메인 화면으로 이동
@@ -65,6 +80,12 @@ class WardReceiver() : BroadcastReceiver() {
      *  - 5. 보호자가 피보호자의 안부 or 질문을 삭제한 경우
      */
     override fun onReceive(context: Context, intent: Intent) {
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+
+        screenWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK
+                or PowerManager.ACQUIRE_CAUSES_WAKEUP, "WakeLock")
+        screenWakeLock?.acquire()
+
         Log.d("확인", "Ward")
         if (!Network.isNetworkAvailable(context)) {
             setNetworkAlarm(context)
@@ -74,12 +95,15 @@ class WardReceiver() : BroadcastReceiver() {
                 uid = Firebase.auth.uid.toString()
                 when (intent.action) {
                     REPEAT_START -> {
-                        recommend(context)
+                        recommendAlarm(context, intent)
+                    }
+                    REPEAT_NOTIFY -> {
+                        notifyAlarm(context, intent,
+                            intent.getSerializableExtra("recommendDTO") as WardRecommendDTO)
                     }
                     REPEAT_STOP -> {
-                        val recommendDTO =
-                            intent.getSerializableExtra("recommendDTO") as WardRecommendDTO
-                        forceAlarm(context, recommendDTO)
+                        forceAlarm(context, intent,
+                            intent.getSerializableExtra("recommendDTO") as WardRecommendDTO)
                     }
                 }
             }
@@ -88,7 +112,7 @@ class WardReceiver() : BroadcastReceiver() {
 
     /*
      *  네트워크 연결이 안될 경우 실행하는 메서드
-     *  30초 단위로 네트워크 알람 요청을 수행
+     *  15분 단위로 네트워크 알람 요청을 수행
      */
     private fun setNetworkAlarm(context : Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -103,7 +127,7 @@ class WardReceiver() : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.SECOND, 30) /* Here! */
+        interval.add(Calendar.MINUTE, 15) /* Here! */
         alarmManager.cancel(sender)
 
         if (Build.VERSION.SDK_INT >= 23) {
@@ -117,6 +141,8 @@ class WardReceiver() : BroadcastReceiver() {
         } else {
             alarmManager[AlarmManager.RTC_WAKEUP, interval.timeInMillis] = sender
         }
+
+        screenWakeLock?.release()
     }
 
     /*
@@ -127,7 +153,7 @@ class WardReceiver() : BroadcastReceiver() {
      *  추천 객체를 전부 모은 경우, timeGap 이 가장 작은 안부를 강제 알람 요청
      *   - ( 피보호자의 알람 시간이 겹치는 케이스를 고려하지 않음 )
      */
-    private fun recommend(context: Context) {
+    private fun recommendAlarm(context: Context, intent : Intent) {
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss E")
             .format(Date(System.currentTimeMillis()))
         val curDate = date.substring(0, 10)
@@ -144,8 +170,9 @@ class WardReceiver() : BroadcastReceiver() {
                     setSafety(context, dateDTO, safetyId)
                 }
                 for (result in wardDTO.resultIdList) {
-                    val resultId = result.key
-                    setResult(context, dateDTO, resultId)
+                    val resultKey = result.key
+                    val resultId = result.value
+                    setResult(context, dateDTO, resultKey, resultId)
                 }
 
                 /* 비동기식 데이터 통신으로 인해 5초 후 추천 시작 */
@@ -153,7 +180,7 @@ class WardReceiver() : BroadcastReceiver() {
                     if (recommendList.isNotEmpty()) {
                         val recommendDTO = recommendList.minBy { it.timeGap }
                         Log.d("확인[Recommend]", recommendDTO.toString())
-                        setForceAlarm(context, recommendDTO)
+                        setForceAlarm(context, recommendDTO, intent)
                     }
                 }, 5000)
             }
@@ -191,7 +218,7 @@ class WardReceiver() : BroadcastReceiver() {
             } else {
                 getTimeGap(curTime, safetyDTO.time!!, safetyDay - curDay, false)
             }
-            recommendList.add(WardRecommendDTO(timeGap, safetyId,null, safetyDTO))
+            recommendList.add(WardRecommendDTO(timeGap, safetyId,null, safetyDTO, null))
         }
     }
 
@@ -201,7 +228,7 @@ class WardReceiver() : BroadcastReceiver() {
      *  - (결과 날짜 = 현재 날짜) : 현재 진행될 수 있는 결과이므로 수정 작업을 수행 x
      *  - (결과 날짜 > 현재 날짜) : 미리 만들어둔 결과이므로 삭제 작업을 수행
      */
-    private fun setResult(context : Context, dateDTO : DateDTO, resultId : String) {
+    private fun setResult(context : Context, dateDTO : DateDTO, resultKey : String, resultId : String) {
         val curDate = dateDTO.curDate
         val curTime = dateDTO.curTime
 
@@ -213,16 +240,16 @@ class WardReceiver() : BroadcastReceiver() {
                  *  answerIdList 가 있는 경우 : 완벽하게 만들어진 경우
                  */
                 if (resultDTO.answerIdList.isEmpty()) {
-                    removeResult(resultId, null)
+                    removeResult(resultKey, resultId, null)
                 } else if (getDateToLong(resultDTO.date, resultDTO.safetyTime) > getDateToLong(curDate, curTime)) {
-                    removeResult(resultId, resultDTO)
+                    removeResult(resultKey, resultId, resultDTO)
                 }
             }
             /*  resultIdList 에 resultId 는 있지만 값이 존재하지 않는 경우
              *  resultId 삭제 : ward -> uid -> resultIdList 에 존재하는 resultId 삭제
              */
             else {
-                wardDB.child(uid).child("resultIdList").child(resultId).removeValue()
+                wardDB.child(uid).child("resultIdList").child(resultKey).removeValue()
             }
         }.addOnFailureListener {
             if (!isFail) setNetworkAlarm(context)
@@ -239,35 +266,31 @@ class WardReceiver() : BroadcastReceiver() {
      *  1. result 삭제 : result 에 존재하는 resultId 값 삭제
      *  2. resultId 삭제 : ward -> uid -> resultIdList 에 존재하는 resultId 삭제
      */
-    private fun removeResult(resultId : String, resultDTO : ResultDTO?) {
+    private fun removeResult(resultKey : String, resultId : String, resultDTO : ResultDTO?) {
         if (resultDTO != null) {
-            /* 1. answers 삭제 */
+            /* answers 삭제 */
             for (answer in resultDTO.answerIdList) {
                 val answerId = answer.value
                 answerDB.child(answerId).removeValue()
             }
-            /* 2. result 삭제 */
-            resultDB.child(resultId).removeValue()
-            /* 3. resultId 삭제 */
-            wardDB.child(uid).child("resultIdList").child(resultId).removeValue()
-        } else {
-            /* 1. result 삭제 */
-            resultDB.child(resultId).removeValue()
-            /* 2. resultId 삭제 */
-            wardDB.child(uid).child("resultIdList").child(resultId).removeValue()
         }
+        /* result 삭제 */
+        resultDB.child(resultId).removeValue()
+        /* resultId 삭제 */
+        wardDB.child(uid).child("resultIdList").child(resultKey).removeValue()
     }
 
     /*
      *  강제 알람을 세팅하는 메서드
      *  다음과 같은 순서로 result 및 answer 를 세팅 후 강제 알람을 요청
+     *  (단, 동일한 시간대의 안부는 단 하나만 적용하도록 함)
      *
      *  1. Create : resultIdList -> resultId
      *  2. Create : resultId -> resultDTO
      *  3. Create : resultDTO.answerList -> [question, answerId]
      *  4. Create : answerId -> answerDTO
      */
-    private fun setForceAlarm(context: Context, recommendDTO : WardRecommendDTO) {
+    private fun setForceAlarm(context: Context, recommendDTO : WardRecommendDTO, intent : Intent) {
         val cal = Calendar.getInstance()
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
@@ -276,23 +299,25 @@ class WardReceiver() : BroadcastReceiver() {
 
         val resultKey = resultDB.push()
         val resultId = resultKey.key.toString()
-        val resultDTO = ResultDTO(date.format(cal.time).substring(0, 10),
+        val safetyDate = date.format(cal.time).toString()
+        val resultDTO = ResultDTO(safetyDate.substring(0, 10),
             recommendDTO.safetyId, recommendDTO.safetyDTO.name!!,
             recommendDTO.safetyDTO.time!!, "미응답", mutableMapOf())
 
         recommendDTO.resultId = resultId
+        recommendDTO.resultDTO = resultDTO
 
         /* 1. Create : resultIdList -> resultId */
-        wardDB.child(uid).child("resultIdList").child(resultId).setValue(resultId)
+        wardDB.child(uid).child("resultIdList").child(safetyDate.substring(0, 16)).setValue(resultId)
             .addOnFailureListener {
-            if (!isFail) setNetworkAlarm(context)
-        }
+                if (!isFail) setNetworkAlarm(context)
+            }
         /* 2. Create : resultId -> resultDTO */
         resultKey.setValue(resultDTO).addOnFailureListener {
             if (!isFail) setNetworkAlarm(context)
         }
         /* 3, 4 순서를 수행 */
-        makeAnswerList(context, recommendDTO)
+        makeAnswerList(context, recommendDTO, intent)
     }
 
     /*
@@ -300,7 +325,7 @@ class WardReceiver() : BroadcastReceiver() {
      *  - 생성한 질문 id 에 대해 answerList[질문 id] = 대답 id
      *  - 질문에 대응하는 대답을 생성
      */
-    private fun makeAnswerList(context : Context, recommendDTO : WardRecommendDTO) {
+    private fun makeAnswerList(context : Context, recommendDTO : WardRecommendDTO, intent : Intent) {
         val questionList : MutableMap<String, String> = recommendDTO.safetyDTO.questionList
 
         for (question in questionList) {
@@ -330,25 +355,28 @@ class WardReceiver() : BroadcastReceiver() {
             }
         }
 
-        /* 비동기식 데이터 통신으로 인해 5초 후 추천 시작 */
+        /* 비동기식 데이터 통신으로 인해 5초 후 시작 */
         Handler().postDelayed({
-            setAlarm(context, REPEAT_STOP, recommendDTO)
+            setAlarm(context, REPEAT_NOTIFY, recommendDTO, intent)
         }, 5000)
     }
 
     /*
-     *  강제 알람을 요청하는 작업을 수행
+     *  alarmFlag 에 따라 알람요청을 세팅
+     *  - REPEAT_STOP : forceAlarm 세팅
+     *  - REPEAT_NOTIFY : notifyAlarm 세팅
+     *  - REPEAT_START : recommendAlarm 세팅
+     *
      *  recommendDTO 를 intent 에 추가하여 넘겨줌
      */
-    private fun setAlarm(context: Context, alarmFlag : String, recommendDTO : WardRecommendDTO?) {
+    private fun setAlarm(context: Context, alarmFlag : String, recommendDTO : WardRecommendDTO?, intent : Intent) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val schedule = Intent(alarmFlag)
 
-        if (alarmFlag == REPEAT_STOP) {
+        if (alarmFlag != REPEAT_START) {
             schedule.putExtra("recommendDTO", recommendDTO)
         }
         schedule.setClass(context, WardReceiver::class.java)
-        schedule.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
 
         val sender = PendingIntent.getBroadcast(context, 0, schedule,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
@@ -356,58 +384,97 @@ class WardReceiver() : BroadcastReceiver() {
 
         /* 알람 시간 설정(recommendDTO.timeGap) */
         interval.timeInMillis = System.currentTimeMillis()
-        if (alarmFlag == REPEAT_STOP) {
+
+        if (alarmFlag == REPEAT_NOTIFY) {
             /* 현재 시간이 [안부 시간 - 10(초), 안부 시간] 인 경우 => 무시 */
             if (recommendDTO!!.timeGap - 10 <= 0) {
-                Log.d("확인", "세상에 이런일이")
-                setAlarm(context, REPEAT_START, null)
+                setAlarm(context, REPEAT_START, null, intent)
                 return
             }
-            else {
-                interval.add(Calendar.SECOND, recommendDTO.timeGap - 10)
+            /* 현재 시간이 [안부시간 - 10(분), 안부시간 - 10(초)) 인 경우 => 통지 알람 */
+            else if (recommendDTO.timeGap - 600 <= 0) {
+                notifyAlarm(context, intent, recommendDTO)
+                return
             }
+            /* 현재 시간이 (안부시간 - 10(분)) 전인 경우 => 강제 알람 요청 */
+            else {
+                interval.add(Calendar.SECOND, recommendDTO.timeGap - 600)
+            }
+        } else if (alarmFlag == REPEAT_STOP) {
+            interval.add(Calendar.SECOND, recommendDTO!!.timeGap)
         } else {
-            interval.add(Calendar.SECOND, 1)
+            interval.add(Calendar.SECOND, 5)
         }
 
-        alarmManager.cancel(sender)
         if (Build.VERSION.SDK_INT >= 23) {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                interval.timeInMillis,
-                sender
-            )
+            alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(interval.timeInMillis, sender), sender)
         } else if (Build.VERSION.SDK_INT >= 19) {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, interval.timeInMillis, sender)
         } else {
             alarmManager[AlarmManager.RTC_WAKEUP, interval.timeInMillis] = sender
         }
+        screenWakeLock?.release()
+    }
+
+    /*  피보호자에게 미리 안부에 대한 통지 알람을 보내는 메서드  */
+    private fun notifyAlarm(context : Context, intent : Intent, recommendDTO : WardRecommendDTO) {
+        val curTime = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
+        val safetyTime = dateFormat.parse(recommendDTO.resultDTO!!.date + " " + recommendDTO.resultDTO!!.safetyTime)
+        val forceTime = safetyTime!!.time - curTime.time.time
+
+        recommendDTO.timeGap = forceTime.toInt() / 1000
+        if (recommendDTO.timeGap < 0)
+            recommendDTO.timeGap = 0
+        executeNotifyAlarm(context, recommendDTO.safetyDTO)
+        setAlarm(context, REPEAT_STOP, recommendDTO, intent)
+    }
+
+    private fun executeNotifyAlarm(context : Context, safetyDTO : SafetyDTO) {
+        val user: Person = Person.Builder()
+            .setName("안심 우체국")
+            .setIcon(IconCompat.createWithResource(context, R.drawable.relief_post_office))
+            .build()
+        val body = safetyDTO.name + " 안부가 곧 시작됩니다."
+        val message = NotificationCompat.MessagingStyle.Message(
+            body,
+            System.currentTimeMillis(),
+            user
+        )
+        val messageStyle = NotificationCompat.MessagingStyle(user)
+            .addMessage(message)
+
+        val notificationManager = context.getSystemService(
+            Context.NOTIFICATION_SERVICE) as NotificationManager
+        val builder = NotificationCompat.Builder(context, "default")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelName = "안부 알람 채널"
+            val description = "피보호자에게 안부를 미리 알람합니다."
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel("default", channelName, importance)
+
+            channel.description = description
+            notificationManager.createNotificationChannel(channel)
+        }
+        builder.setContentTitle("안심 우체국")
+            .setContentText(body)
+            .setStyle(messageStyle)
+            .setSmallIcon(R.drawable.relief_post_office)
+            .setAutoCancel(true)
+
+        notificationManager.notify(NOTIFICATION_ID , builder.build())
     }
 
     /*
      *  피보호자 측에게 강제 알람을 띄우도록 하는 메서드
      *  recommendDTO 를 AlarmActivity 에서 받을 수 있도록 설정
      *  그리고 다시 알람 작업을 수행할 수 있도록 설정
-     *  안부 id 가 유효한지를 확인해서 강제 알람을 띄움
      */
-    private fun forceAlarm(context : Context, recommendDTO : WardRecommendDTO) {
-        val date = SimpleDateFormat("HH:mm E")
-            .format(Date(System.currentTimeMillis()))
-        val curTime = date.substring(0, 5)
-        val curDay = date[6].toString()
-
-        safetyDB.child(recommendDTO.safetyId).get().addOnSuccessListener {
-            if (it.getValue(SafetyDTO::class.java) != null) {
-                val safetyDTO = it.getValue(SafetyDTO::class.java) as SafetyDTO
-
-                if (safetyDTO.dayOfWeek[curDay] == true && safetyDTO.time == curTime) {
-                    executeForceAlarm(context, recommendDTO)
-                    setAlarm(context, REPEAT_START, null)
-                }
-            }
-        }.addOnFailureListener {
-            if (!isFail) setNetworkAlarm(context)
-        }
+    private fun forceAlarm(context : Context, intent : Intent, recommendDTO : WardRecommendDTO) {
+        executeNotifyAlarm(context, recommendDTO.safetyDTO)
+        executeForceAlarm(context, recommendDTO)
+        setAlarm(context, REPEAT_START, null, intent)
     }
 
     private fun executeForceAlarm(context : Context, recommendDTO : WardRecommendDTO) {

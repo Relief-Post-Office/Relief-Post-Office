@@ -43,15 +43,9 @@ class AlarmActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        imageView = binding.alarmButton
-        animationDrawable = imageView.background as AnimationDrawable
-
-        animationDrawable.start()
-
-        setAlarm()
-        setButton()
         setStatusBarTransparent()
         removeNotification()
+        checkResponse()
     }
 
     /* MediaPlayer release */
@@ -64,14 +58,38 @@ class AlarmActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkResponse() {
+        val resultDB = Firebase.database.reference.child("result")
+        val recommendDTO = intent.getSerializableExtra("recommendDTO") as WardRecommendDTO
+
+        resultDB.child(recommendDTO.resultId!!).get().addOnSuccessListener {
+            if (it.getValue(ResultDTO::class.java) != null) {
+                val resultDTO = it.getValue(ResultDTO::class.java) as ResultDTO
+
+                if (resultDTO.responseTime != "미응답") {
+                    finish()
+                } else {
+                    imageView = binding.alarmButton
+                    animationDrawable = imageView.background as AnimationDrawable
+
+                    animationDrawable.start()
+
+                    setAlarm(recommendDTO)
+                    setButton()
+                }
+            } else {
+                finish()
+            }
+        }
+    }
+
     /* 알람 설정 */
-    private fun setAlarm() {
+    private fun setAlarm(recommendDTO : WardRecommendDTO) {
         val date = SimpleDateFormat("MM월 dd일 E요일 HH : mm")
             .format(Date(System.currentTimeMillis()))
         val curDay = date.substring(0, 11)
         val curTime = date.substring(12, 19)
         val finishTime : Long = 300000
-        val recommendDTO = intent.getSerializableExtra("recommendDTO") as WardRecommendDTO
         val safetyDB = Firebase.database.reference.child("safety")
 
         safetyId = recommendDTO.safetyId

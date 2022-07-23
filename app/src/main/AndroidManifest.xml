@@ -18,6 +18,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <permission
         android:name="com.rightline.backgroundrepeatapp.permission.ACTION_REPEAT"
@@ -125,6 +126,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="com.rightline.backgroundrepeatapp.REPEAT_START" />
+                <action android:name="com.rightline.backgroundrepeatapp.REPEAT_NOTIFY" />
                 <action android:name="com.rightline.backgroundrepeatapp.REPEAT_STOP" />
             </intent-filter>
         </receiver>

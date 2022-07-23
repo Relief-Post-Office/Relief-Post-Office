@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.PowerManager
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -19,16 +20,25 @@ class NetworkReceiver : BroadcastReceiver() {
 
     private val userDB = Firebase.database.reference.child("user")
 
+    /* WakeLock */
+    private var screenWakeLock : PowerManager.WakeLock? = null
+
     companion object {
         const val REPEAT_START = "com.rightline.backgroundrepeatapp.REPEAT_START"
     }
 
     /*
      *  네트워크가 연결되었는지 확인
-     *  - 연결이 안된 경우 : 30초 단위로 네트워크 알람을 재요청
+     *  - 연결이 안된 경우 : 15분 단위로 네트워크 알람을 재요청
      *  - 연결된 경우 : 로그인 된 유저 중 보호자, 피보호자에 따라 알람 요청
      */
     override fun onReceive(context : Context, intent : Intent) {
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+
+        screenWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK
+                or PowerManager.ACQUIRE_CAUSES_WAKEUP, "WakeLock")
+        screenWakeLock?.acquire()
+
         Log.d("확인", "Network")
         if (!Network.isNetworkAvailable(context)) {
             Log.d("확인", "Network is not available...")
@@ -52,7 +62,7 @@ class NetworkReceiver : BroadcastReceiver() {
 
     /*
      *  네트워크 연결이 안될 경우 실행하는 메서드
-     *  30초 단위로 네트워크 알람 요청을 수행
+     *  15분 단위로 네트워크 알람 요청을 수행
      */
     private fun setNetworkAlarm(context : Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -65,7 +75,7 @@ class NetworkReceiver : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.SECOND, 30) /* Here! */
+        interval.add(Calendar.MINUTE, 15) /* Here! */
         alarmManager.cancel(sender)
 
         if (Build.VERSION.SDK_INT >= 23) {
@@ -79,6 +89,8 @@ class NetworkReceiver : BroadcastReceiver() {
         } else {
             alarmManager[AlarmManager.RTC_WAKEUP, interval.timeInMillis] = sender
         }
+
+        screenWakeLock?.release()
     }
 
     /*
@@ -101,7 +113,7 @@ class NetworkReceiver : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.SECOND, 1)
+        interval.add(Calendar.SECOND, 5)
         alarmManager.cancel(sender)
 
         if (Build.VERSION.SDK_INT >= 23) {
@@ -115,5 +127,7 @@ class NetworkReceiver : BroadcastReceiver() {
         } else {
             alarmManager[AlarmManager.RTC_WAKEUP, interval.timeInMillis] = sender
         }
+
+        screenWakeLock?.release()
     }
 }

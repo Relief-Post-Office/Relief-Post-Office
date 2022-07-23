@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Handler
+import android.os.PowerManager
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -49,6 +50,9 @@ class GuardianReceiver () : BroadcastReceiver() {
     /* Fail flag */
     private var isFail : Boolean = false
 
+    /* WakeLock */
+    private var screenWakeLock : PowerManager.WakeLock? = null
+
     /*
      *  REPEAT_START : "통지 알람 요청", "요청 없음" 둘 중 하나를 결정하기 위한 플래그
      *  REPEAT_STOP : 특정 안부에 대한 통지 알람 요청을 수행하기 위한 플래그
@@ -70,6 +74,12 @@ class GuardianReceiver () : BroadcastReceiver() {
      *  - 5. 연결된 피보호자의 안부 or 질문이 삭제된 경우
      */
     override fun onReceive(context: Context, intent: Intent) {
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+
+        screenWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK
+                or PowerManager.ACQUIRE_CAUSES_WAKEUP, "WakeLock")
+        screenWakeLock?.acquire()
+
         Log.d("확인", "Guardian")
         if (!Network.isNetworkAvailable(context)) {
             setNetworkAlarm(context)
@@ -93,7 +103,7 @@ class GuardianReceiver () : BroadcastReceiver() {
 
     /*
      *  네트워크 연결이 안될 경우 실행하는 메서드
-     *  30초 단위로 네트워크 알람 요청을 수행
+     *  15분 단위로 네트워크 알람 요청을 수행
      */
     private fun setNetworkAlarm(context : Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -108,7 +118,7 @@ class GuardianReceiver () : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.SECOND, 30) /* Here! */
+        interval.add(Calendar.MINUTE, 15) /* Here! */
         alarmManager.cancel(sender)
 
         if (Build.VERSION.SDK_INT >= 23) {
@@ -122,6 +132,8 @@ class GuardianReceiver () : BroadcastReceiver() {
         } else {
             alarmManager[AlarmManager.RTC_WAKEUP, interval.timeInMillis] = sender
         }
+
+        screenWakeLock?.release()
     }
 
     /*
@@ -237,18 +249,16 @@ class GuardianReceiver () : BroadcastReceiver() {
         interval.timeInMillis = System.currentTimeMillis()
         if (alarmFlag == REPEAT_STOP) {
             /* 현재 시간이 [(안부시간 + 30(분)) - 10(초), (응답시간 + 30(분)] 인 경우 => 무시 */
-            if (recommendList!![0].timeGap - 5 <= 0) {
-                Log.d("확인", "세상에 이런일이")
+            if (recommendList!![0].timeGap - 10 <= 0) {
                 setAlarm(context, WardReceiver.REPEAT_START, null)
                 return
             } else {
                 interval.add(Calendar.SECOND, recommendList[0].timeGap - 5)
             }
         } else {
-            interval.add(Calendar.SECOND, 1)
+            interval.add(Calendar.SECOND, 5)
         }
 
-        alarmManager.cancel(sender)
         if (Build.VERSION.SDK_INT >= 23) {
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
@@ -260,6 +270,8 @@ class GuardianReceiver () : BroadcastReceiver() {
         } else {
             alarmManager[AlarmManager.RTC_WAKEUP, interval.timeInMillis] = sender
         }
+
+        screenWakeLock?.release()
     }
 
     /*
@@ -270,6 +282,8 @@ class GuardianReceiver () : BroadcastReceiver() {
      *  위 2 조건을 만족할 경우 피보호자의 userDTO, wardDTO 를 가지고 통지할지를 결정
      */
     private fun notifyAlarm(context : Context, recommendList : ArrayList<GuardianRecommendDTO>) {
+        val curTime = Calendar.getInstance()
+
         for (recommendDTO in recommendList) {
             userDB.child(recommendDTO.wardId).get().addOnSuccessListener { userSnapshot ->
                 /* 1. 존재하는 유저인지 확인 */
@@ -279,7 +293,7 @@ class GuardianReceiver () : BroadcastReceiver() {
                         /* 2. 피보호자인지 확인 */
                         if (wardSnapshot.getValue(WardDTO::class.java) != null) {
                             val wardDTO = wardSnapshot.getValue(WardDTO::class.java) as WardDTO
-                            compareSafetyAndResult(context, userDTO, wardDTO, recommendDTO)
+                            compareSafetyAndResult(context, userDTO, wardDTO, recommendDTO, curTime)
                         }
                     }.addOnFailureListener {
                         if (!isFail) setNetworkAlarm(context)
@@ -300,22 +314,13 @@ class GuardianReceiver () : BroadcastReceiver() {
      *  아래의 조건이 전부 만족할 경우 보호자에게 통지 알람을 보냄
      *
      *  1. 피보호자가 안부를 미응답했는지
-     *  2. 결과가 현재 시간으로부터 30 분 전인지
+     *  2. (현재 시간 - 안부 시간) 이 [25 min, 35 min] 범위 내에 존재하는지
      *  3. 결과에 대응하는 안부 id 가 선별된 안부 id 와 동일한지
      *  4. 결과에 대응하는 안부가 존재하는지
      */
-    private fun compareSafetyAndResult(context : Context, userDTO : UserDTO, wardDTO : WardDTO, recommendDTO : GuardianRecommendDTO) {
-        val curDate : String
-        val curTime : String
-        val cal = Calendar.getInstance()
-        val date = SimpleDateFormat("yyyy-MM-dd HH:mm")
-
-        cal.time = Date()
-        cal.add(Calendar.MINUTE, -30)
-        Log.d("확인용", date.format(cal.time))
-
-        curDate = date.format(cal.time).substring(0, 10)
-        curTime = date.format(cal.time).substring(11, 16)
+    private fun compareSafetyAndResult(context : Context, userDTO : UserDTO, wardDTO : WardDTO,
+                                       recommendDTO : GuardianRecommendDTO, curTime : Calendar) {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
 
         for (result in wardDTO.resultIdList) {
             val resultId = result.value
@@ -323,9 +328,11 @@ class GuardianReceiver () : BroadcastReceiver() {
             resultDB.child(resultId).get().addOnSuccessListener { resultSnapshot ->
                 if (resultSnapshot.getValue(ResultDTO::class.java) != null) {
                     val resultDTO = resultSnapshot.getValue(ResultDTO::class.java) as ResultDTO
+                    val safetyTime = dateFormat.parse(resultDTO.date + " " + resultDTO.safetyTime)
+                    val gapTime = curTime.time.time - safetyTime!!.time
 
-                    if (resultDTO.responseTime == "미응답" && resultDTO.date == curDate
-                        && resultDTO.safetyTime == curTime && resultDTO.safetyId == recommendDTO.safetyId) {
+                    if (resultDTO.responseTime == "미응답" && resultDTO.safetyId == recommendDTO.safetyId
+                        && gapTime >= 1500000 && gapTime <= 2100000) {
                         safetyDB.child(resultDTO.safetyId).get().addOnSuccessListener { safetySnapshot ->
                             if (safetySnapshot.getValue(SafetyDTO::class.java) != null) {
                                 val safetyDTO = safetySnapshot.getValue(SafetyDTO::class.java) as SafetyDTO

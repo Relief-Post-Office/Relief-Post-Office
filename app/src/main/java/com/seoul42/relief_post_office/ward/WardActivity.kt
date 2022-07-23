@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
+import android.util.Log
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -113,21 +114,21 @@ class WardActivity : AppCompatActivity() {
 
                 connectList = wardDTO.connectList
                 requestList = wardDTO.requestList
-                setAlarm()
-                setLogout()
-                setWardPhoto()
-                setRecyclerView()
-                setAddButton()
+                setUp()
             } else {
                 connectList = mutableMapOf()
                 requestList = mutableMapOf()
-                setAlarm()
-                setLogout()
-                setWardPhoto()
-                setRecyclerView()
-                setAddButton()
+                setUp()
             }
         }
+    }
+
+    private fun setUp() {
+        setAlarm()
+        setLogout()
+        setWardPhoto()
+        setRecyclerView()
+        setAddButton()
     }
 
     /*

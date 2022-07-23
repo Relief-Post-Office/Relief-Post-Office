@@ -1,16 +1,19 @@
 package com.seoul42.relief_post_office.guardian
 
 import android.annotation.SuppressLint
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
+import android.os.PowerManager
+import android.provider.Settings
 import android.view.*
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,10 +33,8 @@ import com.seoul42.relief_post_office.databinding.FragmentGuardianBinding
 import com.seoul42.relief_post_office.model.GuardianDTO
 import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.UserDTO
-import com.seoul42.relief_post_office.model.WardDTO
 import com.seoul42.relief_post_office.service.CheckLoginService
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
-import com.seoul42.relief_post_office.ward.WardProfileActivity
 
 class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_guardian) {
 
@@ -55,6 +56,7 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?) : View {
+
         binding = FragmentGuardianBinding.inflate(inflater, container, false)
         activityResultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult())
