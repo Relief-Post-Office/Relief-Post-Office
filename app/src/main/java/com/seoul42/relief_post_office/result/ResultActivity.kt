@@ -156,6 +156,7 @@ class ResultActivity : AppCompatActivity() {
                                 val safetyTime = dateFormat.parse(result.date + " " + result.safetyTime)
 
                                 if (curTime.time.time - safetyTime.time >= 0) {
+                                    Log.d("확인", resultId + " ~~~ " + result.toString())
                                     resultList.add(Pair(resultId, result))
                                     resultList.sortBy { it.second.safetyTime }
                                     adapter.notifyDataSetChanged()

@@ -131,18 +131,20 @@ class AlarmActivity : AppCompatActivity() {
             close()
             // voice
             // 안부 시작 안내 보이스
-            val startGuideVoice = MediaPlayer.create(this, R.raw.startingsafety)
-            startGuideVoice.start()
-            startGuideVoice.setOnCompletionListener {
-                startGuideVoice.release()
-                val intent = Intent(this, AnswerActivity::class.java)
+            Handler().postDelayed({
+                val startGuideVoice = MediaPlayer.create(this, R.raw.startingsafety)
+                startGuideVoice.start()
+                startGuideVoice.setOnCompletionListener {
+                    startGuideVoice.release()
+                    val intent = Intent(this, AnswerActivity::class.java)
 
-                ActivityCompat.finishAffinity(this)
+                    ActivityCompat.finishAffinity(this)
 
-                intent.putExtra("resultId", resultId)
-                intent.putExtra("answerList", answerList)
-                startActivity(intent)
-            }
+                    intent.putExtra("resultId", resultId)
+                    intent.putExtra("answerList", answerList)
+                    startActivity(intent)
+                }
+            }, 500)
         }
     }
 

@@ -390,12 +390,12 @@ class WardReceiver() : BroadcastReceiver() {
                 setAlarm(context, REPEAT_START, null, intent)
                 return
             }
-            /* 현재 시간이 [안부시간 - 10(분), 안부시간 - 10(초)) 인 경우 => 통지 알람 */
+            /* 현재 시간이 [안부시간 - 10(분), 안부시간 - 10(초)) 인 경우 => 통지 알람 후 강제 알람 요청 */
             else if (recommendDTO.timeGap - 600 <= 0) {
                 notifyAlarm(context, intent, recommendDTO)
                 return
             }
-            /* 현재 시간이 (안부시간 - 10(분)) 전인 경우 => 강제 알람 요청 */
+            /* 현재 시간이 (안부시간 - 10(분)) 전인 경우 => 통지 알람 요청 */
             else {
                 interval.add(Calendar.SECOND, recommendDTO.timeGap - 600)
             }
