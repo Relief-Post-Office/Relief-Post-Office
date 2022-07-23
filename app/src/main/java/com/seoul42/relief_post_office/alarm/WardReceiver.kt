@@ -408,6 +408,7 @@ class WardReceiver() : BroadcastReceiver() {
         } else {
             alarmManager[AlarmManager.RTC_WAKEUP, interval.timeInMillis] = sender
         }
+
         screenWakeLock?.release()
     }
 
@@ -467,7 +468,6 @@ class WardReceiver() : BroadcastReceiver() {
      *  그리고 다시 알람 작업을 수행할 수 있도록 설정
      */
     private fun forceAlarm(context : Context, intent : Intent, recommendDTO : WardRecommendDTO) {
-        executeNotifyAlarm(context, recommendDTO.safetyDTO)
         executeForceAlarm(context, recommendDTO)
         setAlarm(context, REPEAT_START, null, intent)
     }
