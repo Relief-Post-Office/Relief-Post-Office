@@ -51,6 +51,7 @@
         app:layout_constraintTop_toTopOf="@+id/horizontal_guideline1"
         app:layout_constraintVertical_bias="0.0" />
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/result_recyclerView"
         android:layout_width="0dp"

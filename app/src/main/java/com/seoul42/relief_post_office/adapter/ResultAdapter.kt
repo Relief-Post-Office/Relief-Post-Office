@@ -6,6 +6,7 @@ import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.seoul42.relief_post_office.R
@@ -23,10 +24,14 @@ class ResultAdapter(private val context : Context,
         fun setResult(result: Pair<String, ResultDTO>) {
             binding.itemResultSafetyName.text = result.second.safetyName
             binding.itemResultAlarmTime.text = result.second.safetyTime.replace(":", " : ")
+
             if (!isResponsed(result.second.responseTime)) {
                 binding.itemResultResponseTime.text = result.second.responseTime
                 binding.itemResultSafetyLayout.setBackgroundResource(R.drawable.result_disable_background)
                 binding.itemResultResponseTime.setTextColor(R.color.red)
+                binding.itemResultSafetyLayout.setOnClickListener {
+                    Toast.makeText(context, "미응답 결과입니다.", Toast.LENGTH_SHORT).show()
+                }
             }
             else {
                 binding.itemResultSafetyLayout.setBackgroundResource(R.drawable.result_enable_background)

@@ -27,6 +27,8 @@ import com.seoul42.relief_post_office.model.UserDTO
 import com.seoul42.relief_post_office.result.ResultActivity
 import com.seoul42.relief_post_office.safety.WardSafetySettingActivity
 import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class GuardianAdapter(private val context: Context, private val dataList: ArrayList<Pair<String, UserDTO>>) :
     RecyclerView.Adapter<GuardianAdapter.ItemViewHolder>() {
@@ -85,6 +87,8 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
                     val database = Firebase.database
                     val sdf = SimpleDateFormat("yyyy-MM-dd")
                     val today = sdf.format(System.currentTimeMillis())
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
+                    val curTime = Calendar.getInstance()
 
                     database.getReference("ward")
                         .child(user.first)
@@ -97,7 +101,9 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
                                         .child(resultId).get().addOnSuccessListener {
                                             val result = it.getValue<ResultDTO>()
                                             if (result != null) {
-                                                if (result.date == today) {
+                                                val safetyTime = dateFormat.parse(result.date + " " + result.safetyTime)
+
+                                                if (result.date == today && curTime.time.time - safetyTime.time >= 0) {
                                                     resultList.add(Pair(it.key as String, result))
                                                     resultList.sortBy{ it.second.safetyTime }
                                                     adapter.notifyDataSetChanged()

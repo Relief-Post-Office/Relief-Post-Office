@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
@@ -24,6 +25,7 @@ class ResultDetailActivity : AppCompatActivity() {
     private val database = Firebase.database
     private var answerList = mutableListOf<Pair<String, AnswerDTO>>()
     private lateinit var adapter: ResultDetailAdapter
+    private lateinit var listenerDTO : Pair<DatabaseReference, ValueEventListener>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +39,15 @@ class ResultDetailActivity : AppCompatActivity() {
         setDate(result.date)
         setAdapter(result.safetyName, result.date)
         setQuestionAnswerList(resultId)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        val reference : DatabaseReference = listenerDTO.first
+        val listener : ValueEventListener = listenerDTO.second
+
+        reference.removeEventListener(listener)
     }
 
     private fun setSafetyName(safetyName: String) {
@@ -69,7 +80,7 @@ class ResultDetailActivity : AppCompatActivity() {
     private fun setQuestionAnswerList(resultId: String) {
         val answerListRef = database.getReference("result").child(resultId).child("answerList")
 
-        answerListRef.addValueEventListener(object : ValueEventListener {
+        val answerListener = answerListRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 questionAnswerList(resultId)
             }
@@ -78,6 +89,8 @@ class ResultDetailActivity : AppCompatActivity() {
                 print(error.message)
             }
         })
+
+        listenerDTO = Pair(answerListRef, answerListener)
     }
 
     @SuppressLint("NotifyDataSetChanged")
