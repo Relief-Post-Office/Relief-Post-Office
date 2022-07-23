@@ -170,16 +170,30 @@ class SafetyQuestionSettingAdapter(
                                 // 질문과 연결된 안부를 가진 피보호자들에게 안부 동기화 fcm 전송
                                 val safetyListRef = database.getReference("question").child(item.first).child("connectedSafetyList")
                                 safetyListRef.get().addOnSuccessListener {
-                                    val safetyList = (it.getValue() as HashMap<String, String>).values.toList()
-                                    val UserRef = database.getReference("user")
-                                    for (safetyId in safetyList){
-                                        database.getReference("safety").child("uid").get().addOnSuccessListener {
-                                            UserRef.child(it.getValue().toString()).child("token").get().addOnSuccessListener {
-                                                val notificationData = NotificationDTO.NotificationData("SafetyWard",
-                                                    "안심우체국", "안부를 동기화 합니다")
-                                                val notificationDTO = NotificationDTO(it.getValue().toString(), "high", notificationData)
-                                                firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
-                                            }
+                                    if (it.getValue() != null) {
+                                        val safetyList =
+                                            (it.getValue() as HashMap<String, String>).values.toList()
+                                        val UserRef = database.getReference("user")
+                                        for (safetyId in safetyList) {
+                                            database.getReference("safety").child("uid").get()
+                                                .addOnSuccessListener {
+                                                    UserRef.child(it.getValue().toString())
+                                                        .child("token").get().addOnSuccessListener {
+                                                        val notificationData =
+                                                            NotificationDTO.NotificationData(
+                                                                "SafetyWard",
+                                                                "안심우체국", "안부를 동기화 합니다"
+                                                            )
+                                                        val notificationDTO = NotificationDTO(
+                                                            it.getValue().toString(),
+                                                            "high",
+                                                            notificationData
+                                                        )
+                                                        firebaseViewModel.sendNotification(
+                                                            notificationDTO
+                                                        ) /* FCM 전송하기 */
+                                                    }
+                                                }
                                         }
                                     }
                                 }
@@ -221,13 +235,12 @@ class SafetyQuestionSettingAdapter(
                                 }
                             }
                         }
-
-                        // 다이얼로그 종료
-                        Handler().postDelayed({
-                            Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
-                            dialog.dismiss()
-                        }, 1000)
                     }
+                    // 다이얼로그 종료
+                    Handler().postDelayed({
+                        Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                    }, 1000)
                 }
 
                 // 질문 수정 다이얼로그의 "삭제" 버튼을 눌렀을 때 이벤트 처리
