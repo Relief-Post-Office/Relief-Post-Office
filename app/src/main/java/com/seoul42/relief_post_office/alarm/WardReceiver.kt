@@ -61,6 +61,7 @@ class WardReceiver() : BroadcastReceiver() {
         const val REPEAT_STOP = "com.rightline.backgroundrepeatapp.REPEAT_STOP"
         const val PRIMARY_CHANNEL_ID = "primary_notification_channel"
         const val NOTIFICATION_ID = 100
+        const val FORCE_ID = 200
     }
 
     /*
@@ -91,13 +92,16 @@ class WardReceiver() : BroadcastReceiver() {
                 uid = Firebase.auth.uid.toString()
                 when (intent.action) {
                     REPEAT_START -> {
+                        Log.d("확인", "recommend")
                         recommendAlarm(context, intent)
                     }
                     REPEAT_NOTIFY -> {
+                        Log.d("확인", "notify")
                         notifyAlarm(context, intent,
                             intent.getSerializableExtra("recommendDTO") as WardRecommendDTO)
                     }
                     REPEAT_STOP -> {
+                        Log.d("확인", "stop")
                         forceAlarm(context, intent,
                             intent.getSerializableExtra("recommendDTO") as WardRecommendDTO)
                     }
@@ -497,7 +501,7 @@ class WardReceiver() : BroadcastReceiver() {
         val safetyName = recommendDTO.safetyDTO.name
         val contentPendingIntent = PendingIntent.getActivity(
             context,
-            NOTIFICATION_ID,
+            FORCE_ID,
             contentIntent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -512,6 +516,6 @@ class WardReceiver() : BroadcastReceiver() {
                 .setAutoCancel(true)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
 
-        notificationManager.notify(NOTIFICATION_ID, builder.build())
+        notificationManager.notify(FORCE_ID, builder.build())
     }
 }
