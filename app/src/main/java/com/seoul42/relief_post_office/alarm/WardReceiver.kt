@@ -5,15 +5,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Handler
-import android.os.Looper
 import android.os.PowerManager
-import android.service.autofill.Validators.or
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
@@ -28,7 +25,6 @@ import com.seoul42.relief_post_office.util.Alarm.getDay
 import com.seoul42.relief_post_office.util.Alarm.getTimeGap
 import com.seoul42.relief_post_office.util.Network
 import com.seoul42.relief_post_office.ward.AlarmActivity
-import kotlinx.coroutines.NonCancellable.start
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -290,34 +286,34 @@ class WardReceiver() : BroadcastReceiver() {
      *  3. Create : resultDTO.answerList -> [question, answerId]
      *  4. Create : answerId -> answerDTO
      */
-    private fun setForceAlarm(context: Context, recommendDTO : WardRecommendDTO, intent : Intent) {
+    private fun setForceAlarm(context: Context, recommendDTO: WardRecommendDTO, intent: Intent) {
         val cal = Calendar.getInstance()
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
         cal.time = Date()
         cal.add(Calendar.SECOND, recommendDTO.timeGap)
 
-        val resultKey = resultDB.push()
-        val resultId = resultKey.key.toString()
-        val safetyDate = date.format(cal.time).toString()
+        val safetyDate = date.format(cal.time).substring(0, 16)
         val resultDTO = ResultDTO(safetyDate.substring(0, 10),
             recommendDTO.safetyId, recommendDTO.safetyDTO.name!!,
             recommendDTO.safetyDTO.time!!, "미응답", mutableMapOf())
+        val resultId = "$uid/$safetyDate"
 
         recommendDTO.resultId = resultId
         recommendDTO.resultDTO = resultDTO
 
         /* 1. Create : resultIdList -> resultId */
-        wardDB.child(uid).child("resultIdList").child(safetyDate.substring(0, 16)).setValue(resultId)
+        wardDB.child(uid).child("resultIdList").child(safetyDate)
+            .setValue(resultId)
             .addOnFailureListener {
                 if (!isFail) setNetworkAlarm(context)
             }
         /* 2. Create : resultId -> resultDTO */
-        resultKey.setValue(resultDTO).addOnFailureListener {
+        resultDB.child(resultId).setValue(resultDTO).addOnFailureListener {
             if (!isFail) setNetworkAlarm(context)
         }
         /* 3, 4 순서를 수행 */
-        makeAnswerList(context, recommendDTO, intent)
+        makeAnswerList(context, recommendDTO, safetyDate, intent)
     }
 
     /*
@@ -325,7 +321,7 @@ class WardReceiver() : BroadcastReceiver() {
      *  - 생성한 질문 id 에 대해 answerList[질문 id] = 대답 id
      *  - 질문에 대응하는 대답을 생성
      */
-    private fun makeAnswerList(context : Context, recommendDTO : WardRecommendDTO, intent : Intent) {
+    private fun makeAnswerList(context : Context, recommendDTO : WardRecommendDTO, safetyDate : String, intent : Intent) {
         val questionList : MutableMap<String, String> = recommendDTO.safetyDTO.questionList
 
         for (question in questionList) {
@@ -334,8 +330,7 @@ class WardReceiver() : BroadcastReceiver() {
             questionDB.child(questionId).get().addOnSuccessListener { questionSnapshot ->
                 if (questionSnapshot.getValue(QuestionDTO::class.java) != null) {
                     val questionDTO = questionSnapshot.getValue(QuestionDTO::class.java) as QuestionDTO
-                    val answerKey = answerDB.push()
-                    val answerId = answerKey.key.toString()
+                    val answerId = "$uid/$safetyDate/$questionId"
                     val answerDTO = AnswerDTO(null, questionDTO.secret, questionDTO.record,
                         questionDTO.owner!!, questionDTO.src!!, questionDTO.text!!, "")
 
@@ -345,7 +340,7 @@ class WardReceiver() : BroadcastReceiver() {
                             if (!isFail) setNetworkAlarm(context)
                         }
                     /* 4. Create : answerId -> answerDTO */
-                    answerKey.setValue(answerDTO)
+                    answerDB.child(answerId).setValue(answerDTO)
                         .addOnFailureListener {
                             if (!isFail) setNetworkAlarm(context)
                         }
