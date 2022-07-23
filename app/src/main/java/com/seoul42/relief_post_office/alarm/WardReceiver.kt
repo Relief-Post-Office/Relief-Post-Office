@@ -14,6 +14,7 @@ import android.os.PowerManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -472,6 +473,10 @@ class WardReceiver() : BroadcastReceiver() {
      *  그리고 다시 알람 작업을 수행할 수 있도록 설정
      */
     private fun forceAlarm(context : Context, intent : Intent, recommendDTO : WardRecommendDTO) {
+        val notificationManager = context.getSystemService(
+            Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        notificationManager.cancel(NOTIFICATION_ID)
         executeForceAlarm(context, recommendDTO)
         setAlarm(context, REPEAT_START, null, intent)
     }
