@@ -41,12 +41,9 @@ class BootCompleteReceiver : BroadcastReceiver() {
      *  2 가지 조건을 만족하면 Alarm 을 수행하도록 처리
      */
     override fun onReceive(context : Context, intent : Intent) {
-        Log.d("확인", "Booting")
         if (!Network.isNetworkAvailable(context)) {
-            Log.d("확인", "Network is not available...")
             setNetworkAlarm(context)
         } else {
-            Log.d("확인", "Network is available!")
             if (intent.action.equals(Intent.ACTION_BOOT_COMPLETED)) {
                 if (Firebase.auth.currentUser != null){
                     val uid = Firebase.auth.uid.toString()
@@ -78,8 +75,7 @@ class BootCompleteReceiver : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.MINUTE, 15) /* Here! */
-        alarmManager.cancel(sender)
+        interval.add(Calendar.MINUTE, 15)
 
         if (Build.VERSION.SDK_INT >= 23) {
             alarmManager.setExactAndAllowWhileIdle(

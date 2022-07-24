@@ -26,13 +26,9 @@ import com.seoul42.relief_post_office.util.Alarm.getTimeGap
 import com.seoul42.relief_post_office.util.Network
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.max
 
 class GuardianReceiver () : BroadcastReceiver() {
-
-    /* 추천 가능한 모든 객체들을 담음 */
-    private val candidateList = ArrayList<GuardianRecommendDTO>()
-    /* 추천 객체들을 담음 */
-    private val recommendList = ArrayList<GuardianRecommendDTO>()
 
     /* Access to database */
     private val userDB = Firebase.database.reference.child("user")
@@ -41,11 +37,17 @@ class GuardianReceiver () : BroadcastReceiver() {
     private val safetyDB = Firebase.database.reference.child("safety")
     private val guardianDB = Firebase.database.reference.child("guardian")
 
-    /* Several notification Id : 상단에 공지가 누적되는 것을 방지 */
-    private var notificationId : Int = 100
+    /* 추천 가능한 모든 객체들을 담음 */
+    private val candidateList = ArrayList<GuardianRecommendDTO>()
+
+    /* 추천 객체들을 담음 */
+    private val recommendList = ArrayList<GuardianRecommendDTO>()
 
     /* user Id */
     private lateinit var uid : String
+
+    /* 상단 notification 겹침 현상 방지를 위함 */
+    private var notificationId : Int = 100
 
     /* Fail flag */
     private var isFail : Boolean = false
@@ -80,21 +82,17 @@ class GuardianReceiver () : BroadcastReceiver() {
                 or PowerManager.ACQUIRE_CAUSES_WAKEUP, "WakeLock")
         screenWakeLock?.acquire()
 
-        Log.d("확인", "Guardian")
         if (!Network.isNetworkAvailable(context)) {
             setNetworkAlarm(context)
         } else {
             if (Firebase.auth.currentUser != null) {
-                Log.d("확인", "보호자측 네트워크 연결 성공")
                 uid = Firebase.auth.uid.toString()
                 when (intent.action) {
                     REPEAT_START -> {
                         recommend(context)
                     }
                     REPEAT_STOP -> {
-                        val recommendList =
-                            intent.getSerializableExtra("recommendList") as ArrayList<GuardianRecommendDTO>
-                        notifyAlarm(context, recommendList)
+                        notifyAlarm(context, intent.getSerializableExtra("recommendList") as ArrayList<GuardianRecommendDTO>)
                     }
                 }
             }
@@ -109,7 +107,6 @@ class GuardianReceiver () : BroadcastReceiver() {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val schedule = Intent(REPEAT_START)
 
-        Log.d("확인", "보호자측 네트워크 연결 실패")
         isFail = true
         schedule.setClass(context, NetworkReceiver::class.java)
 
@@ -118,7 +115,7 @@ class GuardianReceiver () : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.MINUTE, 15) /* Here! */
+        interval.add(Calendar.MINUTE, 15)
         alarmManager.cancel(sender)
 
         if (Build.VERSION.SDK_INT >= 23) {
@@ -169,7 +166,6 @@ class GuardianReceiver () : BroadcastReceiver() {
                                 recommendList.add(candidate)
                             }
                         }
-                        Log.d("확인용...", recommendList.toString())
                         /* 3. 통지 알람 세팅 */
                         setAlarm(context, REPEAT_STOP, recommendList)
                     }
@@ -196,9 +192,7 @@ class GuardianReceiver () : BroadcastReceiver() {
         }
     }
 
-    /*
-     *  안부를 추가하는 메서드
-     */
+    /*  안부를 추가하는 메서드  */
     private fun addSafetyToRecommend(context : Context, dateDTO : DateDTO, wardId : String, safetyId : String) {
         val curTime = dateDTO.curTime
         val curDay = dateDTO.curDay
@@ -232,7 +226,6 @@ class GuardianReceiver () : BroadcastReceiver() {
      *  추천 리스트를 intent 에 담아서 보내도록 함
      */
     private fun setAlarm(context: Context, alarmFlag : String, recommendList : ArrayList<GuardianRecommendDTO>?) {
-
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val schedule = Intent(alarmFlag)
 
@@ -247,14 +240,9 @@ class GuardianReceiver () : BroadcastReceiver() {
 
         /* 알람 시간 설정(recommendDTO.timeGap) */
         interval.timeInMillis = System.currentTimeMillis()
+
         if (alarmFlag == REPEAT_STOP) {
-            /* 현재 시간이 [(안부시간 + 30(분)) - 10(초), (응답시간 + 30(분)] 인 경우 => 무시 */
-            if (recommendList!![0].timeGap - 10 <= 0) {
-                setAlarm(context, WardReceiver.REPEAT_START, null)
-                return
-            } else {
-                interval.add(Calendar.SECOND, recommendList[0].timeGap - 5)
-            }
+            interval.add(Calendar.SECOND, max(recommendList!![0].timeGap - 5, 5))
         } else {
             interval.add(Calendar.SECOND, 5)
         }
@@ -313,10 +301,10 @@ class GuardianReceiver () : BroadcastReceiver() {
      *  최종적으로 통지 알람을 보호자에게 보낼지를 결정
      *  아래의 조건이 전부 만족할 경우 보호자에게 통지 알람을 보냄
      *
-     *  1. 피보호자가 안부를 미응답했는지
-     *  2. (현재 시간 - 안부 시간) 이 [25 min, 35 min] 범위 내에 존재하는지
+     *  1. (현재 시간 - 안부 시간) 이 [20 min, 40 min] 범위 내인지 => (30분 확인)
+     *  2. 피보호자가 안부를 미응답했는지
      *  3. 결과에 대응하는 안부 id 가 선별된 안부 id 와 동일한지
-     *  4. 결과에 대응하는 안부가 존재하는지
+     *  4. 결과에 대응하는 안부가 존재하는지 => (삭제 여부 확인)
      */
     private fun compareSafetyAndResult(context : Context, userDTO : UserDTO, wardDTO : WardDTO,
                                        recommendDTO : GuardianRecommendDTO, curTime : Calendar) {
@@ -331,13 +319,14 @@ class GuardianReceiver () : BroadcastReceiver() {
                     val safetyTime = dateFormat.parse(resultDTO.date + " " + resultDTO.safetyTime)
                     val gapTime = curTime.time.time - safetyTime!!.time
 
-                    if (resultDTO.responseTime == "미응답" && resultDTO.safetyId == recommendDTO.safetyId
-                        && gapTime >= 1500000 && gapTime <= 2100000) {
+                    if (((gapTime >= 1200000) && (gapTime <= 2400000))
+                        && (resultDTO.responseTime == "미응답")
+                        && (resultDTO.safetyId == recommendDTO.safetyId)) {
                         safetyDB.child(resultDTO.safetyId).get().addOnSuccessListener { safetySnapshot ->
                             if (safetySnapshot.getValue(SafetyDTO::class.java) != null) {
                                 val safetyDTO = safetySnapshot.getValue(SafetyDTO::class.java) as SafetyDTO
 
-                                executeNotifyAlarm(context, userDTO, safetyDTO)
+                                executeNotifyAlarm(context, userDTO, safetyDTO, curTime)
                             }
                         }.addOnFailureListener {
                             if (!isFail) setNetworkAlarm(context)
@@ -354,7 +343,7 @@ class GuardianReceiver () : BroadcastReceiver() {
      *  최종적으로 보호자에게 통지 알람을 보내는 메서드
      *  피보호자가 "미응답"한 안부를 보호자 핸드폰의 상단에 메시지가 띄워지도록 함
      */
-    private fun executeNotifyAlarm(context : Context, userDTO : UserDTO, safetyDTO : SafetyDTO) {
+    private fun executeNotifyAlarm(context : Context, userDTO : UserDTO, safetyDTO : SafetyDTO, curTime : Calendar) {
         val user: Person = Person.Builder()
             .setName(userDTO.name)
             .setIcon(IconCompat.createWithResource(context, R.drawable.relief_post_office))
@@ -367,7 +356,6 @@ class GuardianReceiver () : BroadcastReceiver() {
         )
         val messageStyle = NotificationCompat.MessagingStyle(user)
             .addMessage(message)
-
         val notificationManager = context.getSystemService(
             Context.NOTIFICATION_SERVICE) as NotificationManager
         val builder = NotificationCompat.Builder(context, "default")
@@ -381,12 +369,13 @@ class GuardianReceiver () : BroadcastReceiver() {
             channel.description = description
             notificationManager.createNotificationChannel(channel)
         }
-        builder.setContentTitle("안심 우체국") // 제목
-            .setContentText(body) // 내용
+
+        builder.setContentTitle("안심 우체국")
+            .setContentText(body)
             .setStyle(messageStyle)
-            .setSmallIcon(R.drawable.relief_post_office) // 아이콘
+            .setSmallIcon(R.drawable.relief_post_office)
             .setAutoCancel(true)
 
-        notificationManager.notify(notificationId++ , builder.build()) // 알림 생성
+        notificationManager.notify(notificationId++, builder.build())
     }
 }

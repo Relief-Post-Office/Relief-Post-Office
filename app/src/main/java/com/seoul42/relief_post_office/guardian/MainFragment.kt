@@ -100,14 +100,12 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
 
                 connectList = guardianDTO.connectList
                 setAlarm()
-                setLogout()
                 setGuardianPhoto()
                 setRecyclerView()
                 setRequestButton()
             } else {
                 connectList = mutableMapOf()
                 setAlarm()
-                setLogout()
                 setGuardianPhoto()
                 setRecyclerView()
                 setRequestButton()
@@ -122,16 +120,6 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
 
         start.setClass(context!!, GuardianReceiver::class.java)
         context!!.sendBroadcast(start, GuardianReceiver.PERMISSION_REPEAT)
-    }
-
-    private fun setLogout() {
-        binding.guardianLogout.buttonColor = resources.getColor(R.color.pink)
-        binding.guardianLogout.cornerRadius = 30
-        binding.guardianLogout.setOnClickListener {
-            auth.signOut()
-            ActivityCompat.finishAffinity(requireActivity())
-            startActivity(Intent(context, CheckLoginService::class.java))
-        }
     }
 
     private fun setGuardianPhoto() {

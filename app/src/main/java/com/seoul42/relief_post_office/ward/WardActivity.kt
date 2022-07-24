@@ -125,7 +125,6 @@ class WardActivity : AppCompatActivity() {
 
     private fun setUp() {
         setAlarm()
-        setLogout()
         setWardPhoto()
         setRecyclerView()
         setAddButton()
@@ -139,16 +138,6 @@ class WardActivity : AppCompatActivity() {
 
         start.setClass(this, WardReceiver::class.java)
         sendBroadcast(start, WardReceiver.PERMISSION_REPEAT)
-    }
-
-    private fun setLogout() {
-        binding.wardLogout.buttonColor = resources.getColor(R.color.pink)
-        binding.wardLogout.cornerRadius = 30
-        binding.wardLogout.setOnClickListener {
-            auth.signOut()
-            ActivityCompat.finishAffinity(this)
-            startActivity(Intent(this, CheckLoginService::class.java))
-        }
     }
 
     private fun setWardPhoto() {

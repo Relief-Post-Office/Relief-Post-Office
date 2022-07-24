@@ -20,9 +20,6 @@ class NetworkReceiver : BroadcastReceiver() {
 
     private val userDB = Firebase.database.reference.child("user")
 
-    /* WakeLock */
-    private var screenWakeLock : PowerManager.WakeLock? = null
-
     companion object {
         const val REPEAT_START = "com.rightline.backgroundrepeatapp.REPEAT_START"
     }
@@ -33,18 +30,9 @@ class NetworkReceiver : BroadcastReceiver() {
      *  - 연결된 경우 : 로그인 된 유저 중 보호자, 피보호자에 따라 알람 요청
      */
     override fun onReceive(context : Context, intent : Intent) {
-        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
-
-        screenWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK
-                or PowerManager.ACQUIRE_CAUSES_WAKEUP, "WakeLock")
-        screenWakeLock?.acquire()
-
-        Log.d("확인", "Network")
         if (!Network.isNetworkAvailable(context)) {
-            Log.d("확인", "Network is not available...")
             setNetworkAlarm(context)
         } else {
-            Log.d("확인", "Network is available!")
             if (Firebase.auth.currentUser != null){
                 val uid = Firebase.auth.uid.toString()
                 userDB.child(uid).get().addOnSuccessListener {
@@ -53,7 +41,6 @@ class NetworkReceiver : BroadcastReceiver() {
                         setAlarm(context, userDTO.guardian)
                     }
                 }.addOnFailureListener {
-                    Log.d("확인", "네트워크 연결 실패")
                     setNetworkAlarm(context)
                 }
             }
@@ -75,7 +62,7 @@ class NetworkReceiver : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.MINUTE, 15) /* Here! */
+        interval.add(Calendar.MINUTE, 15)
         alarmManager.cancel(sender)
 
         if (Build.VERSION.SDK_INT >= 23) {
@@ -89,8 +76,6 @@ class NetworkReceiver : BroadcastReceiver() {
         } else {
             alarmManager[AlarmManager.RTC_WAKEUP, interval.timeInMillis] = sender
         }
-
-        screenWakeLock?.release()
     }
 
     /*
@@ -127,7 +112,5 @@ class NetworkReceiver : BroadcastReceiver() {
         } else {
             alarmManager[AlarmManager.RTC_WAKEUP, interval.timeInMillis] = sender
         }
-
-        screenWakeLock?.release()
     }
 }
