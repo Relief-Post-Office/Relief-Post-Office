@@ -116,7 +116,6 @@ class GuardianReceiver () : BroadcastReceiver() {
 
         interval.timeInMillis = System.currentTimeMillis()
         interval.add(Calendar.MINUTE, 15)
-        alarmManager.cancel(sender)
 
         if (Build.VERSION.SDK_INT >= 23) {
             alarmManager.setExactAndAllowWhileIdle(
