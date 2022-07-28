@@ -42,8 +42,8 @@ https://github.com/Relief-Post-Office/Relief-Post-Office/blob/main/app-release.a
 
 ## Credit
 **신동해** : github.com/Jeensh  
-**장승범** : github.com/moungJae  
-**조명재** : github.com/seungbeom1010  
+**장승범** : github.com/seungbeom1010  
+**조명재** : github.com/moungJae  
 **채문희** : github.com/moonheee  
 
 ## 이미지 출처
