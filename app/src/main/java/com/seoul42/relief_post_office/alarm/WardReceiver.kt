@@ -119,7 +119,7 @@ class WardReceiver() : BroadcastReceiver() {
 
     /*
      *  네트워크 연결이 안될 경우 실행하는 메서드
-     *  15분 단위로 네트워크 알람 요청을 수행
+     *  15분 단위로 네트워크 알람 요청을 수행함
      */
     private fun setNetworkAlarm(context : Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
