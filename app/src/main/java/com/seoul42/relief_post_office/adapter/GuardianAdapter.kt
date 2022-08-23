@@ -95,7 +95,7 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
         dialog.findViewById<RecyclerView>(R.id.result_dialog_recycler).layoutManager = LinearLayoutManager(context)
 
         wardDB.child(user.first).child("resultIdList").get().addOnSuccessListener { resultListSnapshot ->
-            val resultIdList = resultListSnapshot.getValue<MutableMap<String, String>>() as MutableMap<String, String>
+            val resultIdList = resultListSnapshot.getValue<MutableMap<String, String>>() ?: mutableMapOf()
             setAllGuardianResult(adapter, resultList, resultIdList)
         }
 

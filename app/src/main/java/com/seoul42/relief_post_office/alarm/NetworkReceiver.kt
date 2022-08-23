@@ -32,17 +32,15 @@ class NetworkReceiver : BroadcastReceiver() {
     override fun onReceive(context : Context, intent : Intent) {
         if (!Network.isNetworkAvailable(context)) {
             setNetworkAlarm(context)
-        } else {
-            if (Firebase.auth.currentUser != null){
-                val uid = Firebase.auth.uid.toString()
-                userDB.child(uid).get().addOnSuccessListener {
-                    if (it.getValue(UserDTO::class.java) != null) {
-                        val userDTO = it.getValue(UserDTO::class.java) as UserDTO
-                        setAlarm(context, userDTO.guardian)
-                    }
-                }.addOnFailureListener {
-                    setNetworkAlarm(context)
-                }
+        } else if (Firebase.auth.currentUser != null){
+            val uid = Firebase.auth.uid.toString()
+
+            userDB.child(uid).get().addOnSuccessListener {
+                val userDTO = it.getValue(UserDTO::class.java) ?: throw IllegalArgumentException("user required")
+
+                setAlarm(context, userDTO.guardian)
+            }.addOnFailureListener {
+                setNetworkAlarm(context)
             }
         }
     }

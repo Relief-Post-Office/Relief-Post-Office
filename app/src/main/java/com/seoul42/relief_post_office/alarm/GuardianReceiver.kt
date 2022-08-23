@@ -84,17 +84,20 @@ class GuardianReceiver () : BroadcastReceiver() {
 
         if (!Network.isNetworkAvailable(context)) {
             setNetworkAlarm(context)
-        } else {
-            if (Firebase.auth.currentUser != null) {
-                uid = Firebase.auth.uid.toString()
-                when (intent.action) {
-                    REPEAT_START -> {
-                        recommend(context)
-                    }
-                    REPEAT_STOP -> {
-                        notifyAlarm(context, intent.getSerializableExtra("recommendList") as ArrayList<GuardianRecommendDTO>)
-                    }
-                }
+        } else if (Firebase.auth.currentUser != null) {
+            uid = Firebase.auth.uid.toString()
+            separateAction(context, intent)
+        }
+    }
+
+    private fun separateAction(context: Context, intent: Intent) {
+        when (intent.action) {
+            REPEAT_START -> {
+                recommend(context)
+            }
+            REPEAT_STOP -> {
+                notifyAlarm(context, intent.getSerializableExtra("recommendList")
+                        as ArrayList<GuardianRecommendDTO>)
             }
         }
     }
@@ -146,45 +149,50 @@ class GuardianReceiver () : BroadcastReceiver() {
         val curDay = date.split(" ")[2]
         val dateDTO = DateDTO(curDate, curTime, getDay(curDay))
 
-        guardianDB.child(uid).get().addOnSuccessListener { snapshot ->
-            if (snapshot.getValue(GuardianDTO::class.java) != null) {
-                val guardianDTO = snapshot.getValue(GuardianDTO::class.java) as GuardianDTO
+        guardianDB.child(uid).get().addOnSuccessListener { guardianSnapshot ->
+            val guardianDTO = guardianSnapshot.getValue(GuardianDTO::class.java) ?: GuardianDTO()
 
-                /* 1. 피보호자 정보 */
-                for (ward in guardianDTO.connectList) {
-                    val wardId = ward.value
-                    findWard(context, dateDTO, wardId)
-                }
-                /* 2. candidateList */
-                Handler().postDelayed({
-                    if (candidateList.isNotEmpty()) {
-                        val timeGap = candidateList.minBy{ it.timeGap }.timeGap
-
-                        for (candidate in candidateList) {
-                            if (timeGap == candidate.timeGap) {
-                                recommendList.add(candidate)
-                            }
-                        }
-                        /* 3. 통지 알람 세팅 */
-                        setAlarm(context, REPEAT_STOP, recommendList)
-                    }
-                }, 5000)
+            /* 1. 피보호자 정보 */
+            for (ward in guardianDTO.connectList) {
+                val wardId = ward.value
+                findWard(context, dateDTO, wardId)
             }
+
+            /* 2. candidateList */
+            Handler().postDelayed({
+                if (candidateList.isNotEmpty()) {
+                    val timeGap = candidateList.minBy{ it.timeGap }.timeGap
+                    setRecommendList(context, timeGap)
+                }
+            }, 5000)
         }.addOnFailureListener {
             if (!isFail) setNetworkAlarm(context)
         }
     }
 
-    /* 피보호자의 안부 리스트에 존재하는 안부를 추가하도록 돕는 메서드 */
-    private fun findWard(context : Context, dateDTO : DateDTO, wardId : String) {
-        wardDB.child(wardId).get().addOnSuccessListener {
-            if (it.getValue(WardDTO::class.java) != null) {
-                val wardDTO = it.getValue(WardDTO::class.java) as WardDTO
+    private fun setRecommendList(context : Context, minTimeGap : Int) {
+        for (candidate in candidateList) {
+            if (minTimeGap == candidate.timeGap) {
+                recommendList.add(candidate)
+            }
+        }
+        /* 3. 통지 알람 세팅 */
+        setAlarm(context, REPEAT_STOP, recommendList)
+    }
 
-                for (safety in wardDTO.safetyIdList) {
-                    val safetyId = safety.key
-                    addSafetyToRecommend(context, dateDTO, wardId, safetyId)
-                }
+    /* 피보호자의 안부 리스트에 존재하는 안부를 추가하도록 돕는 메서드 */
+    private fun findWard(
+        context : Context,
+        dateDTO : DateDTO,
+        wardId : String)
+    {
+        wardDB.child(wardId).get().addOnSuccessListener { wardSnapshot ->
+            val wardDTO = wardSnapshot.getValue(WardDTO::class.java) ?: WardDTO()
+
+            for (safety in wardDTO.safetyIdList) {
+                val safetyId = safety.key
+
+                setSafetyToCandidateList(context, dateDTO, wardId, safetyId)
             }
         }.addOnFailureListener {
             if (!isFail) setNetworkAlarm(context)
@@ -192,31 +200,43 @@ class GuardianReceiver () : BroadcastReceiver() {
     }
 
     /*  안부를 추가하는 메서드  */
-    private fun addSafetyToRecommend(context : Context, dateDTO : DateDTO, wardId : String, safetyId : String) {
+    private fun setSafetyToCandidateList(
+        context : Context,
+        dateDTO : DateDTO,
+        wardId : String,
+        safetyId : String)
+    {
+        safetyDB.child(safetyId).get().addOnSuccessListener { safetySnapshot ->
+            val safetyDTO = safetySnapshot.getValue(SafetyDTO::class.java) ?: SafetyDTO()
+
+            searchDayOfWeekAndSetCandidateList(wardId, safetyId, dateDTO, safetyDTO)
+        }.addOnFailureListener {
+            if (!isFail) setNetworkAlarm(context)
+        }
+    }
+
+    private fun searchDayOfWeekAndSetCandidateList(
+        wardId : String,
+        safetyId : String,
+        dateDTO :DateDTO,
+        safetyDTO : SafetyDTO)
+    {
         val curTime = dateDTO.curTime
         val curDay = dateDTO.curDay
 
-        safetyDB.child(safetyId).get().addOnSuccessListener {
-            if (it.getValue(SafetyDTO::class.java) != null) {
-                val safetyDTO = it.getValue(SafetyDTO::class.java) as SafetyDTO
-
-                for (day in safetyDTO.dayOfWeek) {
-                    if (!day.value) {
-                        continue
-                    }
-                    val safetyDay = getDay(day.key)
-                    val timeGap = if (curDay == safetyDay) {
-                        getTimeGap(curTime, safetyDTO.time!!, 0, true)
-                    } else if (safetyDay - curDay < 0) {
-                        getTimeGap(curTime, safetyDTO.time!!, (safetyDay + 7) - curDay, true)
-                    } else {
-                        getTimeGap(curTime, safetyDTO.time!!, safetyDay - curDay, true)
-                    }
-                    candidateList.add(GuardianRecommendDTO(timeGap, wardId, safetyId))
-                }
+        for (day in safetyDTO.dayOfWeek) {
+            if (!day.value) {
+                continue
             }
-        }.addOnFailureListener {
-            if (!isFail) setNetworkAlarm(context)
+            val safetyDay = getDay(day.key)
+            val timeGap = if (curDay == safetyDay) {
+                getTimeGap(curTime, safetyDTO.time!!, 0, true)
+            } else if (safetyDay - curDay < 0) {
+                getTimeGap(curTime, safetyDTO.time!!, (safetyDay + 7) - curDay, true)
+            } else {
+                getTimeGap(curTime, safetyDTO.time!!, safetyDay - curDay, true)
+            }
+            candidateList.add(GuardianRecommendDTO(timeGap, wardId, safetyId))
         }
     }
 
@@ -224,7 +244,11 @@ class GuardianReceiver () : BroadcastReceiver() {
      *  통지 알람을 요청하는 작업을 수행하는 메서드
      *  추천 리스트를 intent 에 담아서 보내도록 함
      */
-    private fun setAlarm(context: Context, alarmFlag : String, recommendList : ArrayList<GuardianRecommendDTO>?) {
+    private fun setAlarm(
+        context: Context,
+        alarmFlag : String,
+        recommendList : ArrayList<GuardianRecommendDTO>?)
+    {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val schedule = Intent(alarmFlag)
 
@@ -269,31 +293,33 @@ class GuardianReceiver () : BroadcastReceiver() {
      *  위 2 조건을 만족할 경우 피보호자의 userDTO, wardDTO 를 가지고 통지할지를 결정
      */
     private fun notifyAlarm(context : Context, recommendList : ArrayList<GuardianRecommendDTO>) {
-        val curTime = Calendar.getInstance()
-
         for (recommendDTO in recommendList) {
-            userDB.child(recommendDTO.wardId).get().addOnSuccessListener { userSnapshot ->
-                /* 1. 존재하는 유저인지 확인 */
-                if (userSnapshot.getValue(UserDTO::class.java) != null) {
-                    val userDTO = userSnapshot.getValue(UserDTO::class.java) as UserDTO
-                    wardDB.child(recommendDTO.wardId).get().addOnSuccessListener { wardSnapshot ->
-                        /* 2. 피보호자인지 확인 */
-                        if (wardSnapshot.getValue(WardDTO::class.java) != null) {
-                            val wardDTO = wardSnapshot.getValue(WardDTO::class.java) as WardDTO
-                            compareSafetyAndResult(context, userDTO, wardDTO, recommendDTO, curTime)
-                        }
-                    }.addOnFailureListener {
-                        if (!isFail) setNetworkAlarm(context)
-                    }
-                }
-            }.addOnFailureListener {
-                if (!isFail) setNetworkAlarm(context)
-            }
+            checkWardAndNotifyAlarm(context, recommendDTO)
         }
-
         Handler().postDelayed({
             setAlarm(context, REPEAT_START, null)
         }, 5000)
+    }
+
+    private fun checkWardAndNotifyAlarm(context : Context, recommendDTO : GuardianRecommendDTO) {
+        val curTime = Calendar.getInstance()
+
+        userDB.child(recommendDTO.wardId).get().addOnSuccessListener { userSnapshot ->
+            /* 1. 존재하는 유저인지 확인 */
+            val userDTO = userSnapshot.getValue(UserDTO::class.java)
+                ?: throw IllegalArgumentException("user required")
+
+            wardDB.child(recommendDTO.wardId).get().addOnSuccessListener { wardSnapshot ->
+                /* 2. 피보호자인지 확인 */
+                val wardDTO = wardSnapshot.getValue(WardDTO::class.java) ?: WardDTO()
+
+                notifyAlarmWithSafetyAndResult(context, userDTO, wardDTO, recommendDTO, curTime)
+            }.addOnFailureListener {
+                if (!isFail) setNetworkAlarm(context)
+            }
+        }.addOnFailureListener {
+            if (!isFail) setNetworkAlarm(context)
+        }
     }
 
     /*
@@ -305,32 +331,26 @@ class GuardianReceiver () : BroadcastReceiver() {
      *  3. 결과에 대응하는 안부 id 가 선별된 안부 id 와 동일한지
      *  4. 결과에 대응하는 안부가 존재하는지 => (삭제 여부 확인)
      */
-    private fun compareSafetyAndResult(context : Context, userDTO : UserDTO, wardDTO : WardDTO,
-                                       recommendDTO : GuardianRecommendDTO, curTime : Calendar) {
+    private fun notifyAlarmWithSafetyAndResult(
+        context : Context,
+        userDTO : UserDTO,
+        wardDTO : WardDTO,
+        recommendDTO : GuardianRecommendDTO,
+        curTime : Calendar)
+    {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
 
         for (result in wardDTO.resultIdList) {
             val resultId = result.value
 
             resultDB.child(resultId).get().addOnSuccessListener { resultSnapshot ->
-                if (resultSnapshot.getValue(ResultDTO::class.java) != null) {
-                    val resultDTO = resultSnapshot.getValue(ResultDTO::class.java) as ResultDTO
-                    val safetyTime = dateFormat.parse(resultDTO.date + " " + resultDTO.safetyTime)
-                    val gapTime = curTime.time.time - safetyTime!!.time
+                val resultDTO = resultSnapshot.getValue(ResultDTO::class.java)
+                    ?: throw IllegalArgumentException("result required")
+                val safetyTime = dateFormat.parse(resultDTO.date + " " + resultDTO.safetyTime)
+                val gapTime = curTime.time.time - safetyTime!!.time
 
-                    if (((gapTime >= 1200000) && (gapTime <= 2400000))
-                        && (resultDTO.responseTime == "미응답")
-                        && (resultDTO.safetyId == recommendDTO.safetyId)) {
-                        safetyDB.child(resultDTO.safetyId).get().addOnSuccessListener { safetySnapshot ->
-                            if (safetySnapshot.getValue(SafetyDTO::class.java) != null) {
-                                val safetyDTO = safetySnapshot.getValue(SafetyDTO::class.java) as SafetyDTO
-
-                                executeNotifyAlarm(context, userDTO, safetyDTO, curTime)
-                            }
-                        }.addOnFailureListener {
-                            if (!isFail) setNetworkAlarm(context)
-                        }
-                    }
+                if (isEligibleNonResponseSafety(gapTime, resultDTO, recommendDTO)) {
+                    setNotifyAlarm(context, resultDTO, userDTO)
                 }
             }.addOnFailureListener {
                 if (!isFail) setNetworkAlarm(context)
@@ -338,11 +358,40 @@ class GuardianReceiver () : BroadcastReceiver() {
         }
     }
 
+    private fun isEligibleNonResponseSafety(
+        gapTime : Long,
+        resultDTO : ResultDTO,
+        recommendDTO : GuardianRecommendDTO
+    ) : Boolean {
+        return (gapTime >= 1200000) && (gapTime <= 2400000)
+                && (resultDTO.responseTime == "미응답")
+                && (resultDTO.safetyId == recommendDTO.safetyId)
+    }
+
+    private fun setNotifyAlarm(
+        context : Context,
+        resultDTO : ResultDTO,
+        userDTO : UserDTO)
+    {
+        safetyDB.child(resultDTO.safetyId).get().addOnSuccessListener { safetySnapshot ->
+            val safetyDTO = safetySnapshot.getValue(SafetyDTO::class.java)
+                ?: throw IllegalArgumentException("safety required")
+
+            executeNotifyAlarm(context, userDTO, safetyDTO)
+        }.addOnFailureListener {
+            if (!isFail) setNetworkAlarm(context)
+        }
+    }
+
     /*
      *  최종적으로 보호자에게 통지 알람을 보내는 메서드
      *  피보호자가 "미응답"한 안부를 보호자 핸드폰의 상단에 메시지가 띄워지도록 함
      */
-    private fun executeNotifyAlarm(context : Context, userDTO : UserDTO, safetyDTO : SafetyDTO, curTime : Calendar) {
+    private fun executeNotifyAlarm(
+        context : Context,
+        userDTO : UserDTO,
+        safetyDTO : SafetyDTO)
+    {
         val user: Person = Person.Builder()
             .setName(userDTO.name)
             .setIcon(IconCompat.createWithResource(context, R.drawable.relief_post_office))
