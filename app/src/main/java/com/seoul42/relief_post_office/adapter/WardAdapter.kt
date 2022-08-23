@@ -32,6 +32,7 @@ class WardAdapter(private val context: Context, private val dataList: ArrayList<
                 .load(user.second.photoUri)
                 .circleCrop()
                 .into(binding.itemUserImg)
+
             binding.itemUserName.text = userName
             binding.itemUserAge.text = userAge.toString()
             binding.itemUserCall.setOnClickListener {

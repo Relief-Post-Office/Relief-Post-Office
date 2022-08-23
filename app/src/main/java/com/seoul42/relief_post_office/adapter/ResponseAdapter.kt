@@ -30,6 +30,7 @@ class ResponseAdapter(private val context: Context, private val dataList: ArrayL
                 .load(user.second.photoUri)
                 .circleCrop()
                 .into(binding.itemGuardianImg)
+
             binding.itemGuardianName.text = userName
             binding.itemGuardianAge.text = userAge.toString()
             binding.itemGuardianCheck.setOnCheckedChangeListener { _, isChecked ->
