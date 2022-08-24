@@ -1,5 +1,6 @@
 package com.seoul42.relief_post_office.adapter
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -30,8 +31,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class GuardianAdapter(private val context: Context, private val dataList: ArrayList<Pair<String, UserDTO>>) :
-    RecyclerView.Adapter<GuardianAdapter.ItemViewHolder>() {
+class GuardianAdapter(
+    private val context: Context,
+    private val dataList: ArrayList<Pair<String, UserDTO>>
+    ) : RecyclerView.Adapter<GuardianAdapter.ItemViewHolder>() {
 
     private val wardDB = Firebase.database.reference.child("ward")
     private val resultDB = Firebase.database.reference.child("result")
@@ -71,7 +74,6 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
         val dialog = android.app.AlertDialog.Builder(context).create()
         val eDialog : LayoutInflater = LayoutInflater.from(context)
         val mView : View = eDialog.inflate(R.layout.ward_profile_dialog,null)
-        val userName = user.second.name
 
         // 리사이클 뷰 설정
         val resultList: MutableList<Pair<String, ResultDTO>> = mutableListOf()
@@ -81,6 +83,23 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.create()
+
+        setWard(dialog, adapter, resultList, user)
+        setProfileButton(dialog, user)
+        setEditSafety(dialog, user)
+        setResult(dialog, user)
+
+        // 피보호자 다이얼로그 띄우기
+        dialog.show()
+    }
+
+    private fun setWard(
+        dialog : AlertDialog,
+        adapter : ResultDialogAdapter,
+        resultList : MutableList<Pair<String, ResultDTO>>,
+        user : Pair<String, UserDTO>
+    ) {
+        val userName = user.second.name
 
         // 피보호자 이름 세팅
         dialog.findViewById<TextView>(R.id.guardian_dialog_name).setText(userName)
@@ -98,10 +117,12 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
             val resultIdList = resultListSnapshot.getValue<MutableMap<String, String>>() ?: mutableMapOf()
             setAllGuardianResult(adapter, resultList, resultIdList)
         }
+    }
 
-        // 피보호자 다이얼로그 띄우기
-        dialog.show()
-
+    private fun setProfileButton(
+        dialog : AlertDialog,
+        user : Pair<String, UserDTO>
+    ) {
         // 프로필 보기 버튼 이벤트 처리
         dialog.findViewById<Button>(R.id.guardian_dialog_profile_button).setOnClickListener {
             val intent = Intent(context, ProfileActivity::class.java)
@@ -109,7 +130,12 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
             intent.putExtra("userDTO", user.second)
             startActivity(context, intent, null)
         }
+    }
 
+    private fun setEditSafety(
+        dialog : AlertDialog,
+        user : Pair<String, UserDTO>
+    ) {
         // 안부 설정 버튼 이벤트 처리
         dialog.findViewById<Button>(R.id.guardian_dialog_safety_setting_button).setOnClickListener { setButton ->
             // 여러번 클릭 방지
@@ -122,7 +148,12 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
             startActivity(context, intent, null)
             setButton.isClickable = true
         }
+    }
 
+    private fun setResult(
+        dialog : AlertDialog,
+        user : Pair<String, UserDTO>
+    ) {
         // 결과 보기 버튼 이벤트 처리
         dialog.findViewById<Button>(R.id.guardian_dialog_result_button).setOnClickListener { resultButton ->
             // 여러번 클릭 방지
@@ -138,8 +169,8 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
     private fun setAllGuardianResult(
         adapter : ResultDialogAdapter,
         resultList : MutableList<Pair<String, ResultDTO>>,
-        resultIdList : MutableMap<String, String>)
-    {
+        resultIdList : MutableMap<String, String>
+    ) {
         for ((dummy, resultId) in resultIdList) {
             resultDB.child(resultId).get().addOnSuccessListener { resultSnapshot ->
                 val resultKey = resultSnapshot.key ?: throw IllegalArgumentException("resultKey required")
@@ -153,8 +184,8 @@ class GuardianAdapter(private val context: Context, private val dataList: ArrayL
         adapter : ResultDialogAdapter,
         resultList : MutableList<Pair<String, ResultDTO>>,
         resultKey : String,
-        result : ResultDTO)
-    {
+        result : ResultDTO
+    ) {
         // 리사이클 뷰 리스트 설정
         val sdf = SimpleDateFormat("yyyy-MM-dd")
         val today = sdf.format(System.currentTimeMillis())

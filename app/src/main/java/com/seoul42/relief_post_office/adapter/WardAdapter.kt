@@ -17,8 +17,11 @@ import com.seoul42.relief_post_office.databinding.ItemUserBinding
 import com.seoul42.relief_post_office.model.UserDTO
 import java.text.SimpleDateFormat
 
-class WardAdapter(private val context: Context, private val dataList: ArrayList<Pair<String, UserDTO>>) :
-    RecyclerView.Adapter<WardAdapter.ItemViewHolder>() {
+class WardAdapter(
+    private val context: Context,
+    private val dataList: ArrayList<Pair<String, UserDTO>>
+    ) : RecyclerView.Adapter<WardAdapter.ItemViewHolder>() {
+
     inner class ItemViewHolder(private val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(user : Pair<String, UserDTO>, context : Context) {
             val curYear = SimpleDateFormat("yyyy-MM-dd hh:mm")

@@ -26,8 +26,9 @@ import com.seoul42.relief_post_office.util.Constants.Companion.REGISTER_SUCCESS
 class RequestDialog(
     context : AppCompatActivity,
     firebaseViewModel: FirebaseViewModel,
-    private val connectList : MutableMap<String, String>)
-{
+    private val connectList : MutableMap<String, String>
+    ) {
+
     private val myUserId: String by lazy {
         Firebase.auth.uid.toString()
     }
@@ -70,8 +71,8 @@ class RequestDialog(
     private fun connectUser(
         tel : String,
         window : Window,
-        progressBar : ProgressBar)
-    {
+        progressBar : ProgressBar
+    ) {
         var connectFlag = false
 
         for (ward in connectList) {
@@ -96,8 +97,8 @@ class RequestDialog(
     private fun requestUser(
         tel : String,
         window : Window,
-        progressBar : ProgressBar)
-    {
+        progressBar : ProgressBar
+    ) {
         var isExist : Boolean = false
 
         userDB.get().addOnSuccessListener { userSnapshot ->
@@ -126,8 +127,8 @@ class RequestDialog(
     private fun checkWard(
         tel :String,
         userId : String,
-        userValue : UserDTO) : Boolean
-    {
+        userValue : UserDTO
+    ) : Boolean {
         if (tel == userValue.tel && !userValue.guardian) {
             processRequest(userId) /* 요청 작업을 수행 */
             return true

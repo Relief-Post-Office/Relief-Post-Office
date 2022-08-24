@@ -9,6 +9,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.widget.addTextChangedListener
+import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
@@ -33,11 +34,15 @@ class PhoneActivity : AppCompatActivity() {
         PhoneBinding.inflate(layoutInflater)
     }
 
+    private val userDB = Firebase.database.reference.child("user")
+
     private lateinit var phoneAuthCredential: PhoneAuthCredential
     private lateinit var verificationId : String
     private lateinit var phoneNumber: String
     private lateinit var callbacks : PhoneAuthProvider.OnVerificationStateChangedCallbacks
 
+    private var minute = 2
+    private var second = 0
     private var requestFlag: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +62,10 @@ class PhoneActivity : AppCompatActivity() {
                 binding.phoneRequestButton.loadingFailed()
                 setPhoneEnable()
             }
-            override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+            override fun onCodeSent(
+                verificationId: String,
+                token: PhoneAuthProvider.ForceResendingToken
+            ) {
                 Toast.makeText(this@PhoneActivity, "인증 요청이 완료되었습니다.", Toast.LENGTH_SHORT).show()
                 this@PhoneActivity.verificationId = verificationId
                 binding.phoneRequestButton.loadingSuccessful()
@@ -74,16 +82,20 @@ class PhoneActivity : AppCompatActivity() {
 
             binding.phoneRequestButton.startLoading()
             if (phoneNum.length == 11) {
-                if (!requestFlag) {
-                    requestPhone()
-                } else {
-                    binding.phoneRequestButton.loadingFailed()
-                    Toast.makeText(this, "이미 인증요청을 하셨습니다.", Toast.LENGTH_SHORT).show()
-                }
+                checkRequest()
             } else {
                 binding.phoneRequestButton.loadingFailed()
                 Toast.makeText(this, "휴대전화번호를 정확히 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun checkRequest() {
+        if (!requestFlag) {
+            requestPhone()
+        } else {
+            binding.phoneRequestButton.loadingFailed()
+            Toast.makeText(this, "이미 인증요청을 하셨습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -93,18 +105,21 @@ class PhoneActivity : AppCompatActivity() {
         binding.phoneEditVerification.addTextChangedListener {
             myVerification = binding.phoneEditVerification.text.toString()
             if (myVerification.length == 6) {
-                setVerificationDisable()
-                binding.phoneProgressBar.visibility = View.VISIBLE
-                phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, myVerification)
-                auth.signInWithCredential(phoneAuthCredential)
-                    .addOnCompleteListener(this) { task ->
-                        if (task.isSuccessful) {
-                            successVerification()
-                        } else {
-                            failVerification()
-                            binding.phoneProgressBar.visibility = View.INVISIBLE
-                        }
-                    }
+                processVerification(myVerification)
+            }
+        }
+    }
+
+    private fun processVerification(myVerification : String) {
+        setVerificationDisable()
+        binding.phoneProgressBar.visibility = View.VISIBLE
+        phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, myVerification)
+        auth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                successVerification()
+            } else {
+                failVerification()
+                binding.phoneProgressBar.visibility = View.INVISIBLE
             }
         }
     }
@@ -112,13 +127,14 @@ class PhoneActivity : AppCompatActivity() {
     /* Start verification assistant */
     private fun successVerification() {
         val userId = auth.uid.toString()
-        val userDB = Firebase.database.reference.child("user").child(userId)
-        userDB.get().addOnSuccessListener {
-            if (it.getValue(UserDTO::class.java) != null) {
+
+        userDB.child(userId).get().addOnSuccessListener { userSnapshot ->
+            if (userSnapshot.getValue(UserDTO::class.java) != null) {
                 setInfo()
             }
             else {
                 val intent = Intent(this, JoinActivity::class.java)
+
                 intent.putExtra("tel", phoneNumber)
                 startActivity(intent)
                 binding.phoneProgressBar.visibility = View.INVISIBLE
@@ -133,25 +149,26 @@ class PhoneActivity : AppCompatActivity() {
     }
 
     private fun setInfo() {
-        val uid = auth.uid.toString()
-        val userDB = Firebase.database.reference.child("user").child(uid)
-        var userToken : String
-
-        FirebaseMessaging.getInstance().token /* 토큰 획득 및 업데이트 */
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    userToken = task.result.toString()
-                    /* 로그인한 유저가 보호자인지 피보호자인지 확인 */
-                    userDB.get().addOnSuccessListener {
-                        if (it.getValue(UserDTO::class.java) != null) {
-                            val userDTO = it.getValue(UserDTO::class.java) as UserDTO
-                            userDTO.token = userToken
-                            userDB.setValue(userDTO)
-                            moveActivity(userDTO)
-                        }
-                    }
-                }
+        /* 토큰 획득 및 업데이트 */
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                updateTokenAndMoveActivity(task)
             }
+        }
+    }
+
+    private fun updateTokenAndMoveActivity(task : Task<String>) {
+        val uid = auth.uid.toString()
+        val userToken = task.result.toString()
+
+        userDB.child(uid).get().addOnSuccessListener { userSnapshot ->
+            val userDTO = userSnapshot.getValue(UserDTO::class.java)
+                ?: throw IllegalArgumentException("user required")
+
+            userDTO.token = userToken
+            userDB.setValue(userDTO)
+            moveActivity(userDTO)
+        }
     }
 
     private fun moveActivity(userDTO : UserDTO) {
@@ -183,7 +200,8 @@ class PhoneActivity : AppCompatActivity() {
             120,
             TimeUnit.SECONDS,
             this,
-            callbacks )
+            callbacks
+        )
     }
     /* End request assistant */
 
@@ -218,23 +236,27 @@ class PhoneActivity : AppCompatActivity() {
         return result
     }
 
+    private fun setThreadTimer() {
+        while (minute != 0 || second != 0) {
+            Handler(Looper.getMainLooper()).post {
+                binding.phoneTimerText.text = makeTime(minute, second)
+            }
+            if (second == 0) {
+                minute--
+                second = 59
+            } else {
+                second--
+            }
+            Thread.sleep(1000)
+        }
+    }
+
     private fun setTimer() {
-        var minute = 2
-        var second = 0
+        minute = 2
+        second = 0
 
         Thread {
-            while (minute != 0 || second != 0) {
-                Handler(Looper.getMainLooper()).post {
-                    binding.phoneTimerText.text = makeTime(minute, second)
-                }
-                if (second == 0) {
-                    minute--
-                    second = 59
-                } else {
-                    second--
-                }
-                Thread.sleep(1000)
-            }
+            setThreadTimer()
         }.start()
     }
     /* End miscellaneous assistant */

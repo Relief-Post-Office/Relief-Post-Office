@@ -36,7 +36,8 @@ class NetworkReceiver : BroadcastReceiver() {
             val uid = Firebase.auth.uid.toString()
 
             userDB.child(uid).get().addOnSuccessListener { userSnapshot ->
-                val userDTO = userSnapshot.getValue(UserDTO::class.java) ?: throw IllegalArgumentException("user required")
+                val userDTO = userSnapshot.getValue(UserDTO::class.java)
+                    ?: throw IllegalArgumentException("user required")
 
                 setAlarm(context, userDTO.guardian)
             }.addOnFailureListener {

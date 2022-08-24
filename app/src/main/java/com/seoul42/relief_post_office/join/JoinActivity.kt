@@ -19,6 +19,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.bumptech.glide.Glide
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -47,6 +48,10 @@ class JoinActivity : AppCompatActivity() {
     private val binding by lazy {
         JoinBinding.inflate(layoutInflater)
     }
+
+    private val userId = auth.uid.toString()
+    private val imagesRef = storage.reference.child("profile/$userId.jpg")
+    private val userDB = Firebase.database.reference.child("user")
 
     private var guardian : Boolean = false
     private var gender : Boolean = false
@@ -84,9 +89,7 @@ class JoinActivity : AppCompatActivity() {
     private fun getToken() {
         FirebaseMessaging.getInstance().token
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    token = task.result.toString()
-                }
+                if (task.isSuccessful) token = task.result.toString()
             }
     }
 
@@ -111,32 +114,12 @@ class JoinActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun setPhoto() {
-        val userId = auth.uid.toString()
-        val imagesRef = storage.reference
-            .child("profile/$userId.jpg")
-        val getFromAlbumResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val getFromAlbumResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val uri = result.data?.data
-
-                setUpload()
-                if (uri != null) {
-                    val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uri))
-                    val orientation = getOrientationOfImage(uri).toFloat()
-                    val newBitmap = getRotatedBitmap(bitmap, orientation)
-
-                    imagesRef.putFile(uri).addOnSuccessListener {
-                        imagesRef.downloadUrl.addOnCompleteListener{ task ->
-                            if (task.isSuccessful) {
-                                photoUri = task.result.toString()
-                                Glide.with(this)
-                                    .load(photoUri)
-                                    .circleCrop()
-                                    .into(binding.joinPhoto)
-                            }
-                            setUploadFinish()
-                        }
-                    }
-                } else setUploadFinish()
+                val uri = result.data?.data ?: return@registerForActivityResult
+                setUpload(uri)
             }
         }
 
@@ -236,35 +219,59 @@ class JoinActivity : AppCompatActivity() {
     }
 
     private val client: WebViewClient = object : WebViewClient() {
-        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+        override fun shouldOverrideUrlLoading(
+            view: WebView?,
+            request: WebResourceRequest?
+        ): Boolean {
             return false
         }
-        override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
+        override fun onReceivedSslError(
+            view: WebView?,
+            handler: SslErrorHandler?,
+            error: SslError?
+        ) {
             handler?.proceed()
         }
     }
 
     private inner class WebViewData {
         @JavascriptInterface
-        fun getAddress(zone: String, road: String, building: String) {
+        fun getAddress(
+            zone: String,
+            road: String,
+            building: String
+        ) {
             CoroutineScope(Dispatchers.Default).launch {
                 withContext(CoroutineScope(Dispatchers.Main).coroutineContext) {
-                    zoneCode = zone
-                    roadAddress = road
-                    buildingName = building
-                    binding.joinAddress.text = if (buildingName.isEmpty()) {
-                        "($zoneCode)\n$roadAddress"
-                    } else {
-                        "($zoneCode)\n$roadAddress\n$buildingName"
-                    }
+                    setAddressInWeb(zone, road, building)
                 }
+            }
+        }
+
+        private fun setAddressInWeb(
+            zone: String,
+            road: String,
+            building: String
+        ) {
+            zoneCode = zone
+            roadAddress = road
+            buildingName = building
+            binding.joinAddress.text = if (buildingName.isEmpty()) {
+                "($zoneCode)\n$roadAddress"
+            } else {
+                "($zoneCode)\n$roadAddress\n$buildingName"
             }
         }
     }
 
     private val chromeClient = object : WebChromeClient() {
 
-        override fun onCreateWindow(view: WebView?, isDialog: Boolean, isUserGesture: Boolean, resultMsg: Message?): Boolean {
+        override fun onCreateWindow(
+            view: WebView?,
+            isDialog: Boolean,
+            isUserGesture: Boolean,
+            resultMsg: Message?
+        ): Boolean {
             val newWebView = WebView(this@JoinActivity)
             val dialog = Dialog(this@JoinActivity)
             val params = dialog.window!!.attributes
@@ -285,6 +292,7 @@ class JoinActivity : AppCompatActivity() {
                     dialog.dismiss()
                 }
             }
+
             (resultMsg!!.obj as WebView.WebViewTransport).webView = newWebView
             resultMsg.sendToTarget()
 
@@ -303,9 +311,11 @@ class JoinActivity : AppCompatActivity() {
             e.printStackTrace()
             return -1
         }
+
         inputStream.close()
 
         val orientation = exif?.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+
         if (orientation != -1) {
             when (orientation) {
                 ExifInterface.ORIENTATION_ROTATE_90 -> return 90
@@ -322,14 +332,36 @@ class JoinActivity : AppCompatActivity() {
         if (degrees == 0F) return bitmap
 
         val m = Matrix()
+
         m.setRotate(degrees, bitmap.width.toFloat() / 2, bitmap.height.toFloat() / 2)
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, m, true)
     }
 
-    private fun setUpload() {
+    private fun setUpload(uri : Uri) {
+        val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uri))
+        val orientation = getOrientationOfImage(uri).toFloat()
+        val newBitmap = getRotatedBitmap(bitmap, orientation)
+
         binding.joinProgressbar.visibility = View.VISIBLE
         binding.joinTransformText.text = "이미지 업로드중..."
         window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+
+        imagesRef.putFile(uri).addOnSuccessListener {
+            imagesRef.downloadUrl.addOnCompleteListener{ task ->
+                updatePhoto(task)
+            }
+        }
+    }
+
+    private fun updatePhoto(task : Task<Uri>) {
+        if (task.isSuccessful) {
+            photoUri = task.result.toString()
+            Glide.with(this)
+                .load(photoUri)
+                .circleCrop()
+                .into(binding.joinPhoto)
+        }
+        setUploadFinish()
     }
 
     private fun setUploadFinish() {

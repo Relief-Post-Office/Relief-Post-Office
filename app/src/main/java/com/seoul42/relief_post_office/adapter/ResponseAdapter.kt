@@ -12,8 +12,10 @@ import com.seoul42.relief_post_office.databinding.ItemGuardianBinding
 import com.seoul42.relief_post_office.model.UserDTO
 import java.text.SimpleDateFormat
 
-class ResponseAdapter(private val context: Context, private val dataList: ArrayList<Pair<String, UserDTO>>) :
-    RecyclerView.Adapter<ResponseAdapter.ItemViewHolder>() {
+class ResponseAdapter(
+    private val context: Context,
+    private val dataList: ArrayList<Pair<String, UserDTO>>
+    ) : RecyclerView.Adapter<ResponseAdapter.ItemViewHolder>() {
 
     private val checkList = ArrayList<String>()
 

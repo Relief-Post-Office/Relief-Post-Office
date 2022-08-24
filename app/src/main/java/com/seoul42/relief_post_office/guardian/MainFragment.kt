@@ -57,10 +57,12 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?) : View
-    {
+        savedInstanceState: Bundle?
+    ) : View {
         binding = FragmentGuardianBinding.inflate(inflater, container, false)
-        activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { profileActivity ->
+        activityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { profileActivity ->
             if (profileActivity.resultCode == AppCompatActivity.RESULT_OK) {
                 userDTO = profileActivity.data?.getSerializableExtra("userDTO") as UserDTO
                 Glide.with(this)
@@ -191,8 +193,8 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
 
     private fun addConnectedWardList(
         connectedWardList : ArrayList<Pair<String, UserDTO>>,
-        connectedUserId : String)
-    {
+        connectedUserId : String
+    ) {
         userDB.child(connectedUserId).get().addOnSuccessListener { userSnapshot ->
             if (userSnapshot.getValue(UserDTO::class.java) != null) {
                 val ward = userSnapshot.getValue(UserDTO::class.java) as UserDTO

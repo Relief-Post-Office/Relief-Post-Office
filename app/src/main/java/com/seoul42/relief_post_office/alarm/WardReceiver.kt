@@ -196,8 +196,8 @@ class WardReceiver() : BroadcastReceiver() {
     private fun setSafety(
         context : Context,
         dateDTO : DateDTO,
-        safetyId : String)
-    {
+        safetyId : String
+    ) {
         safetyDB.child(safetyId).get().addOnSuccessListener { safetySnapshot ->
             val safetyDTO = safetySnapshot.getValue(SafetyDTO::class.java)
                 ?: throw IllegalArgumentException("safety required")
@@ -212,8 +212,8 @@ class WardReceiver() : BroadcastReceiver() {
     private fun addSafetyToRecommendList(
         dateDTO : DateDTO,
         safetyId : String,
-        safetyDTO : SafetyDTO)
-    {
+        safetyDTO : SafetyDTO
+    ) {
         val curTime = dateDTO.curTime
         val curDay = dateDTO.curDay
 
@@ -243,8 +243,8 @@ class WardReceiver() : BroadcastReceiver() {
         context : Context,
         dateDTO : DateDTO,
         resultKey : String,
-        resultId : String)
-    {
+        resultId : String
+    ) {
         val curDate = dateDTO.curDate
         val curTime = dateDTO.curTime
 
@@ -285,8 +285,8 @@ class WardReceiver() : BroadcastReceiver() {
     private fun removeResult(
         resultKey : String,
         resultId : String,
-        resultDTO : ResultDTO?)
-    {
+        resultDTO : ResultDTO?
+    ) {
         /* answers 삭제 */
         for (answer in resultDTO!!.answerIdList) {
             val answerId = answer.value
@@ -311,8 +311,8 @@ class WardReceiver() : BroadcastReceiver() {
     private fun setForceAlarm(
         context: Context,
         recommendDTO: WardRecommendDTO,
-        intent: Intent)
-    {
+        intent: Intent
+    ) {
         val cal = Calendar.getInstance()
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
@@ -351,8 +351,8 @@ class WardReceiver() : BroadcastReceiver() {
         context : Context,
         recommendDTO : WardRecommendDTO,
         safetyDate : String,
-        intent : Intent)
-    {
+        intent : Intent
+    ) {
         val questionList : MutableMap<String, String> = recommendDTO.safetyDTO.questionList
 
         for (question in questionList) {
@@ -398,8 +398,8 @@ class WardReceiver() : BroadcastReceiver() {
         context: Context,
         alarmFlag : String,
         recommendDTO : WardRecommendDTO?,
-        intent : Intent)
-    {
+        intent : Intent
+    ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val schedule = Intent(alarmFlag)
 
@@ -448,8 +448,8 @@ class WardReceiver() : BroadcastReceiver() {
     private fun notifyAlarm(
         context : Context,
         intent : Intent,
-        recommendDTO : WardRecommendDTO)
-    {
+        recommendDTO : WardRecommendDTO
+    ) {
         val curTime = Calendar.getInstance()
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
         val safetyTime = dateFormat.parse(recommendDTO.resultDTO!!.date + " " + recommendDTO.resultDTO!!.safetyTime)
@@ -460,7 +460,10 @@ class WardReceiver() : BroadcastReceiver() {
         setAlarm(context, REPEAT_STOP, recommendDTO, intent)
     }
 
-    private fun executeNotifyAlarm(context : Context, safetyDTO : SafetyDTO) {
+    private fun executeNotifyAlarm(
+        context : Context,
+        safetyDTO : SafetyDTO
+    ) {
         val user: Person = Person.Builder()
             .setName("안심 우체국")
             .setIcon(IconCompat.createWithResource(context, R.drawable.relief_post_office))
@@ -504,13 +507,16 @@ class WardReceiver() : BroadcastReceiver() {
     private fun forceAlarm(
         context : Context,
         intent : Intent,
-        recommendDTO : WardRecommendDTO)
-    {
+        recommendDTO : WardRecommendDTO
+    ) {
         executeForceAlarm(context, recommendDTO)
         setAlarm(context, REPEAT_START, null, intent)
     }
 
-    private fun executeForceAlarm(context : Context, recommendDTO : WardRecommendDTO) {
+    private fun executeForceAlarm(
+        context : Context,
+        recommendDTO : WardRecommendDTO
+    ) {
         val notificationManager = context.getSystemService(
             Context.NOTIFICATION_SERVICE) as NotificationManager
 

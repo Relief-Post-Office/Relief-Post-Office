@@ -184,8 +184,8 @@ class GuardianReceiver () : BroadcastReceiver() {
     private fun findWard(
         context : Context,
         dateDTO : DateDTO,
-        wardId : String)
-    {
+        wardId : String
+    ) {
         wardDB.child(wardId).get().addOnSuccessListener { wardSnapshot ->
             val wardDTO = wardSnapshot.getValue(WardDTO::class.java) ?: WardDTO()
 
@@ -204,8 +204,8 @@ class GuardianReceiver () : BroadcastReceiver() {
         context : Context,
         dateDTO : DateDTO,
         wardId : String,
-        safetyId : String)
-    {
+        safetyId : String
+    ) {
         safetyDB.child(safetyId).get().addOnSuccessListener { safetySnapshot ->
             val safetyDTO = safetySnapshot.getValue(SafetyDTO::class.java) ?: SafetyDTO()
 
@@ -219,8 +219,8 @@ class GuardianReceiver () : BroadcastReceiver() {
         wardId : String,
         safetyId : String,
         dateDTO :DateDTO,
-        safetyDTO : SafetyDTO)
-    {
+        safetyDTO : SafetyDTO
+    ) {
         val curTime = dateDTO.curTime
         val curDay = dateDTO.curDay
 
@@ -247,8 +247,8 @@ class GuardianReceiver () : BroadcastReceiver() {
     private fun setAlarm(
         context: Context,
         alarmFlag : String,
-        recommendList : ArrayList<GuardianRecommendDTO>?)
-    {
+        recommendList : ArrayList<GuardianRecommendDTO>?
+    ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val schedule = Intent(alarmFlag)
 
@@ -292,7 +292,10 @@ class GuardianReceiver () : BroadcastReceiver() {
      *
      *  위 2 조건을 만족할 경우 피보호자의 userDTO, wardDTO 를 가지고 통지할지를 결정
      */
-    private fun notifyAlarm(context : Context, recommendList : ArrayList<GuardianRecommendDTO>) {
+    private fun notifyAlarm(
+        context : Context,
+        recommendList : ArrayList<GuardianRecommendDTO>
+    ) {
         for (recommendDTO in recommendList) {
             checkWardAndNotifyAlarm(context, recommendDTO)
         }
@@ -301,7 +304,10 @@ class GuardianReceiver () : BroadcastReceiver() {
         }, 5000)
     }
 
-    private fun checkWardAndNotifyAlarm(context : Context, recommendDTO : GuardianRecommendDTO) {
+    private fun checkWardAndNotifyAlarm(
+        context : Context,
+        recommendDTO : GuardianRecommendDTO
+    ) {
         val curTime = Calendar.getInstance()
 
         userDB.child(recommendDTO.wardId).get().addOnSuccessListener { userSnapshot ->
@@ -336,8 +342,8 @@ class GuardianReceiver () : BroadcastReceiver() {
         userDTO : UserDTO,
         wardDTO : WardDTO,
         recommendDTO : GuardianRecommendDTO,
-        curTime : Calendar)
-    {
+        curTime : Calendar
+    ) {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
 
         for (result in wardDTO.resultIdList) {
@@ -371,8 +377,8 @@ class GuardianReceiver () : BroadcastReceiver() {
     private fun setNotifyAlarm(
         context : Context,
         resultDTO : ResultDTO,
-        userDTO : UserDTO)
-    {
+        userDTO : UserDTO
+    ) {
         safetyDB.child(resultDTO.safetyId).get().addOnSuccessListener { safetySnapshot ->
             val safetyDTO = safetySnapshot.getValue(SafetyDTO::class.java)
                 ?: throw IllegalArgumentException("safety required")
@@ -390,8 +396,8 @@ class GuardianReceiver () : BroadcastReceiver() {
     private fun executeNotifyAlarm(
         context : Context,
         userDTO : UserDTO,
-        safetyDTO : SafetyDTO)
-    {
+        safetyDTO : SafetyDTO
+    ) {
         val user: Person = Person.Builder()
             .setName(userDTO.name)
             .setIcon(IconCompat.createWithResource(context, R.drawable.relief_post_office))

@@ -99,10 +99,11 @@ class GuardianProfileActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun setPhoto() {
-        val getFromAlbumResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val getFromAlbumResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val uri = result.data?.data ?: return@registerForActivityResult
-
                 setUpload(uri)
             }
         }
@@ -178,14 +179,17 @@ class GuardianProfileActivity : AppCompatActivity() {
     }
 
     private val client: WebViewClient = object : WebViewClient() {
-        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+        override fun shouldOverrideUrlLoading(
+            view: WebView?,
+            request: WebResourceRequest?
+        ): Boolean {
             return false
         }
         override fun onReceivedSslError(
             view: WebView?,
             handler: SslErrorHandler?,
-            error: SslError?)
-        {
+            error: SslError?
+        ) {
             handler?.proceed()
         }
     }
@@ -196,8 +200,8 @@ class GuardianProfileActivity : AppCompatActivity() {
         fun getAddress(
             zone: String,
             road: String,
-            building: String)
-        {
+            building: String
+        ) {
             CoroutineScope(Dispatchers.Default).launch {
                 withContext(CoroutineScope(Dispatchers.Main).coroutineContext) {
                     setAddressInWeb(zone, road, building)
@@ -208,8 +212,8 @@ class GuardianProfileActivity : AppCompatActivity() {
         private fun setAddressInWeb(
             zone: String,
             road: String,
-            building: String)
-        {
+            building: String
+        ) {
             userDTO.zoneCode = zone
             userDTO.roadAddress = road
             userDTO.buildingName = building
@@ -227,8 +231,8 @@ class GuardianProfileActivity : AppCompatActivity() {
             view: WebView?,
             isDialog: Boolean,
             isUserGesture: Boolean,
-            resultMsg: Message?): Boolean
-        {
+            resultMsg: Message?
+        ): Boolean {
             val newWebView = WebView(this@GuardianProfileActivity)
             val dialog = Dialog(this@GuardianProfileActivity)
             val params = dialog.window!!.attributes
