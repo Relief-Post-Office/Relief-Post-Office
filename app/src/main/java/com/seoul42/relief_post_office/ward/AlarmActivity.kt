@@ -28,15 +28,14 @@ class AlarmActivity : AppCompatActivity() {
     private val binding: ActivityAlarmBinding by lazy {
         ActivityAlarmBinding.inflate(layoutInflater)
     }
-    private val database = Firebase.database
+
+    private val resultDB = Firebase.database.reference.child("result")
+    private val answerDB = Firebase.database.reference.child("answer")
     private val answerList: ArrayList<Pair<String, AnswerDTO>> = arrayListOf()
 
-    private lateinit var safetyId : String
     private lateinit var resultId : String
-
     private lateinit var imageView : ImageButton
     private lateinit var animationDrawable: AnimationDrawable
-
     private var mediaPlayer: MediaPlayer? = null
 
     @Override
@@ -61,41 +60,33 @@ class AlarmActivity : AppCompatActivity() {
     }
 
     private fun checkResponse() {
-        val resultDB = Firebase.database.reference.child("result")
-        val recommendDTO = intent.getSerializableExtra("recommendDTO") as WardRecommendDTO
+        val recommendDTO =
+            intent.getSerializableExtra("recommendDTO") as WardRecommendDTO
 
-        resultDB.child(recommendDTO.resultId!!).get().addOnSuccessListener {
-            if (it.getValue(ResultDTO::class.java) != null) {
-                val resultDTO = it.getValue(ResultDTO::class.java) as ResultDTO
+        resultDB.child(recommendDTO.resultId!!).get().addOnSuccessListener { result ->
+            val resultDTO = result.getValue(ResultDTO::class.java)
+                ?: throw IllegalArgumentException("result required")
 
-                if (resultDTO.responseTime != "미응답") {
-                    finish()
-                } else {
-                    imageView = binding.alarmButton
-                    animationDrawable = imageView.background as AnimationDrawable
-
-                    animationDrawable.start()
-
-                    setAlarm(recommendDTO)
-                    setButton()
-                }
-            } else {
+            if (resultDTO.responseTime != "미응답") {
                 finish()
+            } else {
+                imageView = binding.alarmButton
+                resultId = recommendDTO.resultId!!
+                animationDrawable = imageView.background as AnimationDrawable
+                animationDrawable.start()
+                setAlarm(resultDTO)
+                setButton()
             }
         }
     }
 
     /* 알람 설정 */
-    private fun setAlarm(recommendDTO : WardRecommendDTO) {
+    private fun setAlarm(resultDTO : ResultDTO) {
         val date = SimpleDateFormat("MM월 dd일 E요일 HH : mm")
             .format(Date(System.currentTimeMillis()))
         val curDay = date.substring(0, 11)
         val curTime = date.substring(12, 19)
         val finishTime : Long = 300000
-        val safetyDB = Firebase.database.reference.child("safety")
-
-        safetyId = recommendDTO.safetyId
-        resultId = recommendDTO.resultId!!
 
         mediaPlayer = MediaPlayer.create(this, R.raw.alarmbell)
         mediaPlayer!!.start()
@@ -103,19 +94,12 @@ class AlarmActivity : AppCompatActivity() {
 
         binding.alarmDay.text = curDay
         binding.alarmTime.text = curTime
-
-        safetyDB.child(recommendDTO.safetyId).get().addOnSuccessListener {
-            if (it.getValue(SafetyDTO::class.java) != null) {
-                val safetyDTO = it.getValue(SafetyDTO::class.java) as SafetyDTO
-
-                binding.alarmText.text = safetyDTO.name
-            }
-        }
+        binding.alarmText.text = resultDTO.safetyName
 
         /* 5분 뒤에 알람 종료 */
         Handler().postDelayed({
             if (mediaPlayer != null) {
-                close()
+                alarmClose()
             }
             finish()
         }, finishTime)
@@ -123,51 +107,58 @@ class AlarmActivity : AppCompatActivity() {
 
     /* 버튼 text = 피보호자가 진행해야 할 "안부" 이름 */
     private fun setButton() {
-        binding.alarmButton.setOnClickListener{
-            binding.alarmProgressbar.isVisible = true
-            binding.alarmTransformText.text = "답변 준비중..."
-            window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-            setList()
-            close()
+        binding.alarmButton.setOnClickListener {
+            setAnswerStart()
             // voice
             // 안부 시작 안내 보이스
             Handler().postDelayed({
-                val startGuideVoice = MediaPlayer.create(this, R.raw.startingsafety)
-                startGuideVoice.start()
-                startGuideVoice.setOnCompletionListener {
-                    startGuideVoice.release()
-                    val intent = Intent(this, AnswerActivity::class.java)
-
-                    ActivityCompat.finishAffinity(this)
-
-                    intent.putExtra("resultId", resultId)
-                    intent.putExtra("answerList", answerList)
-                    startActivity(intent)
-                }
+                setGuideAndStartSafety()
             }, 500)
         }
     }
 
-    private fun setList() {
-        database.getReference("result")
-            .child(resultId)
-            .child("answerIdList")
-            .get().addOnSuccessListener { snapshot ->
-                val answerIdList = snapshot.getValue<MutableMap<String, String>>()
+    private fun setAnswerStart() {
+        binding.alarmProgressbar.isVisible = true
+        binding.alarmTransformText.text = "답변 준비중..."
+        window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        checkAndSetAnswerList()
+        alarmClose()
+    }
 
-                if (answerIdList != null) {
-                    for ((questionId, answerId) in answerIdList) {
-                        database.getReference("answer")
-                            .child(answerId).get().addOnSuccessListener {
-                                val answer = it.getValue<AnswerDTO>()
-                                if (answer != null) {
-                                    answerList.add(Pair(answerId, answer))
-                                }
-                            }
-                    }
-                }
+    private fun checkAndSetAnswerList() {
+        resultDB.child(resultId).child("answerIdList").get()
+            .addOnSuccessListener { resultSnapshot ->
+                val answerIdList = resultSnapshot.getValue<MutableMap<String, String>>()
+                ?: throw IllegalArgumentException("answerIdList required")
+
+                setAnswerList(answerIdList)
             }
+    }
 
+    private fun setAnswerList(answerIdList : MutableMap<String, String>) {
+        answerIdList.map { questionAndAnswer ->
+            val answerId = questionAndAnswer.value
+            answerDB.child(answerId).get().addOnSuccessListener { answerSnapshot ->
+                val answerDTO = answerSnapshot.getValue<AnswerDTO>()
+                    ?: throw IllegalArgumentException("answer required")
+                answerList.add(Pair(answerId, answerDTO))
+            }
+        }
+    }
+
+    private fun setGuideAndStartSafety() {
+        val startGuideVoice = MediaPlayer.create(this, R.raw.startingsafety)
+
+        startGuideVoice.start()
+        startGuideVoice.setOnCompletionListener {
+            val intent = Intent(this, AnswerActivity::class.java)
+
+            startGuideVoice.release()
+            ActivityCompat.finishAffinity(this)
+            intent.putExtra("resultId", resultId)
+            intent.putExtra("answerList", answerList)
+            startActivity(intent)
+        }
     }
 
     private fun setStatusBarTransparent() {
@@ -184,7 +175,7 @@ class AlarmActivity : AppCompatActivity() {
     }
 
     /* 알람 종료 */
-    private fun close() {
+    private fun alarmClose() {
         if (mediaPlayer!!.isPlaying) {
             mediaPlayer!!.stop()
             mediaPlayer!!.release()

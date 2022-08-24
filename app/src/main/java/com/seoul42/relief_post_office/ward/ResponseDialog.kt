@@ -22,9 +22,14 @@ class ResponseDialog(context : AppCompatActivity) {
     private val responseDialog by lazy {
         Dialog(context)
     }
+
     private lateinit var responseListener: ResponseAddClickedListener
 
-    fun show(responseAdapter : ResponseAdapter, responseLayout: LinearLayoutManager, resources : Resources) {
+    fun show(
+        responseAdapter : ResponseAdapter,
+        responseLayout: LinearLayoutManager,
+        resources : Resources
+    ) {
         binding.responseRecyclerView.adapter = responseAdapter
         binding.responseRecyclerView.layoutManager = responseLayout
         binding.responseRecyclerView.setHasFixedSize(true)

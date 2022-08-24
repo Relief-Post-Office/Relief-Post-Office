@@ -52,6 +52,7 @@ class GuardianProfileActivity : AppCompatActivity() {
     private val userId = auth.uid.toString()
     private val imagesRef = storage.reference.child("profile/$userId.jpg")
     private val userDB = Firebase.database.reference.child("user")
+
     private lateinit var userDTO: UserDTO
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -195,7 +196,6 @@ class GuardianProfileActivity : AppCompatActivity() {
     }
 
     private inner class WebViewData {
-
         @JavascriptInterface
         fun getAddress(
             zone: String,

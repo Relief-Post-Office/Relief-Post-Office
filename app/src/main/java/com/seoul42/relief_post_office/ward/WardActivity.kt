@@ -56,6 +56,9 @@ class WardActivity : AppCompatActivity() {
     private lateinit var responseAdapter : ResponseAdapter
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
+    private val userDB = Firebase.database.reference.child("user")
+    private val wardDB = Firebase.database.reference.child("ward")
+    private val guardianDB = Firebase.database.reference.child("guardian")
     private val connectedGuardianList = ArrayList<Pair<String, UserDTO>>()
     private val listenerList = ArrayList<ListenerDTO>()
     private val firebaseViewModel : FirebaseViewModel by viewModels()
@@ -65,17 +68,17 @@ class WardActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         ignoreBatteryOptimization()
-        activityResultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult())
-            {
-                if (it.resultCode == RESULT_OK) {
-                    userDTO = it.data?.getSerializableExtra("userDTO") as UserDTO
-                    Glide.with(this)
-                        .load(userDTO.photoUri)
-                        .circleCrop()
-                        .into(binding.wardPhoto)
-                }
+        activityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { profileActivity ->
+            if (profileActivity.resultCode == RESULT_OK) {
+                userDTO = profileActivity.data?.getSerializableExtra("userDTO") as UserDTO
+                Glide.with(this)
+                    .load(userDTO.photoUri)
+                    .circleCrop()
+                    .into(binding.wardPhoto)
             }
+        }
         getWard()
     }
 
@@ -105,12 +108,10 @@ class WardActivity : AppCompatActivity() {
     }
 
     private fun getWard() {
-        val wardDB = Firebase.database.reference.child("ward").child(myUserId)
-
         userDTO = intent.getSerializableExtra("userDTO") as UserDTO
-        wardDB.get().addOnSuccessListener {
-            if (it.getValue(WardDTO::class.java) != null) {
-                val wardDTO = it.getValue(WardDTO::class.java) as WardDTO
+        wardDB.child(myUserId).get().addOnSuccessListener { wardSnapshot ->
+            if (wardSnapshot.getValue(WardDTO::class.java) != null) {
+                val wardDTO = wardSnapshot.getValue(WardDTO::class.java) as WardDTO
 
                 connectList = wardDTO.connectList
                 requestList = wardDTO.requestList
@@ -155,15 +156,14 @@ class WardActivity : AppCompatActivity() {
 
     private fun setRecyclerView() {
         val wardLayout = LinearLayoutManager(this)
-        val connectDB = Firebase.database.reference.child("ward").child(myUserId).child("connectList")
 
         wardAdapter = WardAdapter(this, connectedGuardianList)
-
         binding.wardRecyclerView.adapter = wardAdapter
         binding.wardRecyclerView.layoutManager = wardLayout
         binding.wardRecyclerView.setHasFixedSize(true)
 
         /* 연결된 피보호자가 실시간으로 recyclerView 에 적용하도록 리스너 설정 */
+        val connectDB = wardDB.child(myUserId).child("connectList")
         val connectListener = connectDB.addChildEventListener(object : ChildEventListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -177,8 +177,8 @@ class WardActivity : AppCompatActivity() {
                 val connectedUserId = snapshot.key.toString()
 
                 connectList.remove(connectedUserId)
-                connectedGuardianList.removeIf {
-                    it.first == connectedUserId
+                connectedGuardianList.removeIf { connectedGuardian ->
+                    connectedGuardian.first == connectedUserId
                 }
                 wardAdapter.notifyDataSetChanged()
             }
@@ -190,8 +190,6 @@ class WardActivity : AppCompatActivity() {
     }
 
     private fun setAddButton() {
-        val requestDB = Firebase.database.reference.child("ward").child(myUserId).child("requestList")
-
         binding.wardAddGuardian.buttonColor = resources.getColor(R.color.pink)
         binding.wardAddGuardian.cornerRadius = 30
         binding.wardAddGuardian.setOnClickListener {
@@ -203,6 +201,7 @@ class WardActivity : AppCompatActivity() {
         }
 
         /* 요청온 보호자의 수를 실시간으로 반영 */
+        val requestDB = wardDB.child(myUserId).child("requestList")
         val requestListener = requestDB.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val key = snapshot.key.toString()
@@ -241,29 +240,22 @@ class WardActivity : AppCompatActivity() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun userConnection(checkList : ArrayList<String>) {
-        var wardDB : DatabaseReference
-        var guardianDB : DatabaseReference
-        var userDB : DatabaseReference
-
         /* 피보호자의 요청 목록을 제거 */
-        wardDB = Firebase.database.reference.child("ward").child(myUserId).child("requestList")
-        wardDB.removeValue()
+        wardDB.child(myUserId).child("requestList").removeValue()
 
         for (checkId in checkList) {
             /* 피보호자는 선택한 보호자와 연결 */
-            wardDB = Firebase.database.reference.child("ward").child(myUserId).child("connectList")
-            wardDB.child(checkId).setValue(checkId)
+            wardDB.child(myUserId).child("connectList").child(checkId).setValue(checkId)
             addConnectedGuardianList(connectedGuardianList, checkId)
             /* 선택된 보호자는 피보호자와 연결 */
-            guardianDB = Firebase.database.reference.child("guardian").child(checkId).child("connectList")
-            guardianDB.child(myUserId).setValue(myUserId)
+            guardianDB.child(checkId).child("connectList").child(myUserId).setValue(myUserId)
             /* 보호자에게 FCM 보내기 */
-            userDB = Firebase.database.reference.child("user").child(checkId)
-            userDB.get().addOnSuccessListener {
-                val guardian = it.getValue(UserDTO::class.java) as UserDTO
+            userDB.child(checkId).get().addOnSuccessListener { userSnapshot ->
+                val guardian = userSnapshot.getValue(UserDTO::class.java) ?: throw IllegalArgumentException("user required")
                 val notificationData = NotificationDTO.NotificationData("안심 집배원"
                     , userDTO.name, userDTO.name + "님이 요청을 수락했습니다.")
                 val notificationDTO = NotificationDTO(guardian.token, "high", notificationData)
+
                 firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
             }
         }
@@ -278,24 +270,34 @@ class WardActivity : AppCompatActivity() {
         return requestedGuardianList
     }
 
-    private fun addRequestedGuardianList(requestedGuardianList : ArrayList<Pair<String, UserDTO>>, requestedUserId : String) {
-        val userDB = Firebase.database.reference.child("user").child(requestedUserId)
+    private fun addRequestedGuardianList(
+        requestedGuardianList : ArrayList<Pair<String, UserDTO>>,
+        requestedUserId : String
+    ) {
+        userDB.child(requestedUserId).get().addOnSuccessListener { userSnapshot ->
+            val userDTO = userSnapshot.getValue(UserDTO::class.java)
+                ?: throw IllegalArgumentException("user required")
+            val requestedGuardian = Pair(requestedUserId, userDTO)
 
-        userDB.get().addOnSuccessListener {
-            if (!requestedGuardianList.contains(Pair(requestedUserId, it.getValue(UserDTO::class.java) as UserDTO))) {
-                requestedGuardianList.add(Pair(requestedUserId, it.getValue(UserDTO::class.java) as UserDTO))
+            if (!requestedGuardianList.contains(requestedGuardian)) {
+                requestedGuardianList.add(requestedGuardian)
                 /* 실시간으로 요청온 유저들을 추가 반영 */
                 responseAdapter.notifyDataSetChanged()
             }
         }
     }
 
-    private fun addConnectedGuardianList(connectedGuardianList : ArrayList<Pair<String, UserDTO>>, connectedUserId : String) {
-        val userDB = Firebase.database.reference.child("user").child(connectedUserId)
+    private fun addConnectedGuardianList(
+        connectedGuardianList : ArrayList<Pair<String, UserDTO>>,
+        connectedUserId : String
+    ) {
+        userDB.child(connectedUserId).get().addOnSuccessListener { userSnapshot ->
+            val userDTO = userSnapshot.getValue(UserDTO::class.java)
+                ?: throw IllegalArgumentException("user required")
+            val connectedGuardian = Pair(connectedUserId, userDTO)
 
-        userDB.get().addOnSuccessListener {
-            if (!connectedGuardianList.contains(Pair(connectedUserId, it.getValue(UserDTO::class.java) as UserDTO))) {
-                connectedGuardianList.add(Pair(connectedUserId, it.getValue(UserDTO::class.java) as UserDTO))
+            if (!connectedGuardianList.contains(connectedGuardian)) {
+                connectedGuardianList.add(connectedGuardian)
                 /* 실시간으로 선택한 유저들을 추가 반영 */
                 wardAdapter.notifyDataSetChanged()
             }

@@ -9,8 +9,10 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.startActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
@@ -31,8 +33,10 @@ class CheckLoginService : AppCompatActivity() {
     private val binding: SplashBinding by lazy {
         SplashBinding.inflate(layoutInflater)
     }
-    private lateinit var userDTO: UserDTO
 
+    private val userDB = Firebase.database.reference.child("user")
+
+    private lateinit var userDTO: UserDTO
     private lateinit var imageView : ImageView
     private lateinit var animationDrawable: AnimationDrawable
 
@@ -45,7 +49,6 @@ class CheckLoginService : AppCompatActivity() {
 
         imageView = binding.splashImage
         animationDrawable = imageView.background as AnimationDrawable
-
         animationDrawable.start()
 
         if (auth.currentUser == null) {
@@ -64,15 +67,8 @@ class CheckLoginService : AppCompatActivity() {
     }
 
     private fun processLogin() {
-        val userDB = Firebase.database.reference.child("user")
-        userDB.get().addOnSuccessListener {
-            var flag = false
-            for (user in it.children) {
-                if (auth.uid == user.key) {
-                    flag = true
-                }
-            }
-            if (!flag) {
+        userDB.get().addOnSuccessListener { allUserSnapshot ->
+            if (!isValidUser(allUserSnapshot)) {
                 auth.signOut()
                 startActivity(Intent(this, MainActivity::class.java)
                     .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION))
@@ -83,23 +79,30 @@ class CheckLoginService : AppCompatActivity() {
         }
     }
 
-    private fun setInfo() {
-        val userDB = Firebase.database.reference.child("user").child(myUserId)
-        var userToken : String
+    private fun isValidUser(allUserSnapshot : DataSnapshot) : Boolean {
+        return allUserSnapshot.children.any { user ->
+            user.key == auth.uid
+        }
+    }
 
-        FirebaseMessaging.getInstance().token /* 토큰 획득 및 업데이트 */
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    userToken = task.result.toString()
-                    /* 로그인한 유저가 보호자인지 피보호자인지 확인 */
-                    userDB.get().addOnSuccessListener {
-                        userDTO = it.getValue(UserDTO::class.java) as UserDTO
-                        userDTO.token = userToken
-                        userDB.setValue(userDTO)
-                        moveActivity(userDTO)
-                    }
-                }
+    private fun setInfo() {
+        /* 토큰 획득 및 업데이트 */
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val userToken = task.result.toString()
+                checkUserAndMoveActivity(userToken)
             }
+        }
+    }
+
+    private fun checkUserAndMoveActivity(userToken : String) {
+        /* 로그인한 유저가 보호자인지 피보호자인지 확인 */
+        userDB.child(myUserId).get().addOnSuccessListener { user ->
+            userDTO = user.getValue(UserDTO::class.java) as UserDTO
+            userDTO.token = userToken
+            userDB.setValue(userDTO)
+            moveActivity(userDTO)
+        }
     }
 
     private fun moveActivity(userDTO : UserDTO) {

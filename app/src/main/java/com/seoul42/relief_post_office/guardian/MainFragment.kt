@@ -137,7 +137,6 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
 
     private fun setRecyclerView() {
         val wardLayout = LinearLayoutManager(context)
-        val connectDB = guardianDB.child(myUserId).child("connectList")
 
         guardianAdapter = GuardianAdapter(requireContext(), connectedWardList)
 
@@ -146,6 +145,7 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
         binding.guardianRecyclerView.setHasFixedSize(true)
 
         /* 연결된 피보호자가 실시간으로 recyclerView 에 적용하도록 리스너 설정 */
+        val connectDB = guardianDB.child(myUserId).child("connectList")
         val connectListener = connectDB.addChildEventListener(object : ChildEventListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
