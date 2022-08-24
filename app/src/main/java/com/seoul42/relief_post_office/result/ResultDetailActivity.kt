@@ -56,9 +56,9 @@ class ResultDetailActivity : AppCompatActivity() {
 
     private fun setWardName(wardId: String) {
         database.getReference("user").child(wardId).child("name")
-            .get().addOnSuccessListener {
-            if (it.value != null) {
-                val wardName = it.value.toString()
+            .get().addOnSuccessListener { wardNameSnapshot ->
+            if (wardNameSnapshot.value != null) {
+                val wardName = wardNameSnapshot.value.toString()
                 binding.textResultDetailWardName.text = wardName
             }
         }
@@ -99,13 +99,13 @@ class ResultDetailActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
         val answerListRef = database.getReference("result").child(resultId).child("answerIdList")
         val answerRef = database.getReference("answer")
-        answerListRef.get().addOnSuccessListener {
-            if (it.value != null) {
-                val answerIdList = it.getValue<MutableMap<String, String>>() as MutableMap<String, String>
+        answerListRef.get().addOnSuccessListener { answerListSnapshot ->
+            if (answerListSnapshot.value != null) {
+                val answerIdList = answerListSnapshot.getValue<MutableMap<String, String>>() as MutableMap<String, String>
                 for ((dummy, answerId) in answerIdList) {
-                    answerRef.child(answerId).get().addOnSuccessListener {
-                        if (it.value != null) {
-                            val answer = it.getValue(AnswerDTO::class.java) as AnswerDTO
+                    answerRef.child(answerId).get().addOnSuccessListener { answerSnapshot ->
+                        if (answerSnapshot.value != null) {
+                            val answer = answerSnapshot.getValue(AnswerDTO::class.java) as AnswerDTO
                             val userId = auth.uid.toString()
                             if (!answer.questionSecret) {
                                 answerList.add(Pair(answerId, answer))

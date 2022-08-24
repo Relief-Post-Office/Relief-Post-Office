@@ -2,7 +2,6 @@ package com.seoul42.relief_post_office.result
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -18,7 +17,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.seoul42.relief_post_office.adapter.ResultAdapter
 import com.seoul42.relief_post_office.databinding.ActivityResultBinding
-import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.ResultDTO
 import java.text.SimpleDateFormat
 import java.util.*
@@ -102,8 +100,8 @@ class ResultActivity : AppCompatActivity() {
     private fun setProfile(path: String) {
         storage.getReference(path).downloadUrl.addOnSuccessListener { uri ->
             Glide.with(this).load(uri).into(binding.imgResultProfile)
-        }.addOnFailureListener {
-            Log.e("스토리지", "다운로드 에러=>${it.message}")
+        }.addOnFailureListener { profileErrorSnapshot ->
+            Log.e("스토리지", "다운로드 에러=>${profileErrorSnapshot.message}")
         }
     }
 
@@ -112,8 +110,8 @@ class ResultActivity : AppCompatActivity() {
         usersRef.child(wardId)
             .child("name")
             .get()
-            .addOnSuccessListener {
-                binding.textResultWardName.text = it.value.toString()
+            .addOnSuccessListener { wardNameSnapshot ->
+                binding.textResultWardName.text = wardNameSnapshot.value.toString()
             }
     }
 
@@ -157,13 +155,13 @@ class ResultActivity : AppCompatActivity() {
 
         resultList.clear()
         adapter.notifyDataSetChanged()
-        resultListRef.get().addOnSuccessListener {
-            if (it.value != null) {
-                val resultIdList = it.getValue<MutableMap<String, String>>() as MutableMap<String, String>
+        resultListRef.get().addOnSuccessListener { resultListSnapshot ->
+            if (resultListSnapshot.value != null) {
+                val resultIdList = resultListSnapshot.getValue<MutableMap<String, String>>() as MutableMap<String, String>
                 for ((dummy, resultId) in resultIdList) {
-                    resultsRef.child(resultId).get().addOnSuccessListener {
-                        if (it.value != null) {
-                            val result = it.getValue(ResultDTO::class.java) as ResultDTO
+                    resultsRef.child(resultId).get().addOnSuccessListener { resultSnapshot ->
+                        if (resultSnapshot.value != null) {
+                            val result = resultSnapshot.getValue(ResultDTO::class.java) as ResultDTO
                             if (result.date.replace("-", "/") == binding.btnResultSetDate.text.toString()) {
                                 val safetyTime = dateFormat.parse(result.date + " " + result.safetyTime)
 

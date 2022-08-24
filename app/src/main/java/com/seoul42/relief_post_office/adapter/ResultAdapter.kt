@@ -3,7 +3,6 @@ package com.seoul42.relief_post_office.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
@@ -36,15 +35,15 @@ class ResultAdapter(private val context : Context,
             else {
                 binding.itemResultSafetyLayout.setBackgroundResource(R.drawable.result_enable_background)
                 binding.itemResultResponseTime.text = millisToTimeString(calTimeDiff(result))
-                binding.itemResultSafetyLayout.setOnClickListener {
+                binding.itemResultSafetyLayout.setOnClickListener { itemResultSafetyView ->
                     // 여러번 클릭 방지
-                    it.isClickable = false
+                    itemResultSafetyView.isClickable = false
                     val intent = Intent(context, ResultDetailActivity::class.java)
                     intent.putExtra("wardId", wardId)
                     intent.putExtra("resultId", result.first)
                     intent.putExtra("result", result.second)
                     ContextCompat.startActivity(context, intent, null)
-                    it.isClickable = true
+                    itemResultSafetyView.isClickable = true
                 }
             }
         }

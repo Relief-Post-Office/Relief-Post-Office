@@ -269,9 +269,9 @@ class AnswerActivity : AppCompatActivity() {
 
         for (connect in connectList) {
             val uid = connect.key
-            userDB.child(uid).get().addOnSuccessListener {
-                if (it.getValue(UserDTO::class.java) != null) {
-                    val userDTO = it.getValue(UserDTO::class.java) as UserDTO
+            userDB.child(uid).get().addOnSuccessListener { userSnapshot ->
+                if (userSnapshot.getValue(UserDTO::class.java) != null) {
+                    val userDTO = userSnapshot.getValue(UserDTO::class.java) as UserDTO
                     val notificationData = NotificationDTO.NotificationData("안심우체국",
                         myName, "$myName 님이 $safety 안부를 완료했습니다.")
                     val notificationDTO = NotificationDTO(userDTO.token,"high", notificationData)
