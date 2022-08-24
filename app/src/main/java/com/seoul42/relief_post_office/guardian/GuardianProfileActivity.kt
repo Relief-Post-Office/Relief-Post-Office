@@ -22,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -48,6 +49,9 @@ class GuardianProfileActivity : AppCompatActivity() {
         GuardianProfileBinding.inflate(layoutInflater)
     }
 
+    private val userId = auth.uid.toString()
+    private val imagesRef = storage.reference.child("profile/$userId.jpg")
+    private val userDB = Firebase.database.reference.child("user")
     private lateinit var userDTO: UserDTO
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -95,32 +99,11 @@ class GuardianProfileActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun setPhoto() {
-        val userId = auth.uid.toString()
-        val imagesRef = storage.reference
-            .child("profile/$userId.jpg")
         val getFromAlbumResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val uri = result.data?.data
+                val uri = result.data?.data ?: return@registerForActivityResult
 
-                setUpload()
-                if (uri != null) {
-                    val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uri))
-                    val orientation = getOrientationOfImage(uri).toFloat()
-                    val newBitmap = getRotatedBitmap(bitmap, orientation)
-
-                    imagesRef.putFile(uri).addOnSuccessListener {
-                        imagesRef.downloadUrl.addOnCompleteListener{ task ->
-                            if (task.isSuccessful) {
-                                userDTO.photoUri = task.result.toString()
-                                Glide.with(this)
-                                    .load(userDTO.photoUri)
-                                    .circleCrop()
-                                    .into(binding.guardianProfilePhoto)
-                            }
-                            setUploadFinish()
-                        }
-                    }
-                } else setUploadFinish()
+                setUpload(uri)
             }
         }
 
@@ -161,10 +144,7 @@ class GuardianProfileActivity : AppCompatActivity() {
     }
 
     private fun insertUser() {
-        val userId = auth.uid.toString()
-        val userDB = Firebase.database.reference.child("user").child(userId)
-
-        userDB.setValue(userDTO)
+        userDB.child(userId).setValue(userDTO)
     }
 
     private fun completeJoin() {
@@ -201,32 +181,54 @@ class GuardianProfileActivity : AppCompatActivity() {
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
             return false
         }
-        override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
+        override fun onReceivedSslError(
+            view: WebView?,
+            handler: SslErrorHandler?,
+            error: SslError?)
+        {
             handler?.proceed()
         }
     }
 
     private inner class WebViewData {
+
         @JavascriptInterface
-        fun getAddress(zone: String, road: String, building: String) {
+        fun getAddress(
+            zone: String,
+            road: String,
+            building: String)
+        {
             CoroutineScope(Dispatchers.Default).launch {
                 withContext(CoroutineScope(Dispatchers.Main).coroutineContext) {
-                    userDTO.zoneCode = zone
-                    userDTO.roadAddress = road
-                    userDTO.buildingName = building
-                    binding.guardianProfileAddress.text = if (userDTO.buildingName.isEmpty()) {
-                        "(${userDTO.zoneCode})\n${userDTO.roadAddress}"
-                    } else {
-                        "(${userDTO.zoneCode})\n${userDTO.roadAddress}\n${userDTO.buildingName}"
-                    }
+                    setAddressInWeb(zone, road, building)
                 }
+            }
+        }
+
+        private fun setAddressInWeb(
+            zone: String,
+            road: String,
+            building: String)
+        {
+            userDTO.zoneCode = zone
+            userDTO.roadAddress = road
+            userDTO.buildingName = building
+            binding.guardianProfileAddress.text = if (userDTO.buildingName.isEmpty()) {
+                "(${userDTO.zoneCode})\n${userDTO.roadAddress}"
+            } else {
+                "(${userDTO.zoneCode})\n${userDTO.roadAddress}\n${userDTO.buildingName}"
             }
         }
     }
 
     private val chromeClient = object : WebChromeClient() {
 
-        override fun onCreateWindow(view: WebView?, isDialog: Boolean, isUserGesture: Boolean, resultMsg: Message?): Boolean {
+        override fun onCreateWindow(
+            view: WebView?,
+            isDialog: Boolean,
+            isUserGesture: Boolean,
+            resultMsg: Message?): Boolean
+        {
             val newWebView = WebView(this@GuardianProfileActivity)
             val dialog = Dialog(this@GuardianProfileActivity)
             val params = dialog.window!!.attributes
@@ -239,7 +241,12 @@ class GuardianProfileActivity : AppCompatActivity() {
             dialog.show()
 
             newWebView.webChromeClient = object : WebChromeClient() {
-                override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
+                override fun onJsAlert(
+                    view: WebView,
+                    url: String,
+                    message: String,
+                    result: JsResult): Boolean
+                {
                     super.onJsAlert(view, url, message, result)
                     return true
                 }
@@ -247,6 +254,7 @@ class GuardianProfileActivity : AppCompatActivity() {
                     dialog.dismiss()
                 }
             }
+
             (resultMsg!!.obj as WebView.WebViewTransport).webView = newWebView
             resultMsg.sendToTarget()
 
@@ -265,9 +273,11 @@ class GuardianProfileActivity : AppCompatActivity() {
             e.printStackTrace()
             return -1
         }
+
         inputStream.close()
 
         val orientation = exif?.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+
         if (orientation != -1) {
             when (orientation) {
                 ExifInterface.ORIENTATION_ROTATE_90 -> return 90
@@ -284,14 +294,36 @@ class GuardianProfileActivity : AppCompatActivity() {
         if (degrees == 0F) return bitmap
 
         val m = Matrix()
+
         m.setRotate(degrees, bitmap.width.toFloat() / 2, bitmap.height.toFloat() / 2)
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, m, true)
     }
 
-    private fun setUpload() {
+    private fun setUpload(uri : Uri) {
+        val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uri))
+        val orientation = getOrientationOfImage(uri).toFloat()
+        val newBitmap = getRotatedBitmap(bitmap, orientation)
+
         binding.guardianProfileProgressbar.visibility = View.VISIBLE
         binding.guardianProfileTransformText.text = "이미지 업로드중..."
         window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+
+        imagesRef.putFile(uri).addOnSuccessListener {
+            imagesRef.downloadUrl.addOnCompleteListener{ task ->
+                updatePhoto(task)
+            }
+        }
+    }
+
+    private fun updatePhoto(task : Task<Uri>) {
+        if (task.isSuccessful) {
+            userDTO.photoUri = task.result.toString()
+            Glide.with(this)
+                .load(userDTO.photoUri)
+                .circleCrop()
+                .into(binding.guardianProfilePhoto)
+        }
+        setUploadFinish()
     }
 
     private fun setUploadFinish() {

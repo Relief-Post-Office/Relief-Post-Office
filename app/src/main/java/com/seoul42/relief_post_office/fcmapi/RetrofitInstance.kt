@@ -11,6 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 
 object RetrofitInstance {
+
     private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(FCM_URL)

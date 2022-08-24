@@ -161,7 +161,7 @@ class GuardianReceiver () : BroadcastReceiver() {
             /* 2. candidateList */
             Handler().postDelayed({
                 if (candidateList.isNotEmpty()) {
-                    val timeGap = candidateList.minBy{ it.timeGap }.timeGap
+                    val timeGap = candidateList.minBy{ candidate -> candidate.timeGap }.timeGap
                     setRecommendList(context, timeGap)
                 }
             }, 5000)

@@ -7,6 +7,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface FcmInterface {
+
     @POST("fcm/send")
     suspend fun sendNotification(
         @Body notification: NotificationDTO

@@ -11,5 +11,10 @@ class Constants {
         const val TAG_MAIN = "fragment_main"
         const val TAG_SAFETY = "fragment_safety"
         const val TAG_QUESTION = "fragment_question"
+        /* request dialog util */
+        const val INVALID_PHONE_NUMBER = "invalid_phone_number"
+        const val CONNECTED_GUARDIAN = "connected_guardian"
+        const val NON_EXIST_GUARDIAN = "non_exist_guardian_phone_number"
+        const val REGISTER_SUCCESS = "register_success"
     }
 }

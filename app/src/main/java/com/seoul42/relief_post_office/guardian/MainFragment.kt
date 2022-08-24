@@ -1,19 +1,13 @@
 package com.seoul42.relief_post_office.guardian
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.os.PowerManager
-import android.provider.Settings
 import android.view.*
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,7 +27,10 @@ import com.seoul42.relief_post_office.databinding.FragmentGuardianBinding
 import com.seoul42.relief_post_office.model.GuardianDTO
 import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.UserDTO
-import com.seoul42.relief_post_office.service.CheckLoginService
+import com.seoul42.relief_post_office.util.Constants.Companion.INVALID_PHONE_NUMBER
+import com.seoul42.relief_post_office.util.Constants.Companion.CONNECTED_GUARDIAN
+import com.seoul42.relief_post_office.util.Constants.Companion.NON_EXIST_GUARDIAN
+import com.seoul42.relief_post_office.util.Constants.Companion.REGISTER_SUCCESS
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 
 class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_guardian) {
@@ -49,26 +46,29 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
     private val connectedWardList = ArrayList<Pair<String, UserDTO>>()
     private val listenerList = ArrayList<ListenerDTO>()
 
+    private val userDB = Firebase.database.reference.child("user")
+    private val guardianDB = Firebase.database.reference.child("guardian")
+
     private lateinit var connectList : MutableMap<String, String>
     private lateinit var guardianAdapter : GuardianAdapter
     private lateinit var binding : FragmentGuardianBinding
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?) : View {
-
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?) : View
+    {
         binding = FragmentGuardianBinding.inflate(inflater, container, false)
-        activityResultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult())
-            {
-                if (it.resultCode == AppCompatActivity.RESULT_OK) {
-                    userDTO = it.data?.getSerializableExtra("userDTO") as UserDTO
-                    Glide.with(this)
-                        .load(userDTO.photoUri)
-                        .circleCrop()
-                        .into(binding.guardianPhoto)
-                }
+        activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { profileActivity ->
+            if (profileActivity.resultCode == AppCompatActivity.RESULT_OK) {
+                userDTO = profileActivity.data?.getSerializableExtra("userDTO") as UserDTO
+                Glide.with(this)
+                    .load(userDTO.photoUri)
+                    .circleCrop()
+                    .into(binding.guardianPhoto)
             }
+        }
         return binding.root
     }
 
@@ -92,9 +92,7 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
     }
 
     private fun getGuardian() {
-        val guardianDB = Firebase.database.reference.child("guardian").child(myUserId)
-
-        guardianDB.get().addOnSuccessListener {
+        guardianDB.child(myUserId).get().addOnSuccessListener {
             if (it.getValue(GuardianDTO::class.java) != null) {
                 val guardianDTO = it.getValue(GuardianDTO::class.java) as GuardianDTO
 
@@ -137,7 +135,7 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
 
     private fun setRecyclerView() {
         val wardLayout = LinearLayoutManager(context)
-        val connectDB = Firebase.database.reference.child("guardian").child(myUserId).child("connectList")
+        val connectDB = guardianDB.child(myUserId).child("connectList")
 
         guardianAdapter = GuardianAdapter(requireContext(), connectedWardList)
 
@@ -159,8 +157,8 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
                 val connectedUserId = snapshot.value.toString()
 
                 connectList.remove(connectedUserId)
-                connectedWardList.removeIf {
-                    it.first == connectedUserId
+                connectedWardList.removeIf { connectedWard ->
+                    connectedWard.first == connectedUserId
                 }
                 guardianAdapter.notifyDataSetChanged()
             }
@@ -173,26 +171,31 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
 
     private fun setRequestButton() {
         binding.guardianAdd.setOnClickListener {
-            val requestDialog = RequestDialog(context as AppCompatActivity, firebaseViewModel, userDTO, connectList)
+            val requestDialog = RequestDialog(context as AppCompatActivity, firebaseViewModel, connectList)
 
             requestDialog.show(activity!!.window)
             requestDialog.setOnRequestListener { requestCase ->
-                when(requestCase) {
-                    0 -> Toast.makeText(context, "휴대전화번호를 정확히 입력해주세요.", Toast.LENGTH_SHORT).show()
-                    1 -> Toast.makeText(context, "이미 연결된 피보호자입니다.", Toast.LENGTH_SHORT).show()
-                    2 -> Toast.makeText(context, "등록되지 않은 피보호자 번호입니다.\n다시 입력해주세요.", Toast.LENGTH_SHORT).show()
-                    else -> Toast.makeText(context, "등록이 완료되었습니다.", Toast.LENGTH_SHORT).show()
-                }
+                requestToast(requestCase)
             }
         }
     }
 
-    private fun addConnectedWardList(connectedWardList : ArrayList<Pair<String, UserDTO>>, connectedUserId : String) {
-        val userDB = Firebase.database.reference.child("user").child(connectedUserId)
+    private fun requestToast(requestCase : String) {
+        when(requestCase) {
+            INVALID_PHONE_NUMBER -> Toast.makeText(context, "휴대전화번호를 정확히 입력해주세요.", Toast.LENGTH_SHORT).show()
+            CONNECTED_GUARDIAN -> Toast.makeText(context, "이미 연결된 피보호자입니다.", Toast.LENGTH_SHORT).show()
+            NON_EXIST_GUARDIAN -> Toast.makeText(context, "등록되지 않은 피보호자 번호입니다.\n다시 입력해주세요.", Toast.LENGTH_SHORT).show()
+            REGISTER_SUCCESS -> Toast.makeText(context, "등록이 완료되었습니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
 
-        userDB.get().addOnSuccessListener {
-            if (it.getValue(UserDTO::class.java) != null) {
-                val ward = it.getValue(UserDTO::class.java) as UserDTO
+    private fun addConnectedWardList(
+        connectedWardList : ArrayList<Pair<String, UserDTO>>,
+        connectedUserId : String)
+    {
+        userDB.child(connectedUserId).get().addOnSuccessListener { userSnapshot ->
+            if (userSnapshot.getValue(UserDTO::class.java) != null) {
+                val ward = userSnapshot.getValue(UserDTO::class.java) as UserDTO
                 if (!connectedWardList.contains(Pair(connectedUserId, ward))) {
                     connectedWardList.add(Pair(connectedUserId, ward))
                     guardianAdapter.notifyDataSetChanged()

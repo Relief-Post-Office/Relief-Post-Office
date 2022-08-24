@@ -183,7 +183,7 @@ class WardReceiver() : BroadcastReceiver() {
             /* 비동기식 데이터 통신으로 인해 5초 후 추천 시작 */
             Handler().postDelayed({
                 if (recommendList.isNotEmpty()) {
-                    val recommendDTO = recommendList.minBy { it.timeGap }
+                    val recommendDTO = recommendList.minBy { recommend -> recommend.timeGap }
                     setForceAlarm(context, recommendDTO, intent)
                 }
             }, 5000)
