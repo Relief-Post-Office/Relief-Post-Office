@@ -166,7 +166,7 @@ class PhoneActivity : AppCompatActivity() {
                 ?: throw IllegalArgumentException("user required")
 
             userDTO.token = userToken
-            userDB.setValue(userDTO)
+            userDB.child(uid).setValue(userDTO)
             moveActivity(userDTO)
         }
     }

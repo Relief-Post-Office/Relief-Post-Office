@@ -100,7 +100,7 @@ class CheckLoginService : AppCompatActivity() {
         userDB.child(myUserId).get().addOnSuccessListener { user ->
             userDTO = user.getValue(UserDTO::class.java) as UserDTO
             userDTO.token = userToken
-            userDB.setValue(userDTO)
+            userDB.child(myUserId).setValue(userDTO)
             moveActivity(userDTO)
         }
     }
