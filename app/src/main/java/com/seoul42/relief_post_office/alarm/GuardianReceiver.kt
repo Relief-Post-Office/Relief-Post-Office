@@ -28,56 +28,59 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.max
 
+/**
+ * 보호자 유저를 위한 알람 설정을 위한 클래스
+ * 연결된 피보호자의 안부 시작 시간으로부터 30분 뒤 미응답시 notification 을 알림
+ * 총 3 가지 케이스로 알람 설정
+ *
+ *  1. 추천 알람 : 연결된 피보호자의 (안부 시간 + 30분) 과 가장 근접한 안부(여러 개)를 추천 후 통지 알람을 요청
+ *  2. 통지 알람 : 추천 받은 안부들 중 미응답인 안부인 경우 notification 을 알리고 추천 알람을 요청
+ *  3. 네트워크 알람 : 네트워크 연결이 안된 경우 네트워크 알람을 요청
+ */
 class GuardianReceiver () : BroadcastReceiver() {
 
-    /* Access to database */
     private val userDB = Firebase.database.reference.child("user")
     private val wardDB = Firebase.database.reference.child("ward")
     private val resultDB = Firebase.database.reference.child("result")
     private val safetyDB = Firebase.database.reference.child("safety")
     private val guardianDB = Firebase.database.reference.child("guardian")
 
-    /* 추천 가능한 모든 객체들을 담음 */
+    // 추천 가능한 모든 객체들을 담음
     private val candidateList = ArrayList<GuardianRecommendDTO>()
 
-    /* 추천 객체들을 담음 */
+    // 추천 객체들을 담음
     private val recommendList = ArrayList<GuardianRecommendDTO>()
 
-    /* user Id */
-    private lateinit var uid : String
-
-    /* 상단 notification 겹침 현상 방지를 위함 */
+    // 상단 notification 의 겹침 현상 방지를 위함
     private var notificationId : Int = 100
 
-    /* Fail flag */
     private var isFail : Boolean = false
-
-    /* WakeLock */
     private var screenWakeLock : PowerManager.WakeLock? = null
+    private lateinit var uid : String
 
-    /*
-     *  REPEAT_START : "통지 알람 요청", "요청 없음" 둘 중 하나를 결정하기 위한 플래그
-     *  REPEAT_STOP : 특정 안부에 대한 통지 알람 요청을 수행하기 위한 플래그
-     */
     companion object {
         const val PERMISSION_REPEAT = "com.rightline.backgroundrepeatapp.permission.ACTION_REPEAT"
+
+        // REPEAT_START : 추천 알람을 수행하기 위한 플래그
         const val REPEAT_START = "com.rightline.backgroundrepeatapp.REPEAT_START"
+        // REPEAT_STOP : 통지 알람을 수행하기 위한 플래그
         const val REPEAT_STOP = "com.rightline.backgroundrepeatapp.REPEAT_STOP"
     }
 
-    /*
+    /**
      *  알람 요청을 받고 플래그에 따라 특정 작업을 수행하는 메서드
      *
      *  알람 요청을 받는 5 가지 케이스
-     *  - 1. 보호자가 메인 화면으로 이동
-     *  - 2. 보호자가 재부팅한 경우
-     *  - 3. 연결된 피보호자의 안부 or 질문이 추가된 경우
-     *  - 4. 연결된 피보호자의 안부 or 질문이 수정된 경우
-     *  - 5. 연결된 피보호자의 안부 or 질문이 삭제된 경우
+     *   1. 보호자가 메인 화면으로 이동
+     *   2. 보호자가 재부팅한 경우
+     *   3. 연결된 피보호자의 안부 or 질문이 추가된 경우
+     *   4. 연결된 피보호자의 안부 or 질문이 수정된 경우
+     *   5. 연결된 피보호자의 안부 or 질문이 삭제된 경우
      */
     override fun onReceive(context: Context, intent: Intent) {
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
 
+        // doze 모드 상태에서 즉각적으로 알람이 수행 가능하도록 깨우도록 함
         screenWakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK
                 or PowerManager.ACQUIRE_CAUSES_WAKEUP, "WakeLock")
         screenWakeLock?.acquire()
@@ -86,14 +89,18 @@ class GuardianReceiver () : BroadcastReceiver() {
             setNetworkAlarm(context)
         } else if (Firebase.auth.currentUser != null) {
             uid = Firebase.auth.uid.toString()
-            separateAction(context, intent)
+            selectAlarm(context, intent)
         }
     }
 
-    private fun separateAction(context: Context, intent: Intent) {
+    /**
+     *  REPEAT_START : 추천 알람 수행
+     *  REPEAT_STOP : 통지 알람 수행
+     */
+    private fun selectAlarm(context: Context, intent: Intent) {
         when (intent.action) {
             REPEAT_START -> {
-                recommend(context)
+                recommendAlarm(context)
             }
             REPEAT_STOP -> {
                 notifyAlarm(context, intent.getSerializableExtra("recommendList")
@@ -102,7 +109,7 @@ class GuardianReceiver () : BroadcastReceiver() {
         }
     }
 
-    /*
+    /**
      *  네트워크 연결이 안될 경우 실행하는 메서드
      *  15분 단위로 네트워크 알람 요청을 수행
      */
@@ -118,7 +125,7 @@ class GuardianReceiver () : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.MINUTE, 15)
+        interval.add(Calendar.MINUTE, 15) // 15분 뒤에 네트워크 알람 설정
 
         if (Build.VERSION.SDK_INT >= 23) {
             alarmManager.setExactAndAllowWhileIdle(
@@ -132,16 +139,17 @@ class GuardianReceiver () : BroadcastReceiver() {
             alarmManager[AlarmManager.RTC_WAKEUP, interval.timeInMillis] = sender
         }
 
-        screenWakeLock?.release()
+        screenWakeLock?.release() // 핸드폰이 다시 doze 모드에 빠질 수 있도록 잠금락을 해제
     }
 
-    /*
+    /**
      *  연결된 피보호자 중 가장 근접한 안부를 찾는 메서드
-     *   1. findWard 메서드 : 피보호자의 정보를 찾음 (그 후에 안부를 찾음)
-     *   2. candidateList : 가장 근접한 후보 객체를 선별후 timeGap 이 동일한 객체를 recommendList 에 추가
-     *   3. 통지 알람 세팅 : 1, 2 작업이 끝날 경우 수행 (단, candidateList 가 빌 경우 수행 x)
+     *
+     *   1. 피보호자의 정보를 찾음 (그 후에 안부를 찾음)
+     *   2. 가장 근접한 후보 객체를 선별후 timeGap 이 동일한 객체를 recommendList 에 추가
+     *   3. 1, 2 작업이 끝날 경우 통지 알람을 설정 (단, candidateList 가 빌 경우 수행 x)
      */
-    private fun recommend(context : Context) {
+    private fun recommendAlarm(context : Context) {
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss E")
             .format(Date(System.currentTimeMillis()))
         val curDate = date.substring(0, 10)
@@ -152,35 +160,42 @@ class GuardianReceiver () : BroadcastReceiver() {
         guardianDB.child(uid).get().addOnSuccessListener { guardianSnapshot ->
             val guardianDTO = guardianSnapshot.getValue(GuardianDTO::class.java) ?: GuardianDTO()
 
-            /* 1. 피보호자 정보 */
             for (ward in guardianDTO.connectList) {
                 val wardId = ward.value
                 findWard(context, dateDTO, wardId)
             }
-
-            /* 2. candidateList */
             Handler().postDelayed({
                 if (candidateList.isNotEmpty()) {
+                    // 현재 시간으로부터 가장 근접한 안부의 초(second) 격차
                     val timeGap = candidateList.minBy{ candidate -> candidate.timeGap }.timeGap
                     setRecommendList(context, timeGap)
                 }
-            }, 5000)
+            }, 5000) // 비동기식 데이터 통신으로 5초의 딜레이를 매꾸는 부분
         }.addOnFailureListener {
             if (!isFail) setNetworkAlarm(context)
         }
     }
 
+    /**
+     *  candidateList 는 가장 근접한 후보 객체들이 선별된 목록
+     *  현재 시간으로부터 가장 근접한 후보들을 recommendList 에 추가
+     *
+     *   - minTimeGap = 현재 시간으로부터 가장 근접한 안부의 초(second) 격차
+     */
     private fun setRecommendList(context : Context, minTimeGap : Int) {
         for (candidate in candidateList) {
             if (minTimeGap == candidate.timeGap) {
                 recommendList.add(candidate)
             }
         }
-        /* 3. 통지 알람 세팅 */
         setAlarm(context, REPEAT_STOP, recommendList)
     }
 
-    /* 피보호자의 안부 리스트에 존재하는 안부를 추가하도록 돕는 메서드 */
+    /**
+     * 피보호자의 안부 리스트에 존재하는 안부를 추가하도록 돕는 메서드
+     *
+     *  - dateDTO : 현재 날짜 및 현재 시간에 대한 정보
+     */
     private fun findWard(
         context : Context,
         dateDTO : DateDTO,
@@ -199,7 +214,9 @@ class GuardianReceiver () : BroadcastReceiver() {
         }
     }
 
-    /*  안부를 추가하는 메서드  */
+    /**
+     *  안부를 후보 리스트에 추가하도록 돕는 메서드
+     */
     private fun setSafetyToCandidateList(
         context : Context,
         dateDTO : DateDTO,
@@ -215,6 +232,9 @@ class GuardianReceiver () : BroadcastReceiver() {
         }
     }
 
+    /**
+     *  현재 시간으로부터 (안부 시간 + 30분) 까지의 초(second) 격차를 환산하여 후보 리스트에 추가하는 메서드
+     */
     private fun searchDayOfWeekAndSetCandidateList(
         wardId : String,
         safetyId : String,
@@ -240,9 +260,10 @@ class GuardianReceiver () : BroadcastReceiver() {
         }
     }
 
-    /*
-     *  통지 알람을 요청하는 작업을 수행하는 메서드
-     *  추천 리스트를 intent 에 담아서 보내도록 함
+    /**
+     *  alarmFlag 에 따라 알람 요청을 세팅
+     *   - REPEAT_START : 추천 알람을 세팅
+     *   - REPEAT_STOP : 통지 알람을 세팅
      */
     private fun setAlarm(
         context: Context,
@@ -252,6 +273,7 @@ class GuardianReceiver () : BroadcastReceiver() {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val schedule = Intent(alarmFlag)
 
+        // 통지 알람을 위한 추천 리스트를 추가
         if (alarmFlag == REPEAT_STOP) {
             schedule.putExtra("recommendList", recommendList)
         }
@@ -261,9 +283,10 @@ class GuardianReceiver () : BroadcastReceiver() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val interval = Calendar.getInstance()
 
-        /* 알람 시간 설정(recommendDTO.timeGap) */
         interval.timeInMillis = System.currentTimeMillis()
 
+        // 비동기식 데이터 통신으로 5초의 딜레이를 매꾸는 부분 (timeGap - 5 부분)
+        // 최소 5초 뒤에 알람이 설정될 수 있도록 함 (5 미만의 정수는 허용 x)
         if (alarmFlag == REPEAT_STOP) {
             interval.add(Calendar.SECOND, max(recommendList!![0].timeGap - 5, 5))
         } else {
@@ -282,15 +305,11 @@ class GuardianReceiver () : BroadcastReceiver() {
             alarmManager[AlarmManager.RTC_WAKEUP, interval.timeInMillis] = sender
         }
 
-        screenWakeLock?.release()
+        screenWakeLock?.release() // 핸드폰이 다시 doze 모드에 빠질 수 있도록 잠금락을 해제
     }
 
-    /*
-     *  통지 알람을 요청하도록 하는 메서드
-     *  1. 존재하는 유저인지 확인
-     *  2. 피보호자인지 확인
-     *
-     *  위 2 조건을 만족할 경우 피보호자의 userDTO, wardDTO 를 가지고 통지할지를 결정
+    /**
+     *  통지 알람을 요청하도록 돕는 메서드
      */
     private fun notifyAlarm(
         context : Context,
@@ -304,6 +323,12 @@ class GuardianReceiver () : BroadcastReceiver() {
         }, 5000)
     }
 
+    /**
+     *  1. 존재하는 유저인지 확인
+     *  2. 피보호자인지 확인
+     *
+     *  위 2 조건을 만족할 경우 피보호자의 userDTO, wardDTO 를 가지고 통지할지를 결정
+     */
     private fun checkWardAndNotifyAlarm(
         context : Context,
         recommendDTO : GuardianRecommendDTO
@@ -311,12 +336,10 @@ class GuardianReceiver () : BroadcastReceiver() {
         val curTime = Calendar.getInstance()
 
         userDB.child(recommendDTO.wardId).get().addOnSuccessListener { userSnapshot ->
-            /* 1. 존재하는 유저인지 확인 */
             val userDTO = userSnapshot.getValue(UserDTO::class.java)
                 ?: throw IllegalArgumentException("user required")
 
             wardDB.child(recommendDTO.wardId).get().addOnSuccessListener { wardSnapshot ->
-                /* 2. 피보호자인지 확인 */
                 val wardDTO = wardSnapshot.getValue(WardDTO::class.java) ?: WardDTO()
 
                 notifyAlarmWithSafetyAndResult(context, userDTO, wardDTO, recommendDTO, curTime)
@@ -328,14 +351,18 @@ class GuardianReceiver () : BroadcastReceiver() {
         }
     }
 
-    /*
+    /**
      *  최종적으로 통지 알람을 보호자에게 보낼지를 결정
      *  아래의 조건이 전부 만족할 경우 보호자에게 통지 알람을 보냄
      *
-     *  1. (현재 시간 - 안부 시간) 이 [20 min, 40 min] 범위 내인지 => (30분 확인)
+     *  1. (현재 시간 - 안부 시간) 이 [20 min, 40 min] 범위 내인지 => (대략 30분 근처 확인)
      *  2. 피보호자가 안부를 미응답했는지
      *  3. 결과에 대응하는 안부 id 가 선별된 안부 id 와 동일한지
-     *  4. 결과에 대응하는 안부가 존재하는지 => (삭제 여부 확인)
+     *  4. 결과에 대응하는 안부가 존재하는지 => (삭제 여부까지 확인)
+     *
+     *  - userDTO : 피보호자의 정보를 확인하기 위한 용도
+     *  - wardDTO : 피보호자의 결과 목록을 확인하기 위한 용도
+     *  - recommendDTO : 추천 알람에서 받아온 추천 안부
      */
     private fun notifyAlarmWithSafetyAndResult(
         context : Context,
@@ -356,7 +383,7 @@ class GuardianReceiver () : BroadcastReceiver() {
                 val gapTime = curTime.time.time - safetyTime!!.time
 
                 if (isEligibleNonResponseSafety(gapTime, resultDTO, recommendDTO)) {
-                    setNotifyAlarm(context, resultDTO, userDTO)
+                    setNotification(context, resultDTO, userDTO)
                 }
             }.addOnFailureListener {
                 if (!isFail) setNetworkAlarm(context)
@@ -364,6 +391,14 @@ class GuardianReceiver () : BroadcastReceiver() {
         }
     }
 
+    /**
+     *  1. (현재 시간 - 안부 시간) 이 [20 min, 40 min] 범위 내인지 => (대략 30분 근처 확인)
+     *  2. 피보호자가 안부를 미응답했는지
+     *  3. 결과에 대응하는 안부 id 가 선별된 안부 id 와 동일한지
+     *  4. 결과에 대응하는 안부가 존재하는지 => (삭제 여부까지 확인)
+     *
+     *  위 4 가지 조건을 만족하면 true, 그 외에 false
+     */
     private fun isEligibleNonResponseSafety(
         gapTime : Long,
         resultDTO : ResultDTO,
@@ -374,7 +409,10 @@ class GuardianReceiver () : BroadcastReceiver() {
                 && (resultDTO.safetyId == recommendDTO.safetyId)
     }
 
-    private fun setNotifyAlarm(
+    /**
+     *  통지를 세팅하는 작업을 돕는 메서드
+     */
+    private fun setNotification(
         context : Context,
         resultDTO : ResultDTO,
         userDTO : UserDTO
@@ -383,17 +421,17 @@ class GuardianReceiver () : BroadcastReceiver() {
             val safetyDTO = safetySnapshot.getValue(SafetyDTO::class.java)
                 ?: throw IllegalArgumentException("safety required")
 
-            executeNotifyAlarm(context, userDTO, safetyDTO)
+            executeNotification(context, userDTO, safetyDTO)
         }.addOnFailureListener {
             if (!isFail) setNetworkAlarm(context)
         }
     }
 
-    /*
-     *  최종적으로 보호자에게 통지 알람을 보내는 메서드
+    /**
+     *  최종적으로 보호자에게 통지를 보내는 메서드
      *  피보호자가 "미응답"한 안부를 보호자 핸드폰의 상단에 메시지가 띄워지도록 함
      */
-    private fun executeNotifyAlarm(
+    private fun executeNotification(
         context : Context,
         userDTO : UserDTO,
         safetyDTO : SafetyDTO
@@ -430,6 +468,7 @@ class GuardianReceiver () : BroadcastReceiver() {
             .setSmallIcon(R.drawable.relief_post_office)
             .setAutoCancel(true)
 
+        // notification 아이디를 분할하여 여러 통지가 한번에 올 경우 통지 중복을 방지
         notificationManager.notify(notificationId++, builder.build())
     }
 }

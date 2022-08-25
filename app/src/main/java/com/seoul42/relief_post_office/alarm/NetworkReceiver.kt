@@ -16,15 +16,24 @@ import com.seoul42.relief_post_office.util.Alarm
 import com.seoul42.relief_post_office.util.Network
 import java.util.*
 
+/**
+ * 네트워크 연결이 안될 때 알람 설정을 위한 클래스
+ * 총 3 가지 케이스로 알람 설정
+ *
+ *  1. 보호자 추천 알람 : 네트워크 연결 성공 및 보호자 유저인 경우 보호자 추천 알람을 요청
+ *  2. 피보호자 추천 알람 : 네트워크 연결 성공 및 피보호자 유저인 경우 피보호자 추천 알람을 요청
+ *  3. 네트워크 알람 : 네트워크 연결이 안된 경우
+ */
 class NetworkReceiver : BroadcastReceiver() {
 
     private val userDB = Firebase.database.reference.child("user")
 
     companion object {
+        // 최초로 알람을 수행시키기 위한 플래그
         const val REPEAT_START = "com.rightline.backgroundrepeatapp.REPEAT_START"
     }
 
-    /*
+    /**
      *  네트워크가 연결되었는지 확인
      *  - 연결이 안된 경우 : 15분 단위로 네트워크 알람을 재요청
      *  - 연결된 경우 : 로그인 된 유저 중 보호자, 피보호자에 따라 알람 요청
@@ -46,7 +55,7 @@ class NetworkReceiver : BroadcastReceiver() {
         }
     }
 
-    /*
+    /**
      *  네트워크 연결이 안될 경우 실행하는 메서드
      *  15분 단위로 네트워크 알람 요청을 수행
      */
@@ -54,6 +63,7 @@ class NetworkReceiver : BroadcastReceiver() {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val schedule = Intent(REPEAT_START)
 
+        // 클래스 인자를 NetworkReceiver 로 설정하여 네트워크 알람을 설정
         schedule.setClass(context, NetworkReceiver::class.java)
 
         val sender = PendingIntent.getBroadcast(context, 0, schedule,
@@ -61,7 +71,7 @@ class NetworkReceiver : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.MINUTE, 15)
+        interval.add(Calendar.MINUTE, 15) // 15분 뒤 네트워크 알람을 받도록 설정
 
         if (Build.VERSION.SDK_INT >= 23) {
             alarmManager.setExactAndAllowWhileIdle(
@@ -76,7 +86,7 @@ class NetworkReceiver : BroadcastReceiver() {
         }
     }
 
-    /*
+    /**
      * 보호자 또는 피보호자의 Alarm 작업을 수행하도록 함
      *  - guardianFlag = true : 보호자 Alarm 을 수행
      *  - guardianFlag = false : 피보호자 Alarm 을 수행
@@ -85,6 +95,7 @@ class NetworkReceiver : BroadcastReceiver() {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val schedule = Intent(REPEAT_START)
 
+        // 보호자 플래그에 따라 클래스 인자를 다르게 설정하여 보호자 및 피보호자 알람을 설정
         if (guardianFlag) {
             schedule.setClass(context, GuardianReceiver::class.java)
         } else {
@@ -96,7 +107,7 @@ class NetworkReceiver : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.SECOND, 5)
+        interval.add(Calendar.SECOND, 5) // 5초 뒤에 알람을 받도록 설정
 
         if (Build.VERSION.SDK_INT >= 23) {
             alarmManager.setExactAndAllowWhileIdle(
