@@ -144,7 +144,6 @@ class GuardianReceiver () : BroadcastReceiver() {
 
     /**
      *  연결된 피보호자 중 가장 근접한 안부를 찾는 메서드
-     *
      *   1. 피보호자의 정보를 찾음 (그 후에 안부를 찾음)
      *   2. 가장 근접한 후보 객체를 선별후 timeGap 이 동일한 객체를 recommendList 에 추가
      *   3. 1, 2 작업이 끝날 경우 통지 알람을 설정 (단, candidateList 가 빌 경우 수행 x)
@@ -179,7 +178,6 @@ class GuardianReceiver () : BroadcastReceiver() {
     /**
      *  candidateList 는 가장 근접한 후보 객체들이 선별된 목록
      *  현재 시간으로부터 가장 근접한 후보들을 recommendList 에 추가
-     *
      *   - minTimeGap = 현재 시간으로부터 가장 근접한 안부의 초(second) 격차
      */
     private fun setRecommendList(context : Context, minTimeGap : Int) {
@@ -193,7 +191,6 @@ class GuardianReceiver () : BroadcastReceiver() {
 
     /**
      * 피보호자의 안부 리스트에 존재하는 안부를 추가하도록 돕는 메서드
-     *
      *  - dateDTO : 현재 날짜 및 현재 시간에 대한 정보
      */
     private fun findWard(
@@ -326,7 +323,6 @@ class GuardianReceiver () : BroadcastReceiver() {
     /**
      *  1. 존재하는 유저인지 확인
      *  2. 피보호자인지 확인
-     *
      *  위 2 조건을 만족할 경우 피보호자의 userDTO, wardDTO 를 가지고 통지할지를 결정
      */
     private fun checkWardAndNotifyAlarm(

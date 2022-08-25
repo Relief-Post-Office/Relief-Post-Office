@@ -203,7 +203,6 @@ class WardReceiver() : BroadcastReceiver() {
 
     /**
      * 피보호자가 보유한 각각의 안부에 대해 추천 리스트에 추가하도록 세팅하는 메서드
-     *
      *  - dateDTO : 현재 날짜 및 현재 시간에 대한 정보
      */
     private fun setSafety(
@@ -250,7 +249,6 @@ class WardReceiver() : BroadcastReceiver() {
 
     /**
      *  피보호자가 보유한 결과에 대해 조건에 따라 결과에 대한 삭제 작업을 결정하는 메서드
-     *
      *  - (결과 날짜 < 현재 날짜) : 이전 결과이므로 삭제 작업을 수행 x
      *  - (결과 날짜 = 현재 날짜) : 현재 진행될 수 있는 결과이므로 삭제 작업을 수행 x
      *  - (결과 날짜 > 현재 날짜) : 미리 만들어둔 결과이므로 삭제 작업을 수행
@@ -295,14 +293,14 @@ class WardReceiver() : BroadcastReceiver() {
     }
 
     /**
-     *  - resultDTO 에 answer 존재 시 삭제 과정
-     *  1. answers 삭제 : answer 에 존재하는 answerIdList 의 모든 answerId 값 삭제
-     *  2. result 삭제 : result 에 존재하는 resultId 값 삭제
-     *  3. resultId 삭제 : ward -> uid -> resultIdList 에 존재하는 resultId 삭제
+     *  resultDTO 에 answer 존재 시 삭제 과정
+     *   1. answers 삭제 : answer 에 존재하는 answerIdList 의 모든 answerId 값 삭제
+     *   2. result 삭제 : result 에 존재하는 resultId 값 삭제
+     *   3. resultId 삭제 : ward -> uid -> resultIdList 에 존재하는 resultId 삭제
      *
-     *  - resultDTO 에 answer 없을 시 삭제 과정
-     *  1. result 삭제 : result 에 존재하는 resultId 값 삭제
-     *  2. resultId 삭제 : ward -> uid -> resultIdList 에 존재하는 resultId 삭제
+     *  resultDTO 에 answer 없을 시 삭제 과정
+     *   1. result 삭제 : result 에 존재하는 resultId 값 삭제
+     *   2. resultId 삭제 : ward -> uid -> resultIdList 에 존재하는 resultId 삭제
      */
     private fun removeResult(
         resultKey : String,
@@ -466,7 +464,6 @@ class WardReceiver() : BroadcastReceiver() {
 
     /**
      *  피보호자에게 미리 안부에 대한 통지 알람을 보내는 메서드
-     *
      *  - recommendDTO : 추천 알람에서 선별된 추천 안부
      */
     private fun notifyAlarm(
