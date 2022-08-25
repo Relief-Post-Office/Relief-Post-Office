@@ -18,6 +18,12 @@ import com.seoul42.relief_post_office.util.Constants.Companion.TAG_MAIN
 import com.seoul42.relief_post_office.util.Constants.Companion.TAG_QUESTION
 import com.seoul42.relief_post_office.util.Constants.Companion.TAG_SAFETY
 
+/**
+ * 보호자는 총 3 가지 화면이 존재함
+ *  1. 메인 화면 : 보호자와 연결된 피보호자 정보를 확인할 수 있는 화면
+ *  2. 내 안부 화면 : 보호자가 보유한 내 안부를 확인할 수 있는 화면
+ *  3. 내 질문 화면 : 보호자가 보유한 내 질문을 확인할 수 있는 화면
+ */
 class GuardianBackgroundActivity : AppCompatActivity() {
 
     private val binding: GuardianBackgroundBinding by lazy {
@@ -41,6 +47,7 @@ class GuardianBackgroundActivity : AppCompatActivity() {
         setContentView(binding.root)
         setFragment(TAG_MAIN, mainFragment)
 
+        // 하단 내비게이션 선택시 해당 프래그먼트가 설정됨
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.navigation_main -> setFragment(TAG_MAIN, mainFragment)
@@ -51,6 +58,10 @@ class GuardianBackgroundActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     *  배터리 최적화 무시를 설정
+     *   => 알람 매니저 및 FCM 에 대비하기 위함
+     */
     private fun ignoreBatteryOptimization() {
         val intent = Intent()
         val packageName = packageName
@@ -63,22 +74,24 @@ class GuardianBackgroundActivity : AppCompatActivity() {
         }
     }
 
-    /* Fragment State 유지 함수 */
+    /**
+     * Fragment State 유지 함수
+     */
     private fun setFragment(tag: String, fragment: Fragment){
         val manager: FragmentManager = supportFragmentManager
         val ft: FragmentTransaction = manager.beginTransaction()
 
-        /* 트랜잭션에 태그로 전달된 프래그먼트가 없을 경우 추가 */
+        // 트랜잭션에 태그로 전달된 프래그먼트가 없을 경우 추가
         if(manager.findFragmentByTag(tag) == null){
             ft.add(R.id.fragmentContainer, fragment, tag)
         }
 
-        /* 작업이 수월하도록 관리자에 추가되어 있는 프래그먼트를 변수로 할당 */
+        // 작업이 수월하도록 관리자에 추가되어 있는 프래그먼트를 변수로 할당
         val main = manager.findFragmentByTag(TAG_MAIN)
         val safety = manager.findFragmentByTag(TAG_SAFETY)
         val question = manager.findFragmentByTag(TAG_QUESTION)
 
-        /* 모든 프래그먼트를 숨김 */
+        // 모든 프래그먼트를 숨김
         if(main != null){
             ft.hide(main)
         }
@@ -89,7 +102,7 @@ class GuardianBackgroundActivity : AppCompatActivity() {
             ft.hide(question)
         }
 
-        /* 선택한 항목에 따라 그에 맞는 프래그먼트만 보여줌 */
+        // 선택한 항목에 따라 그에 맞는 프래그먼트를 보여줌
         if(tag == TAG_MAIN){
             if(main != null){
                 ft.show(main)

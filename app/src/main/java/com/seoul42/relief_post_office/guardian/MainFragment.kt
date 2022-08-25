@@ -33,11 +33,12 @@ import com.seoul42.relief_post_office.util.Constants.Companion.NON_EXIST_GUARDIA
 import com.seoul42.relief_post_office.util.Constants.Companion.REGISTER_SUCCESS
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 
+/**
+ *  보호자의 메인 화면을 띄우도록 돕는 클래스
+ *   - userDTO : 현재 보호자의 정보가 GuardianBackgroundActivity 에서 객체로 넘어옴
+ */
 class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_guardian) {
 
-    private val auth: FirebaseAuth by lazy {
-        Firebase.auth
-    }
     private val myUserId: String by lazy {
         Firebase.auth.uid.toString()
     }
@@ -54,12 +55,17 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
     private lateinit var binding : FragmentGuardianBinding
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
+    /**
+     *  화면이 설정되기 전에 바인딩 설정
+     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ) : View {
         binding = FragmentGuardianBinding.inflate(inflater, container, false)
+        // 프로필 변경 화면에서 정상적으로 수정 작업이 이뤄진 경우
+        // 변경된 객체를 받아서 현재 화면에 적용될 수 있도록 돕는 변수
         activityResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { profileActivity ->
@@ -77,9 +83,12 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        getGuardian()
+        getWardListAndSetGuardian()
     }
 
+    /**
+     *  화면이 완전히 종료시 데이터베이스 관련 이벤트 리스너들을 해제하도록 함
+     */
     override fun onDestroy() {
         super.onDestroy()
 
@@ -93,10 +102,15 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
         }
     }
 
-    private fun getGuardian() {
-        guardianDB.child(myUserId).get().addOnSuccessListener {
-            if (it.getValue(GuardianDTO::class.java) != null) {
-                val guardianDTO = it.getValue(GuardianDTO::class.java) as GuardianDTO
+    /**
+     *  2 가지 케이스로 분류하여 피보호자 정보를 띄우도록 돕는 메서드
+     *   1. 이미 연결된 피보호자가 있는 경우
+     *   2. 최초 접속으로 피보호자가 없는 경우
+     */
+    private fun getWardListAndSetGuardian() {
+        guardianDB.child(myUserId).get().addOnSuccessListener { guardian->
+            if (guardian.getValue(GuardianDTO::class.java) != null) {
+                val guardianDTO = guardian.getValue(GuardianDTO::class.java) as GuardianDTO
 
                 connectList = guardianDTO.connectList
                 setAlarm()
@@ -104,6 +118,7 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
                 setRecyclerView()
                 setRequestButton()
             } else {
+                // nullPointerException 방지로 빈 객체 할당
                 connectList = mutableMapOf()
                 setAlarm()
                 setGuardianPhoto()
@@ -112,8 +127,9 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
             }
         }
     }
-    /*
-     * 알람 요청 작업을 수행할 수 있도록 설정
+
+    /**
+     * 보호자 알람 요청 작업을 수행할 수 있도록 설정
      */
     private fun setAlarm() {
         val start = Intent(GuardianReceiver.REPEAT_START)
@@ -135,6 +151,9 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
         }
     }
 
+    /**
+     *  피보호자들을 확인할 수 있도록 하는 리사이클러뷰를 설정하도록 돕는 메서드
+     */
     private fun setRecyclerView() {
         val wardLayout = LinearLayoutManager(context)
 
@@ -144,8 +163,8 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
         binding.guardianRecyclerView.layoutManager = wardLayout
         binding.guardianRecyclerView.setHasFixedSize(true)
 
-        /* 연결된 피보호자가 실시간으로 recyclerView 에 적용하도록 리스너 설정 */
         val connectDB = guardianDB.child(myUserId).child("connectList")
+        // 연결된 피보호자가 실시간으로 recyclerView 에 적용하도록 리스너 설정
         val connectListener = connectDB.addChildEventListener(object : ChildEventListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -182,6 +201,9 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
         }
     }
 
+    /**
+     *  보호자가 피보호자의 전화번호를 입력 후 요청 시 발생되는 모든 토스트의 경우
+     */
     private fun requestToast(requestCase : String) {
         when(requestCase) {
             INVALID_PHONE_NUMBER -> Toast.makeText(context, "휴대전화번호를 정확히 입력해주세요.", Toast.LENGTH_SHORT).show()
@@ -191,17 +213,20 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
         }
     }
 
+    /**
+     *  보호자와 연결된 피보호자를 리사이클러뷰에 적용가능하도록 연결된 목록에 추가
+     */
     private fun addConnectedWardList(
         connectedWardList : ArrayList<Pair<String, UserDTO>>,
         connectedUserId : String
     ) {
         userDB.child(connectedUserId).get().addOnSuccessListener { userSnapshot ->
-            if (userSnapshot.getValue(UserDTO::class.java) != null) {
-                val ward = userSnapshot.getValue(UserDTO::class.java) as UserDTO
-                if (!connectedWardList.contains(Pair(connectedUserId, ward))) {
-                    connectedWardList.add(Pair(connectedUserId, ward))
-                    guardianAdapter.notifyDataSetChanged()
-                }
+            val ward = userSnapshot.getValue(UserDTO::class.java)
+                ?: throw IllegalArgumentException("user required")
+            if (!connectedWardList.contains(Pair(connectedUserId, ward))) {
+                connectedWardList.add(Pair(connectedUserId, ward))
+                // 리사이클러뷰가 즉각적으로 업데이트 가능하도록 설정
+                guardianAdapter.notifyDataSetChanged()
             }
         }
     }
