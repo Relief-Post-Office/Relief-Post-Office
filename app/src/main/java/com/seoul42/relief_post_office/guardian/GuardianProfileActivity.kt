@@ -137,6 +137,9 @@ class GuardianProfileActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     *  모든 정보가 기입되었는지를 확인하는 메서드
+     */
     private fun allCheck() : Boolean {
         userDTO.detailAddress = binding.guardianProfileDetailAddress.text.toString()
 
@@ -151,6 +154,8 @@ class GuardianProfileActivity : AppCompatActivity() {
     private fun updateProfile() {
         binding.guardianProfileProgressbar.visibility = View.VISIBLE
         binding.guardianProfileTransformText.text = "프로필 변경중..."
+
+        // 프로필 정보 변경시 화면 선택이 안되도록 설정
         window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
 
         // 수정된 정보를 반영
@@ -239,7 +244,6 @@ class GuardianProfileActivity : AppCompatActivity() {
 
     //  주소를 선택할 수 있는 새로운 창을 띄우도록 돕는 변수
     private val chromeClient = object : WebChromeClient() {
-
         /**
          *  주소를 선택할 수 있는 다이얼로그를 띄우는 메서드
          */
