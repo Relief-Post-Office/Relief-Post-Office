@@ -25,6 +25,10 @@ import com.seoul42.relief_post_office.ward.WardActivity
 import java.util.concurrent.TimeUnit
 import com.seoul42.relief_post_office.databinding.PhoneBinding
 
+/**
+ *  핸드폰 인증을 돕는 클래스
+ *  핸드폰 인증을 마치면 회원가입 또는 보호자 및 피보호자 화면으로 이동
+ */
 class PhoneActivity : AppCompatActivity() {
 
     private val auth : FirebaseAuth by lazy {
@@ -36,9 +40,12 @@ class PhoneActivity : AppCompatActivity() {
 
     private val userDB = Firebase.database.reference.child("user")
 
-    private lateinit var phoneAuthCredential: PhoneAuthCredential
     private lateinit var verificationId : String
     private lateinit var phoneNumber: String
+
+    // 유저가 입력한 인증번호와 일치한지를 판단해주는 변수
+    private lateinit var phoneAuthCredential: PhoneAuthCredential
+    // 핸드폰 인증 관련 콜백을 유저가 인증번호 요청 시에 수행되도록 돕는 변수
     private lateinit var callbacks : PhoneAuthProvider.OnVerificationStateChangedCallbacks
 
     private var minute = 2
@@ -62,6 +69,11 @@ class PhoneActivity : AppCompatActivity() {
                 binding.phoneRequestButton.loadingFailed()
                 setPhoneEnable()
             }
+
+            /**
+             *  핸드폰 번호를 입력하고 인증 번호 요청시 정상적으로 수행되는 메서드
+             *   - verificationId : 유저가 입력해야 할 인증번호
+             */
             override fun onCodeSent(
                 verificationId: String,
                 token: PhoneAuthProvider.ForceResendingToken
@@ -76,6 +88,10 @@ class PhoneActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 인증 요청을 돕는 메서드
+     * 핸드폰 번호가 정상적으로 기입되었는지 확인 후 인증 요청을 수행
+     */
     private fun requestVerification() {
         binding.phoneRequestButton.setOnClickListener {
             val phoneNum = binding.phoneEditNumber.text.toString()
@@ -90,6 +106,9 @@ class PhoneActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 이미 인증요청을 한 경우를 제외하고 인증 요청이 수행되도록 처리하는 메서드
+     */
     private fun checkRequest() {
         if (!requestFlag) {
             requestPhone()
@@ -99,6 +118,9 @@ class PhoneActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 유저가 기입한 인증번호가 6글자 정확히 입력한 경우를 확인하는 메서드
+     */
     private fun checkVerification() {
         var myVerification : String
 
@@ -110,9 +132,14 @@ class PhoneActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 유저가 기입한 인증번호가 요청한 인증번호와 동일한지를 확인하는 메서드
+     */
     private fun processVerification(myVerification : String) {
         setVerificationDisable()
         binding.phoneProgressBar.visibility = View.VISIBLE
+        // verificationId : 유저가 요청한 인증번호
+        // myVerificationId : 유저가 기입한 인증번호
         phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, myVerification)
         auth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
@@ -124,7 +151,11 @@ class PhoneActivity : AppCompatActivity() {
         }
     }
 
-    /* Start verification assistant */
+    /**
+     * 인증 요청이 성공적으로 이루어진 경우
+     *  - 이미 회원가입 된 경우 : 보호자 또는 피보호자 메인 화면으로 이동
+     *  - 첫 회원인 경우 : 회원가입 화면으로 이동
+     */
     private fun successVerification() {
         val userId = auth.uid.toString()
 
@@ -148,8 +179,11 @@ class PhoneActivity : AppCompatActivity() {
         setVerificationEnable()
     }
 
+    /**
+     * FCM 토큰을 업데이트하는 메서드
+     * 토큰은 앱을 삭제하고 다시 수행 시 변경될 수 있는 점을 고려
+     */
     private fun setInfo() {
-        /* 토큰 획득 및 업데이트 */
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 updateTokenAndMoveActivity(task)
@@ -157,6 +191,10 @@ class PhoneActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 기존에 있던 토큰을 새 토큰으로 업데이트
+     * 그 후에 현재 유저의 정보를 담은 객체 userDTO 를 다음 화면으로 전송
+     */
     private fun updateTokenAndMoveActivity(task : Task<String>) {
         val uid = auth.uid.toString()
         val userToken = task.result.toString()
@@ -171,6 +209,9 @@ class PhoneActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 보호자 또는 피보호자 화면으로 현재 유저의 정보 userDTO 를 전송시킴
+     */
     private fun moveActivity(userDTO : UserDTO) {
         val guardianIntent = Intent(this, GuardianBackgroundActivity::class.java)
         val wardIntent = Intent(this, WardActivity::class.java)
@@ -186,9 +227,11 @@ class PhoneActivity : AppCompatActivity() {
             }
         }, 2000)
     }
-    /* End verification assistant */
 
-    /* Start request assistant */
+    /**
+     * 인증 번호를 요청하도록 돕는 메서드
+     * callbacks 변수를 인자로 설정하여 인증 요청을 확인해줌
+     */
     private fun requestPhone() {
         var phoneNum = binding.phoneEditNumber.text.toString()
 
@@ -203,27 +246,10 @@ class PhoneActivity : AppCompatActivity() {
             callbacks
         )
     }
-    /* End request assistant */
 
-    /* Start miscellaneous assistant */
-    private fun setPhoneEnable() {
-        binding.phoneEditNumber.isEnabled = true
-        binding.phoneRequestButton.isEnabled = true
-    }
-
-    private fun setPhoneDisable() {
-        binding.phoneEditNumber.isEnabled = false
-        binding.phoneRequestButton.isEnabled = false
-    }
-
-    private fun setVerificationEnable() {
-        binding.phoneEditVerification.isEnabled = true
-    }
-
-    private fun setVerificationDisable() {
-        binding.phoneEditVerification.isEnabled = false
-    }
-
+    /**
+     * ex : result = "01분 48초"
+     */
     private fun makeTime(minute : Int, second : Int) : String {
         var result = ""
 
@@ -236,6 +262,9 @@ class PhoneActivity : AppCompatActivity() {
         return result
     }
 
+    /**
+     * 00분 00초 가 될 때까지 1초씩 감소되어 인증 시간을 업데이트
+     */
     private fun setThreadTimer() {
         while (minute != 0 || second != 0) {
             Handler(Looper.getMainLooper()).post {
@@ -259,5 +288,22 @@ class PhoneActivity : AppCompatActivity() {
             setThreadTimer()
         }.start()
     }
-    /* End miscellaneous assistant */
+
+    private fun setPhoneEnable() {
+        binding.phoneEditNumber.isEnabled = true
+        binding.phoneRequestButton.isEnabled = true
+    }
+
+    private fun setPhoneDisable() {
+        binding.phoneEditNumber.isEnabled = false
+        binding.phoneRequestButton.isEnabled = false
+    }
+
+    private fun setVerificationEnable() {
+        binding.phoneEditVerification.isEnabled = true
+    }
+
+    private fun setVerificationDisable() {
+        binding.phoneEditVerification.isEnabled = false
+    }
 }
