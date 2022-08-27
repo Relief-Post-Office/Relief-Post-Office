@@ -3,7 +3,6 @@ package com.seoul42.relief_post_office.result
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.databinding.ActivityResultQuestionDetailBinding

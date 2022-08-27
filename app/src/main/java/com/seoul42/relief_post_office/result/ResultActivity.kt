@@ -25,6 +25,9 @@ class ResultActivity : AppCompatActivity() {
     private val binding by lazy { ActivityResultBinding.inflate(layoutInflater) }
     private val database = Firebase.database
     private val storage = Firebase.storage
+    private val userDB = database.getReference("user")
+    private val wardDB = database.getReference("ward")
+    private val resultsDB = database.getReference("result")
     private lateinit var date: String
     private var resultList = mutableListOf<Pair<String, ResultDTO>>()
     private lateinit var adapter: ResultAdapter
@@ -106,8 +109,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun setWardName(wardId: String) {
-        val usersRef = database.getReference("user")
-        usersRef.child(wardId)
+        userDB.child(wardId)
             .child("name")
             .get()
             .addOnSuccessListener { wardNameSnapshot ->
@@ -132,7 +134,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun resultListenSet(wardId: String) {
-        val resultListRef = database.getReference("ward").child(wardId).child("resultIdList")
+        val resultListRef = wardDB.child(wardId).child("resultIdList")
 
         val resultListener = resultListRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -148,8 +150,7 @@ class ResultActivity : AppCompatActivity() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun resetResultList(wardId: String) {
-        val resultListRef = database.getReference("ward").child(wardId).child("resultIdList")
-        val resultsRef = database.getReference("result")
+        val resultListRef = wardDB.child(wardId).child("resultIdList")
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
         val curTime = Calendar.getInstance()
 
@@ -158,7 +159,7 @@ class ResultActivity : AppCompatActivity() {
         resultListRef.get().addOnSuccessListener { resultListSnapshot ->
             val resultIdList = resultListSnapshot.getValue<MutableMap<String, String>>() ?: mutableMapOf()
             for ((dummy, resultId) in resultIdList) {
-                resultsRef.child(resultId).get().addOnSuccessListener { resultSnapshot ->
+                resultsDB.child(resultId).get().addOnSuccessListener { resultSnapshot ->
                     val result = resultSnapshot.getValue(ResultDTO::class.java) ?: throw IllegalArgumentException("corresponding resultID not exists")
                     if (result.date.replace("-", "/") == binding.btnResultSetDate.text.toString()) {
                         val safetyTime = dateFormat.parse(result.date + " " + result.safetyTime)

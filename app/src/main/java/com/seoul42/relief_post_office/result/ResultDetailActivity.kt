@@ -23,6 +23,9 @@ class ResultDetailActivity : AppCompatActivity() {
     private val binding by lazy { ActivityResultDetailBinding.inflate(layoutInflater) }
     private val auth : FirebaseAuth by lazy { Firebase.auth }
     private val database = Firebase.database
+    private val userDB = database.getReference("user")
+    private val resultDB = database.getReference("result")
+    private val answerDB = database.getReference("answer")
     private var answerList = mutableListOf<Pair<String, AnswerDTO>>()
     private lateinit var adapter: ResultDetailAdapter
     private lateinit var listenerDTO : Pair<DatabaseReference, ValueEventListener>
@@ -55,7 +58,7 @@ class ResultDetailActivity : AppCompatActivity() {
     }
 
     private fun setWardName(wardId: String) {
-        database.getReference("user").child(wardId).child("name")
+        userDB.child(wardId).child("name")
             .get().addOnSuccessListener { wardNameSnapshot ->
             val wardName = (wardNameSnapshot.value ?: throw IllegalArgumentException("corresponding resultID not exists"))
                 .toString()
@@ -96,12 +99,11 @@ class ResultDetailActivity : AppCompatActivity() {
     private fun questionAnswerList(resultId: String) {
         answerList.clear()
         adapter.notifyDataSetChanged()
-        val answerListRef = database.getReference("result").child(resultId).child("answerIdList")
-        val answerRef = database.getReference("answer")
+        val answerListRef = resultDB.child(resultId).child("answerIdList")
         answerListRef.get().addOnSuccessListener { answerListSnapshot ->
             val answerIdList = answerListSnapshot.getValue<MutableMap<String, String>>() ?: mutableMapOf()
             for ((dummy, answerId) in answerIdList) {
-                answerRef.child(answerId).get().addOnSuccessListener { answerSnapshot ->
+                answerDB.child(answerId).get().addOnSuccessListener { answerSnapshot ->
                     val answer = answerSnapshot.getValue(AnswerDTO::class.java) ?: throw IllegalArgumentException("corresponding answer not exists")
                     val userId = auth.uid.toString()
                     if (!answer.questionSecret) {

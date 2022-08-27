@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
@@ -26,7 +25,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.*
 import com.seoul42.relief_post_office.record.AnswerRecordActivity
-import com.seoul42.relief_post_office.record.RecordActivity
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 import java.io.File
 import java.text.SimpleDateFormat
@@ -45,6 +43,10 @@ class AnswerActivity : AppCompatActivity() {
 
     private var auth : FirebaseAuth = Firebase.auth
     private val database = Firebase.database
+    private val answerDB = database.getReference("answer")
+    private val resultDB = database.getReference("result")
+    private val userDB = Firebase.database.getReference("user")
+    private val wardDB = Firebase.database.getReference("ward")
     private lateinit var answerList: ArrayList<Pair<String, AnswerDTO>>
     private var listSize = 0
     private var currentIndex: Int = 0
@@ -188,12 +190,10 @@ class AnswerActivity : AppCompatActivity() {
     }
 
     private fun sendAnswer(reply: Boolean, recordSrc: String) {
-        database.getReference("answer")
-            .child(answerList[currentIndex].first)
+        answerDB.child(answerList[currentIndex].first)
             .child("reply")
             .setValue(reply)
-        database.getReference("answer")
-            .child(answerList[currentIndex].first)
+        answerDB.child(answerList[currentIndex].first)
             .child("answerSrc")
             .setValue(recordSrc)
     }
@@ -212,8 +212,7 @@ class AnswerActivity : AppCompatActivity() {
                 val intent = Intent(this, EndingActivity::class.java)
 
                 answerBell.release()
-                database.getReference("result")
-                    .child(resultId)
+                resultDB.child(resultId)
                     .child("responseTime")
                     .setValue(date)
                 intent.putExtra("resultId", resultId)
@@ -230,8 +229,6 @@ class AnswerActivity : AppCompatActivity() {
     }
 
     private fun setUser(uid : String) {
-        val userDB = Firebase.database.getReference("user")
-
         userDB.child(uid).get().addOnSuccessListener { userSnapshot ->
             val userDTO = userSnapshot.getValue(UserDTO::class.java) ?: throw IllegalArgumentException("corresponding userID not exists")
             setWard(uid, userDTO)
@@ -239,8 +236,6 @@ class AnswerActivity : AppCompatActivity() {
     }
 
     private fun setWard(uid : String, userDTO : UserDTO) {
-        val wardDB = Firebase.database.getReference("ward")
-
         wardDB.child(uid).get().addOnSuccessListener { wardSnapshot ->
             val wardDTO = wardSnapshot.getValue(WardDTO::class.java) ?: throw IllegalArgumentException("corresponding wardID not exists")
             setResult(userDTO, wardDTO)
@@ -248,7 +243,6 @@ class AnswerActivity : AppCompatActivity() {
     }
 
     private fun setResult(userDTO : UserDTO, wardDTO : WardDTO) {
-        val resultDB = Firebase.database.getReference("result")
         val resultId = intent.getStringExtra("resultId").toString()
 
         resultDB.child(resultId).get().addOnSuccessListener { resultSnapshot ->
@@ -258,7 +252,6 @@ class AnswerActivity : AppCompatActivity() {
     }
 
     private fun sendFCM(myName : String, connectList : MutableMap<String, String>, safety : String) {
-        val userDB = Firebase.database.getReference("user")
         val firebaseViewModel : FirebaseViewModel by viewModels()
 
         for (connect in connectList) {
