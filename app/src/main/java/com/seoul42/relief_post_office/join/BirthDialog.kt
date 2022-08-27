@@ -20,10 +20,11 @@ class BirthDialog(context : AppCompatActivity) {
         Dialog(context)
     }
 
-    private lateinit var birthListener: BirthSaveClickedListener
     private var myYear : Int = 1970
     private var myMonth : Int = 1
     private var myDay : Int = 1
+
+    private lateinit var birthListener: BirthSaveClickedListener
 
     fun show(birth : String) {
         // 연도, 월, 일에 대한 NumberPicker 가 핸들링 될 때 변화된 값이 적용되도록 돕는 리스너 변수

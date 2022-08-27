@@ -50,9 +50,16 @@ class RequestDialog(
         firebaseViewModel
     }
 
+    // 데이터베이스 참조 변수
     private val userDB = Firebase.database.reference.child("user")
     private val wardDB = Firebase.database.reference.child("ward")
 
+    // 전화번호 입력 후 요청 버튼을 누를 시 발동되는 리스너
+    // MainFragment 에서 4 가지 케이스중 한 가지 케이스를 전달하도록 돕는 리스너
+    //  1. 핸드폰이 유효하지 않음
+    //  2. 이미 연결된 보호자
+    //  3. 보호자가 존재하지 않음
+    //  4. 보호자 등록을 성공
     private lateinit var requestListener: RequestListener
 
     fun show(window : Window) {
@@ -144,13 +151,16 @@ class RequestDialog(
                           // 모든 유저의 정보이므로 더 많은 딜레이를 설정하였음
     }
 
+    /**
+     * 피보호자의 번호일 경우 요청 작업을 수행
+     */
     private fun checkWard(
         tel :String,
         userId : String,
         userValue : UserDTO
     ) : Boolean {
         if (tel == userValue.tel && !userValue.guardian) {
-            processRequest(userId) /* 요청 작업을 수행 */
+            processRequest(userId)
             return true
         }
         return false
@@ -165,7 +175,7 @@ class RequestDialog(
     }
 
     /**
-     * 요청 작업을 수행하는 메서드
+     * 요청 작업을 실행하는 메서드
      */
     private fun executeRequest(user : DataSnapshot) {
         val userDTO = user.getValue(UserDTO::class.java) as UserDTO

@@ -43,20 +43,33 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
         Firebase.auth.uid.toString()
     }
 
-    private val firebaseViewModel : FirebaseViewModel by viewModels()
-    private val connectedWardList = ArrayList<Pair<String, UserDTO>>()
-    private val listenerList = ArrayList<ListenerDTO>()
-
+    // 데이터베이스 참조 변수
     private val userDB = Firebase.database.reference.child("user")
     private val guardianDB = Firebase.database.reference.child("guardian")
 
+    // FCM 푸시 알람을 처리하도록 돕는 변수
+    private val firebaseViewModel : FirebaseViewModel by viewModels()
+
+    // 실시간으로 연결된 피보호자들을 담도록 하는 리스트
+    private val connectedWardList = ArrayList<Pair<String, UserDTO>>()
+
+    // 등록한 데이터베이스 리스너들을 담는 리스트
+    private val listenerList = ArrayList<ListenerDTO>()
+
+    // 데이터베이스에 존재했던 보호자와 연결된 피보호자들을 담은 리스트
     private lateinit var connectList : MutableMap<String, String>
-    private lateinit var guardianAdapter : GuardianAdapter
-    private lateinit var binding : FragmentGuardianBinding
+
+    // 프로필 변경 화면에서 정상적으로 수정 작업이 이뤄진 경우
+    // 변경된 객체를 받아서 현재 화면에 적용될 수 있도록 돕는 변수
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
+    // 보호자와 연결된 피보호자들을 처리할 수 있는 어댑터
+    private lateinit var guardianAdapter : GuardianAdapter
+
+    private lateinit var binding : FragmentGuardianBinding
+
     /**
-     *  화면이 설정되기 전에 바인딩 설정
+     * 화면이 설정되기 전에 바인딩 설정
      */
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,11 +77,10 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
         savedInstanceState: Bundle?
     ) : View {
         binding = FragmentGuardianBinding.inflate(inflater, container, false)
-        // 프로필 변경 화면에서 정상적으로 수정 작업이 이뤄진 경우
-        // 변경된 객체를 받아서 현재 화면에 적용될 수 있도록 돕는 변수
         activityResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { profileActivity ->
+            // 정상적으로 프로필 변경 완료시 변경 정보를 받고 변경된 사진을 적용
             if (profileActivity.resultCode == AppCompatActivity.RESULT_OK) {
                 userDTO = profileActivity.data?.getSerializableExtra("userDTO") as UserDTO
                 Glide.with(this)
@@ -87,7 +99,7 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
     }
 
     /**
-     *  화면이 완전히 종료시 데이터베이스 관련 이벤트 리스너들을 해제하도록 함
+     * 화면이 완전히 종료시 데이터베이스 관련 이벤트 리스너들을 해제하도록 함
      */
     override fun onDestroy() {
         super.onDestroy()
@@ -103,9 +115,9 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
     }
 
     /**
-     *  2 가지 케이스로 분류하여 피보호자 정보를 띄우도록 돕는 메서드
-     *   1. 이미 연결된 피보호자가 있는 경우
-     *   2. 최초 접속으로 피보호자가 없는 경우
+     * 2 가지 케이스로 분류하여 피보호자 정보를 띄우도록 돕는 메서드
+     *  1. 이미 연결된 피보호자가 있는 경우
+     *  2. 피보호자가 없는 경우
      */
     private fun getWardListAndSetGuardian() {
         guardianDB.child(myUserId).get().addOnSuccessListener { guardian->
@@ -113,19 +125,27 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
                 val guardianDTO = guardian.getValue(GuardianDTO::class.java) as GuardianDTO
 
                 connectList = guardianDTO.connectList
-                setAlarm()
-                setGuardianPhoto()
-                setRecyclerView()
-                setRequestButton()
+                setUp()
             } else {
                 // nullPointerException 방지로 빈 객체 할당
                 connectList = mutableMapOf()
-                setAlarm()
-                setGuardianPhoto()
-                setRecyclerView()
-                setRequestButton()
+                setUp()
             }
         }
+    }
+
+    /**
+     * 총 4가지 세팅 작업이 이뤄짐
+     *  1. 보호자 알람 세팅
+     *  2. 보호자 프로필 사진 세팅
+     *  3. 보호자와 연결된 피보호자들의 리사이클러뷰 세팅
+     *  4. 피보호자에게 보호자 권한 요청 버튼에 대한 리스터 세팅
+     */
+    private fun setUp() {
+        setAlarm()
+        setGuardianPhoto()
+        setRecyclerView()
+        setRequestButton()
     }
 
     /**
@@ -152,7 +172,7 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
     }
 
     /**
-     *  피보호자들을 확인할 수 있도록 하는 리사이클러뷰를 설정하도록 돕는 메서드
+     * 연결된 피보호자들을 확인할 수 있도록 하는 리사이클러뷰를 설정하도록 돕는 메서드
      */
     private fun setRecyclerView() {
         val wardLayout = LinearLayoutManager(context)
@@ -202,7 +222,7 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
     }
 
     /**
-     *  보호자가 피보호자의 전화번호를 입력 후 요청 시 발생되는 모든 토스트의 경우
+     * 보호자가 피보호자의 전화번호를 입력 후 요청 시 발생되는 모든 토스트의 경우
      */
     private fun requestToast(requestCase : String) {
         when(requestCase) {
@@ -214,7 +234,7 @@ class MainFragment(private var userDTO : UserDTO) : Fragment(R.layout.fragment_g
     }
 
     /**
-     *  보호자와 연결된 피보호자를 리사이클러뷰에 적용가능하도록 연결된 목록에 추가
+     * 보호자와 연결된 피보호자를 리사이클러뷰에 적용가능하도록 연결된 목록에 추가
      */
     private fun addConnectedWardList(
         connectedWardList : ArrayList<Pair<String, UserDTO>>,

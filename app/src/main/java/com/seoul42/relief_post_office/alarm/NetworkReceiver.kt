@@ -26,15 +26,16 @@ import java.util.*
  */
 class NetworkReceiver : BroadcastReceiver() {
 
-    private val userDB = Firebase.database.reference.child("user")
-
     companion object {
         // 최초로 알람을 수행시키기 위한 플래그
         const val REPEAT_START = "com.rightline.backgroundrepeatapp.REPEAT_START"
     }
 
+    // 데이터베이스 참조 변수
+    private val userDB = Firebase.database.reference.child("user")
+
     /**
-     *  네트워크가 연결되었는지 확인
+     * 네트워크가 연결되었는지 확인
      *  - 연결이 안된 경우 : 15분 단위로 네트워크 알람을 재요청
      *  - 연결된 경우 : 로그인 된 유저 중 보호자, 피보호자에 따라 알람 요청
      */
@@ -56,8 +57,8 @@ class NetworkReceiver : BroadcastReceiver() {
     }
 
     /**
-     *  네트워크 연결이 안될 경우 실행하는 메서드
-     *  15분 단위로 네트워크 알람 요청을 수행
+     * 네트워크 연결이 안될 경우 실행하는 메서드
+     * 15분 단위로 네트워크 알람 요청을 수행
      */
     private fun setNetworkAlarm(context : Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager

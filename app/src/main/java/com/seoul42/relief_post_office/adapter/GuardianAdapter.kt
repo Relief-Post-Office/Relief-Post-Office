@@ -41,6 +41,7 @@ class GuardianAdapter(
     private val dataList: ArrayList<Pair<String, UserDTO>>
     ) : RecyclerView.Adapter<GuardianAdapter.ItemViewHolder>() {
 
+    // 데이터베이스 참조 변수
     private val wardDB = Firebase.database.reference.child("ward")
     private val resultDB = Firebase.database.reference.child("result")
 

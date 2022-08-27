@@ -56,8 +56,13 @@ class GuardianProfileActivity : AppCompatActivity() {
     }
 
     private val userId = auth.uid.toString()
-    private val imagesRef = storage.reference.child("profile/$userId.jpg")
+
+    // 데이터베이스 참조 변수
     private val userDB = Firebase.database.reference.child("user")
+
+    // firebase storage 에 사진을 저장하고자 할 경로를 지정한 변수
+    // 해당 경로를 통해 사진을 저장하거나 가져올 수 있음
+    private val imagesRef = storage.reference.child("profile/$userId.jpg")
 
     private lateinit var userDTO: UserDTO
 
@@ -73,7 +78,7 @@ class GuardianProfileActivity : AppCompatActivity() {
     }
 
     /**
-     *  현재 보호자의 정보를 미리 설정
+     * 현재 보호자의 정보를 미리 설정
      */
     private fun setPreProcessed() {
         userDTO = intent.getSerializableExtra("userDTO") as UserDTO
@@ -124,7 +129,7 @@ class GuardianProfileActivity : AppCompatActivity() {
     }
 
     /**
-     *  보호자가 변경하고자 할 정보를 수정하는 작업을 수행
+     * 보호자가 변경하고자 할 정보를 수정하는 작업을 수행
      */
     private fun setSave() {
         binding.guardianProfileSave.cornerRadius = 30
@@ -138,7 +143,7 @@ class GuardianProfileActivity : AppCompatActivity() {
     }
 
     /**
-     *  모든 정보가 기입되었는지를 확인하는 메서드
+     * 모든 정보가 기입되었는지를 확인하는 메서드
      */
     private fun allCheck() : Boolean {
         userDTO.detailAddress = binding.guardianProfileDetailAddress.text.toString()
@@ -174,7 +179,7 @@ class GuardianProfileActivity : AppCompatActivity() {
     }
 
     /**
-     *  Kakao 도로명 주소 검색 API 를 활용하였음
+     * Kakao 도로명 주소 검색 API 를 활용
      */
     private fun showKakaoAddressWebView() {
         binding.guardianProfileWebView.settings.apply {
@@ -209,8 +214,8 @@ class GuardianProfileActivity : AppCompatActivity() {
     }
 
     /**
-     *  실제로 입력한 주소 정보는 getAddress 메서드의 매개변수로 받아옴
-     *  받아온 주소를 반영하도록 돕는 클래스
+     * 실제로 입력한 주소 정보는 getAddress 메서드의 매개변수로 받아옴
+     * 받아온 주소를 반영하도록 돕는 클래스
      */
     private inner class WebViewData {
         @JavascriptInterface
@@ -245,7 +250,7 @@ class GuardianProfileActivity : AppCompatActivity() {
     //  주소를 선택할 수 있는 새로운 창을 띄우도록 돕는 변수
     private val chromeClient = object : WebChromeClient() {
         /**
-         *  주소를 선택할 수 있는 다이얼로그를 띄우는 메서드
+         * 주소를 선택할 수 있는 다이얼로그를 띄우는 메서드
          */
         override fun onCreateWindow(
             view: WebView?,
@@ -325,7 +330,7 @@ class GuardianProfileActivity : AppCompatActivity() {
     }
 
     /**
-     *  변경된 이미지의 uri 을 받아와 사진 업로드를 수행하는 메서드
+     * 변경된 이미지의 uri 을 받아와 사진 업로드를 수행하는 메서드
      */
     private fun setPhotoUpload(uri : Uri) {
         val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uri))

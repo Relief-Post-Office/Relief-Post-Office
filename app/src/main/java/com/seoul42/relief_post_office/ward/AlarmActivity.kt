@@ -23,20 +23,29 @@ import com.seoul42.relief_post_office.model.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * 피보호자의 안부에 해당하는 강제알람을 띄우도록 돕는 클래스
+ * 강제 알람이 5분 동안 지속되고 그 이후에는 종료
+ */
 class AlarmActivity : AppCompatActivity() {
 
     private val binding: ActivityAlarmBinding by lazy {
         ActivityAlarmBinding.inflate(layoutInflater)
     }
 
+    // 데이터베이스 참조 변수
     private val resultDB = Firebase.database.reference.child("result")
     private val answerDB = Firebase.database.reference.child("answer")
+
+    // 안부의 여러 질문들 중, 질문에 대한 응답 아이디 및 응답 데이터를 리스트 형태로 담음
     private val answerList: ArrayList<Pair<String, AnswerDTO>> = arrayListOf()
+
+    // 알람 소리를 울릴 수 있도록 하는 미디어 플레이어 변수
+    private var mediaPlayer: MediaPlayer? = null
 
     private lateinit var resultId : String
     private lateinit var imageView : ImageButton
     private lateinit var animationDrawable: AnimationDrawable
-    private var mediaPlayer: MediaPlayer? = null
 
     @Override
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +58,9 @@ class AlarmActivity : AppCompatActivity() {
         checkResponse()
     }
 
-    /* MediaPlayer release */
+    /**
+     * MediaPlayer release
+     */
     override fun onDestroy() {
         super.onDestroy()
 
@@ -59,6 +70,10 @@ class AlarmActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * - 미응답인 경우 : 강제 알람을 수행하도록 세팅
+     * - 응답한 경우 : 강제 알람을 바로 종료
+     */
     private fun checkResponse() {
         val recommendDTO =
             intent.getSerializableExtra("recommendDTO") as WardRecommendDTO
@@ -80,7 +95,10 @@ class AlarmActivity : AppCompatActivity() {
         }
     }
 
-    /* 알람 설정 */
+    /**
+     * 강제 알람에서 받아온 안부에 맞게 텍스트 변경 및 알람 소리를 on
+     * 알람 시작으로부터 5분 지날시 강제종료
+     */
     private fun setAlarm(resultDTO : ResultDTO) {
         val date = SimpleDateFormat("MM월 dd일 E요일 HH : mm")
             .format(Date(System.currentTimeMillis()))
@@ -96,7 +114,7 @@ class AlarmActivity : AppCompatActivity() {
         binding.alarmTime.text = curTime
         binding.alarmText.text = resultDTO.safetyName
 
-        /* 5분 뒤에 알람 종료 */
+        // 5분 뒤에 알람 종료
         Handler().postDelayed({
             if (mediaPlayer != null) {
                 alarmClose()
@@ -105,15 +123,18 @@ class AlarmActivity : AppCompatActivity() {
         }, finishTime)
     }
 
-    /* 버튼 text = 피보호자가 진행해야 할 "안부" 이름 */
+    /**
+     * 피보호자가 안부 시작 버튼을 누를 시
+     *  1. 안부에 대응하는 answerList 를 세팅
+     *  2. 울리고 있는 알람을 close
+     *  3. 1, 2 작업 완료시 안내 음성이 뜨고 안부 시작
+     */
     private fun setButton() {
         binding.alarmButton.setOnClickListener {
             setAnswerStart()
-            // voice
-            // 안부 시작 안내 보이스
             Handler().postDelayed({
                 setGuideAndStartSafety()
-            }, 500)
+            }, 500) // 비동기적 데이터 통신을 고려하여 500ms 딜레이를 설정
         }
     }
 
@@ -129,12 +150,15 @@ class AlarmActivity : AppCompatActivity() {
         resultDB.child(resultId).child("answerIdList").get()
             .addOnSuccessListener { resultSnapshot ->
                 val answerIdList = resultSnapshot.getValue<MutableMap<String, String>>()
-                ?: throw IllegalArgumentException("answerIdList required")
-
+                    ?: throw IllegalArgumentException("answerIdList required")
                 setAnswerList(answerIdList)
             }
     }
 
+    /**
+     * 응답 목록에 담겨있는 모든 응답 아이디 및 응답 데이터를 answerList 에 담음
+     *  - answerList => (응답 아이디, 응답 데이터)
+     */
     private fun setAnswerList(answerIdList : MutableMap<String, String>) {
         answerIdList.map { questionAndAnswer ->
             val answerId = questionAndAnswer.value
@@ -146,6 +170,9 @@ class AlarmActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 안내 음성이 종료되면 응답 화면(AnswerActivity)으로 이동
+     */
     private fun setGuideAndStartSafety() {
         val startGuideVoice = MediaPlayer.create(this, R.raw.startingsafety)
 
@@ -166,7 +193,9 @@ class AlarmActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
 
-    /* 상단 notification 을 없애기 */
+    /**
+     * 상단 notification 을 없애는 메서드
+     */
     private fun removeNotification() {
         val notificationManager = this.getSystemService(
             Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -174,7 +203,6 @@ class AlarmActivity : AppCompatActivity() {
         notificationManager.cancelAll()
     }
 
-    /* 알람 종료 */
     private fun alarmClose() {
         if (mediaPlayer!!.isPlaying) {
             mediaPlayer!!.stop()

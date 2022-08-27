@@ -59,8 +59,8 @@ class GuardianBackgroundActivity : AppCompatActivity() {
     }
 
     /**
-     *  배터리 최적화 무시를 설정
-     *   => 알람 매니저 및 FCM 에 대비하기 위함
+     * 배터리 최적화 무시를 설정
+     *  => 알람 매니저 및 FCM 에 대비하기 위함
      */
     private fun ignoreBatteryOptimization() {
         val intent = Intent()

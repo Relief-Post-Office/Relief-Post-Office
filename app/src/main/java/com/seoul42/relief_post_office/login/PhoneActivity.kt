@@ -26,8 +26,8 @@ import java.util.concurrent.TimeUnit
 import com.seoul42.relief_post_office.databinding.PhoneBinding
 
 /**
- *  핸드폰 인증을 돕는 클래스
- *  핸드폰 인증을 마치면 회원가입 또는 보호자 및 피보호자 화면으로 이동
+ * 핸드폰 인증을 돕는 클래스
+ * 핸드폰 인증을 마치면 회원가입 또는 보호자 및 피보호자 화면으로 이동
  */
 class PhoneActivity : AppCompatActivity() {
 
@@ -38,19 +38,23 @@ class PhoneActivity : AppCompatActivity() {
         PhoneBinding.inflate(layoutInflater)
     }
 
+    // 데이터베이스 참조 변수
     private val userDB = Firebase.database.reference.child("user")
 
-    private lateinit var verificationId : String
-    private lateinit var phoneNumber: String
-
-    // 유저가 입력한 인증번호와 일치한지를 판단해주는 변수
-    private lateinit var phoneAuthCredential: PhoneAuthCredential
-    // 핸드폰 인증 관련 콜백을 유저가 인증번호 요청 시에 수행되도록 돕는 변수
-    private lateinit var callbacks : PhoneAuthProvider.OnVerificationStateChangedCallbacks
-
+    // 인증 시간을 처리하도록 하는 변수들
     private var minute = 2
     private var second = 0
     private var requestFlag: Boolean = false
+
+    // 유저가 입력한 인증번호와 일치한지를 판단해주는 변수
+    private lateinit var phoneAuthCredential: PhoneAuthCredential
+
+    // 핸드폰 인증 관련 콜백을 유저가 인증번호 요청 시에 수행되도록 돕는 변수
+    private lateinit var callbacks : PhoneAuthProvider.OnVerificationStateChangedCallbacks
+
+    // 유저의 인증번호 및 핸드폰 번호
+    private lateinit var verificationId : String
+    private lateinit var phoneNumber: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,8 +75,8 @@ class PhoneActivity : AppCompatActivity() {
             }
 
             /**
-             *  핸드폰 번호를 입력하고 인증 번호 요청시 정상적으로 수행되는 메서드
-             *   - verificationId : 유저가 입력해야 할 인증번호
+             * 핸드폰 번호를 입력하고 인증 번호 요청시 정상적으로 수행되는 메서드
+             *  - verificationId : 유저가 입력해야 할 인증번호
              */
             override fun onCodeSent(
                 verificationId: String,
@@ -248,7 +252,7 @@ class PhoneActivity : AppCompatActivity() {
     }
 
     /**
-     * ex : result = "01분 48초"
+     * ex) result = "01분 48초"
      */
     private fun makeTime(minute : Int, second : Int) : String {
         var result = ""

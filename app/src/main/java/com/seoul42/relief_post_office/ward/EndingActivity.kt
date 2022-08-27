@@ -14,6 +14,9 @@ import com.seoul42.relief_post_office.databinding.WardEndingBinding
 import com.seoul42.relief_post_office.model.*
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 
+/**
+ * 피보호자가 모든 응답을 완료한 경우 종료 음성이 끝나면 종료되도록 하는 클래스
+ */
 class EndingActivity : AppCompatActivity() {
 
     private val binding: WardEndingBinding by lazy {
@@ -24,15 +27,16 @@ class EndingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        // 보이스 재생 후 종료
         val endingGuideVoice = MediaPlayer.create(this, R.raw.safetyending)
 
+        endingGuideVoice.start()
+        setStatusBarTransparent()
+
+        // 종료 음성이 끝나면 종료처리
         endingGuideVoice.setOnCompletionListener {
             endingGuideVoice.release()
             finish()
         }
-        endingGuideVoice.start()
-        setStatusBarTransparent()
     }
 
     private fun setStatusBarTransparent() {

@@ -11,8 +11,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 
 /**
- *  현재 프로젝트의 클라우드 메시징 서버 키를 헤더에 삽입
- *  정상적으로 서버 접근이 가능하도록 헤더를 설정
+ * 현재 프로젝트의 클라우드 메시징 서버 키를 헤더에 삽입
+ * 정상적으로 서버 접근이 가능하도록 헤더를 설정
  */
 object RetrofitInstance {
 

@@ -39,6 +39,7 @@ class CheckLoginService : AppCompatActivity() {
         SplashBinding.inflate(layoutInflater)
     }
 
+    // 데이터베이스 참조 변수
     private val userDB = Firebase.database.reference.child("user")
 
     private lateinit var userDTO: UserDTO

@@ -31,14 +31,24 @@ import kotlin.math.max
 /**
  * 보호자 유저를 위한 알람 설정을 위한 클래스
  * 연결된 피보호자의 안부 시작 시간으로부터 30분 뒤 미응답시 notification 을 알림
- * 총 3 가지 케이스로 알람 설정
  *
+ * 총 3 가지 케이스로 알람 설정
  *  1. 추천 알람 : 연결된 피보호자의 (안부 시간 + 30분) 과 가장 근접한 안부(여러 개)를 추천 후 통지 알람을 요청
  *  2. 통지 알람 : 추천 받은 안부들 중 미응답인 안부인 경우 notification 을 알리고 추천 알람을 요청
  *  3. 네트워크 알람 : 네트워크 연결이 안된 경우 네트워크 알람을 요청
  */
 class GuardianReceiver () : BroadcastReceiver() {
 
+    companion object {
+        const val PERMISSION_REPEAT = "com.rightline.backgroundrepeatapp.permission.ACTION_REPEAT"
+
+        // REPEAT_START : 추천 알람을 수행하기 위한 플래그
+        const val REPEAT_START = "com.rightline.backgroundrepeatapp.REPEAT_START"
+        // REPEAT_STOP : 통지 알람을 수행하기 위한 플래그
+        const val REPEAT_STOP = "com.rightline.backgroundrepeatapp.REPEAT_STOP"
+    }
+
+    // 데이터베이스 참조 변수
     private val userDB = Firebase.database.reference.child("user")
     private val wardDB = Firebase.database.reference.child("ward")
     private val resultDB = Firebase.database.reference.child("result")
@@ -56,26 +66,18 @@ class GuardianReceiver () : BroadcastReceiver() {
 
     private var isFail : Boolean = false
     private var screenWakeLock : PowerManager.WakeLock? = null
+
     private lateinit var uid : String
 
-    companion object {
-        const val PERMISSION_REPEAT = "com.rightline.backgroundrepeatapp.permission.ACTION_REPEAT"
-
-        // REPEAT_START : 추천 알람을 수행하기 위한 플래그
-        const val REPEAT_START = "com.rightline.backgroundrepeatapp.REPEAT_START"
-        // REPEAT_STOP : 통지 알람을 수행하기 위한 플래그
-        const val REPEAT_STOP = "com.rightline.backgroundrepeatapp.REPEAT_STOP"
-    }
-
     /**
-     *  알람 요청을 받고 플래그에 따라 특정 작업을 수행하는 메서드
+     * 알람 요청을 받고 플래그에 따라 특정 작업을 수행하는 메서드
      *
-     *  알람 요청을 받는 5 가지 케이스
-     *   1. 보호자가 메인 화면으로 이동
-     *   2. 보호자가 재부팅한 경우
-     *   3. 연결된 피보호자의 안부 or 질문이 추가된 경우
-     *   4. 연결된 피보호자의 안부 or 질문이 수정된 경우
-     *   5. 연결된 피보호자의 안부 or 질문이 삭제된 경우
+     * 알람 요청을 받는 5 가지 케이스
+     *  1. 보호자가 메인 화면으로 이동
+     *  2. 보호자가 재부팅한 경우
+     *  3. 연결된 피보호자의 안부 or 질문이 추가된 경우
+     *  4. 연결된 피보호자의 안부 or 질문이 수정된 경우
+     *  5. 연결된 피보호자의 안부 or 질문이 삭제된 경우
      */
     override fun onReceive(context: Context, intent: Intent) {
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -94,8 +96,8 @@ class GuardianReceiver () : BroadcastReceiver() {
     }
 
     /**
-     *  REPEAT_START : 추천 알람 수행
-     *  REPEAT_STOP : 통지 알람 수행
+     * REPEAT_START : 추천 알람 수행
+     * REPEAT_STOP : 통지 알람 수행
      */
     private fun selectAlarm(context: Context, intent: Intent) {
         when (intent.action) {
@@ -110,8 +112,8 @@ class GuardianReceiver () : BroadcastReceiver() {
     }
 
     /**
-     *  네트워크 연결이 안될 경우 실행하는 메서드
-     *  15분 단위로 네트워크 알람 요청을 수행
+     * 네트워크 연결이 안될 경우 실행하는 메서드
+     * 15분 단위로 네트워크 알람 요청을 수행
      */
     private fun setNetworkAlarm(context : Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -143,10 +145,10 @@ class GuardianReceiver () : BroadcastReceiver() {
     }
 
     /**
-     *  연결된 피보호자 중 가장 근접한 안부를 찾는 메서드
-     *   1. 피보호자의 정보를 찾음 (그 후에 안부를 찾음)
-     *   2. 가장 근접한 후보 객체를 선별후 timeGap 이 동일한 객체를 recommendList 에 추가
-     *   3. 1, 2 작업이 끝날 경우 통지 알람을 설정 (단, candidateList 가 빌 경우 수행 x)
+     * 연결된 피보호자 중 가장 근접한 안부를 찾는 메서드
+     *  1. 피보호자의 정보를 찾음 (그 후에 안부를 찾음)
+     *  2. 가장 근접한 후보 객체를 선별후 timeGap 이 동일한 객체를 recommendList 에 추가
+     *  3. 1, 2 작업이 끝날 경우 통지 알람을 설정 (단, candidateList 가 빌 경우 수행 x)
      */
     private fun recommendAlarm(context : Context) {
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss E")
@@ -176,9 +178,9 @@ class GuardianReceiver () : BroadcastReceiver() {
     }
 
     /**
-     *  candidateList 는 가장 근접한 후보 객체들이 선별된 목록
-     *  현재 시간으로부터 가장 근접한 후보들을 recommendList 에 추가
-     *   - minTimeGap = 현재 시간으로부터 가장 근접한 안부의 초(second) 격차
+     * candidateList 는 가장 근접한 후보 객체들이 선별된 목록
+     * 현재 시간으로부터 가장 근접한 후보들을 recommendList 에 추가
+     *  - minTimeGap = 현재 시간으로부터 가장 근접한 안부의 초(second) 격차
      */
     private fun setRecommendList(context : Context, minTimeGap : Int) {
         for (candidate in candidateList) {
@@ -212,7 +214,7 @@ class GuardianReceiver () : BroadcastReceiver() {
     }
 
     /**
-     *  안부를 후보 리스트에 추가하도록 돕는 메서드
+     * 안부를 후보 리스트에 추가하도록 돕는 메서드
      */
     private fun setSafetyToCandidateList(
         context : Context,
@@ -230,7 +232,7 @@ class GuardianReceiver () : BroadcastReceiver() {
     }
 
     /**
-     *  현재 시간으로부터 (안부 시간 + 30분) 까지의 초(second) 격차를 환산하여 후보 리스트에 추가하는 메서드
+     * 현재 시간으로부터 (안부 시간 + 30분) 까지의 초(second) 격차를 환산하여 후보 리스트에 추가하는 메서드
      */
     private fun searchDayOfWeekAndSetCandidateList(
         wardId : String,
@@ -258,9 +260,9 @@ class GuardianReceiver () : BroadcastReceiver() {
     }
 
     /**
-     *  alarmFlag 에 따라 알람 요청을 세팅
-     *   - REPEAT_START : 추천 알람을 세팅
-     *   - REPEAT_STOP : 통지 알람을 세팅
+     * alarmFlag 에 따라 알람 요청을 세팅
+     *  - REPEAT_START : 추천 알람을 세팅
+     *  - REPEAT_STOP : 통지 알람을 세팅
      */
     private fun setAlarm(
         context: Context,
@@ -306,7 +308,7 @@ class GuardianReceiver () : BroadcastReceiver() {
     }
 
     /**
-     *  통지 알람을 요청하도록 돕는 메서드
+     * 통지 알람을 요청하도록 돕는 메서드
      */
     private fun notifyAlarm(
         context : Context,
@@ -321,9 +323,9 @@ class GuardianReceiver () : BroadcastReceiver() {
     }
 
     /**
-     *  1. 존재하는 유저인지 확인
-     *  2. 피보호자인지 확인
-     *  위 2 조건을 만족할 경우 피보호자의 userDTO, wardDTO 를 가지고 통지할지를 결정
+     * 1. 존재하는 유저인지 확인
+     * 2. 피보호자인지 확인
+     * 위 2 조건을 만족할 경우 피보호자의 userDTO, wardDTO 를 가지고 통지할지를 결정
      */
     private fun checkWardAndNotifyAlarm(
         context : Context,
@@ -348,17 +350,17 @@ class GuardianReceiver () : BroadcastReceiver() {
     }
 
     /**
-     *  최종적으로 통지 알람을 보호자에게 보낼지를 결정
-     *  아래의 조건이 전부 만족할 경우 보호자에게 통지 알람을 보냄
+     * 최종적으로 통지 알람을 보호자에게 보낼지를 결정
+     * 아래의 조건이 전부 만족할 경우 보호자에게 통지 알람을 보냄
      *
-     *  1. (현재 시간 - 안부 시간) 이 [20 min, 40 min] 범위 내인지 => (대략 30분 근처 확인)
-     *  2. 피보호자가 안부를 미응답했는지
-     *  3. 결과에 대응하는 안부 id 가 선별된 안부 id 와 동일한지
-     *  4. 결과에 대응하는 안부가 존재하는지 => (삭제 여부까지 확인)
+     * 1. (현재 시간 - 안부 시간) 이 [20 min, 40 min] 범위 내인지 => (대략 30분 근처 확인)
+     * 2. 피보호자가 안부를 미응답했는지
+     * 3. 결과에 대응하는 안부 id 가 선별된 안부 id 와 동일한지
+     * 4. 결과에 대응하는 안부가 존재하는지 => (삭제 여부까지 확인)
      *
-     *  - userDTO : 피보호자의 정보를 확인하기 위한 용도
-     *  - wardDTO : 피보호자의 결과 목록을 확인하기 위한 용도
-     *  - recommendDTO : 추천 알람에서 받아온 추천 안부
+     * - userDTO : 피보호자의 정보를 확인하기 위한 용도
+     * - wardDTO : 피보호자의 결과 목록을 확인하기 위한 용도
+     * - recommendDTO : 추천 알람에서 받아온 추천 안부
      */
     private fun notifyAlarmWithSafetyAndResult(
         context : Context,
@@ -388,12 +390,12 @@ class GuardianReceiver () : BroadcastReceiver() {
     }
 
     /**
-     *  1. (현재 시간 - 안부 시간) 이 [20 min, 40 min] 범위 내인지 => (대략 30분 근처 확인)
-     *  2. 피보호자가 안부를 미응답했는지
-     *  3. 결과에 대응하는 안부 id 가 선별된 안부 id 와 동일한지
-     *  4. 결과에 대응하는 안부가 존재하는지 => (삭제 여부까지 확인)
+     * 1. (현재 시간 - 안부 시간) 이 [20 min, 40 min] 범위 내인지 => (대략 30분 근처 확인)
+     * 2. 피보호자가 안부를 미응답했는지
+     * 3. 결과에 대응하는 안부 id 가 선별된 안부 id 와 동일한지
+     * 4. 결과에 대응하는 안부가 존재하는지 => (삭제 여부까지 확인)
      *
-     *  위 4 가지 조건을 만족하면 true, 그 외에 false
+     * 위 4 가지 조건을 만족하면 true, 그 외에 false
      */
     private fun isEligibleNonResponseSafety(
         gapTime : Long,
@@ -406,7 +408,7 @@ class GuardianReceiver () : BroadcastReceiver() {
     }
 
     /**
-     *  통지를 세팅하는 작업을 돕는 메서드
+     * 통지를 세팅하는 작업을 돕는 메서드
      */
     private fun setNotification(
         context : Context,
@@ -424,8 +426,8 @@ class GuardianReceiver () : BroadcastReceiver() {
     }
 
     /**
-     *  최종적으로 보호자에게 통지를 보내는 메서드
-     *  피보호자가 "미응답"한 안부를 보호자 핸드폰의 상단에 메시지가 띄워지도록 함
+     * 최종적으로 보호자에게 통지를 보내는 메서드
+     * 피보호자가 "미응답"한 안부를 보호자 핸드폰의 상단에 메시지가 띄워지도록 함
      */
     private fun executeNotification(
         context : Context,
