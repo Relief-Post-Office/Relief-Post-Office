@@ -139,9 +139,9 @@ class AnswerActivity : AppCompatActivity() {
                         answerRecordActivity.stopRecording()
                         var uploadAnswerRecord = answerRecordRef.putFile(answerRecordFile)
                         uploadAnswerRecord.addOnSuccessListener {
-                            answerRecordRef.downloadUrl.addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    recordSrc = task.result.toString()
+                            answerRecordRef.downloadUrl.addOnCompleteListener { answerRecord ->
+                                if (answerRecord.isSuccessful) {
+                                    recordSrc = answerRecord.result.toString()
                                 }
                                 sendAnswer(reply, recordSrc)
                             }
@@ -232,8 +232,8 @@ class AnswerActivity : AppCompatActivity() {
     private fun setUser(uid : String) {
         val userDB = Firebase.database.getReference("user")
 
-        userDB.child(uid).get().addOnSuccessListener { user ->
-            val userDTO = user.getValue(UserDTO::class.java) ?: throw IllegalArgumentException("corresponding userID not exists")
+        userDB.child(uid).get().addOnSuccessListener { userSnapshot ->
+            val userDTO = userSnapshot.getValue(UserDTO::class.java) ?: throw IllegalArgumentException("corresponding userID not exists")
             setWard(uid, userDTO)
         }
     }
@@ -241,8 +241,8 @@ class AnswerActivity : AppCompatActivity() {
     private fun setWard(uid : String, userDTO : UserDTO) {
         val wardDB = Firebase.database.getReference("ward")
 
-        wardDB.child(uid).get().addOnSuccessListener { ward ->
-            val wardDTO = ward.getValue(WardDTO::class.java) ?: throw IllegalArgumentException("corresponding wardID not exists")
+        wardDB.child(uid).get().addOnSuccessListener { wardSnapshot ->
+            val wardDTO = wardSnapshot.getValue(WardDTO::class.java) ?: throw IllegalArgumentException("corresponding wardID not exists")
             setResult(userDTO, wardDTO)
         }
     }
@@ -251,8 +251,8 @@ class AnswerActivity : AppCompatActivity() {
         val resultDB = Firebase.database.getReference("result")
         val resultId = intent.getStringExtra("resultId").toString()
 
-        resultDB.child(resultId).get().addOnSuccessListener { result ->
-            val resultDTO = result.getValue(ResultDTO::class.java) ?: throw IllegalArgumentException("corresponding resultID not exists")
+        resultDB.child(resultId).get().addOnSuccessListener { resultSnapshot ->
+            val resultDTO = resultSnapshot.getValue(ResultDTO::class.java) ?: throw IllegalArgumentException("corresponding resultID not exists")
             sendFCM(userDTO.name, wardDTO.connectList, resultDTO!!.safetyName)
         }
     }
