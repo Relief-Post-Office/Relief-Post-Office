@@ -156,21 +156,17 @@ class ResultActivity : AppCompatActivity() {
         resultList.clear()
         adapter.notifyDataSetChanged()
         resultListRef.get().addOnSuccessListener { resultListSnapshot ->
-            if (resultListSnapshot.value != null) {
-                val resultIdList = resultListSnapshot.getValue<MutableMap<String, String>>() as MutableMap<String, String>
-                for ((dummy, resultId) in resultIdList) {
-                    resultsRef.child(resultId).get().addOnSuccessListener { resultSnapshot ->
-                        if (resultSnapshot.value != null) {
-                            val result = resultSnapshot.getValue(ResultDTO::class.java) as ResultDTO
-                            if (result.date.replace("-", "/") == binding.btnResultSetDate.text.toString()) {
-                                val safetyTime = dateFormat.parse(result.date + " " + result.safetyTime)
+            val resultIdList = resultListSnapshot.getValue<MutableMap<String, String>>() ?: mutableMapOf()
+            for ((dummy, resultId) in resultIdList) {
+                resultsRef.child(resultId).get().addOnSuccessListener { resultSnapshot ->
+                    val result = resultSnapshot.getValue(ResultDTO::class.java) ?: throw IllegalArgumentException("corresponding resultID not exists")
+                    if (result.date.replace("-", "/") == binding.btnResultSetDate.text.toString()) {
+                        val safetyTime = dateFormat.parse(result.date + " " + result.safetyTime)
 
-                                if (curTime.time.time - safetyTime.time >= 0) {
-                                    resultList.add(Pair(resultId, result))
-                                    resultList.sortBy { it.second.safetyTime }
-                                    adapter.notifyDataSetChanged()
-                                }
-                            }
+                        if (curTime.time.time - safetyTime.time >= 0) {
+                            resultList.add(Pair(resultId, result))
+                            resultList.sortBy { it.second.safetyTime }
+                            adapter.notifyDataSetChanged()
                         }
                     }
                 }

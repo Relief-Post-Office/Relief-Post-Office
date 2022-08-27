@@ -233,10 +233,8 @@ class AnswerActivity : AppCompatActivity() {
         val userDB = Firebase.database.getReference("user")
 
         userDB.child(uid).get().addOnSuccessListener { user ->
-            if (user.getValue(UserDTO::class.java) != null) {
-                val userDTO = user.getValue(UserDTO::class.java) as UserDTO
-                setWard(uid, userDTO)
-            }
+            val userDTO = user.getValue(UserDTO::class.java) ?: throw IllegalArgumentException("corresponding userID not exists")
+            setWard(uid, userDTO)
         }
     }
 
@@ -244,10 +242,8 @@ class AnswerActivity : AppCompatActivity() {
         val wardDB = Firebase.database.getReference("ward")
 
         wardDB.child(uid).get().addOnSuccessListener { ward ->
-            if (ward.getValue(WardDTO::class.java) != null) {
-                val wardDTO = ward.getValue(WardDTO::class.java) as WardDTO
-                setResult(userDTO, wardDTO)
-            }
+            val wardDTO = ward.getValue(WardDTO::class.java) ?: throw IllegalArgumentException("corresponding wardID not exists")
+            setResult(userDTO, wardDTO)
         }
     }
 
@@ -256,10 +252,8 @@ class AnswerActivity : AppCompatActivity() {
         val resultId = intent.getStringExtra("resultId").toString()
 
         resultDB.child(resultId).get().addOnSuccessListener { result ->
-            if (result.getValue(ResultDTO::class.java) != null) {
-                val resultDTO = result.getValue(ResultDTO::class.java)
-                sendFCM(userDTO.name, wardDTO.connectList, resultDTO!!.safetyName)
-            }
+            val resultDTO = result.getValue(ResultDTO::class.java) ?: throw IllegalArgumentException("corresponding resultID not exists")
+            sendFCM(userDTO.name, wardDTO.connectList, resultDTO!!.safetyName)
         }
     }
 
@@ -270,13 +264,11 @@ class AnswerActivity : AppCompatActivity() {
         for (connect in connectList) {
             val uid = connect.key
             userDB.child(uid).get().addOnSuccessListener { userSnapshot ->
-                if (userSnapshot.getValue(UserDTO::class.java) != null) {
-                    val userDTO = userSnapshot.getValue(UserDTO::class.java) as UserDTO
-                    val notificationData = NotificationDTO.NotificationData("안심우체국",
-                        myName, "$myName 님이 $safety 안부를 완료했습니다.")
-                    val notificationDTO = NotificationDTO(userDTO.token,"high", notificationData)
-                    firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
-                }
+                val userDTO = userSnapshot.getValue(UserDTO::class.java) ?: throw IllegalArgumentException("corresponding userID not exists")
+                val notificationData = NotificationDTO.NotificationData("안심우체국",
+                    myName, "$myName 님이 $safety 안부를 완료했습니다.")
+                val notificationDTO = NotificationDTO(userDTO.token,"high", notificationData)
+                firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
             }
         }
     }

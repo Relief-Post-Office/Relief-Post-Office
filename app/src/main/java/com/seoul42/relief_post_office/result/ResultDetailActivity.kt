@@ -57,10 +57,9 @@ class ResultDetailActivity : AppCompatActivity() {
     private fun setWardName(wardId: String) {
         database.getReference("user").child(wardId).child("name")
             .get().addOnSuccessListener { wardNameSnapshot ->
-            if (wardNameSnapshot.value != null) {
-                val wardName = wardNameSnapshot.value.toString()
-                binding.textResultDetailWardName.text = wardName
-            }
+            val wardName = (wardNameSnapshot.value ?: throw IllegalArgumentException("corresponding resultID not exists"))
+                .toString()
+            binding.textResultDetailWardName.text = wardName
         }
     }
 
@@ -100,22 +99,18 @@ class ResultDetailActivity : AppCompatActivity() {
         val answerListRef = database.getReference("result").child(resultId).child("answerIdList")
         val answerRef = database.getReference("answer")
         answerListRef.get().addOnSuccessListener { answerListSnapshot ->
-            if (answerListSnapshot.value != null) {
-                val answerIdList = answerListSnapshot.getValue<MutableMap<String, String>>() as MutableMap<String, String>
-                for ((dummy, answerId) in answerIdList) {
-                    answerRef.child(answerId).get().addOnSuccessListener { answerSnapshot ->
-                        if (answerSnapshot.value != null) {
-                            val answer = answerSnapshot.getValue(AnswerDTO::class.java) as AnswerDTO
-                            val userId = auth.uid.toString()
-                            if (!answer.questionSecret) {
-                                answerList.add(Pair(answerId, answer))
-                                adapter.notifyDataSetChanged()
-                            }
-                            else if ((answer.questionSecret) and (answer.questionOwner == userId)) {
-                                answerList.add(Pair(answerId, answer))
-                                adapter.notifyDataSetChanged()
-                            }
-                        }
+            val answerIdList = answerListSnapshot.getValue<MutableMap<String, String>>() ?: mutableMapOf()
+            for ((dummy, answerId) in answerIdList) {
+                answerRef.child(answerId).get().addOnSuccessListener { answerSnapshot ->
+                    val answer = answerSnapshot.getValue(AnswerDTO::class.java) ?: throw IllegalArgumentException("corresponding answer not exists")
+                    val userId = auth.uid.toString()
+                    if (!answer.questionSecret) {
+                        answerList.add(Pair(answerId, answer))
+                        adapter.notifyDataSetChanged()
+                    }
+                    else if ((answer.questionSecret) and (answer.questionOwner == userId)) {
+                        answerList.add(Pair(answerId, answer))
+                        adapter.notifyDataSetChanged()
                     }
                 }
             }
