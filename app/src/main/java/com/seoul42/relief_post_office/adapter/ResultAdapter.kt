@@ -25,26 +25,9 @@ class ResultAdapter(private val context : Context,
             binding.itemResultAlarmTime.text = result.second.safetyTime.replace(":", " : ")
 
             if (!isResponsed(result.second.responseTime)) {
-                binding.itemResultResponseTime.text = result.second.responseTime
-                binding.itemResultSafetyLayout.setBackgroundResource(R.drawable.result_disable_background)
-                binding.itemResultResponseTime.setTextColor(R.color.red)
-                binding.itemResultSafetyLayout.setOnClickListener {
-                    Toast.makeText(context, "미응답 결과입니다.", Toast.LENGTH_SHORT).show()
-                }
-            }
-            else {
-                binding.itemResultSafetyLayout.setBackgroundResource(R.drawable.result_enable_background)
-                binding.itemResultResponseTime.text = millisToTimeString(calTimeDiff(result))
-                binding.itemResultSafetyLayout.setOnClickListener { itemResultSafetyView ->
-                    // 여러번 클릭 방지
-                    itemResultSafetyView.isClickable = false
-                    val intent = Intent(context, ResultDetailActivity::class.java)
-                    intent.putExtra("wardId", wardId)
-                    intent.putExtra("resultId", result.first)
-                    intent.putExtra("result", result.second)
-                    ContextCompat.startActivity(context, intent, null)
-                    itemResultSafetyView.isClickable = true
-                }
+                setClickableResult(binding, result)
+            } else {
+                setUnClickableResult(binding, result)
             }
         }
     }
@@ -61,6 +44,30 @@ class ResultAdapter(private val context : Context,
 
     override fun getItemCount(): Int {
         return resultList.size
+    }
+
+    private fun setClickableResult(binding: ItemResultBinding, result: Pair<String, ResultDTO>) {
+        binding.itemResultResponseTime.text = result.second.responseTime
+        binding.itemResultSafetyLayout.setBackgroundResource(R.drawable.result_disable_background)
+        binding.itemResultResponseTime.setTextColor(R.color.red)
+        binding.itemResultSafetyLayout.setOnClickListener {
+            Toast.makeText(context, "미응답 결과입니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun setUnClickableResult(binding: ItemResultBinding, result: Pair<String, ResultDTO>) {
+        binding.itemResultSafetyLayout.setBackgroundResource(R.drawable.result_enable_background)
+        binding.itemResultResponseTime.text = millisToTimeString(calTimeDiff(result))
+        binding.itemResultSafetyLayout.setOnClickListener { itemResultSafetyView ->
+            // 여러번 클릭 방지
+            itemResultSafetyView.isClickable = false
+            val intent = Intent(context, ResultDetailActivity::class.java)
+            intent.putExtra("wardId", wardId)
+            intent.putExtra("resultId", result.first)
+            intent.putExtra("result", result.second)
+            ContextCompat.startActivity(context, intent, null)
+            itemResultSafetyView.isClickable = true
+        }
     }
 
     private fun calTimeDiff(result: Pair<String, ResultDTO>): Long {
