@@ -151,27 +151,40 @@ class ResultActivity : AppCompatActivity() {
     @SuppressLint("NotifyDataSetChanged")
     private fun resetResultList(wardId: String) {
         val resultListRef = wardDB.child(wardId).child("resultIdList")
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
-        val curTime = Calendar.getInstance()
 
         resultList.clear()
         adapter.notifyDataSetChanged()
         resultListRef.get().addOnSuccessListener { resultListSnapshot ->
             val resultIdList = resultListSnapshot.getValue<MutableMap<String, String>>() ?: mutableMapOf()
             for ((dummy, resultId) in resultIdList) {
-                resultsDB.child(resultId).get().addOnSuccessListener { resultSnapshot ->
-                    val result = resultSnapshot.getValue(ResultDTO::class.java) ?: throw IllegalArgumentException("corresponding resultID not exists")
-                    if (result.date.replace("-", "/") == binding.btnResultSetDate.text.toString()) {
-                        val safetyTime = dateFormat.parse(result.date + " " + result.safetyTime)
-
-                        if (curTime.time.time - safetyTime.time >= 0) {
-                            resultList.add(Pair(resultId, result))
-                            resultList.sortBy { it.second.safetyTime }
-                            adapter.notifyDataSetChanged()
-                        }
-                    }
-                }
+                addResult(resultId)
             }
         }
+    }
+
+    private fun addResult(resultId: String) {
+        resultsDB.child(resultId).get().addOnSuccessListener { resultSnapshot ->
+            val result = resultSnapshot.getValue(ResultDTO::class.java) ?: throw IllegalArgumentException("corresponding resultID not exists")
+            sortResultList(result, resultId)
+        }
+    }
+
+    private fun sortResultList(result: ResultDTO, resultId: String) {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
+        val curTime = Calendar.getInstance()
+
+        if (isAccessibleDate(result)) {
+            val safetyTime = dateFormat.parse(result.date + " " + result.safetyTime)
+
+            if (curTime.time.time - safetyTime.time >= 0) {
+                resultList.add(Pair(resultId, result))
+                resultList.sortBy { it.second.safetyTime }
+                adapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun isAccessibleDate(result: ResultDTO) : Boolean{
+        return result.date.replace("-", "/") == binding.btnResultSetDate.text.toString()
     }
 }

@@ -84,37 +84,44 @@ class ResultDetailActivity : AppCompatActivity() {
 
         val answerListener = answerListRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                questionAnswerList(resultId)
+                updateQuestionAnswerList(resultId)
             }
 
             override fun onCancelled(error: DatabaseError) {
                 print(error.message)
             }
         })
-
         listenerDTO = Pair(answerListRef, answerListener)
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun questionAnswerList(resultId: String) {
+    private fun updateQuestionAnswerList(resultId: String) {
         answerList.clear()
         adapter.notifyDataSetChanged()
         val answerListRef = resultDB.child(resultId).child("answerIdList")
         answerListRef.get().addOnSuccessListener { answerListSnapshot ->
             val answerIdList = answerListSnapshot.getValue<MutableMap<String, String>>() ?: mutableMapOf()
-            for ((dummy, answerId) in answerIdList) {
-                answerDB.child(answerId).get().addOnSuccessListener { answerSnapshot ->
-                    val answer = answerSnapshot.getValue(AnswerDTO::class.java) ?: throw IllegalArgumentException("corresponding answer not exists")
-                    val userId = auth.uid.toString()
-                    if (!answer.questionSecret) {
-                        answerList.add(Pair(answerId, answer))
-                        adapter.notifyDataSetChanged()
-                    }
-                    else if ((answer.questionSecret) and (answer.questionOwner == userId)) {
-                        answerList.add(Pair(answerId, answer))
-                        adapter.notifyDataSetChanged()
-                    }
-                }
+            addAnswers(answerIdList)
+        }
+    }
+
+    private fun addAnswers(answerIdList: MutableMap<String, String>) {
+        for ((dummy, answerId) in answerIdList) {
+            addAnswer(answerId)
+        }
+    }
+
+    private fun addAnswer(answerId: String) {
+        answerDB.child(answerId).get().addOnSuccessListener { answerSnapshot ->
+            val answer = answerSnapshot.getValue(AnswerDTO::class.java) ?: throw IllegalArgumentException("corresponding answer not exists")
+            val userId = auth.uid.toString()
+            if (!answer.questionSecret) {
+                answerList.add(Pair(answerId, answer))
+                adapter.notifyDataSetChanged()
+            }
+            else if ((answer.questionSecret) and (answer.questionOwner == userId)) {
+                answerList.add(Pair(answerId, answer))
+                adapter.notifyDataSetChanged()
             }
         }
     }
