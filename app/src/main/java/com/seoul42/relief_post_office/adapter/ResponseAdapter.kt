@@ -22,7 +22,7 @@ class ResponseAdapter(private val context: Context, private val dataList: ArrayL
             val curYear = SimpleDateFormat("yyyy-MM-dd hh:mm")
                 .format(System.currentTimeMillis())
                 .split("-")[0].toInt()
-            val userYear = user.second.birth!!.split("/")[0].toInt()
+            val userYear = user.second.birth.split("/")[0].toInt()
             val userAge = curYear - userYear + 1
             val userName = user.second.name
 
@@ -30,7 +30,8 @@ class ResponseAdapter(private val context: Context, private val dataList: ArrayL
                 .load(user.second.photoUri)
                 .circleCrop()
                 .into(binding.itemGuardianImg)
-            binding.itemGuardianText.text = "$userName\n$userAge"
+            binding.itemGuardianName.text = userName
+            binding.itemGuardianAge.text = userAge.toString()
             binding.itemGuardianCheck.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) checkList.add(user.first)
                 else checkList.remove(user.first)

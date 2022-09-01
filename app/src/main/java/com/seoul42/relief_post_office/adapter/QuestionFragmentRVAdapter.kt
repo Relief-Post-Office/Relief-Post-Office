@@ -8,10 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
+import android.view.*
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -22,6 +19,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.seoul42.relief_post_office.R
+import com.seoul42.relief_post_office.guardian.QuestionFragment
 import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.record.EditRecordActivity
@@ -36,7 +34,7 @@ import java.time.format.DateTimeFormatter
 class QuestionFragmentRVAdapter(
     private val context: Context,
     private val items: ArrayList<Pair<String, QuestionDTO>>,
-    private val firebaseViewModel: FirebaseViewModel
+    private val firebaseViewModel: FirebaseViewModel,
 )
     : RecyclerView.Adapter<QuestionFragmentRVAdapter.ViewHolder>() {
 
@@ -74,6 +72,9 @@ class QuestionFragmentRVAdapter(
 
             // 아이템 눌렀을 때 이벤트
             rvText.setOnClickListener{
+                // 아이템 여러번 눌리는 것 방지
+                rvText.isClickable = false
+
                 // 질문 수정 다이얼로그 세팅
                 val questionText = item.second.text
                 val secret = item.second.secret
@@ -107,10 +108,17 @@ class QuestionFragmentRVAdapter(
                 dialog.setOnDismissListener {
                     editRecordActivity.stopRecording()
                     editRecordActivity.stopPlaying()
+                    // 아이템 터치 다시 가능하게 하기
+                    rvText.isClickable = true
                 }
 
                 // 질문 수정 다이얼로그의 "저장" 버튼을 눌렀을 때 이벤트 처리
                 dialog.findViewById<Button>(R.id.save_question_btn).setOnClickListener {
+                    // 프로그레스바 처리
+                    it.isClickable = false
+                    dialog.window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    val progressBar = dialog.findViewById<ProgressBar>(R.id.setting_question_progressbar2)
+                    progressBar.visibility = View.VISIBLE
 
                     // 녹음 중이라면 중단 후 저장
                     editRecordActivity.stopRecording()
@@ -137,6 +145,7 @@ class QuestionFragmentRVAdapter(
                     uploadEditRecord.addOnSuccessListener {
                         editRecordRef.downloadUrl.addOnCompleteListener { task ->
                             if (task.isSuccessful) {
+                                Log.d("호호호", "하하하")
                                 question.child("src").setValue(task.result.toString())
 
                                 // 로그인한 보호자의 questionList와 question 컬렉션의 수정된 질문의 최종 수정날짜 수정
@@ -146,24 +155,36 @@ class QuestionFragmentRVAdapter(
                                     .child("questionList")
                                     .child(item.first).setValue(date)
 
-                                // 로그인한 보호자와 연결된 모든 피보호자에게 안부 동기화 fcm 전송
-                                val wardListRef = database.getReference("guardian").child(item.second.owner.toString()).child("connectList")
-                                wardListRef.get().addOnSuccessListener {
-                                    val wardList = (it.getValue() as HashMap<String, String>).values.toList()
-                                    val UserRef = database.getReference("user")
-                                    for (wardId in wardList){
-                                        UserRef.child(wardId).child("token").get().addOnSuccessListener {
-                                            val notificationData = NotificationDTO.NotificationData("SafetyWard",
-                                                "안심우체국", "안부를 동기화 합니다")
-                                            val notificationDTO = NotificationDTO(it.getValue().toString()!!, notificationData)
-                                            firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                                // 질문과 연결된 안부를 가진 피보호자들에게 안부 동기화 fcm 전송
+                                val safetyListRef = database.getReference("question").child(item.first).child("connectedSafetyList")
+                                safetyListRef.get().addOnSuccessListener {
+                                    if (it.getValue() != null) {
+                                        val safetyList =
+                                            (it.getValue() as HashMap<String, String>).values.toList()
+                                        val UserRef = database.getReference("user")
+                                        for (safetyId in safetyList) {
+                                            database.getReference("safety").child("uid").get()
+                                                .addOnSuccessListener {
+                                                    UserRef.child(it.getValue().toString())
+                                                        .child("token").get().addOnSuccessListener {
+                                                        val notificationData =
+                                                            NotificationDTO.NotificationData(
+                                                                "SafetyWard",
+                                                                "안심우체국", "안부를 동기화 합니다"
+                                                            )
+                                                        val notificationDTO = NotificationDTO(
+                                                            it.getValue().toString(),
+                                                            "high",
+                                                            notificationData
+                                                        )
+                                                        firebaseViewModel.sendNotification(
+                                                            notificationDTO
+                                                        ) /* FCM 전송하기 */
+                                                    }
+                                                }
                                         }
                                     }
                                 }
-
-                                // 다이얼로그 종료
-                                Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
-                                dialog.dismiss()
                             }
                         }
                     // 수정하였지만 녹음을 바꾸진 않은 경우
@@ -175,29 +196,49 @@ class QuestionFragmentRVAdapter(
                             .child("questionList")
                             .child(item.first).setValue(date)
 
-                        // 로그인한 보호자와 연결된 모든 피보호자에게 안부 동기화 fcm 전송
-                        val wardListRef = database.getReference("guardian").child(item.second.owner.toString()).child("connectList")
-                        wardListRef.get().addOnSuccessListener {
-                            val wardList = (it.getValue() as HashMap<String, String>).values.toList()
-                            val UserRef = database.getReference("user")
-                            for (wardId in wardList){
-                                UserRef.child(wardId).child("token").get().addOnSuccessListener {
-                                    val notificationData = NotificationDTO.NotificationData("SafetyWard",
-                                        "안심우체국", "안부를 동기화 합니다")
-                                    val notificationDTO = NotificationDTO(it.getValue().toString()!!, notificationData)
-                                    firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                        // 질문과 연결된 안부를 가진 피보호자들에게 안부 동기화 fcm 전송
+                        val safetyListRef = database.getReference("question").child(item.first).child("connectedSafetyList")
+                        safetyListRef.get().addOnSuccessListener {
+                            if (it.getValue() != null) {
+                                val safetyList =
+                                    (it.getValue() as HashMap<String, String>).values.toList()
+                                val UserRef = database.getReference("user")
+                                for (safetyId in safetyList) {
+                                    database.getReference("safety").child("uid").get()
+                                        .addOnSuccessListener {
+                                            UserRef.child(it.getValue().toString()).child("token")
+                                                .get().addOnSuccessListener {
+                                                val notificationData =
+                                                    NotificationDTO.NotificationData(
+                                                        "SafetyWard",
+                                                        "안심우체국", "안부를 동기화 합니다"
+                                                    )
+                                                val notificationDTO = NotificationDTO(
+                                                    it.getValue().toString(),
+                                                    "high", notificationData
+                                                )
+                                                firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                                            }
+                                        }
                                 }
                             }
                         }
-
-                        // 다이얼로그 종료
+                    }
+                    // 다이얼로그 종료
+                    Handler().postDelayed({
                         Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
                         dialog.dismiss()
-                    }
+                    }, 1000)
                 }
 
                 // 질문 수정 다이얼로그의 "삭제" 버튼을 눌렀을 때 이벤트 처리
                 dialog.findViewById<Button>(R.id.delete_question_btn).setOnClickListener {
+                    it.isClickable = false
+
+                    // 프로그레스바 처리
+                    dialog.window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    val progressBar = dialog.findViewById<ProgressBar>(R.id.setting_question_progressbar2)
+                    progressBar.visibility = View.VISIBLE
 
                     // 만약 질문에 연결된 안부가 있다면 삭제 불가
                     if (item.second.connectedSafetyList.isEmpty()){
@@ -230,7 +271,7 @@ class QuestionFragmentRVAdapter(
                     player?.release()
                     player = null
 
-                    playerBtn.setImageResource(R.drawable.playbtn2)
+                    playerBtn.setImageResource(R.drawable.playbtn)
                     playing = false
                 }
                 // 재생 중이 아니면 중지 버튼으로 이미지 변경
@@ -245,7 +286,7 @@ class QuestionFragmentRVAdapter(
                         player?.release()
                         player = null
 
-                        playerBtn.setImageResource(R.drawable.playbtn2)
+                        playerBtn.setImageResource(R.drawable.playbtn)
                         playing = false
                     }
 

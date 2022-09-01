@@ -3,23 +3,21 @@ package com.seoul42.relief_post_office.ward
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.AnimationDrawable
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
-import com.seoul42.relief_post_office.PhoneActivity
 import com.seoul42.relief_post_office.R
-import com.seoul42.relief_post_office.alarm.WardReceiver
 import com.seoul42.relief_post_office.databinding.ActivityAlarmBinding
 import com.seoul42.relief_post_office.model.*
 import java.text.SimpleDateFormat
@@ -31,22 +29,25 @@ class AlarmActivity : AppCompatActivity() {
         ActivityAlarmBinding.inflate(layoutInflater)
     }
     private val database = Firebase.database
-    private val questionList: ArrayList<Pair<String, QuestionDTO>> = arrayListOf()
     private val answerList: ArrayList<Pair<String, AnswerDTO>> = arrayListOf()
 
     private lateinit var safetyId : String
     private lateinit var resultId : String
 
+    private lateinit var imageView : ImageButton
+    private lateinit var animationDrawable: AnimationDrawable
+
     private var mediaPlayer: MediaPlayer? = null
 
+    @Override
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        setAlarm()
-        setButton()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         setStatusBarTransparent()
         removeNotification()
+        checkResponse()
     }
 
     /* MediaPlayer release */
@@ -59,20 +60,44 @@ class AlarmActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkResponse() {
+        val resultDB = Firebase.database.reference.child("result")
+        val recommendDTO = intent.getSerializableExtra("recommendDTO") as WardRecommendDTO
+
+        resultDB.child(recommendDTO.resultId!!).get().addOnSuccessListener {
+            if (it.getValue(ResultDTO::class.java) != null) {
+                val resultDTO = it.getValue(ResultDTO::class.java) as ResultDTO
+
+                if (resultDTO.responseTime != "미응답") {
+                    finish()
+                } else {
+                    imageView = binding.alarmButton
+                    animationDrawable = imageView.background as AnimationDrawable
+
+                    animationDrawable.start()
+
+                    setAlarm(recommendDTO)
+                    setButton()
+                }
+            } else {
+                finish()
+            }
+        }
+    }
+
     /* 알람 설정 */
-    private fun setAlarm() {
-        val date = SimpleDateFormat("MM월 dd일 E요일 HH:mm")
+    private fun setAlarm(recommendDTO : WardRecommendDTO) {
+        val date = SimpleDateFormat("MM월 dd일 E요일 HH : mm")
             .format(Date(System.currentTimeMillis()))
         val curDay = date.substring(0, 11)
-        val curTime = date.substring(12, 17)
+        val curTime = date.substring(12, 19)
         val finishTime : Long = 300000
-        val recommendDTO = intent.getSerializableExtra("recommendDTO") as WardRecommendDTO
         val safetyDB = Firebase.database.reference.child("safety")
 
         safetyId = recommendDTO.safetyId
         resultId = recommendDTO.resultId!!
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.alarm)
+        mediaPlayer = MediaPlayer.create(this, R.raw.alarmbell)
         mediaPlayer!!.start()
         mediaPlayer!!.isLooping = true
 
@@ -92,6 +117,7 @@ class AlarmActivity : AppCompatActivity() {
             if (mediaPlayer != null) {
                 close()
             }
+            finish()
         }, finishTime)
     }
 
@@ -105,19 +131,20 @@ class AlarmActivity : AppCompatActivity() {
             close()
             // voice
             // 안부 시작 안내 보이스
-            val startGuideVoice = MediaPlayer.create(this, R.raw.startingsafety)
-            startGuideVoice.start()
-            startGuideVoice.setOnCompletionListener {
-                startGuideVoice.release()
-                val intent = Intent(this, AnswerActivity::class.java)
+            Handler().postDelayed({
+                val startGuideVoice = MediaPlayer.create(this, R.raw.startingsafety)
+                startGuideVoice.start()
+                startGuideVoice.setOnCompletionListener {
+                    startGuideVoice.release()
+                    val intent = Intent(this, AnswerActivity::class.java)
 
-                ActivityCompat.finishAffinity(this)
+                    ActivityCompat.finishAffinity(this)
 
-                intent.putExtra("resultId", resultId)
-                intent.putExtra("questionList", questionList)
-                intent.putExtra("answerList", answerList)
-                startActivity(intent)
-            }
+                    intent.putExtra("resultId", resultId)
+                    intent.putExtra("answerList", answerList)
+                    startActivity(intent)
+                }
+            }, 500)
         }
     }
 
@@ -135,13 +162,6 @@ class AlarmActivity : AppCompatActivity() {
                                 val answer = it.getValue<AnswerDTO>()
                                 if (answer != null) {
                                     answerList.add(Pair(answerId, answer))
-                                }
-                            }
-                        database.getReference("question")
-                            .child(questionId).get().addOnSuccessListener {
-                                val question = it.getValue<QuestionDTO>()
-                                if (question != null) {
-                                    questionList.add(Pair(questionId, question))
                                 }
                             }
                     }

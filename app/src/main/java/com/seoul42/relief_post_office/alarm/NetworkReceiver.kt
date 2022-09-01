@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.PowerManager
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -25,25 +26,21 @@ class NetworkReceiver : BroadcastReceiver() {
 
     /*
      *  네트워크가 연결되었는지 확인
-     *  - 연결이 안된 경우 : 5분 단위로 네트워크 알람을 재요청
+     *  - 연결이 안된 경우 : 15분 단위로 네트워크 알람을 재요청
      *  - 연결된 경우 : 로그인 된 유저 중 보호자, 피보호자에 따라 알람 요청
      */
     override fun onReceive(context : Context, intent : Intent) {
-        Log.d("확인", "Network")
         if (!Network.isNetworkAvailable(context)) {
-            Log.d("확인", "Network is not available...")
             setNetworkAlarm(context)
         } else {
-            Log.d("확인", "Network is available!")
             if (Firebase.auth.currentUser != null){
                 val uid = Firebase.auth.uid.toString()
                 userDB.child(uid).get().addOnSuccessListener {
                     if (it.getValue(UserDTO::class.java) != null) {
                         val userDTO = it.getValue(UserDTO::class.java) as UserDTO
-                        setAlarm(context, userDTO.guardian!!)
+                        setAlarm(context, userDTO.guardian)
                     }
                 }.addOnFailureListener {
-                    Log.d("확인", "네트워크 연결 실패")
                     setNetworkAlarm(context)
                 }
             }
@@ -52,7 +49,7 @@ class NetworkReceiver : BroadcastReceiver() {
 
     /*
      *  네트워크 연결이 안될 경우 실행하는 메서드
-     *  5분 단위로 네트워크 알람 요청을 수행
+     *  15분 단위로 네트워크 알람 요청을 수행
      */
     private fun setNetworkAlarm(context : Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -65,8 +62,7 @@ class NetworkReceiver : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.MINUTE, 5) /* Here! */
-        alarmManager.cancel(sender)
+        interval.add(Calendar.MINUTE, 15)
 
         if (Build.VERSION.SDK_INT >= 23) {
             alarmManager.setExactAndAllowWhileIdle(
@@ -101,8 +97,7 @@ class NetworkReceiver : BroadcastReceiver() {
         val interval = Calendar.getInstance()
 
         interval.timeInMillis = System.currentTimeMillis()
-        interval.add(Calendar.SECOND, 1)
-        alarmManager.cancel(sender)
+        interval.add(Calendar.SECOND, 5)
 
         if (Build.VERSION.SDK_INT >= 23) {
             alarmManager.setExactAndAllowWhileIdle(

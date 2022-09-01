@@ -14,6 +14,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.util.Log
 import android.view.*
 import android.webkit.*
 import android.widget.*
@@ -28,14 +29,12 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.databinding.GuardianProfileBinding
-import com.seoul42.relief_post_office.databinding.WardProfileBinding
 import com.seoul42.relief_post_office.model.UserDTO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
-import com.seoul42.relief_post_office.util.Guardian.Companion.USER
 
 class GuardianProfileActivity : AppCompatActivity() {
 
@@ -48,18 +47,6 @@ class GuardianProfileActivity : AppCompatActivity() {
     private val binding by lazy {
         GuardianProfileBinding.inflate(layoutInflater)
     }
-
-    private var guardian : Boolean = USER.guardian == true
-    private var gender : Boolean = USER.gender == true
-    private var name : String = USER.name!!
-    private var birth : String = USER.birth!!
-    private var photoUri : String = USER.photoUri!!
-    private var token : String = USER.token!!
-    private var tel : String = USER.tel!!
-    private var zoneCode : String = USER.zoneCode!!
-    private var roadAddress : String = USER.roadAddress!!
-    private var buildingName : String = USER.buildingName!!
-    private var detailAddress : String = USER.detailAddress!!
 
     private lateinit var userDTO: UserDTO
 
@@ -78,21 +65,23 @@ class GuardianProfileActivity : AppCompatActivity() {
 
 
     private fun setPreProcessed() {
-        binding.guardianProfileBirth.hint = birth
-        binding.guardianProfileName.setText(name)
-        binding.guardianProfileDetailAddress.setText(detailAddress)
-        binding.guardianProfileAddress.text = if (buildingName.isEmpty()) {
-            "($zoneCode)\n$roadAddress"
+        userDTO = intent.getSerializableExtra("userDTO") as UserDTO
+
+        binding.guardianProfileBirth.hint = userDTO.birth
+        binding.guardianProfileName.setText(userDTO.name)
+        binding.guardianProfileDetailAddress.setText(userDTO.detailAddress)
+        binding.guardianProfileAddress.text = if (userDTO.buildingName.isEmpty()) {
+            "(${userDTO.zoneCode})\n${userDTO.roadAddress}"
         } else {
-            "($zoneCode)\n$roadAddress\n$buildingName"
+            "(${userDTO.zoneCode})\n${userDTO.roadAddress}\n${userDTO.buildingName}"
         }
-        if (USER.gender == true) {
+        if (userDTO.gender == true) {
             binding.guardianProfileMale.isChecked = true
         } else {
             binding.guardianProfileFemale.isChecked = true
         }
         Glide.with(this)
-            .load(USER.photoUri)
+            .load(userDTO.photoUri)
             .circleCrop()
             .into(binding.guardianProfilePhoto)
     }
@@ -122,9 +111,9 @@ class GuardianProfileActivity : AppCompatActivity() {
                     imagesRef.putFile(uri).addOnSuccessListener {
                         imagesRef.downloadUrl.addOnCompleteListener{ task ->
                             if (task.isSuccessful) {
-                                photoUri = task.result.toString()
+                                userDTO.photoUri = task.result.toString()
                                 Glide.with(this)
-                                    .load(photoUri)
+                                    .load(userDTO.photoUri)
                                     .circleCrop()
                                     .into(binding.guardianProfilePhoto)
                             }
@@ -143,6 +132,7 @@ class GuardianProfileActivity : AppCompatActivity() {
     }
 
     private fun setSave() {
+        binding.guardianProfileSave.cornerRadius = 30
         binding.guardianProfileSave.setOnClickListener {
             if (allCheck()) {
                 completeJoin()
@@ -154,12 +144,12 @@ class GuardianProfileActivity : AppCompatActivity() {
 
     /* Start save assistant */
     private fun allCheck() : Boolean {
-        detailAddress = binding.guardianProfileDetailAddress.text.toString()
+        userDTO.detailAddress = binding.guardianProfileDetailAddress.text.toString()
 
-        if (name.isEmpty() || birth.isEmpty() || token.isEmpty()
+        if (userDTO.name.isEmpty() || userDTO.birth.isEmpty() || userDTO.token.isEmpty()
             || binding.guardianProfileAddress.text.isEmpty()
             || binding.guardianProfileDetailAddress.text.isEmpty()
-            || photoUri.isEmpty())
+            || userDTO.photoUri.isEmpty())
             return false
         return true
     }
@@ -173,9 +163,6 @@ class GuardianProfileActivity : AppCompatActivity() {
     private fun insertUser() {
         val userId = auth.uid.toString()
         val userDB = Firebase.database.reference.child("user").child(userId)
-        userDTO = UserDTO(photoUri, name, birth, tel, token, zoneCode,
-            roadAddress, buildingName, detailAddress, gender, guardian)
-        USER = userDTO
 
         userDB.setValue(userDTO)
     }
@@ -184,6 +171,10 @@ class GuardianProfileActivity : AppCompatActivity() {
         setInsert()
         insertUser()
         Handler().postDelayed({
+            val returnIntent = Intent()
+
+            returnIntent.putExtra("userDTO", userDTO)
+            setResult(Activity.RESULT_OK, returnIntent)
             finish()
         }, 2500)
     }
@@ -220,13 +211,13 @@ class GuardianProfileActivity : AppCompatActivity() {
         fun getAddress(zone: String, road: String, building: String) {
             CoroutineScope(Dispatchers.Default).launch {
                 withContext(CoroutineScope(Dispatchers.Main).coroutineContext) {
-                    zoneCode = zone
-                    roadAddress = road
-                    buildingName = building
-                    binding.guardianProfileAddress.text = if (buildingName.isEmpty()) {
-                        "($zoneCode)\n$roadAddress"
+                    userDTO.zoneCode = zone
+                    userDTO.roadAddress = road
+                    userDTO.buildingName = building
+                    binding.guardianProfileAddress.text = if (userDTO.buildingName.isEmpty()) {
+                        "(${userDTO.zoneCode})\n${userDTO.roadAddress}"
                     } else {
-                        "($zoneCode)\n$roadAddress\n$buildingName"
+                        "(${userDTO.zoneCode})\n${userDTO.roadAddress}\n${userDTO.buildingName}"
                     }
                 }
             }

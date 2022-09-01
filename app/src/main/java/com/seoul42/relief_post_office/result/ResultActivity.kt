@@ -2,6 +2,7 @@ package com.seoul42.relief_post_office.result
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -10,15 +11,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.seoul42.relief_post_office.adapter.ResultAdapter
 import com.seoul42.relief_post_office.databinding.ActivityResultBinding
+import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.ResultDTO
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,6 +30,7 @@ class ResultActivity : AppCompatActivity() {
     private lateinit var date: String
     private var resultList = mutableListOf<Pair<String, ResultDTO>>()
     private lateinit var adapter: ResultAdapter
+    private lateinit var listenerDTO : Pair<DatabaseReference, ValueEventListener>
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +43,15 @@ class ResultActivity : AppCompatActivity() {
         setAdapter(wardId)
         setDateBtn(wardId)
         resultListenSet(wardId)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        val reference : DatabaseReference = listenerDTO.first
+        val listener : ValueEventListener = listenerDTO.second
+
+        reference.removeEventListener(listener)
     }
 
     private fun setDateBtn(wardId: String) {
@@ -71,7 +81,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     fun showDatePickerDialog(v: View) {
-        val newFragment = DatePickerFragment()
+        val newFragment = DatePickerFragment(binding.btnResultSetDate.text.toString())
         newFragment.show(supportFragmentManager, "datePicker")
     }
 
@@ -126,7 +136,7 @@ class ResultActivity : AppCompatActivity() {
     private fun resultListenSet(wardId: String) {
         val resultListRef = database.getReference("ward").child(wardId).child("resultIdList")
 
-        resultListRef.addValueEventListener(object : ValueEventListener {
+        val resultListener = resultListRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 resetResultList(wardId)
             }
@@ -134,14 +144,19 @@ class ResultActivity : AppCompatActivity() {
                 print(error.message)
             }
         })
+
+        listenerDTO = Pair(resultListRef, resultListener)
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun resetResultList(wardId: String) {
         val resultListRef = database.getReference("ward").child(wardId).child("resultIdList")
         val resultsRef = database.getReference("result")
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
+        val curTime = Calendar.getInstance()
 
         resultList.clear()
+        adapter.notifyDataSetChanged()
         resultListRef.get().addOnSuccessListener {
             if (it.value != null) {
                 val resultIdList = it.getValue<MutableMap<String, String>>() as MutableMap<String, String>
@@ -150,9 +165,13 @@ class ResultActivity : AppCompatActivity() {
                         if (it.value != null) {
                             val result = it.getValue(ResultDTO::class.java) as ResultDTO
                             if (result.date.replace("-", "/") == binding.btnResultSetDate.text.toString()) {
-                                resultList.add(Pair(it.key.toString(), result))
-                                resultList.sortBy{ it.second.safetyTime }
-                                adapter.notifyDataSetChanged()
+                                val safetyTime = dateFormat.parse(result.date + " " + result.safetyTime)
+
+                                if (curTime.time.time - safetyTime.time >= 0) {
+                                    resultList.add(Pair(resultId, result))
+                                    resultList.sortBy { it.second.safetyTime }
+                                    adapter.notifyDataSetChanged()
+                                }
                             }
                         }
                     }

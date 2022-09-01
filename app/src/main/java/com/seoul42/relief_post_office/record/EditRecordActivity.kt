@@ -45,9 +45,6 @@ class EditRecordActivity(var src: String?, view: View) {
     // 요청할 권한들을 담을 배열에 음성 녹음 관련 권한을 담아줍니다.
     private var recordingFilePath: String? = src
 
-    // 녹음파일 있을 경우, QuestionFragment로 1 반환 / 없을 경우, 0 반환
-    private var recordSign: Int = 0
-
     private var state = RecordState.AFTER_RECORDING
         set(value) { // setter 설정
             field = value // 실제 프로퍼티에 대입
@@ -59,12 +56,8 @@ class EditRecordActivity(var src: String?, view: View) {
     private var player: MediaPlayer? = null
 
      fun initViews() {
-         if (src != "") {
-             recordSign = 1
-             state = RecordState.AFTER_RECORDING
-         }
-         recordDurationTextView.setRecordDuration(recordSign, recordingFilePath)
          recordButton.updateIconWithState(state)
+         recordDurationTextView.setRecordDuration(recordingFilePath)
     }
 
      fun bindViews(view : View) {
@@ -90,7 +83,6 @@ class EditRecordActivity(var src: String?, view: View) {
             stopPlaying()
             recordingFilePath = "${view.context.externalCacheDir?.absolutePath}/${auth.currentUser?.uid + dateAndTime.format(formatter)}.3gp"
             // clear
-            recordSign = 0
             recordDurationTextView.clearCountTime()
             recordTimeTextView.clearCountTime()
             state = RecordState.BEFORE_RECORDING
@@ -98,17 +90,11 @@ class EditRecordActivity(var src: String?, view: View) {
     }
 
     fun initVariables() {
-        if (src != "") {
-            recordSign = 1
-            state = RecordState.AFTER_RECORDING
-        } else {
-            recordSign = 0
-            state = RecordState.BEFORE_RECORDING
-        }
+        state = RecordState.AFTER_RECORDING
     }
 
-    fun returnRecordingFile() : Pair<Int, String?> {
-        return Pair(recordSign, recordingFilePath)
+    fun returnRecordingFile() : String? {
+        return recordingFilePath
     }
 
     fun startRecoding() {
@@ -129,15 +115,16 @@ class EditRecordActivity(var src: String?, view: View) {
     }
 
     fun stopRecording() {
-        recorder?.run {
-            stop()
-            release()
+        if (state == RecordState.ON_RECORDING) {
+            recorder?.run {
+                stop()
+                release()
+            }
+            recorder = null
+            recordDurationTextView.setRecordDuration(recordingFilePath)
+            recordTimeTextView.stopCountUp()
+            state = RecordState.AFTER_RECORDING
         }
-        recorder = null
-        recordDurationTextView.setRecordDuration(recordSign, recordingFilePath)
-        recordTimeTextView.stopCountUp()
-        state = RecordState.AFTER_RECORDING
-        recordSign = 1
     }
 
     fun startPlaying() {
@@ -155,17 +142,18 @@ class EditRecordActivity(var src: String?, view: View) {
         }
 
         player?.start() // 재생
-        recordDurationTextView.setRecordDuration(recordSign, recordingFilePath)
+        recordDurationTextView.setRecordDuration(recordingFilePath)
         recordTimeTextView.startCountUp()
         state = RecordState.ON_PLAYING
     }
 
     fun stopPlaying() {
-        player?.release()
-        player = null
-        recordTimeTextView.stopCountUp()
-
-        state = RecordState.AFTER_RECORDING
+        if (state == RecordState.ON_PLAYING) {
+            player?.release()
+            player = null
+            recordTimeTextView.stopCountUp()
+            state = RecordState.AFTER_RECORDING
+        }
     }
 
     // 상수로 우리가 요청할 오디오 권한의 코드를 따로 정의

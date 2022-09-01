@@ -7,18 +7,18 @@
     android:orientation="vertical"
     android:gravity="center"
     android:fitsSystemWindows="true"
-    android:background="@drawable/alarm_background"
+    android:background="@drawable/alarm_background_another"
     tools:context=".ward.AlarmActivity">
 
     <TextView
         android:id="@+id/alarm_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="12:12"
         android:textSize="50sp"
         android:textStyle="bold"
-        android:textColor="@color/white"
+        android:textColor="#fffbf3"
         android:gravity="center"
+        android:fontFamily="@font/bmjua"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline1"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline2"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
@@ -28,11 +28,11 @@
         android:id="@+id/alarm_day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="7월 10일 일요일"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@color/white"
+        android:textColor="#fffbf3"
         android:gravity="center"
+        android:fontFamily="@font/bmjua"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline3"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline4"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
@@ -42,35 +42,22 @@
         android:id="@+id/alarm_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="점심"
-        android:textSize="35sp"
+        android:textSize="40sp"
         android:textStyle="bold"
-        android:textColor="@color/white"
+        android:textColor="#fffbf3"
         android:gravity="center"
+        android:fontFamily="@font/bmjua"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline5"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline6"
-        app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
-        app:layout_constraintEnd_toEndOf="@id/vertical_guideline2" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="안부 시작"
-        android:textSize="35sp"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="@id/horizontal_guideline7"
-        app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline9"
-        app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
-        app:layout_constraintEnd_toEndOf="@id/vertical_guideline2" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageButton
         android:id="@+id/alarm_button"
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:layout_gravity="center"
-        android:background="@drawable/relief_post_office"
+        android:background="@drawable/alarm_animation"
         app:layout_constraintTop_toTopOf="@id/horizontal_guideline8"
         app:layout_constraintBottom_toBottomOf="@id/horizontal_guideline10"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline3"
@@ -92,7 +79,6 @@
             android:id="@+id/alarm_progressbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:visibility="invisible" />
 
         <TextView

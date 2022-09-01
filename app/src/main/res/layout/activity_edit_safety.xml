@@ -9,40 +9,51 @@
 
     <ImageView
         android:id="@+id/edit_safety_backBtn"
-        android:layout_width="50dp"
+        android:layout_width="60dp"
         android:layout_height="50dp"
+        android:layout_margin="10sp"
         app:srcCompat="@drawable/backbtn"
-        android:layout_margin="5sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf= "parent" />
-
-    <TextView
-        android:id="@+id/edit_safety_title"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:text="안부 수정"
-        android:textSize="40sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="HardcodedText"
-        tools:layout_editor_absoluteX="0dp" />
 
     <LinearLayout
         android:id="@+id/edit_safety_linear1"
         android:layout_width="match_parent"
-        android:layout_height="60sp"
-        app:layout_constraintTop_toBottomOf="@+id/edit_safety_title"
-        android:layout_marginStart="10sp"
-        android:layout_marginEnd="10sp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/horizontal_guideline2"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/edit_safety_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/safety_update"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/edit_safety_linear2"
+        android:layout_width="0sp"
+        android:layout_height="40sp"
+        android:maxLength="10"
+        android:lineSpacingExtra="6sp"
+        app:layout_constraintTop_toBottomOf="@+id/edit_safety_linear1"
+        app:layout_constraintStart_toEndOf="@id/vertical_guideline1"
+        app:layout_constraintEnd_toStartOf="@id/vertical_guideline6"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="안부 이름"
+            android:text="@string/safety_name"
             android:textSize="25sp"
+            android:textColor="@color/black"
             android:layout_gravity="left|center"
             android:layout_marginStart="5sp"/>
 
@@ -50,7 +61,9 @@
             android:id="@+id/edit_safety_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="안부 이름을 작성해주세요"
+            android:hint="@string/safety_edit_hint"
+            android:maxLength="10"
+            android:lineSpacingExtra="6sp"
             android:layout_gravity="center"
             android:layout_marginStart="30sp"
             android:layout_marginEnd="30sp"/>
@@ -61,13 +74,12 @@
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:background="@drawable/recyclerview_border"
-        app:layout_constraintTop_toBottomOf="@+id/edit_safety_linear1"
+        app:layout_constraintTop_toBottomOf="@+id/edit_safety_linear2"
         app:layout_constraintBottom_toTopOf="@+id/edit_safety_linear3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:orientation="vertical"
-        android:layout_margin="10sp"
-        android:layout_marginTop="10sp">
+        android:layout_margin="20sp">
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -79,13 +91,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textSize="25sp"
-                android:text="질문 설정"/>
+                android:textColor="@color/black"
+                android:text="@string/question_set"/>
 
             <ImageView
                 android:id="@+id/edit_safety_setting"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:layout_gravity="right"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
                 android:src="@drawable/optionbtn" />
 
         </FrameLayout>
@@ -99,37 +114,101 @@
 
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/edit_safety_linear3"
-        android:layout_width="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="10sp"
+        android:layout_width="0sp"
+        android:layout_height="0sp"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline2"
+        app:layout_constraintEnd_toStartOf="@id/vertical_guideline3"
+        app:layout_constraintTop_toBottomOf="@id/horizontal_guideline4"
+        app:layout_constraintBottom_toTopOf="@id/horizontal_guideline6"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/edit_safety_save_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="저 장"
+            android:layout_height="match_parent"
+            android:text="@string/save"
             android:textSize="25sp"
-            android:layout_marginStart="10sp"
-            android:layout_marginEnd="5sp"
+            android:background="@drawable/button_rounded_pink"
+            android:textColor="#ffd8de"
             android:layout_weight="1"
+            android:layout_marginRight="15dp"
             tools:ignore="HardcodedText" />
 
         <Button
             android:id="@+id/edit_safety_delete_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="삭 제"
+            android:layout_height="match_parent"
+            android:text="@string/remove"
             android:textSize="25sp"
-            android:layout_marginStart="5sp"
-            android:layout_marginEnd="10sp"
+            android:background="@drawable/button_rounded_pink"
+            android:textColor="#ffd8de"
             android:layout_weight="1"
+            android:layout_marginLeft="15dp"
             tools:ignore="HardcodedText" />
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/edit_safety_progress"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        tools:layout_editor_absoluteX="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.06" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.90" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.98" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.1" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.9" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

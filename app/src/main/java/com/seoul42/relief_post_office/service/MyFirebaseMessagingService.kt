@@ -3,8 +3,10 @@ package com.seoul42.relief_post_office.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_INCLUDE_STOPPED_PACKAGES
 import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
@@ -33,7 +35,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // 다른 기기에서 서버로 보냈을 때(이 경우에 해당)
         else if(remoteMessage.data.isNotEmpty()){
             val title = remoteMessage.data["title"]!!
-            val userId = remoteMessage.data["name"]!!
+            val userId = remoteMessage.data["text"]!!
             val message = remoteMessage.data["message"]!!
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -151,9 +153,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 val channel = NotificationChannel("default", channelName, importance)
 
                 channel.description = description
-                if (notificationManager != null) {
-                    notificationManager.createNotificationChannel(channel)
-                }
+                notificationManager.createNotificationChannel(channel)
             }
             builder.setContentTitle(title) // 제목
                 .setContentText(body) // 내용

@@ -13,6 +13,7 @@ import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
+import android.view.WindowManager
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -24,6 +25,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -31,6 +33,7 @@ import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.QuestionFragmentRVAdapter
 import com.seoul42.relief_post_office.adapter.SafetyQuestionSettingAdapter
 import com.seoul42.relief_post_office.adapter.WardSafetyAdapter
+import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.record.RecordActivity
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
@@ -51,8 +54,8 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
     private var deletedQuestionList = arrayListOf<String>()
     private lateinit var checkedQuestions : ArrayList<String>
     private lateinit var safetyQuestionSettingAdapter: SafetyQuestionSettingAdapter
-    private lateinit var auth : FirebaseAuth
     private lateinit var owner : String
+    private lateinit var listenerDTO : ListenerDTO
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,16 +66,36 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
         checkedQuestions = intent.getStringArrayListExtra("questionList") as ArrayList<String>
 
         // 로그인 한 사람 uid 가져오기
-        auth = Firebase.auth
-        owner = auth.currentUser?.uid.toString()
+        owner = Firebase.auth.currentUser?.uid.toString()
 
-        // questionList 세팅
+        /* questionList 세팅 */
         setQuestionList()
 
-        // recycler 뷰 세팅
+        /* recycler 뷰 세팅 */
         setRecyclerView()
 
-        // 질문 추가 버튼 이벤트
+        /* 질문 추가 버튼 세팅 */
+        setAddQuestionButton()
+
+        /* 저장 버튼 세팅 */
+        setSaveButton()
+    }
+
+    /* 저장 버튼 세팅 */
+    private fun setSaveButton() {
+        findViewById<Button>(R.id.safety_question_setting_save_button).setOnClickListener {
+            it.isClickable = false
+            val returnIntent = Intent()
+            returnIntent.putExtra("returnQuestionList", safetyQuestionSettingAdapter.checkedQuestions)
+            returnIntent.putExtra("deletedQuestionList", safetyQuestionSettingAdapter.deletedQuestions)
+            setResult(Activity.RESULT_OK, returnIntent)
+            finish()
+        }
+    }
+
+    /* 질문 추가 버튼 세팅 */
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setAddQuestionButton() {
         val questionPlusBtn = findViewById<ImageView>(R.id.safety_question_setting_add_question)
         questionPlusBtn.setOnClickListener{
 
@@ -95,6 +118,11 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
 
             // 질문 추가 다이얼로그의 "저장"버튼을 눌렀을 때 이벤트 처리
             dialog.findViewById<Button>(R.id.add_question_btn).setOnClickListener {
+                it.isClickable = false
+                // 프로그레스바 처리
+                dialog.window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                val progressBar = dialog.findViewById<ProgressBar>(R.id.setting_question_progressbar)
+                progressBar.visibility = View.VISIBLE
 
                 // 녹음 중이라면 중단 후 저장
                 recordActivity.stopRecording()
@@ -107,81 +135,53 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
                 val secret = dialog.findViewById<Switch>(R.id.secret_switch).isChecked
                 val record = dialog.findViewById<Switch>(R.id.record_switch).isChecked
                 var src: String? = null
-                var recordContent: Pair<Int, String?> = recordActivity.returnRecordingFile()
 
                 // question 컬렉션에 추가할 QuestoinDTO 생성
                 val newQuestion = QuestionDTO(secret, record, owner, date, questionText, src, mutableMapOf())
 
-                val questionRef = database.getReference("question")
-                val newPush = questionRef.push()
-                val key = newPush.key.toString()
+                // 녹음 파일 생성 및 스토리지 저장
+                var recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
+                val recordRef = storage.reference
+                    .child("questionRecord/${owner}/${owner + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
 
-                if (recordContent.first == 1) {
-                    // 녹음 파일 생성 및 스토리지 저장
-                    var recordFile = Uri.fromFile(File(recordContent.second))
-                    val recordRef = storage.reference
-                        .child(
-                            "questionRecord/${owner}/${
-                                owner + LocalDateTime.now()
-                                    .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
-                            }"
-                        )
+                // 녹음 업로드에 성공한 경우(녹음이 있는 경우)
+                recordRef.putFile(recordFile).addOnSuccessListener {
+                    recordRef.downloadUrl.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // question 컬렉션에 작성한 내용 추가
+                            val questionRef = database.getReference("question")
+                            val newPush = questionRef.push()
+                            val key = newPush.key.toString()
 
-                    // 녹음 업로드에 성공한 경우(녹음이 있는 경우)
-                    recordRef.putFile(recordFile).addOnSuccessListener {
-                        recordRef.downloadUrl.addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                // question 컬렉션에 작성한 내용 추가
-                                newQuestion.src = task.result.toString()
-                                newPush.setValue(newQuestion)
+                            newQuestion.src = task.result.toString()
+                            newPush.setValue(newQuestion)
 
-                                // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
-                                val userQuestionRef = database.getReference("guardian").child(owner)
-                                    .child("questionList")
-                                userQuestionRef.child(key).setValue(date)
+                            // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
+                            val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
+                            userQuestionRef.child(key).setValue(date)
 
-                                // 다이얼로그 종료
-                                Toast.makeText(this, "질문 추가 완료", Toast.LENGTH_SHORT).show()
-                                dialog.dismiss()
-                            }
+                            // 다이얼로그 종료
+                            Toast.makeText(this, "질문 추가 완료", Toast.LENGTH_SHORT).show()
+                            dialog.dismiss()
                         }
-                        // 녹음 업로드에 실패한 경우(녹음이 없는 경우 + @) 질문 추가 불가능
-                    }.addOnFailureListener {
-                        Toast.makeText(this, "녹음 파일을 생성해 주세요", Toast.LENGTH_SHORT).show()
                     }
-                } else {
-                    newPush.setValue(newQuestion)
-
-                    // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
-                    val userQuestionRef = database.getReference("guardian").child(owner)
-                        .child("questionList")
-                    userQuestionRef.child(key).setValue(date)
-
-                    // 다이얼로그 종료
-                    Toast.makeText(this, "질문 추가 완료", Toast.LENGTH_SHORT).show()
-                    dialog.dismiss()
+                    // 녹음 업로드에 실패한 경우(녹음이 없는 경우 + @) 질문 추가 불가능
+                }.addOnFailureListener{
+                    progressBar.visibility = View.INVISIBLE
+                    dialog.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    Toast.makeText(this, "녹음 파일을 생성해 주세요", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-
-        // 저장 버튼 이벤트
-        findViewById<Button>(R.id.safety_question_setting_save_button).setOnClickListener {
-            val returnIntent = Intent()
-            returnIntent.putExtra("returnQuestionList", safetyQuestionSettingAdapter.checkedQuestions)
-            returnIntent.putExtra("deletedQuestionList", safetyQuestionSettingAdapter.deletedQuestions)
-            setResult(Activity.RESULT_OK, returnIntent)
-            finish()
-        }
-
     }
 
-    // questionList 실시간 세팅해주기 / 수정 및 변경 적용 포함
+    /* questionList 실시간 업데이트 (수정 및 변경 적용 포함) */
     private fun setQuestionList(){
         // 로그인한 유저의 질문 목록
         val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
 
         // questionList에 로그인한 유저의 질문들 넣기
-        userQuestionRef.addChildEventListener(object : ChildEventListener {
+        val questionListener = userQuestionRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 // 로그인한 유저의 질문 하나씩 참조
                 val questionId = snapshot.key.toString()
@@ -196,7 +196,6 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
                     safetyQuestionSettingAdapter.notifyDataSetChanged()
                 }
             }
-
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 // questionID 찾기
                 val questionId = snapshot.key.toString()
@@ -223,7 +222,6 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
                     }
                 }
             }
-
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 // questionID 찾기
                 val questionId = snapshot.key.toString()
@@ -238,16 +236,15 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
                 // 리스트가 수정되었다고 어댑터에게 알려주기
                 safetyQuestionSettingAdapter.notifyDataSetChanged()
             }
-
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
             }
-
             override fun onCancelled(error: DatabaseError) {
             }
         })
+        listenerDTO = ListenerDTO(userQuestionRef, questionListener)
     }
 
-    // 리사이클러 뷰 세팅함수
+    /* 리사이클러 뷰 세팅 */
     private fun setRecyclerView(){
         val rv = findViewById<RecyclerView>(R.id.safety_question_setting_rv)
         // 리사이클러 뷰 아답터에 리스트 넘긴 후 아답터 가져오기
@@ -259,10 +256,12 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
         rv.setHasFixedSize(true)
     }
 
-    override fun onBackPressed() {
-        // 뒤로가기 버튼 막기
-        Toast.makeText(this, "저장 버튼을 눌러주세요", Toast.LENGTH_SHORT).show()
-//        super.onBackPressed()
-    }
+    override fun onDestroy() {
+        super.onDestroy()
 
+        val reference : DatabaseReference = listenerDTO.reference
+        val listener : ChildEventListener = listenerDTO.listener
+
+        reference.removeEventListener(listener)
+    }
 }

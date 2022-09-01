@@ -21,10 +21,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="보호자 등록"
+            android:text="@string/guardian_register"
             android:padding="10dp"
             android:textColor="@color/black"
-            android:textSize="25sp"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -43,13 +43,13 @@
         android:gravity="center"
         android:orientation="horizontal" >
 
-        <Button
+        <info.hoang8f.widget.FButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/response_button"
-            android:background="@drawable/button_rounded_corner"
-            android:backgroundTint="#3f91ff"
-            android:text="등록"/>
+            android:text="등록"
+            android:textSize="20sp"
+            android:fontFamily="@font/bmjua" />
 
     </LinearLayout>
 

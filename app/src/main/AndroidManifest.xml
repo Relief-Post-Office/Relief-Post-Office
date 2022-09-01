@@ -17,7 +17,8 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -36,6 +37,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Relief_post_office"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".safety.GetGuardianSafetyActivity"
+            android:exported="false" />
         <activity
             android:name=".safety.EditWardSafetyActivity"
             android:exported="false" />
@@ -65,20 +69,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".login.MainActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity
-            android:name=".PhoneActivity"
+            android:name=".login.PhoneActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity
-            android:name=".JoinActivity"
+            android:name=".join.JoinActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".guardian.MainFragment"
             android:windowSoftInputMode="adjustNothing"
             tools:ignore="Instantiatable" />
         <activity
-            android:name=".GuardianBackgroundActivity"
+            android:name=".guardian.GuardianBackgroundActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".ward.WardActivity"
@@ -100,10 +104,16 @@
             android:name=".result.ResultDetailActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity
+            android:name=".result.ResultQuestionDetailActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
             android:name=".ward.AnswerActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".ward.EndingActivity"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".guardian.ProfileActivity"
             android:windowSoftInputMode="adjustNothing" />
 
         <service
@@ -120,6 +130,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="com.rightline.backgroundrepeatapp.REPEAT_START" />
+                <action android:name="com.rightline.backgroundrepeatapp.REPEAT_NOTIFY" />
                 <action android:name="com.rightline.backgroundrepeatapp.REPEAT_STOP" />
             </intent-filter>
         </receiver>
@@ -132,7 +143,6 @@
                 <action android:name="com.rightline.backgroundrepeatapp.REPEAT_STOP" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".alarm.NetworkReceiver"
             android:enabled="true"
@@ -142,11 +152,10 @@
                 <action android:name="com.rightline.backgroundrepeatapp.REPEAT_STOP" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".alarm.BootCompleteReceiver"
             android:enabled="true"
-            android:exported="false"
+            android:exported="true"
             android:label="BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

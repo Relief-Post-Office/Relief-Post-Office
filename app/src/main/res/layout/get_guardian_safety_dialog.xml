@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_radius_background"
+    android:layout_gravity="center"
+    android:paddingHorizontal="50sp"
+    android:paddingVertical="10sp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="10sp" >
+
+        <TextView
+            android:id="@+id/get_guardian_safety_dialog_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/safety_get_ask"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="25sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:id="@+id/get_guardian_safety_dialog_yes"
+            android:text="@string/yes_text"
+            android:background="@drawable/button_rounded_weak_blue"
+            android:layout_margin="10sp"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/bmjua"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:id="@+id/get_guardian_safety_dialog_no"
+            android:text="@string/no_text"
+            android:background="@drawable/button_rounded_pink"
+            android:layout_margin="10sp"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/bmjua"/>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

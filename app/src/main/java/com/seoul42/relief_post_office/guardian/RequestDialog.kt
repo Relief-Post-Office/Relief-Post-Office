@@ -8,25 +8,17 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.seoul42.relief_post_office.BirthDialog
-import com.seoul42.relief_post_office.adapter.ResponseAdapter
 import com.seoul42.relief_post_office.databinding.DialogRequestBinding
-import com.seoul42.relief_post_office.databinding.DialogResponseBinding
 import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.UserDTO
-import com.seoul42.relief_post_office.util.Guardian
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
-import com.seoul42.relief_post_office.ward.ResponseDialog
 
-class RequestDialog(context : AppCompatActivity, firebaseViewModel: FirebaseViewModel) {
+class RequestDialog(context : AppCompatActivity, firebaseViewModel: FirebaseViewModel,
+    private val userDTO : UserDTO, private val connectList : MutableMap<String, String>) {
 
     private val myUserId: String by lazy {
         Firebase.auth.uid.toString()
@@ -67,8 +59,8 @@ class RequestDialog(context : AppCompatActivity, firebaseViewModel: FirebaseView
     private fun connectUser(tel : String, window : Window, progressBar : ProgressBar) {
         var connectFlag = false
 
-        for (ward in Guardian.CONNECT_LIST) {
-            val wardDB = Firebase.database.reference.child("user").child(ward.value)
+        for (ward in connectList) {
+            val wardDB = Firebase.database.reference.child("user").child(ward.key)
 
             wardDB.get().addOnSuccessListener {
                 val userDTO = it.getValue(UserDTO::class.java) as UserDTO
@@ -101,7 +93,7 @@ class RequestDialog(context : AppCompatActivity, firebaseViewModel: FirebaseView
                 userId = user.key!!
                 userValue = user.getValue(UserDTO::class.java) as UserDTO
                 /* 피보호자의 전화번호와 일치한지 확인 */
-                if (tel == userValue.tel && userValue.guardian == false) {
+                if (tel == userValue.tel && !userValue.guardian) {
                     processRequest(userId) /* 요청 작업을 수행 */
                     isExist = true
                 }
@@ -130,11 +122,11 @@ class RequestDialog(context : AppCompatActivity, firebaseViewModel: FirebaseView
             for (child in it.children) {
                 if (child.key == userId) {
                     val userDTO = child.getValue(UserDTO::class.java) as UserDTO
-                    val token = userDTO.token.toString()
+                    val token = userDTO.token
                     val notificationData = NotificationDTO.NotificationData("안심 집배원"
-                        , Guardian.USER.name!!, Guardian.USER.name + "님이 요청을 보냈습니다.")
-                    val notificationDTO = NotificationDTO(token, notificationData)
-                    wardDB.push().setValue(myUserId) /* 피보호자 요청 목록에 현재 보호자의 uid 추가 */
+                        , userDTO.name, userDTO.name + "님이 요청을 보냈습니다.")
+                    val notificationDTO = NotificationDTO(token, "high", notificationData)
+                    wardDB.child(myUserId).setValue(myUserId) /* 피보호자 요청 목록에 현재 보호자의 uid 추가 */
                     firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
                     break
                 }

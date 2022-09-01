@@ -61,7 +61,7 @@ class AddWardSafetyAdapter(private val items: ArrayList<Pair<String, QuestionDTO
                         player?.release()
                         player = null
 
-                        playerBtn.setImageResource(R.drawable.playbtn2)
+                        playerBtn.setImageResource(R.drawable.playbtn)
                         playing = false
                     }
                     // 재생 중이 아니면 중지 버튼으로 이미지 변경
@@ -76,7 +76,7 @@ class AddWardSafetyAdapter(private val items: ArrayList<Pair<String, QuestionDTO
                             player?.release()
                             player = null
 
-                            playerBtn.setImageResource(R.drawable.playbtn2)
+                            playerBtn.setImageResource(R.drawable.playbtn)
                             playing = false
                         }
 

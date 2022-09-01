@@ -28,8 +28,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.seoul42.relief_post_office.R
-import com.seoul42.relief_post_office.databinding.JoinBinding
 import com.seoul42.relief_post_office.databinding.WardProfileBinding
 import com.seoul42.relief_post_office.model.UserDTO
 import kotlinx.coroutines.CoroutineScope
@@ -37,7 +35,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
-import com.seoul42.relief_post_office.util.Ward.Companion.USER
 
 class WardProfileActivity  : AppCompatActivity() {
 
@@ -50,18 +47,6 @@ class WardProfileActivity  : AppCompatActivity() {
     private val binding by lazy {
         WardProfileBinding.inflate(layoutInflater)
     }
-
-    private var guardian : Boolean = USER.guardian == true
-    private var gender : Boolean = USER.gender == true
-    private var name : String = USER.name!!
-    private var birth : String = USER.birth!!
-    private var photoUri : String = USER.photoUri!!
-    private var token : String = USER.token!!
-    private var tel : String = USER.tel!!
-    private var zoneCode : String = USER.zoneCode!!
-    private var roadAddress : String = USER.roadAddress!!
-    private var buildingName : String = USER.buildingName!!
-    private var detailAddress : String = USER.detailAddress!!
 
     private lateinit var userDTO: UserDTO
 
@@ -80,21 +65,23 @@ class WardProfileActivity  : AppCompatActivity() {
 
 
     private fun setPreProcessed() {
-        binding.wardProfileBirth.hint = birth
-        binding.wardProfileName.setText(name)
-        binding.wardProfileDetailAddress.setText(detailAddress)
-        binding.wardProfileAddress.text = if (buildingName.isEmpty()) {
-            "($zoneCode)\n$roadAddress"
+        userDTO = intent.getSerializableExtra("userDTO") as UserDTO
+
+        binding.wardProfileBirth.hint = userDTO.birth
+        binding.wardProfileName.setText(userDTO.name)
+        binding.wardProfileDetailAddress.setText(userDTO.detailAddress)
+        binding.wardProfileAddress.text = if (userDTO.buildingName.isEmpty()) {
+            "(${userDTO.zoneCode})\n${userDTO.roadAddress}"
         } else {
-            "($zoneCode)\n$roadAddress\n$buildingName"
+            "(${userDTO.zoneCode})\n${userDTO.roadAddress}\n${userDTO.buildingName}"
         }
-        if (USER.gender == true) {
+        if (userDTO.gender == true) {
             binding.wardProfileMale.isChecked = true
         } else {
             binding.wardProfileFemale.isChecked = true
         }
         Glide.with(this)
-            .load(USER.photoUri)
+            .load(userDTO.photoUri)
             .circleCrop()
             .into(binding.wardProfilePhoto)
     }
@@ -124,9 +111,9 @@ class WardProfileActivity  : AppCompatActivity() {
                     imagesRef.putFile(uri).addOnSuccessListener {
                         imagesRef.downloadUrl.addOnCompleteListener{ task ->
                             if (task.isSuccessful) {
-                                photoUri = task.result.toString()
+                                userDTO.photoUri = task.result.toString()
                                 Glide.with(this)
-                                    .load(photoUri)
+                                    .load(userDTO.photoUri)
                                     .circleCrop()
                                     .into(binding.wardProfilePhoto)
                             }
@@ -145,6 +132,7 @@ class WardProfileActivity  : AppCompatActivity() {
     }
 
     private fun setSave() {
+        binding.wardProfileSave.cornerRadius = 30
         binding.wardProfileSave.setOnClickListener {
             if (allCheck()) {
                 completeJoin()
@@ -156,12 +144,12 @@ class WardProfileActivity  : AppCompatActivity() {
 
     /* Start save assistant */
     private fun allCheck() : Boolean {
-        detailAddress = binding.wardProfileDetailAddress.text.toString()
+        userDTO.detailAddress = binding.wardProfileDetailAddress.text.toString()
 
-        if (name.isEmpty() || birth.isEmpty() || token.isEmpty()
+        if (userDTO.name.isEmpty() || userDTO.birth.isEmpty() || userDTO.token.isEmpty()
             || binding.wardProfileAddress.text.isEmpty()
             || binding.wardProfileDetailAddress.text.isEmpty()
-            || photoUri.isEmpty())
+            || userDTO.photoUri.isEmpty())
             return false
         return true
     }
@@ -175,9 +163,6 @@ class WardProfileActivity  : AppCompatActivity() {
     private fun insertUser() {
         val userId = auth.uid.toString()
         val userDB = Firebase.database.reference.child("user").child(userId)
-        userDTO = UserDTO(photoUri, name, birth, tel, token, zoneCode,
-            roadAddress, buildingName, detailAddress, gender, guardian)
-        USER = userDTO
 
         userDB.setValue(userDTO)
     }
@@ -186,6 +171,10 @@ class WardProfileActivity  : AppCompatActivity() {
         setInsert()
         insertUser()
         Handler().postDelayed({
+            val returnIntent = Intent()
+
+            returnIntent.putExtra("userDTO", userDTO)
+            setResult(Activity.RESULT_OK, returnIntent)
             finish()
         }, 2500)
     }
@@ -222,13 +211,13 @@ class WardProfileActivity  : AppCompatActivity() {
         fun getAddress(zone: String, road: String, building: String) {
             CoroutineScope(Dispatchers.Default).launch {
                 withContext(CoroutineScope(Dispatchers.Main).coroutineContext) {
-                    zoneCode = zone
-                    roadAddress = road
-                    buildingName = building
-                    binding.wardProfileAddress.text = if (buildingName.isEmpty()) {
-                        "($zoneCode)\n$roadAddress"
+                    userDTO.zoneCode = zone
+                    userDTO.roadAddress = road
+                    userDTO.buildingName = building
+                    binding.wardProfileAddress.text = if (userDTO.buildingName.isEmpty()) {
+                        "(${userDTO.zoneCode})\n${userDTO.roadAddress}"
                     } else {
-                        "($zoneCode)\n$roadAddress\n$buildingName"
+                        "(${userDTO.zoneCode})\n${userDTO.roadAddress}\n${userDTO.buildingName}"
                     }
                 }
             }
