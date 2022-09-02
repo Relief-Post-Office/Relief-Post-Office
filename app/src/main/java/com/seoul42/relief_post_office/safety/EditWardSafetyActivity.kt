@@ -207,7 +207,8 @@ class EditWardSafetyActivity : AppCompatActivity() {
     private fun setSaveButton() {
         findViewById<Button>(R.id.edit_ward_safety_save_button).setOnClickListener {
             // 프로그레스바 처리
-            it.isClickable = false
+            val saveBtnView = it
+            saveBtnView.isClickable = false
             window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             val progressBar = findViewById<ProgressBar>(R.id.edit_ward_safety_progress)
             progressBar.visibility = View.VISIBLE
@@ -231,11 +232,13 @@ class EditWardSafetyActivity : AppCompatActivity() {
 
             // 시간과 질문을 설정한 경우에만 추가 가능
             if (time == null){
+                saveBtnView.isClickable = true
                 progressBar.visibility = View.INVISIBLE
                 window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 Toast.makeText(this, "시간을 설정해 주세요", Toast.LENGTH_SHORT).show()
             }
             else if (questionList.isEmpty()){
+                saveBtnView.isClickable = true
                 progressBar.visibility = View.INVISIBLE
                 window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 Toast.makeText(this, "질문을 설정해 주세요", Toast.LENGTH_SHORT).show()
