@@ -7,6 +7,7 @@ import android.media.MediaPlayer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.seoul42.relief_post_office.R
@@ -61,42 +62,68 @@ class ResultDetailAdapter (private val context : Context,
         if (answer.answerSrc != "") {
             val recordBtn = binding.btnResultQuetionPlay
             recordBtn.visibility = View.VISIBLE
-            var playing = false
-            var player: MediaPlayer? = null
-            recordBtn.setOnClickListener {
-                // 질문 녹음 재생 기능
-                if (playing){
-                    player?.release()
-                    player = null
-
-                    recordBtn.setBackgroundResource(R.drawable.playbtn5)
-                    playing = false
-                }
-                // 재생 중이 아니면 중지 버튼으로 이미지 변경
-                else{
-                    // 녹음 소스 불러와서 미디어 플레이어 세팅
-                    player = MediaPlayer().apply {
-                        setDataSource(answer.answerSrc)
-                        prepare()
-                    }
-
-                    player?.setOnCompletionListener {
-                        player?.release()
-                        player = null
-
-                        recordBtn.setBackgroundResource(R.drawable.playbtn5)
-                        playing = false
-                    }
-
-                    // 재생
-                    player?.start()
-
-                    recordBtn.setBackgroundResource(R.drawable.stopbtn)
-                    playing = true
-                }
-            }
+            setRecordPlayer(recordBtn, answer.answerSrc)
         }
     }
+
+    class PlayerState {
+        var player: MediaPlayer? = null
+        var isPlaying: Boolean = false
+    }
+
+    private fun setRecordPlayer(recordBtn: Button, recordSrc: String) {
+        val playerState = PlayerState()
+        recordBtn.setOnClickListener {
+            // 질문 녹음 재생 기능
+            setRecordPlayerListener(recordBtn, recordSrc, playerState)
+        }
+    }
+
+    private fun setRecordPlayerListener(
+        recordBtn: Button,
+        recordSrc: String,
+        playerState: PlayerState,
+    ) {
+        // 재생 중일 때
+        if (playerState.isPlaying){
+            //player 반납
+            resetPlayer(playerState, recordBtn)
+        } else {
+            // 재생 중이 아니면 중지 버튼으로 이미지 변경
+            // 재생 중이 아닐때 맨 처음
+            // 녹음 소스 불러와서 미디어 플레이어 세팅
+            setPlayer(playerState, recordSrc)
+
+            // 재생이 끝나면 player 초기화해주는 리스너 등록
+            setPlayerListener(playerState, recordBtn)
+
+            // 재생
+            playerState.player?.start()
+            recordBtn.setBackgroundResource(R.drawable.stopbtn)
+            playerState.isPlaying = true
+        }
+    }
+
+    private fun setPlayer(playerState: PlayerState, recordSrc: String) {
+        playerState.player = MediaPlayer().apply {
+            setDataSource(recordSrc)
+            prepare()
+        }
+    }
+
+    private fun setPlayerListener(playerState: PlayerState, recordBtn: Button) {
+        playerState.player?.setOnCompletionListener {
+            resetPlayer(playerState, recordBtn)
+        }
+    }
+
+    private fun resetPlayer(playerState: PlayerState, recordBtn: Button) {
+        playerState.player?.release()
+        recordBtn.setBackgroundResource(R.drawable.playbtn5)
+        playerState.player = null
+        playerState.isPlaying = false
+    }
+
 
     private fun setAnswerReply(binding: ItemResultDetailBinding, answer: AnswerDTO) {
         val replyImg = binding.imgResultAnswer
