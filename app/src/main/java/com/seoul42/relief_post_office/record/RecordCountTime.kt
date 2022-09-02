@@ -21,24 +21,21 @@ class RecordCountTime(
             handler?.postDelayed(this, 1000L)
         }
     }
-
+    /* 녹음파일 시간 카운트 */
     fun startCountUp() {
         startTimeStamp = SystemClock.elapsedRealtime()
         handler?.post(countUpAction)
     }
-
+    /* 녹음파일 시간 카운트정지 */
     fun stopCountUp() {
         handler?.removeCallbacks(countUpAction)
-<<<<<<< HEAD
         updateCountTime(0)
-=======
->>>>>>> origin/seunjang
     }
-
+    /* 녹음파일 시간 초기화 */
     fun clearCountTime() {
         updateCountTime(0)
     }
-
+    /* 녹음파일 시간을 분/초로 표시 */
     private fun updateCountTime(countTimeSeconds : Int) {
         val minutes = countTimeSeconds / 60
         val seconds = countTimeSeconds % 60
