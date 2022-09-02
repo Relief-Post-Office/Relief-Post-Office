@@ -51,7 +51,6 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
     private val firebaseViewModel : FirebaseViewModel by viewModels()
     private val database = Firebase.database
     private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
-    private var deletedQuestionList = arrayListOf<String>()
     private lateinit var checkedQuestions : ArrayList<String>
     private lateinit var safetyQuestionSettingAdapter: SafetyQuestionSettingAdapter
     private lateinit var owner : String
@@ -249,7 +248,7 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
         val rv = findViewById<RecyclerView>(R.id.safety_question_setting_rv)
         // 리사이클러 뷰 아답터에 리스트 넘긴 후 아답터 가져오기
         safetyQuestionSettingAdapter = SafetyQuestionSettingAdapter(
-            this, checkedQuestions, deletedQuestionList ,questionList, firebaseViewModel)
+            this, checkedQuestions, questionList, firebaseViewModel)
         // 리사이클러 뷰에 아답터 연결하기
         rv.adapter = safetyQuestionSettingAdapter
         rv.layoutManager = LinearLayoutManager(this)

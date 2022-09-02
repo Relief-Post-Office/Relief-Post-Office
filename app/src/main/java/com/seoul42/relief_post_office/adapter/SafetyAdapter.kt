@@ -13,32 +13,21 @@ import com.seoul42.relief_post_office.model.SafetyDTO
 import com.seoul42.relief_post_office.safety.EditSafetyActivity
 import com.seoul42.relief_post_office.safety.EditWardSafetyActivity
 
+/**
+ * 보호자의 안부탭에서 만들어놓은 안부들을 RecyclerView에 띄우기 위한 adapter 클래스
+ *  - context : "SafetyFragment"의 context
+ *  - items : 로그인 한 보호자의 안부들을 담은 리스트
+ */
 class SafetyAdapter(private val context : Context, private val items : ArrayList<Pair<String, SafetyDTO>>)
 	: RecyclerView.Adapter<SafetyAdapter.ViewHolder>() {
 
-	override fun onCreateViewHolder(
-		parent: ViewGroup,
-		viewType: Int
-	): SafetyAdapter.ViewHolder {
-		val view = LayoutInflater.from(parent.context).inflate(R.layout.safety_fragment_rv_item, parent, false)
-
-		return ViewHolder(view)
-	}
-
-	override fun onBindViewHolder(holder: SafetyAdapter.ViewHolder, position: Int) {
-		holder.bindItems(items[position])
-	}
-
-	// 전체 리사이클러 뷰의 아이템 개수
-	override fun getItemCount(): Int {
-		return items.size
-	}
-
 	inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
 
-		// 데이터 매핑 해주기
+		/**
+		 * 각 안부들의 정보를 받아와서 RecyclerView에 각각 세팅해주는 메서드
+		 */
 		fun bindItems(item : Pair<String, SafetyDTO>){
-			// 안부 이름 매핑
+			// 안부 이름 세팅
 			val rvText = itemView.findViewById<TextView>(R.id.safety_fragment_rv_item_text)
 			rvText.text = item.second.name
 
@@ -54,4 +43,20 @@ class SafetyAdapter(private val context : Context, private val items : ArrayList
 		}
 	}
 
+	override fun onCreateViewHolder(
+		parent: ViewGroup,
+		viewType: Int
+	): SafetyAdapter.ViewHolder {
+		val view = LayoutInflater.from(parent.context).inflate(R.layout.safety_fragment_rv_item, parent, false)
+
+		return ViewHolder(view)
+	}
+
+	override fun onBindViewHolder(holder: SafetyAdapter.ViewHolder, position: Int) {
+		holder.bindItems(items[position])
+	}
+
+	override fun getItemCount(): Int {
+		return items.size
+	}
 }
