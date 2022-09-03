@@ -7,11 +7,13 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.ktx.auth
@@ -108,7 +110,9 @@ class AddWardSafetyActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setSaveButton() {
         // 저장 버튼 이벤트
-        findViewById<Button>(R.id.add_ward_safety_add_button).setOnClickListener {
+        val saveButton = findViewById<Button>(R.id.add_ward_safety_add_button)
+
+        saveButton.setOnClickListener {
             // 프로그레스바 처리
             it.isClickable = false
             window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
@@ -134,11 +138,13 @@ class AddWardSafetyActivity : AppCompatActivity() {
 
             // 시간을 설정한 경우에만 추가 가능
             if (time == null){
+                it.isClickable = true
                 progressBar.visibility = View.INVISIBLE
                 window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 Toast.makeText(this, "시간을 설정해 주세요", Toast.LENGTH_SHORT).show()
             }
             else if (questionList.isEmpty()){
+                it.isClickable = true
                 progressBar.visibility = View.INVISIBLE
                 window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 Toast.makeText(this, "질문을 설정해 주세요", Toast.LENGTH_SHORT).show()
@@ -167,6 +173,7 @@ class AddWardSafetyActivity : AppCompatActivity() {
 
                 // 피보호자에게 동기화 FCM 보내기
                 wardSafetySync()
+
             }
         }
     }

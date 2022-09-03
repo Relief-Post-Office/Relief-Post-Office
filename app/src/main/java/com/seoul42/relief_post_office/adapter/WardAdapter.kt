@@ -17,9 +17,22 @@ import com.seoul42.relief_post_office.databinding.ItemUserBinding
 import com.seoul42.relief_post_office.model.UserDTO
 import java.text.SimpleDateFormat
 
-class WardAdapter(private val context: Context, private val dataList: ArrayList<Pair<String, UserDTO>>) :
-    RecyclerView.Adapter<WardAdapter.ItemViewHolder>() {
+/**
+ * 피보호자와 연결된 보호자들을 RecyclerView 에 띄우기 위한 adapter 클래스
+ *  - context : WardActivity's context
+ *  - dataList : 보호자들을 담은 리스트
+ */
+class WardAdapter(
+    private val context: Context,
+    private val dataList: ArrayList<Pair<String, UserDTO>>
+    ) : RecyclerView.Adapter<WardAdapter.ItemViewHolder>() {
+
     inner class ItemViewHolder(private val binding: ItemUserBinding) : RecyclerView.ViewHolder(binding.root) {
+        /**
+         * 각 보호자의 정보를 받아와서 RecyclerView 에 각각 세팅해주는 메서드
+         * - user : <보호자 id, 보호자 UserDTO>
+         * - context : WardActivity's context
+         */
         fun bind(user : Pair<String, UserDTO>, context : Context) {
             val curYear = SimpleDateFormat("yyyy-MM-dd hh:mm")
                 .format(System.currentTimeMillis())
@@ -32,10 +45,12 @@ class WardAdapter(private val context: Context, private val dataList: ArrayList<
                 .load(user.second.photoUri)
                 .circleCrop()
                 .into(binding.itemUserImg)
+
             binding.itemUserName.text = userName
             binding.itemUserAge.text = userAge.toString()
+
+            // 통화 버튼 누를 시 전화번호가 키패드에 세팅되도록 설정
             binding.itemUserCall.setOnClickListener {
-                /* 통화 바로 가능하도록 */
                 ContextCompat.startActivity(
                     context,
                     Intent(Intent.ACTION_VIEW, Uri.parse("tel:" + user.second.tel)),

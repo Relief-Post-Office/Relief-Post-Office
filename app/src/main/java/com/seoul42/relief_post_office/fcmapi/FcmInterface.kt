@@ -6,7 +6,11 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 
+/**
+ * Fcm 전송을 돕는 인터페이스
+ */
 interface FcmInterface {
+
     @POST("fcm/send")
     suspend fun sendNotification(
         @Body notification: NotificationDTO
