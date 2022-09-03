@@ -43,7 +43,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         FirebaseStorage.getInstance()
     }
 
-    // FCM을 보낼 수 있는 객체 변수
+    // FCM을 보낼 수 있는 객체
     private val firebaseViewModel : FirebaseViewModel by viewModels()
     private val database = Firebase.database
     // RecyclerView에 띄울 질문 리스트
@@ -76,7 +76,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
 
     /**
      * 질문 추가 버튼을 세팅해주는 메서드
-     * 추가 버튼 클릭 시 나타나는 "질문 추가" 다이얼로그를 세팅해주는 것이 주요 기능
+     *  - 추가 버튼 클릭 시 나타나는 "질문 추가" 다이얼로그를 세팅해주는 것이 주요 기능
      *  - view : QuestionFragment의 View
      */
     @RequiresApi(Build.VERSION_CODES.O)
@@ -172,7 +172,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
 
     /**
      * RecyclerView에 띄워질 questionList를 데이터베이스에 따라 실시간으로 세팅하는 메서드
-     * 초기화 / 추가 / 수정 / 삭제 시 적용
+     *  - 초기화 / 추가 / 수정 / 삭제 시 적용
      */
     private fun setQuestionList(){
         // 로그인한 유저의 질문 목록

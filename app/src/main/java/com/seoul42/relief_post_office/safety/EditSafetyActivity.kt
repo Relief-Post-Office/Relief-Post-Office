@@ -25,15 +25,23 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.ArrayList
 
+/**
+ * "보호자 안부 수정" 화면을 띄오도록 돕는 클래스
+ */
 class EditSafetyActivity : AppCompatActivity() {
 
 	private val database = Firebase.database
 	private val QuestionRef = database.getReference("question")
+	// 안부에 포함되었다가 삭제된 질문들을 담는 리스트
 	private var deletedQuestionList = arrayListOf<String>()
+	// 안부에 포함된 질문들을 담는 리스트
 	private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
+	// 로그인한 보호자의 id
 	private lateinit var owner : String
+	// 선택한 안부의 id
 	private lateinit var safetyId : String
 	private lateinit var safety : SafetyDTO
+	// RecyclerView 세팅을 돕는 adapter 객체
 	private lateinit var editSafetyAdapter : AddWardSafetyAdapter
 
 	@RequiresApi(Build.VERSION_CODES.O)
@@ -60,7 +68,9 @@ class EditSafetyActivity : AppCompatActivity() {
 		setBackButton()
 	}
 
-	/* 초기 세팅 */
+	/**
+	 * 데이터베이스에서 정보를 불러와서 "보호자 안부 수정" 화면의 초기 세팅을 하는 메서드
+	 */
 	private fun setData() {
 		// 수정할 안부 데이터 가져오고 첫 세팅 하기
 		safetyId = intent.getStringExtra("safetyId").toString()
@@ -83,7 +93,11 @@ class EditSafetyActivity : AppCompatActivity() {
 		}
 	}
 
-	/* 질문 설정 버튼 세팅 */
+	/**
+	 * "질문 설정" 버튼을 세팅해주는 메서드
+	 *  - "SafetyQuestionSettingActivity"으로 이동
+	 *  - questionList를 함께 전달
+	 */
 	private fun setEditSafetyQuestionButton() {
 		findViewById<ImageView>(R.id.edit_safety_setting).setOnClickListener{
 			val tmpIntent = Intent(this, SafetyQuestionSettingActivity::class.java)
@@ -92,7 +106,9 @@ class EditSafetyActivity : AppCompatActivity() {
 		}
 	}
 
-	/* 리사이클러 뷰 세팅 */
+	/**
+	 * RecyclerView를 세팅하기 위해 adapter클래스에 연결하는 메서드
+	 */
 	private fun setRecyclerView() {
 		val rv = findViewById<RecyclerView>(R.id.edit_safety_rv)
 		editSafetyAdapter = AddWardSafetyAdapter(questionList)
@@ -101,14 +117,23 @@ class EditSafetyActivity : AppCompatActivity() {
 		rv.setHasFixedSize(true)
 	}
 
-	/* 뒤로가기 버튼 세팅 */
+	/**
+	 * "뒤로가기" 버튼 세팅해주는 메서드
+	 *  - "SafetyFragment"로 돌아감
+	 */
 	private fun setBackButton() {
 		findViewById<ImageView>(R.id.edit_safety_backBtn).setOnClickListener{
 			finish()
 		}
 	}
 
-	/* 삭제 버튼 세팅 */
+	/**
+	 * "삭제" 버튼 세팅해주는 메서드
+	 *  - 삭제 과정
+	 *   1. 안부 삭제
+	 *   2. 보호자의 안부 목록에서 삭제
+	 *   3. 안부에 포함되어 있던 질문들의 "connectedSafetyList"에서 삭제
+	 */
 	@RequiresApi(Build.VERSION_CODES.O)
 	private fun setDeleteButton() {
 		findViewById<Button>(R.id.edit_safety_delete_button).setOnClickListener{
@@ -148,6 +173,11 @@ class EditSafetyActivity : AppCompatActivity() {
 	}
 
 	/* 저장 버튼 세팅 */
+	/**
+	 * "저장" 버튼 세팅해주는 메서드
+	 *  - 저장 조건
+	 *   1. 안부에 할당된 질문이 1개 이상
+	 */
 	@RequiresApi(Build.VERSION_CODES.O)
 	private fun setSaveButton() {
 		findViewById<Button>(R.id.edit_safety_save_button).setOnClickListener {
@@ -196,8 +226,11 @@ class EditSafetyActivity : AppCompatActivity() {
 		}
 	}
 
-	/* 안부에 연결 및 연결 해제된 질문들 connectedSafetyList 동기화 */
-	/* flag -> 1(안부 수정 시), -> 2(안부 삭제 시) */
+	/**
+	 * 안부에 연결 및 연결 해제된 질문들을 connectedSafetyList에 동기화 해주는 함수
+	 *  - flag -> 1 : 안부 수정 시
+	 *  - flag -> 2 : 안부 삭제 시
+	 */
 	private fun connectedSafetyListSync(date : String, flag : Int) {
 		when(flag){
 			1-> { for (q in questionList){  // 최종 저장되는 질문들 connectedSafetyList 동기화
@@ -241,7 +274,11 @@ class EditSafetyActivity : AppCompatActivity() {
 		}
 	}
 
-	/* 질문 설정 작업 결과 가져오기 */
+	/**
+	 * 질문 설정 작업 결과를 가져오는 메서드
+	 *  - "질문 설정"
+	 *  	- 수정된 질문 할당 여부들을 가져와서 동기화
+	 */
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 

@@ -252,7 +252,7 @@ class QuestionFragmentRVAdapter(
 
         /**
          *  질문 동기화 FCM을 보내는 메서드
-         *  보호자가 질문 수정 시, 해당 질문을 포함한 안부를 가지고 있는 모든 피보호자에게 안부 동기화를 요청하기 위함
+         *  - 보호자가 질문 수정 시, 해당 질문을 포함한 안부를 가지고 있는 모든 피보호자에게 안부 동기화를 요청하기 위함
          *  - item : <질문 id, 질문 DTO>
          *  - title : FCM에 포함될 title
          *  - message : FCM에 포함될 message

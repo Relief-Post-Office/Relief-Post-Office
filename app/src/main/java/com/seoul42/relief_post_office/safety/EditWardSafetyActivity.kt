@@ -31,19 +31,28 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+/**
+ * 피보호자의 안부를 수정하는 화면을 띄우도록 돕는 클래스
+ */
 class EditWardSafetyActivity : AppCompatActivity() {
 
     private val database = Firebase.database
     private val QuestionRef = database.getReference("question")
+    // 안부가 설정된 시간을 담는 변수
     private var time : String? = null
+    // 안부에 설정된 질문들을 담는 리스트
     private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
+    // 안부에 포함되었다가 삭제된 질문들을 담는 리스트
     private var deletedQuestionList = arrayListOf<String>()
+    // FCM을 보내기 위한 객체
     private val firebaseViewModel : FirebaseViewModel by viewModels()
+    // 로그인한 보호자 id
     private lateinit var owner : String
     private lateinit var wardId : String
     private lateinit var wardName : String
     private lateinit var safetyId : String
     private lateinit var safety : SafetyDTO
+    // RecyclerView 세팅을 돕는 adapter 객체
     private lateinit var editWardSafetyAdapter : AddWardSafetyAdapter
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -73,7 +82,9 @@ class EditWardSafetyActivity : AppCompatActivity() {
         setBackButton()
     }
 
-    /* 안부 수정 화면 초기 세팅 */
+    /**
+     * 데이터베이스에서 정보를 불러와 "피보호자 안부 수정" 화면의 초기 세팅을 해주는 메서드
+     */
     private fun setData() {
         safetyId = intent.getStringExtra("safetyId").toString()
         wardName = intent.getStringExtra("wardName").toString()
@@ -146,7 +157,9 @@ class EditWardSafetyActivity : AppCompatActivity() {
         }
     }
 
-    /* 리사이클러 뷰 세팅 */
+    /**
+     * RecyclerView를 세팅하기 위해 adapter클래스에 연결하는 메서드
+     */
     private fun setRecyclerView() {
         val rv = findViewById<RecyclerView>(R.id.edit_ward_safety_rv)
         editWardSafetyAdapter = AddWardSafetyAdapter(questionList)
@@ -155,7 +168,11 @@ class EditWardSafetyActivity : AppCompatActivity() {
         rv.setHasFixedSize(true)
     }
 
-    /* 질문 설정 버튼 세팅 */
+    /**
+     * "질문 설정" 버튼을 세팅해주는 메서드
+     *  - "SafetyQuestionSettingActivity"으로 이동
+     *  - questionList를 함께 전달
+     */
     private fun setEditSafetyQuestionButton() {
         findViewById<ImageView>(R.id.edit_ward_safety_question_setting).setOnClickListener{
             val tmpIntent = Intent(this, SafetyQuestionSettingActivity::class.java)
@@ -164,7 +181,10 @@ class EditWardSafetyActivity : AppCompatActivity() {
         }
     }
 
-    /* 뒤로 가기 버튼 세팅 */
+    /**
+     * "뒤로가기" 버튼 세팅해주는 메서드
+     *  - "WardSafetySettingActivity"로 돌아감
+     */
     private fun setBackButton() {
         findViewById<ImageView>(R.id.edit_ward_safety_backBtn).setOnClickListener{
             finish()
@@ -172,6 +192,16 @@ class EditWardSafetyActivity : AppCompatActivity() {
     }
 
     /* 삭제 버튼 세팅 */
+    /**
+     * "삭제" 버튼 세팅해주는 메서드
+     *  - 삭제 조건
+     *   1. 안부에 할당된 질문들이 모두 로그인한 보호자의 소유
+     *  - 삭제 과정
+     *   1. 안부 삭제
+     *   2. 피보호자 안부 목록에서 삭제
+     *   3. 안부에 연결되어 있던 질문들 connectedSafetyList에서 삭제
+     *   4. 피보호자에게 안부 삭제 동기화 FCM 전송
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setDeleteButton() {
         findViewById<Button>(R.id.edit_ward_safety_delete_button).setOnClickListener{
@@ -203,6 +233,13 @@ class EditWardSafetyActivity : AppCompatActivity() {
     }
 
     /* 저장 버튼 세팅 */
+    /**
+     * "저장" 버튼 세팅해주는 메서드
+     *  - 저장 조건
+     *   1. 시간 설정
+     *   2. 안부에 할당된 질문이 1개 이상
+     *  - 변경 후 "피보호자" 및 "피보호자와 연결된 보호자"들에게 동기화 FCM 전송
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setSaveButton() {
         findViewById<Button>(R.id.edit_ward_safety_save_button).setOnClickListener {
@@ -269,8 +306,11 @@ class EditWardSafetyActivity : AppCompatActivity() {
         }
     }
 
-    /* 안부에 연결 및 연결 해제된 질문들 connectedSafetyList 동기화 */
-    /* flag -> 1(안부 수정 시), -> 2(안부 삭제 시) */
+    /**
+     * 안부에 연결 및 연결 해제된 질문들을 connectedSafetyList에 동기화 해주는 함수
+     *  - flag -> 1 : 안부 수정 시
+     *  - flag -> 2 : 안부 삭제 시
+     */
     private fun connectedSafetyListSync(date : String, flag : Int) {
         when(flag){
             1-> { for (q in questionList){  // 최종 저장되는 질문들 connectedSafetyList 동기화
@@ -314,7 +354,11 @@ class EditWardSafetyActivity : AppCompatActivity() {
         }
     }
 
-    /* 삭제 가능한지 확인 (질문 목록에 로그인한 보호자의 질문들만 있는지 확인) */
+    /**
+     * 해당 안부가 삭제 가능한지 확인해주는 메서드
+     *  - 안부에 설정된 질문들이 모두 로그인한 보호자의 소유일 경우 : true 반환
+     *  - 안부에 설정된 질문들 중 로그인한 보호자의 소유가 아닌 질문이 있는 경우 : false 반환
+     */
     private fun canDelete() : Boolean {
         for (q in questionList){
             // 내 소유가 아닌 질문을 찾으면
@@ -326,7 +370,9 @@ class EditWardSafetyActivity : AppCompatActivity() {
         return true
     }
 
-    /* 보호자 안부 가져오기 버튼 세팅 */
+    /**
+     * "안부 가져오기" 버튼 세팅해주는 함수
+     */
     private fun setGetSafetyButton() {
         findViewById<Button>(R.id.edit_ward_safety_get_button).setOnClickListener{
             val tmpIntent = Intent(this, GetGuardianSafetyActivity::class.java)
@@ -334,7 +380,10 @@ class EditWardSafetyActivity : AppCompatActivity() {
         }
     }
 
-    /* 피보호자에게 안부 동기화 FCM 보내기 */
+    /**
+     * 피보호자에게 안부 동기화 FCM 보내는 메서드
+     *  - message : FCM에 담을 텍스트 메세지
+     */
     private fun wardSafetySync(message : String) {
         val wardRef = Firebase.database.reference.child("user").child(wardId)
         wardRef.get().addOnSuccessListener {
@@ -350,7 +399,11 @@ class EditWardSafetyActivity : AppCompatActivity() {
         }
     }
 
-    /* 피보호자와 연결된 보호자들에게 안부 동기화 FCM 보내기 */
+    /**
+     * 피보호자와 연결된 보호자들에게 안부 동기화 FCM 보내는 메서드
+     *  - 전송 후 액티비티 종료
+     *  - message : FCM에 담을 텍스트 메세지
+     */
     private fun guardianSafetySync(message : String) {
         val guardianListRef = database.getReference("ward").child(wardId).child("connectList")
         guardianListRef.get().addOnSuccessListener {
@@ -372,7 +425,13 @@ class EditWardSafetyActivity : AppCompatActivity() {
         }, 1500)
     }
 
-    /* 질문 설정, 안부 가져오기 작업 결과 가져오기 */
+    /**
+     * "질문 설정", "안부 가져오기" 페이지에서 작업한 결과 가져오는 메서드
+     *  - "질문 설정"
+     *      - 수정된 질문 할당 여부들을 가져와서 동기화
+     *  - "안부 가져오기"
+     *      - 선택한 보호자 안부(질문 모음)에 포함된 질문들을 questionList에 추가
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -408,7 +467,12 @@ class EditWardSafetyActivity : AppCompatActivity() {
         }
     }
 
-    /* 액티비티 종료 시 뮤텍스 반환 */
+    /**
+     * 액티비티 종료 시 뮤텍스를 반환하는 메서드
+     *  - 안부 수정 후 다른 보호자가 수정 화면에 접근할 수 있게하기 위함
+     *  - 뮤텍스 획득 시기 : "WardSafetySettingActivity"의 RecyclerView에서 해당 안부를 클릭 했을 경우
+     *      - 클릭 시 뮤텍스가 없다면 접근 불가
+     */
     override fun onDestroy() {
         super.onDestroy()
         database.getReference("safety").child(safetyId).child("Access")

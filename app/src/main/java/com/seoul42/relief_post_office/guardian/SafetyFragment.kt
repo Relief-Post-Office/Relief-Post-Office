@@ -82,7 +82,7 @@ class SafetyFragment : Fragment(R.layout.fragment_safety) {
 
 	/**
 	 * RecyclerView에 띄워질 safetyList를 데이터베이스에 따라 실시간으로 세팅하는 메서드
-	 * 초기화 / 추가 / 수정 / 삭제 시 적용
+	 *  - 초기화 / 추가 / 수정 / 삭제 시 적용
 	 */
 	private fun setSafetyList() {
 		// 로그인한 유저의 안부 목록
@@ -153,7 +153,7 @@ class SafetyFragment : Fragment(R.layout.fragment_safety) {
 
 	/**
 	 * RecyclerView를 세팅하기 위해 adapter클래스에 연결하는 메서드
-	 *  - view : "QuestionFragment"의 View
+	 *  - view : "SafetyFragment"의 View
 	 */
 	private fun setRecyclerView(view : View) {
 		val recyclerView = view.findViewById<RecyclerView>(R.id.safety_fragment_rv)
