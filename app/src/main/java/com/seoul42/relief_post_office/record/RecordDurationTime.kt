@@ -24,12 +24,12 @@ class RecordDurationTime(
             handler?.postDelayed(this, 1000L)
         }
     }
-
+    /** 녹음파일 시간 카운트 */
     fun startCountUp() {
         startTimeStamp = SystemClock.elapsedRealtime()
         handler?.post(countUpAction)
     }
-
+    /** 현재 녹음된 파일 재생시간 유지 */
     fun setRecordDuration(recordingFilePath : String?) {
         playerDuration = MediaPlayer().
                 apply {
@@ -41,12 +41,12 @@ class RecordDurationTime(
         updateCountTime((recordDuration)/1000)
         handler?.removeCallbacks(countUpAction)
     }
-
+    /** 녹음파일 시간 초기화 */
     fun clearCountTime() {
         playerDuration.release()
         updateCountTime(0)
     }
-
+    /** 녹음파일 시간을 분/초로 표시 */
     private fun updateCountTime(countTimeSeconds : Int) {
         val minutes = countTimeSeconds / 60
         val seconds = countTimeSeconds % 60
