@@ -42,18 +42,25 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * 안부에 질문을 할당(질문 설정)하는 화면을 띄우도록 돕는 클래스
+ */
 class SafetyQuestionSettingActivity : AppCompatActivity() {
 
     private val storage: FirebaseStorage by lazy {
         FirebaseStorage.getInstance()
     }
 
+    // FCM을 보내는 기능이 있는 객체
     private val firebaseViewModel : FirebaseViewModel by viewModels()
     private val database = Firebase.database
+    // 로그인한 보호자의 질문들을 담는 리스트
     private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
-    private var deletedQuestionList = arrayListOf<String>()
+    // 안부에 할당된 질문들을 담는 리스트
     private lateinit var checkedQuestions : ArrayList<String>
+    // RecyclerView 세팅을 돕는 adapter 객체
     private lateinit var safetyQuestionSettingAdapter: SafetyQuestionSettingAdapter
+    // 로그인한 보호자 id
     private lateinit var owner : String
     private lateinit var listenerDTO : ListenerDTO
 
@@ -82,6 +89,12 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
     }
 
     /* 저장 버튼 세팅 */
+    /**
+     * "저장" 버튼을 세팅해주는 메서드
+     *  - 이 액티비티를 호출한 액티비티에게 2가지 데이터를 전달
+     *   1. returnQuestionList : 안부에 설정할 질문들을 담은 리스트
+     *   2. deletedQuestionList : 안부에 설정되었다가 취소된 질문들을 담은 리스트
+     */
     private fun setSaveButton() {
         findViewById<Button>(R.id.safety_question_setting_save_button).setOnClickListener {
             it.isClickable = false
@@ -93,7 +106,10 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
         }
     }
 
-    /* 질문 추가 버튼 세팅 */
+    /**
+     * 질문 추가 버튼을 세팅해주는 메서드
+     *  - 추가 버튼 클릭 시 나타나는 "질문 추가" 다이얼로그를 세팅해주는 것이 주요 기능
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setAddQuestionButton() {
         val questionPlusBtn = findViewById<ImageView>(R.id.safety_question_setting_add_question)
@@ -175,7 +191,10 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
         }
     }
 
-    /* questionList 실시간 업데이트 (수정 및 변경 적용 포함) */
+    /**
+     * RecyclerView에 띄워질 questionList를 데이터베이스에 따라 실시간으로 세팅하는 메서드
+     *  - 초기화 / 추가 / 수정 / 삭제 시 적용
+     */
     private fun setQuestionList(){
         // 로그인한 유저의 질문 목록
         val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
@@ -244,18 +263,23 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
         listenerDTO = ListenerDTO(userQuestionRef, questionListener)
     }
 
-    /* 리사이클러 뷰 세팅 */
+    /**
+     * RecyclerView를 세팅하기 위해 adapter클래스에 연결하는 메서드
+     */
     private fun setRecyclerView(){
         val rv = findViewById<RecyclerView>(R.id.safety_question_setting_rv)
         // 리사이클러 뷰 아답터에 리스트 넘긴 후 아답터 가져오기
         safetyQuestionSettingAdapter = SafetyQuestionSettingAdapter(
-            this, checkedQuestions, deletedQuestionList ,questionList, firebaseViewModel)
+            this, checkedQuestions, questionList, firebaseViewModel)
         // 리사이클러 뷰에 아답터 연결하기
         rv.adapter = safetyQuestionSettingAdapter
         rv.layoutManager = LinearLayoutManager(this)
         rv.setHasFixedSize(true)
     }
 
+    /**
+     * 화면 종료시 사용하고 있던 리스너들을 반환하는 메서드
+     */
     override fun onDestroy() {
         super.onDestroy()
 

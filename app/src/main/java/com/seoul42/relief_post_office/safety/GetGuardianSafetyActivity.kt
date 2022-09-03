@@ -21,12 +21,17 @@ import com.seoul42.relief_post_office.adapter.SafetyAdapter
 import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.SafetyDTO
 
+/**
+ * 피보호자 안부 설정 시 "안부 가져오기" 화면을 띄우도록 돕는 클래스
+ */
 class GetGuardianSafetyActivity : AppCompatActivity() {
 
     private val database = Firebase.database
+    // 로그인한 보호자의 안부들을 담는 리스트
     private var safetyList = arrayListOf<Pair<String, SafetyDTO>>()
-    private lateinit var auth : FirebaseAuth
+    // RecyclerView 세팅을 돕는 adapter 객체
     private lateinit var getGuardianSafetyAdapter : GetGuardianSafetyRVAdapter
+    // 로그인한 보호자 id
     private lateinit var owner : String
     private lateinit var listenerDTO : ListenerDTO
 
@@ -35,8 +40,7 @@ class GetGuardianSafetyActivity : AppCompatActivity() {
         setContentView(R.layout.activity_get_guardian_safety)
 
         // 로그인 한 사람 uid 가져오기
-        auth = Firebase.auth
-        owner = auth.currentUser?.uid.toString()
+        owner = Firebase.auth.currentUser?.uid.toString()
 
         // safetyList 세팅
         setSafetyList()
@@ -48,6 +52,9 @@ class GetGuardianSafetyActivity : AppCompatActivity() {
         setAddSafety()
     }
 
+    /**
+     * "GetGuardianSafetyActivity" 종료 시 사용한 리스너들을 반환해주는 메서드
+     */
     override fun onDestroy() {
         super.onDestroy()
 
@@ -57,7 +64,10 @@ class GetGuardianSafetyActivity : AppCompatActivity() {
         reference.removeEventListener(listener)
     }
 
-    /* 안부 추가 버튼 세팅 */
+    /**
+     * 새로운 "보호자 안부 추가" 버튼을 세팅해주는 함수
+     *  - "SafetyMake"로 이동
+     */
     private fun setAddSafety() {
         val safetyAddBtn = findViewById<ImageView>(R.id.get_guardian_safety_button)
         safetyAddBtn.setOnClickListener{
@@ -65,6 +75,10 @@ class GetGuardianSafetyActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * RecyclerView에 띄워질 safetyList를 데이터베이스에 따라 실시간으로 세팅하는 메서드
+     *  - 초기화 / 추가 / 수정 / 삭제 시 적용
+     */
     private fun setSafetyList() {
         // 로그인한 유저의 안부 목록
         val userSafetyRef = database.getReference("guardian").child(owner).child("safetyList")
@@ -132,7 +146,9 @@ class GetGuardianSafetyActivity : AppCompatActivity() {
         listenerDTO = ListenerDTO(userSafetyRef, safetyListener)
     }
 
-    // 리사이클러 뷰 세팅 함수
+    /**
+     * RecyclerView를 세팅하기 위해 adapter클래스에 연결하는 메서드
+     */
     private fun setRecyclerView() {
         val recyclerView = findViewById<RecyclerView>(R.id.get_guardian_safety_rv)
         val layout = LinearLayoutManager(this)

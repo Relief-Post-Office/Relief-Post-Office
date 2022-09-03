@@ -24,12 +24,18 @@ import com.seoul42.relief_post_office.model.SafetyDTO
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * "보호자 안부 추가" 화면을 띄오도록 돕는 클래스
+ */
 class SafetyMake : AppCompatActivity() {
 
 	private val database = Firebase.database
 	private val safetyRef = database.getReference("safety")
+	// 안부에 할당된 질문들을 담는 리스트
 	private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
+	// RecyclerView 세팅을 돕는 adapter 객체
 	private lateinit var safetyMakeAdapter: AddWardSafetyAdapter
+	// 로그인한 보호자 id
 	private lateinit var owner : String
 
 	@RequiresApi(Build.VERSION_CODES.O)
@@ -53,14 +59,21 @@ class SafetyMake : AppCompatActivity() {
 		setBackButton()
 	}
 
-	/* 뒤로 가기 버튼 세팅 */
+	/**
+	 * "뒤로가기" 버튼 세팅해주는 메서드
+	 *  - "SafetyFragment"로 돌아감
+	 */
 	private fun setBackButton(){
 		findViewById<ImageView>(R.id.safety_make_backBtn).setOnClickListener{
 			finish()
 		}
 	}
 
-	/* 질문 설정 버튼 세팅 */
+	/**
+	 * "질문 설정" 버튼을 세팅해주는 메서드
+	 *  - "SafetyQuestionSettingActivity"로 이동
+	 *  - questionList를 함께 전달
+	 */
 	private fun setEditSafetyQuestionButton(){
 		findViewById<ImageView>(R.id.safety_make_question_setting).setOnClickListener{
 			val tmpIntent = Intent(this, SafetyQuestionSettingActivity::class.java)
@@ -69,7 +82,9 @@ class SafetyMake : AppCompatActivity() {
 		}
 	}
 
-	/* 리사이클러 뷰 세팅 */
+	/**
+	 * RecyclerView를 세팅하기 위해 adapter클래스에 연결하는 메서드
+	 */
 	private fun setRecyclerView() {
 		val rv = findViewById<RecyclerView>(R.id.safety_make_rv)
 		safetyMakeAdapter = AddWardSafetyAdapter(questionList)
@@ -78,7 +93,12 @@ class SafetyMake : AppCompatActivity() {
 		rv.setHasFixedSize(true)
 	}
 
-	/* 저장 버튼 세팅*/
+	/**
+	 *  안부 저장 버튼을 세팅해주는 메서드
+	 *   - 수정 데이터와 설정값을 데이터베이스에 업로드
+	 *   - 안부 저장 최소 조건
+	 *    2. 질문 1개 이상 설정
+	 */
 	@RequiresApi(Build.VERSION_CODES.O)
 	private fun setSaveButton() {
 		findViewById<Button>(R.id.safety_make_save_button).setOnClickListener {
@@ -139,7 +159,11 @@ class SafetyMake : AppCompatActivity() {
 	}
 
 
-	/* 질문 설정 작업 결과 가져오기 */
+	/**
+	 * 질문 설정 작업 결과를 가져오는 메서드
+	 *  - "질문 설정"
+	 *  	- 수정된 질문 할당 여부들을 가져와서 동기화
+	 */
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 

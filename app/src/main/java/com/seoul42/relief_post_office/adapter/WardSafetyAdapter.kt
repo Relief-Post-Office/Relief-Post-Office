@@ -20,34 +20,24 @@ import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.SafetyDTO
 import com.seoul42.relief_post_office.safety.EditWardSafetyActivity
 
-
+/**
+ * 피보호자의 안부를 RecyclerView에 띄우기 위한 adapter 클래스
+ *  - context : "WardSafetySettingActivity"의 context
+ *  - items : 피보호자에게 설정된 안부들을 담은 리스트
+ *  - wardName : 피보호자의 이름
+ */
 class WardSafetyAdapter(private val context: Context, private val items: ArrayList<Pair<String, SafetyDTO>>,
                         private val wardName: String)
     : RecyclerView.Adapter<WardSafetyAdapter.ViewHolder>() {
 
     private val database = Firebase.database
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): WardSafetyAdapter.ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.ward_safety_item, parent, false)
-
-        return ViewHolder(view)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onBindViewHolder(holder: WardSafetyAdapter.ViewHolder, position: Int) {
-        holder.bindItems(items[position])
-    }
-
-    override fun getItemCount(): Int {
-        return items.size
-    }
-
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
 
-        // 각 아이템마다 뷰 처리
+        /**
+         * 각 안부들의 정보들을 가져와서 RecyclerView에 각각 세팅해주는 메서드
+         *  - item : <안부 id, 안부 DTO>
+         */
         fun bindItems(item: Pair<String, SafetyDTO>){
             // 각 안부별 이름, 요일, 시간 세팅
             val rvName = itemView.findViewById<TextView>(R.id.ward_safety_item_name)
@@ -78,6 +68,7 @@ class WardSafetyAdapter(private val context: Context, private val items: ArrayLi
                 // 여러번 클릭 방지
                 it.isClickable = false
 
+                /* 동기화 문제 예방 */
                 // 선택한 안부를 누군가 수정중인지 확인
                 val accessedGuardian = database.getReference("safety").child(item.first).child("Access")
                 accessedGuardian.get().addOnSuccessListener {
@@ -102,5 +93,23 @@ class WardSafetyAdapter(private val context: Context, private val items: ArrayLi
                 }
             }
         }
+    }
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): WardSafetyAdapter.ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.ward_safety_item, parent, false)
+
+        return ViewHolder(view)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onBindViewHolder(holder: WardSafetyAdapter.ViewHolder, position: Int) {
+        holder.bindItems(items[position])
+    }
+
+    override fun getItemCount(): Int {
+        return items.size
     }
 }

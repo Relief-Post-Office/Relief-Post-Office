@@ -23,13 +23,19 @@ import com.seoul42.relief_post_office.adapter.WardSafetyAdapter
 import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.SafetyDTO
 
+/**
+ * "피보호자 안부 설정" 화면을 띄우도록 돕는 클래스
+ */
 class WardSafetySettingActivity : AppCompatActivity() {
 
     private val database = Firebase.database
+    // RecyclerView에 띄울 피보호자 안부를 담는 리스트
     private var wardSafetyList = arrayListOf<Pair<String, SafetyDTO>>()
+    // RecyclerView 세팅을 돕는 adapter 객체
     private lateinit var wardSafetyAdapter : WardSafetyAdapter
     private lateinit var wardId : String
     private lateinit var wardName : String
+    // 피보호자의 프로필 사진 경로
     private lateinit var photoUri : String
     private lateinit var listenerDTO : ListenerDTO
 
@@ -53,7 +59,9 @@ class WardSafetySettingActivity : AppCompatActivity() {
         setAddButton()
     }
 
-    /* 사전 세팅 */
+    /**
+     * "피보호자 안부 설정" 화면의 초기 세팅을 해주는 메서드
+     */
     private fun setData() {
         wardId = intent.getStringExtra("wardId").toString()
         wardName = intent.getStringExtra("wardName").toString()
@@ -69,14 +77,21 @@ class WardSafetySettingActivity : AppCompatActivity() {
             .into(findViewById(R.id.ward_safety_setting_ward_photo))
     }
 
-    /* 종료 버튼 세팅 */
+    /**
+     * "종료" 버튼을 세팅해주는 메서드
+     *  - "MainFragment"에서 선택한 피보호자의 Dialog가 켜진 화면으로 돌아감
+     */
     private fun setExitButton() {
         findViewById<ImageView>(R.id.ward_safety_setting_exit_button).setOnClickListener {
             finish()
         }
     }
 
-    /* 추가 버튼 세팅 */
+    /**
+     * "피보호자 안부 추가" 버튼을 세팅해주는 메서드
+     *  - "AddWardSafetyActivity"로 이동
+     *  - wardName, wardId를 함게 전달
+     */
     private fun setAddButton() {
         findViewById<ImageView>(R.id.ward_safety_setting_add_button).setOnClickListener {
             val tmpIntent = Intent(this, AddWardSafetyActivity::class.java)
@@ -87,6 +102,10 @@ class WardSafetySettingActivity : AppCompatActivity() {
     }
 
     /* 피보호자 안부 목록 리스너 설정 */
+    /**
+     * RecyclerView에 띄워질 wardSafetyList를 데이터베이스에 따라 실시간으로 세팅하는 메서드
+     *  - 초기화 / 추가 / 수정 / 삭제 시 적용
+     */
     private fun setWardSafetyListener() {
         // wardSafetyList 세팅 및 업데이트 하기
         // 현재 선택한 피보호자의 안부 목록
@@ -151,7 +170,9 @@ class WardSafetySettingActivity : AppCompatActivity() {
         listenerDTO = ListenerDTO(wardSafetyRef, safetyListener)
     }
 
-    /* 리사이클러 뷰 세팅 */
+    /**
+     * RecyclerView를 세팅하기 위해 adapter클래스에 연결하는 메서드
+     */
     private fun setRecyclerView() {
         val rv = findViewById<RecyclerView>(R.id.ward_safety_setting_rv)
         wardSafetyAdapter = WardSafetyAdapter(this, wardSafetyList, wardName)
@@ -160,6 +181,9 @@ class WardSafetySettingActivity : AppCompatActivity() {
         rv.setHasFixedSize(true)
     }
 
+    /**
+     * 화면 종료시 사용하고 있던 리스너들을 반환하는 메서드
+     */
     override fun onDestroy() {
         super.onDestroy()
 
