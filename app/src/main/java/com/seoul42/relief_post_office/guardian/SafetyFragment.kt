@@ -32,23 +32,28 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.*
 
+/**
+ * 보호자의 안부(질문 모음)탭을 띄우도록 돕는 클래스
+ */
 class SafetyFragment : Fragment(R.layout.fragment_safety) {
 
 	private val database = Firebase.database
+	// RecyclerView에 띄울 안부들을 담는 리스트
 	private var safetyList = arrayListOf<Pair<String, SafetyDTO>>()
-	private lateinit var auth : FirebaseAuth
+	// RecyclerView 세팅을 돕는 adapter 객체 변수
 	private lateinit var safetyAdapter : SafetyAdapter
 	private lateinit var owner : String
 	private lateinit var listenerDTO : ListenerDTO
 
-	// 프래그먼트 실행 시 동작
+	/**
+	 * 화면이 시작될때 초기 세팅을 해주는 메서드
+	 */
 	@RequiresApi(Build.VERSION_CODES.O)
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
 		// 로그인 한 사람 uid 가져오기
-		auth = Firebase.auth
-		owner = auth.currentUser?.uid.toString()
+		owner = Firebase.auth.currentUser?.uid.toString()
 
 		// safetyList 세팅
 		setSafetyList()
@@ -63,6 +68,9 @@ class SafetyFragment : Fragment(R.layout.fragment_safety) {
 		}
 	}
 
+	/**
+	 * 화면 종료시 사용하고 있던 리스너들을 반환하는 메서드
+	 */
 	override fun onDestroy() {
 		super.onDestroy()
 
@@ -72,7 +80,10 @@ class SafetyFragment : Fragment(R.layout.fragment_safety) {
 		reference.removeEventListener(listener)
 	}
 
-	// safetyList 실시간 세팅해주기 / 수정 및 변경 적용 포함
+	/**
+	 * RecyclerView에 띄워질 safetyList를 데이터베이스에 따라 실시간으로 세팅하는 메서드
+	 * 초기화 / 추가 / 수정 / 삭제 시 적용
+	 */
 	private fun setSafetyList() {
 		// 로그인한 유저의 안부 목록
 		val userSafetyRef = database.getReference("guardian").child(owner).child("safetyList")
@@ -140,7 +151,10 @@ class SafetyFragment : Fragment(R.layout.fragment_safety) {
 		listenerDTO = ListenerDTO(userSafetyRef, safetyListener)
 	}
 
-	// 리사이클러 뷰 세팅 함수
+	/**
+	 * RecyclerView를 세팅하기 위해 adapter클래스에 연결하는 메서드
+	 *  - view : "QuestionFragment"의 View
+	 */
 	private fun setRecyclerView(view : View) {
 		val recyclerView = view.findViewById<RecyclerView>(R.id.safety_fragment_rv)
 		val layout = LinearLayoutManager(context)
