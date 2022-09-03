@@ -34,28 +34,35 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * 보호자의 질문 탭을 띄우도록 돕는 클래스
+ */
 class QuestionFragment : Fragment(R.layout.fragment_question) {
 
     private val storage: FirebaseStorage by lazy {
         FirebaseStorage.getInstance()
     }
 
+    // FCM을 보낼 수 있는 객체 변수
     private val firebaseViewModel : FirebaseViewModel by viewModels()
     private val database = Firebase.database
+    // RecyclerView에 띄울 질문 리스트
     private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
+    // RecyclerView 세팅을 돕는 adapter 객체
     private lateinit var QuestionAdapter : QuestionFragmentRVAdapter
-    private lateinit var auth : FirebaseAuth
+    // 로그인 한 보호자의 uid
     private lateinit var owner : String
     private lateinit var listenerDTO : ListenerDTO
 
-    // 프래그먼트 실행시 동작
+    /**
+     * 화면이 시작될때 초기 세팅을 해주는 메서드
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 로그인 한 사람 uid 가져오기
-        auth = Firebase.auth
-        owner = auth.currentUser?.uid.toString()
+        // 로그인 한 보호자의 uid 가져오기
+        owner = Firebase.auth.currentUser?.uid.toString()
 
         // questionList 세팅
         setQuestionList()
@@ -67,7 +74,11 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         setAddQuestionButton(view)
     }
 
-    /* 질문 추가 버튼 세팅 */
+    /**
+     * 질문 추가 버튼을 세팅해주는 메서드
+     * 추가 버튼 클릭 시 나타나는 "질문 추가" 다이얼로그를 세팅해주는 것이 주요 기능
+     *  - view : QuestionFragment의 View
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setAddQuestionButton(view: View) {
         val questionPlusBtn = view.findViewById<ImageView>(R.id.question_rv_item_plusBtn)
@@ -84,13 +95,16 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
             dialog.create()
             dialog.show()
 
-            // 녹음기능
+            // 녹음 기능 세팅
             val recordActivity = RecordActivity(mView)
             recordActivity.initViews()
             recordActivity.bindViews()
             recordActivity.initVariables()
 
-            // 다이얼로그 종료 시 이벤트
+            /* 다이얼로그 종료 시 이벤트
+            * 1. 녹음 중이라면 녹음 중단
+            * 2. 녹음파일 재생 중이라면 재생 중단
+            * */
             dialog.setOnDismissListener {
                 recordActivity.stopRecording()
                 recordActivity.stopPlaying()
@@ -156,7 +170,10 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         }
     }
 
-    /* questionList 실시간 세팅 (수정 및 변경 적용 포함 )*/
+    /**
+     * RecyclerView에 띄워질 questionList를 데이터베이스에 따라 실시간으로 세팅하는 메서드
+     * 초기화 / 추가 / 수정 / 삭제 시 적용
+     */
     private fun setQuestionList(){
         // 로그인한 유저의 질문 목록
         val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
@@ -234,6 +251,9 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         listenerDTO = ListenerDTO(userQuestionRef, questionListener)
     }
 
+    /**
+     * 화면 종료시 사용하고 있던 리스너들을 반환하는 메서드
+     */
     override fun onDestroy() {
         super.onDestroy()
 
@@ -243,7 +263,10 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         reference.removeEventListener(listener)
     }
 
-    // 리사이클러 뷰 세팅함수
+    /**
+     * RecyclerView를 세팅하기 위해 adapter클래스에 연결하는 메서드
+     *  - view : "QuestionFragment"의 View
+     */
     private fun setRecyclerView(view : View){
         val recyclerView = view.findViewById<RecyclerView>(R.id.question_rv)
 
