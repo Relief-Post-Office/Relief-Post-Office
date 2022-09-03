@@ -96,6 +96,17 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 recordActivity.stopPlaying()
             }
 
+            // 녹음 활성를 할 것인지에 대한 이벤트 처리
+            val recordLayout = dialog.findViewById<LinearLayout>(R.id.question_add_record_layout)
+
+            dialog.findViewById<Switch>(R.id.question_add_voice_record).setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    recordLayout.visibility = View.VISIBLE
+                } else {
+                    recordLayout.visibility = View.GONE
+                }
+            }
+
             // 질문 추가 다이얼로그의 "저장"버튼을 눌렀을 때 이벤트 처리
             dialog.findViewById<Button>(R.id.add_question_btn).setOnClickListener {
                 it.isClickable = false
@@ -118,7 +129,7 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 var src: String? = null
 
                 // question 컬렉션에 추가할 QuestoinDTO 생성
-                val newQuestion = QuestionDTO(secret, record, owner, date, questionText, src, mutableMapOf())
+                val newQuestion = QuestionDTO(secret, record, false, owner, date, questionText, src, mutableMapOf())
 
                 // 녹음 파일 생성 및 스토리지 저장
                 var recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))

@@ -94,7 +94,6 @@ class QuestionFragmentRVAdapter(
                 dialog.findViewById<Switch>(R.id.secret_switch2).isChecked = secret   // 비밀 스위치 세팅
                 dialog.findViewById<Switch>(R.id.record_switch2).isChecked = record   // 녹음 스위치 세팅
 
-
                 // 질문 수정 다이얼로그 띄우기
                 dialog.show()
 
@@ -110,6 +109,17 @@ class QuestionFragmentRVAdapter(
                     editRecordActivity.stopPlaying()
                     // 아이템 터치 다시 가능하게 하기
                     rvText.isClickable = true
+                }
+
+                // 녹음 활성를 할 것인지에 대한 이벤트 처리
+                val recordLayout = dialog.findViewById<LinearLayout>(R.id.question_update_record_layout)
+
+                dialog.findViewById<Switch>(R.id.question_update_voice_record).setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        recordLayout.visibility = View.VISIBLE
+                    } else {
+                        recordLayout.visibility = View.GONE
+                    }
                 }
 
                 // 질문 수정 다이얼로그의 "저장" 버튼을 눌렀을 때 이벤트 처리
