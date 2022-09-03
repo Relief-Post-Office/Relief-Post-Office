@@ -54,7 +54,7 @@ class EditRecordActivity(var src: String?, view: View) {
     private var recorder: MediaRecorder? = null
     private var player: MediaPlayer? = null
 
-    /*
+    /**
      * recordButton 초기화
      * - BEFORE_RECORDING 상태
      * - text = "녹음"
@@ -64,7 +64,7 @@ class EditRecordActivity(var src: String?, view: View) {
          recordDurationTextView.setRecordDuration(recordingFilePath)
     }
 
-    /*
+    /**
      * recordButton 및 resetButton 상태
      * - recordButton 클릭 시, 상태 변화 및 해당 메써드 실행
      * - resetButton 클릭 시, 녹음 시간 및 녹음 상태를 BEFORE_RECORDING으로 세팅
@@ -97,12 +97,12 @@ class EditRecordActivity(var src: String?, view: View) {
             state = RecordState.BEFORE_RECORDING
         }
     }
-    /* 첫 state = BEFORE_RECORDING으로 세팅 */
+    /** 첫 state = BEFORE_RECORDING으로 세팅 */
     fun initVariables() {
         state = RecordState.AFTER_RECORDING
     }
 
-    /*
+    /**
      * 로컬 캐시에 저장된 녹음주소
      * - QuestionFragments로 전달
      */
@@ -110,7 +110,7 @@ class EditRecordActivity(var src: String?, view: View) {
         return recordingFilePath
     }
 
-    /* 녹음 시작 */
+    /** 녹음 시작 */
     fun startRecoding() {
         // 녹음 시작 시 초기화
         recorder = MediaRecorder()
@@ -127,7 +127,7 @@ class EditRecordActivity(var src: String?, view: View) {
         state = RecordState.ON_RECORDING
     }
 
-    /*
+    /**
      * 녹음 중단
      * - 녹음 중단 및 메모리해제
      */
@@ -144,7 +144,7 @@ class EditRecordActivity(var src: String?, view: View) {
         }
     }
 
-    /*
+    /**
      * 음성파일 실행
      * - 기존 캐시에 녹음된 파일 실행
      */
@@ -168,7 +168,7 @@ class EditRecordActivity(var src: String?, view: View) {
         state = RecordState.ON_PLAYING
     }
 
-    /*
+    /**
      * 음성파일 실행중지
      * - resetButton 누르기 전까지 AFTER_RECORDING 상태유지
      */

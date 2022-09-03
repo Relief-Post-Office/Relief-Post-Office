@@ -13,7 +13,7 @@ class RecordButton (
         text = "녹음"
     }
 
-    /*
+    /**
      * 안부질문 녹음 시 나타나는 버튼
      * - 상태에 따른 버튼 Text 설정
      */

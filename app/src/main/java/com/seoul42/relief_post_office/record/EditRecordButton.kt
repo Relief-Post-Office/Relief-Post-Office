@@ -13,7 +13,7 @@ class EditRecordButton (
         text = "재생"
     }
 
-    /*
+    /**
      * 안부질문 실행 시 나타나는 버튼
      * - 상태에 따른 버튼 Text 설정
      */

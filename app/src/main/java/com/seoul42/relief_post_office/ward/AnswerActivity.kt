@@ -26,7 +26,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.model.*
 import com.seoul42.relief_post_office.record.AnswerRecordActivity
-import com.seoul42.relief_post_office.record.RecordActivity
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 import java.io.File
 import java.text.SimpleDateFormat

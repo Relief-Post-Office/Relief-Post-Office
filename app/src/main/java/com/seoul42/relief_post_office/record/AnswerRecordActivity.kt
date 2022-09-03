@@ -30,7 +30,7 @@ class AnswerRecordActivity(view: View) {
 
     private var state : RecordState = RecordState.BEFORE_RECORDING
 
-    /*
+    /**
      * 로컬에 저장된 녹음파일 캐시주소 반환
      * - 피보호자 음성응답용
      * - AnswerActivity 전달
@@ -40,7 +40,7 @@ class AnswerRecordActivity(view: View) {
         return recordingFilePath
     }
 
-    /*
+    /**
      * 음성 녹음기능 시작
      * - MediaRecorder 클래스 활용
      * - 포맷 : THREE_GPP
@@ -61,7 +61,7 @@ class AnswerRecordActivity(view: View) {
         state = RecordState.ON_RECORDING
     }
 
-    /*
+    /**
      * 음성 녹음기능 중지
      * - '녹음 중' state 일때 버튼 누를경우, 녹음 중단 및 메모리해제
      */
