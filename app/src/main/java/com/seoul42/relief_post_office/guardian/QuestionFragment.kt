@@ -1,10 +1,12 @@
 package com.seoul42.relief_post_office.guardian
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
@@ -29,6 +31,7 @@ import com.seoul42.relief_post_office.adapter.QuestionFragmentRVAdapter
 import com.seoul42.relief_post_office.model.ListenerDTO
 import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.record.RecordActivity
+import com.seoul42.relief_post_office.tts.TextToSpeech
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 import java.io.File
 import java.time.LocalDateTime
@@ -71,12 +74,12 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setAddQuestionButton(view: View) {
         val questionPlusBtn = view.findViewById<ImageView>(R.id.question_rv_item_plusBtn)
-        questionPlusBtn.setOnClickListener{
+        questionPlusBtn.setOnClickListener {
 
             // 질문 추가 다이얼로그 띄우기
             val dialog = android.app.AlertDialog.Builder(context).create()
-            val eDialog : LayoutInflater = LayoutInflater.from(context)
-            val mView : View = eDialog.inflate(R.layout.setting_question_dialog,null)
+            val eDialog: LayoutInflater = LayoutInflater.from(context)
+            val mView: View = eDialog.inflate(R.layout.setting_question_dialog, null)
 
             dialog.setView(mView)
             dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -90,6 +93,11 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
             recordActivity.bindViews()
             recordActivity.initVariables()
 
+            // tts 기능
+            val textToSpeech = TextToSpeech(mView, dialog.context)
+
+            textToSpeech.initTTS()
+
             // 다이얼로그 종료 시 이벤트
             dialog.setOnDismissListener {
                 recordActivity.stopRecording()
@@ -98,28 +106,33 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
 
             // 녹음 활성를 할 것인지에 대한 이벤트 처리
             val recordLayout = dialog.findViewById<LinearLayout>(R.id.question_add_record_layout)
+            var ttsFlag = true
 
-            dialog.findViewById<Switch>(R.id.question_add_voice_record).setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    recordLayout.visibility = View.VISIBLE
-                } else {
-                    recordLayout.visibility = View.GONE
+            dialog.findViewById<Switch>(R.id.question_add_voice_record)
+                .setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        recordLayout.visibility = View.VISIBLE
+                        ttsFlag = false
+                    } else {
+                        recordLayout.visibility = View.GONE
+                        ttsFlag = true
+                    }
                 }
-            }
 
             // 질문 추가 다이얼로그의 "저장"버튼을 눌렀을 때 이벤트 처리
             dialog.findViewById<Button>(R.id.add_question_btn).setOnClickListener {
                 it.isClickable = false
 
-                // 프로그레스바 처리
+                val progressBar =
+                    dialog.findViewById<ProgressBar>(R.id.setting_question_progressbar)
+                lateinit var recordFile: Uri
+
                 dialog.window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                val progressBar = dialog.findViewById<ProgressBar>(R.id.setting_question_progressbar)
                 progressBar.visibility = View.VISIBLE
 
                 // 생성 날짜, 텍스트, , ttsFlag, 비밀 옵션, 녹음 옵션, 녹음 파일 주소
                 val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 val questionText = dialog.findViewById<EditText>(R.id.question_text).text.toString()
-                var ttsFlag = dialog.findViewById<Switch>(R.id.question_add_voice_record).isChecked
                 val secret = dialog.findViewById<Switch>(R.id.secret_switch).isChecked
                 val record = dialog.findViewById<Switch>(R.id.record_switch).isChecked
                 var src: String? = null
@@ -132,45 +145,63 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 // 재생 중이라면 재생 중단
                 recordActivity.stopPlaying()
 
-                // 음성녹음 파일 생성(ttsFlag에 따라 해당 음성파일 생성)
-                var recordFile: Uri
-                if (ttsFlag)
-                    recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
-                else
-                    recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
-
-                // 녹음 파일 스토리지 저장
-                val recordRef = storage.reference
-                    .child("questionRecord/${owner}/${owner + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
-
-                // 녹음 업로드에 성공한 경우(녹음이 있는 경우)
-                recordRef.putFile(recordFile).addOnSuccessListener {
-                    recordRef.downloadUrl.addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            // question 컬렉션에 작성한 내용 추가
-                            val questionRef = database.getReference("question")
-                            val newPush = questionRef.push()
-                            val key = newPush.key.toString()
-
-                            newQuestion.src = task.result.toString()
-                            newPush.setValue(newQuestion)
-
-                            // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
-                            val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
-                            userQuestionRef.child(key).setValue(date)
-
-                            // 다이얼로그 종료
-                            Toast.makeText(context, "질문 추가 완료", Toast.LENGTH_SHORT).show()
-                            dialog.dismiss()
-                        }
-                    }
-                    // 녹음 업로드에 실패한 경우(녹음이 없는 경우 + @) 질문 추가 불가능
-                }.addOnFailureListener{
-                    progressBar.visibility = View.INVISIBLE
-                    dialog.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                    Toast.makeText(context, "녹음 파일을 생성해 주세요", Toast.LENGTH_SHORT).show()
+                if (ttsFlag) {
+                    textToSpeech.synthesizeToFile(newQuestion.text!!)
+                    Handler().postDelayed({
+                        // 녹음 파일 생성 및 스토리지 저장
+                        recordFile = Uri.fromFile(File(textToSpeech.returnRecordingFile()))
+                        addRecordToStorage(recordFile, newQuestion, date, dialog, progressBar)
+                    }, 2000)
+                } else {
+                    // 녹음 파일 생성 및 스토리지 저장
+                    Handler().postDelayed({
+                        // 녹음 파일 생성 및 스토리지 저장
+                        recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
+                        addRecordToStorage(recordFile, newQuestion, date, dialog, progressBar)
+                    }, 2000)
                 }
             }
+        }
+    }
+
+    private fun addRecordToStorage(
+        recordFile : Uri,
+        newQuestion : QuestionDTO,
+        date : String,
+        dialog : AlertDialog,
+        progressBar : ProgressBar
+    ) {
+        // 녹음 파일 스토리지 저장
+        val recordRef = storage.reference
+            .child("questionRecord/${owner}/${owner + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
+
+        // 녹음 업로드에 성공한 경우(녹음이 있는 경우)
+        recordRef.putFile(recordFile).addOnSuccessListener {
+            recordRef.downloadUrl.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // question 컬렉션에 작성한 내용 추가
+                    val questionRef = database.getReference("question")
+                    val newPush = questionRef.push()
+                    val key = newPush.key.toString()
+
+                    newQuestion.src = task.result.toString()
+                    newPush.setValue(newQuestion)
+
+                    // 지금 로그인한 사람 질문 목록에 방금 등록한 질문 아이디 추가
+                    val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
+                    userQuestionRef.child(key).setValue(date)
+
+                    // 다이얼로그 종료
+                    Toast.makeText(context, "질문 추가 완료", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+            }
+            // 녹음 업로드에 실패한 경우(녹음이 없는 경우 + @) 질문 추가 불가능
+        }.addOnFailureListener{
+            progressBar.visibility = View.INVISIBLE
+            dialog.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            Toast.makeText(context, "녹음 파일을 생성해 주세요", Toast.LENGTH_SHORT).show()
+            dialog.findViewById<Button>(R.id.add_question_btn).isClickable = true
         }
     }
 

@@ -1,5 +1,6 @@
 package com.seoul42.relief_post_office.adapter
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -15,6 +16,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.util.remove
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -23,6 +25,7 @@ import com.seoul42.relief_post_office.model.NotificationDTO
 import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.model.SafetyDTO
 import com.seoul42.relief_post_office.record.EditRecordActivity
+import com.seoul42.relief_post_office.tts.TextToSpeech
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
 import java.io.File
 import java.time.LocalDateTime
@@ -116,6 +119,11 @@ class SafetyQuestionSettingAdapter(
                 editRecordActivity.bindViews(mView)
                 editRecordActivity.initVariables()
 
+                // tts 기능
+                val textToSpeech = TextToSpeech(mView, dialog.context)
+
+                textToSpeech.initTTS()
+
                 // 다이얼로그 종료 시 이벤트
                 dialog.setOnDismissListener {
                     editRecordActivity.stopRecording()
@@ -126,12 +134,24 @@ class SafetyQuestionSettingAdapter(
 
                 // 녹음 활성를 할 것인지에 대한 이벤트 처리
                 val recordLayout = dialog.findViewById<LinearLayout>(R.id.question_update_record_layout)
+                val recordSwitch = dialog.findViewById<Switch>(R.id.question_update_voice_record)
+                var ttsFlag = item.second.ttsFlag
 
-                dialog.findViewById<Switch>(R.id.question_update_voice_record).setOnCheckedChangeListener { _, isChecked ->
+                if (ttsFlag) {
+                    recordLayout.visibility = View.GONE
+                    recordSwitch.isChecked = false
+                } else {
+                    recordLayout.visibility = View.VISIBLE
+                    recordSwitch.isChecked = true
+                }
+
+                recordSwitch.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         recordLayout.visibility = View.VISIBLE
+                        ttsFlag = false
                     } else {
                         recordLayout.visibility = View.GONE
+                        ttsFlag = true
                     }
                 }
 
@@ -159,6 +179,9 @@ class SafetyQuestionSettingAdapter(
                     question.child("text").setValue(editedQuestionText)
                     question.child("secret").setValue(editedSecret)
                     question.child("record").setValue(editedRecord)
+                    question.child("ttsFlag").setValue(ttsFlag)
+
+                    item.second.ttsFlag = ttsFlag
 
                     // EditRecordActivity에서 받은 녹음파일 변경주소 반영
                     var editRecordFile = Uri.fromFile(File(editRecordActivity.returnRecordingFile()))
@@ -166,92 +189,21 @@ class SafetyQuestionSettingAdapter(
                         storage.reference.child("questionRecord/${item.second.owner}/${item.second.owner + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
                     var uploadEditRecord = editRecordRef.putFile(editRecordFile)
 
-                    uploadEditRecord.addOnSuccessListener {
-                        editRecordRef.downloadUrl.addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                question.child("src").setValue(task.result.toString())
 
-                                // 로그인한 보호자의 questionList와 question 컬렉션의 수정된 질문의 최종 수정날짜 수정
-                                val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                                question.child("date").setValue(date)
-                                database.getReference("guardian").child(item.second.owner.toString())
-                                    .child("questionList")
-                                    .child(item.first).setValue(date)
-
-                                // 질문과 연결된 안부를 가진 피보호자들에게 안부 동기화 fcm 전송
-                                val safetyListRef = database.getReference("question").child(item.first).child("connectedSafetyList")
-                                safetyListRef.get().addOnSuccessListener {
-                                    if (it.getValue() != null) {
-                                        val safetyList =
-                                            (it.getValue() as HashMap<String, String>).values.toList()
-                                        val UserRef = database.getReference("user")
-                                        for (safetyId in safetyList) {
-                                            database.getReference("safety").child("uid").get()
-                                                .addOnSuccessListener {
-                                                    UserRef.child(it.getValue().toString())
-                                                        .child("token").get().addOnSuccessListener {
-                                                        val notificationData =
-                                                            NotificationDTO.NotificationData(
-                                                                "SafetyWard",
-                                                                "안심우체국", "안부를 동기화 합니다"
-                                                            )
-                                                        val notificationDTO = NotificationDTO(
-                                                            it.getValue().toString(),
-                                                            "high",
-                                                            notificationData
-                                                        )
-                                                        firebaseViewModel.sendNotification(
-                                                            notificationDTO
-                                                        ) /* FCM 전송하기 */
-                                                    }
-                                                }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    // 수정하였지만 녹음을 바꾸진 않은 경우
-                    }.addOnFailureListener{
-                        // 로그인한 보호자의 questionList와 question 컬렉션의 수정된 질문의 최종 수정날짜 수정
-                        val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                        question.child("date").setValue(date)
-                        database.getReference("guardian").child(item.second.owner.toString())
-                            .child("questionList")
-                            .child(item.first).setValue(date)
-
-                        // 질문과 연결된 안부를 가진 피보호자들에게 안부 동기화 fcm 전송
-                        val safetyListRef = database.getReference("question").child(item.first).child("connectedSafetyList")
-                        safetyListRef.get().addOnSuccessListener {
-                            if (it.getValue() != null) {
-                                val safetyList =
-                                    (it.getValue() as HashMap<String, String>).values.toList()
-                                val UserRef = database.getReference("user")
-                                for (safetyId in safetyList) {
-                                    database.getReference("safety").child("uid").get()
-                                        .addOnSuccessListener {
-                                            UserRef.child(it.getValue().toString()).child("token")
-                                                .get().addOnSuccessListener {
-                                                val notificationData =
-                                                    NotificationDTO.NotificationData(
-                                                        "SafetyWard",
-                                                        "안심우체국", "안부를 동기화 합니다"
-                                                    )
-                                                val notificationDTO = NotificationDTO(
-                                                    it.getValue().toString(),
-                                                    "high", notificationData
-                                                )
-                                                firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
-                                            }
-                                        }
-                                }
-                            }
-                        }
+                    if (ttsFlag) {
+                        textToSpeech.synthesizeToFile(editedQuestionText)
+                        Handler().postDelayed({
+                            val editRecordFile = Uri.fromFile(File(textToSpeech.returnRecordingFile()))
+                            addRecordToStorage(editRecordFile, item, question, dialog)
+                        }, 2000)
+                    } else {
+                        Handler().postDelayed({
+                            // EditRecordActivity에서 받은 녹음파일 변경주소 반영
+                            var editRecordFile =
+                                Uri.fromFile(File(editRecordActivity.returnRecordingFile()))
+                            addRecordToStorage(editRecordFile, item, question, dialog)
+                        }, 2000)
                     }
-                    // 다이얼로그 종료
-                    Handler().postDelayed({
-                        Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
-                        dialog.dismiss()
-                    }, 1000)
                 }
 
                 // 질문 수정 다이얼로그의 "삭제" 버튼을 눌렀을 때 이벤트 처리
@@ -345,5 +297,104 @@ class SafetyQuestionSettingAdapter(
                 }
             }
         }
+    }
+
+    private fun addRecordToStorage(
+        editRecordFile : Uri,
+        item : Pair<String, QuestionDTO>,
+        question : DatabaseReference,
+        dialog : AlertDialog
+    ) {
+        val editRecordRef =
+            storage.reference.child("questionRecord/${item.second.owner}/${item.second.owner + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
+        var uploadEditRecord = editRecordRef.putFile(editRecordFile)
+
+        uploadEditRecord.addOnSuccessListener {
+            editRecordRef.downloadUrl.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("호호호", "하하하")
+                    question.child("src").setValue(task.result.toString())
+
+                    // 로그인한 보호자의 questionList와 question 컬렉션의 수정된 질문의 최종 수정날짜 수정
+                    val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                    question.child("date").setValue(date)
+                    database.getReference("guardian").child(item.second.owner.toString())
+                        .child("questionList")
+                        .child(item.first).setValue(date)
+
+                    // 질문과 연결된 안부를 가진 피보호자들에게 안부 동기화 fcm 전송
+                    val safetyListRef = database.getReference("question").child(item.first).child("connectedSafetyList")
+                    safetyListRef.get().addOnSuccessListener {
+                        if (it.getValue() != null) {
+                            val safetyList =
+                                (it.getValue() as HashMap<String, String>).values.toList()
+                            val UserRef = database.getReference("user")
+                            for (safetyId in safetyList) {
+                                database.getReference("safety").child("uid").get()
+                                    .addOnSuccessListener {
+                                        UserRef.child(it.getValue().toString())
+                                            .child("token").get().addOnSuccessListener {
+                                                val notificationData =
+                                                    NotificationDTO.NotificationData(
+                                                        "SafetyWard",
+                                                        "안심우체국", "안부를 동기화 합니다"
+                                                    )
+                                                val notificationDTO = NotificationDTO(
+                                                    it.getValue().toString(),
+                                                    "high",
+                                                    notificationData
+                                                )
+                                                firebaseViewModel.sendNotification(
+                                                    notificationDTO
+                                                ) /* FCM 전송하기 */
+                                            }
+                                    }
+                            }
+                        }
+                    }
+                }
+            }
+            // 수정하였지만 녹음을 바꾸진 않은 경우
+        }.addOnFailureListener{
+            // 로그인한 보호자의 questionList와 question 컬렉션의 수정된 질문의 최종 수정날짜 수정
+            val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            question.child("date").setValue(date)
+            database.getReference("guardian").child(item.second.owner.toString())
+                .child("questionList")
+                .child(item.first).setValue(date)
+
+            // 질문과 연결된 안부를 가진 피보호자들에게 안부 동기화 fcm 전송
+            val safetyListRef = database.getReference("question").child(item.first).child("connectedSafetyList")
+            safetyListRef.get().addOnSuccessListener {
+                if (it.getValue() != null) {
+                    val safetyList =
+                        (it.getValue() as HashMap<String, String>).values.toList()
+                    val UserRef = database.getReference("user")
+                    for (safetyId in safetyList) {
+                        database.getReference("safety").child("uid").get()
+                            .addOnSuccessListener {
+                                UserRef.child(it.getValue().toString()).child("token")
+                                    .get().addOnSuccessListener {
+                                        val notificationData =
+                                            NotificationDTO.NotificationData(
+                                                "SafetyWard",
+                                                "안심우체국", "안부를 동기화 합니다"
+                                            )
+                                        val notificationDTO = NotificationDTO(
+                                            it.getValue().toString(),
+                                            "high", notificationData
+                                        )
+                                        firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
+                                    }
+                            }
+                    }
+                }
+            }
+        }
+        // 다이얼로그 종료
+        Handler().postDelayed({
+            Toast.makeText(context, "질문 수정 완료", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+        }, 1000)
     }
 }
