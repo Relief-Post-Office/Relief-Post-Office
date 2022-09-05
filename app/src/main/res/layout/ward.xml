@@ -36,10 +36,10 @@
         android:layout_marginTop="20sp"
         android:layout_marginBottom="20sp"
         android:background="@drawable/recyclerview_border"
-        app:layout_constraintTop_toBottomOf="@id/ward_photo"
         app:layout_constraintBottom_toTopOf="@id/ward_add_guardian"
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline6"
         app:layout_constraintStart_toStartOf="@id/vertical_guideline1"
-        app:layout_constraintEnd_toEndOf="@id/vertical_guideline6">
+        app:layout_constraintTop_toBottomOf="@id/ward_photo">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/ward_recyclerView"
@@ -168,5 +168,17 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.95" />
+
+    <TextView
+        android:id="@+id/sttBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stt"
+        android:textColor="@color/gray"
+        android:textSize="20sp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/fragment_guardian_layout"
+        app:layout_constraintEnd_toStartOf="@+id/vertical_guideline6" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

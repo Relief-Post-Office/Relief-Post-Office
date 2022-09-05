@@ -26,6 +26,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.seoul42.relief_post_office.R
 import com.seoul42.relief_post_office.adapter.ResponseAdapter
@@ -159,12 +160,14 @@ class WardActivity : AppCompatActivity() {
      *  2. 피보호자 프로필 사진 세팅
      *  3. 피보호자와 연결된 보호자들의 리사이클러뷰 세팅
      *  4. 요청온 보호자의 추가 버튼에 대한 리스터 세팅
+     *  5. 음성 답변 기능(STT) 사용 여부 세팅
      */
     private fun setUp() {
         setAlarm()
         setWardPhoto()
         setRecyclerView()
         setAddButton()
+        setSttButton()
     }
 
     /**
@@ -260,6 +263,41 @@ class WardActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {}
         })
         listenerList.add(ListenerDTO(requestDB, requestListener))
+    }
+
+    /**
+     * 음성 답변 기능(Stt) 옵션에 대한 스위치를 세팅해주는 메서드
+     *  - 데이터베이스의 ward 컬렉션 하위항목 "stt"의 값이
+     *      - true : 기능 On
+     *      - null or false : 기능 Off
+     *  - 기능 On/Off에 따라 텍스트 색상 변경
+     *      - 텍스트 색상이 붉은색 : 기능 On
+     *      - 텍스트 색상이 회색 : 기능 Off
+     */
+    private fun setSttButton() {
+        wardDB.child(myUserId).child("stt").get().addOnSuccessListener { snapshot ->
+            var isActivated = snapshot.getValue() as Boolean? ?: false
+
+            if (isActivated)
+                binding.sttBtn.setTextColor(resources.getColor(R.color.red))
+
+            binding.sttBtn.setOnClickListener {
+                if (isActivated) {
+                    wardDB.child(myUserId).child("stt").setValue(false).addOnSuccessListener {
+                        binding.sttBtn.setTextColor(resources.getColor(R.color.gray))
+                        isActivated = false
+                        Toast.makeText(this, "음성 답변 기능 비활성화", Toast.LENGTH_LONG).show()
+                    }
+                }
+                else {
+                    wardDB.child(myUserId).child("stt").setValue(true).addOnSuccessListener {
+                        binding.sttBtn.setTextColor(resources.getColor(R.color.pink))
+                        isActivated = true
+                        Toast.makeText(this, "음성 답변 기능 활성화", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
     }
 
     /**
