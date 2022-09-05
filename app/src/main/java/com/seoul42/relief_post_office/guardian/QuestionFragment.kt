@@ -116,23 +116,30 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                 val progressBar = dialog.findViewById<ProgressBar>(R.id.setting_question_progressbar)
                 progressBar.visibility = View.VISIBLE
 
-                // 녹음 중이라면 중단 후 저장
-                recordActivity.stopRecording()
-                // 재생 중이라면 재생 중단
-                recordActivity.stopPlaying()
-
-                // 생성 날짜, 텍스트, 비밀 옵션, 녹음 옵션, 녹음 파일 주소
+                // 생성 날짜, 텍스트, , ttsFlag, 비밀 옵션, 녹음 옵션, 녹음 파일 주소
                 val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 val questionText = dialog.findViewById<EditText>(R.id.question_text).text.toString()
+                var ttsFlag = dialog.findViewById<Switch>(R.id.question_add_voice_record).isChecked
                 val secret = dialog.findViewById<Switch>(R.id.secret_switch).isChecked
                 val record = dialog.findViewById<Switch>(R.id.record_switch).isChecked
                 var src: String? = null
 
                 // question 컬렉션에 추가할 QuestoinDTO 생성
-                val newQuestion = QuestionDTO(secret, record, false, owner, date, questionText, src, mutableMapOf())
+                val newQuestion = QuestionDTO(secret, record, ttsFlag, owner, date, questionText, src, mutableMapOf())
 
-                // 녹음 파일 생성 및 스토리지 저장
-                var recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
+                // 녹음 중이라면 중단 후 저장
+                recordActivity.stopRecording()
+                // 재생 중이라면 재생 중단
+                recordActivity.stopPlaying()
+
+                // 음성녹음 파일 생성(ttsFlag에 따라 해당 음성파일 생성)
+                var recordFile: Uri
+                if (ttsFlag)
+                    recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
+                else
+                    recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
+
+                // 녹음 파일 스토리지 저장
                 val recordRef = storage.reference
                     .child("questionRecord/${owner}/${owner + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
 
