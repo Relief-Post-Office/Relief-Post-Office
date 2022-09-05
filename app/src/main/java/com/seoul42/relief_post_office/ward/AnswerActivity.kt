@@ -8,12 +8,16 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -31,6 +35,8 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 class AnswerActivity : AppCompatActivity() {
 
@@ -42,6 +48,8 @@ class AnswerActivity : AppCompatActivity() {
         FirebaseStorage.getInstance()
     }
 
+    // STT 기능을 위한 객체
+    private var speechRecognizer: SpeechRecognizer? = null
     private var auth : FirebaseAuth = Firebase.auth
     private val database = Firebase.database
     private lateinit var answerList: ArrayList<Pair<String, AnswerDTO>>
@@ -59,6 +67,9 @@ class AnswerActivity : AppCompatActivity() {
         getId()
         setSize(answerList.size)
         setButton()
+
+        // Test
+        startStt()
     }
 
     private fun getId() {
@@ -278,5 +289,75 @@ class AnswerActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    /**
+     * 아래는 STT 기능 구현을 위한 코드
+     */
+
+    /**
+     * SpeechToText 설정 및 동작
+     */
+    private fun startStt() {
+        val speechRecognizerintent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR")
+        }
+
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this).apply {
+            setRecognitionListener(recognitionListener())
+            startListening(speechRecognizerintent)
+        }
+    }
+
+    /**
+     * SpeechToText 기능 세팅
+     */
+    private fun recognitionListener() = object : RecognitionListener {
+        override fun onReadyForSpeech(p0: Bundle?) { }
+
+        override fun onBeginningOfSpeech() { }
+
+        override fun onRmsChanged(p0: Float) { }
+
+        override fun onBufferReceived(p0: ByteArray?) { }
+
+        override fun onEndOfSpeech() { }
+
+        override fun onError(error: Int) {
+            var message : String
+
+            when (error) {
+                SpeechRecognizer.ERROR_AUDIO ->
+                    message = "오디오 에러"
+                SpeechRecognizer.ERROR_CLIENT ->
+                    message = "클라이언트 에러"
+                SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS ->
+                    message = "퍼미션 없음"
+                SpeechRecognizer.ERROR_NETWORK ->
+                    message = "네트워크 에러"
+                SpeechRecognizer.ERROR_NETWORK_TIMEOUT ->
+                    message = "네트워크 타임아웃"
+                SpeechRecognizer.ERROR_NO_MATCH ->
+                    message = "찾을 수 없음"
+                SpeechRecognizer.ERROR_RECOGNIZER_BUSY ->
+                    message = "RECOGNIZER가 바쁨"
+                SpeechRecognizer.ERROR_SERVER ->
+                    message = "서버가 이상함"
+                SpeechRecognizer.ERROR_SPEECH_TIMEOUT ->
+                    message = "말하는 시간초과"
+                else ->
+                    message = "알 수 없는 오류"
+            }
+            Toast.makeText(applicationContext, "에러 발생 $message", Toast.LENGTH_SHORT).show()
+        }
+
+        override fun onResults(results: Bundle?) {
+            Toast.makeText(applicationContext, results.toString(), Toast.LENGTH_SHORT).show()
+        }
+
+        override fun onPartialResults(p0: Bundle?) { }
+
+        override fun onEvent(p0: Int, p1: Bundle?) { }
     }
 }
