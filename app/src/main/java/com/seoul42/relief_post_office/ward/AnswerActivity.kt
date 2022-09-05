@@ -50,6 +50,7 @@ class AnswerActivity : AppCompatActivity() {
 
     // STT 기능을 위한 객체
     private var speechRecognizer: SpeechRecognizer? = null
+    private var sttIsOn: Boolean = false
     private var auth : FirebaseAuth = Firebase.auth
     private val database = Firebase.database
     private lateinit var answerList: ArrayList<Pair<String, AnswerDTO>>
@@ -68,7 +69,6 @@ class AnswerActivity : AppCompatActivity() {
         setSize(answerList.size)
         setButton()
 
-        // Test
         startStt()
     }
 
@@ -76,6 +76,7 @@ class AnswerActivity : AppCompatActivity() {
         answerBell = MediaPlayer.create(this, R.raw.bell)
         resultId = intent.getStringExtra("resultId").toString()
         answerList = intent.getSerializableExtra("answerList") as ArrayList<Pair<String, AnswerDTO>>
+        sttIsOn = intent.getBooleanExtra("sttIsOn", false)
     }
 
     private fun setSize(answerListSize : Int) {
@@ -194,6 +195,7 @@ class AnswerActivity : AppCompatActivity() {
             questionPlayer.prepare()
             questionPlayer.start()
         }
+        startStt()
         window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
@@ -209,6 +211,10 @@ class AnswerActivity : AppCompatActivity() {
     }
 
     private fun nextQuestion() {
+        // 음성 인식 종료
+        speechRecognizer?.stopListening()
+        speechRecognizer?.destroy()
+
         if (currentIndex < listSize - 1) {
             currentIndex += 1
             questionPlayer.release()
@@ -292,26 +298,32 @@ class AnswerActivity : AppCompatActivity() {
     }
 
     /**
-     * 아래는 STT 기능 구현을 위한 코드
+     * 이하는 음성 대답 기능(STT) 구현을 위한 메서드
      */
 
     /**
      * SpeechToText 설정 및 동작
      */
     private fun startStt() {
-        val speechRecognizerintent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR")
-        }
+        // STT 옵션이 켜져있고 질문이 녹음 회신 옵션이 꺼진 경우에만 실행
+        if (sttIsOn && !answerList[currentIndex].second.questionRecord) {
+            val speechRecognizerintent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR")
+            }
 
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this).apply {
-            setRecognitionListener(recognitionListener())
-            startListening(speechRecognizerintent)
+            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this).apply {
+                setRecognitionListener(recognitionListener())
+                startListening(speechRecognizerintent)
+            }
         }
     }
 
     /**
      * SpeechToText 기능 세팅
+     *  - onResults
+     *      - 해석 결과가 긍정 / 부정 / 다시 듣기에 해당하면 알맞은 기능 수행
+     *      - 위에 해당하지 않는다면 음성인식 다시 수행
      */
     private fun recognitionListener() = object : RecognitionListener {
         override fun onReadyForSpeech(p0: Bundle?) { }
@@ -338,8 +350,10 @@ class AnswerActivity : AppCompatActivity() {
                     message = "네트워크 에러"
                 SpeechRecognizer.ERROR_NETWORK_TIMEOUT ->
                     message = "네트워크 타임아웃"
-                SpeechRecognizer.ERROR_NO_MATCH ->
-                    message = "찾을 수 없음"
+                SpeechRecognizer.ERROR_NO_MATCH -> {
+                    message = "음성 인식 실패"
+                    startStt()
+                }
                 SpeechRecognizer.ERROR_RECOGNIZER_BUSY ->
                     message = "RECOGNIZER가 바쁨"
                 SpeechRecognizer.ERROR_SERVER ->
@@ -349,15 +363,79 @@ class AnswerActivity : AppCompatActivity() {
                 else ->
                     message = "알 수 없는 오류"
             }
-            Toast.makeText(applicationContext, "에러 발생 $message", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "에러 발생 $message", Toast.LENGTH_SHORT)
         }
 
         override fun onResults(results: Bundle?) {
-            Toast.makeText(applicationContext, results.toString(), Toast.LENGTH_SHORT).show()
+            var str = results!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)!![0]
+            var positiveWordList = arrayListOf("그래", "으응", "응", "엉", "어")
+            var negativeWordList = arrayListOf("아니", "않이", "안이")
+            var replayWordList = arrayListOf("다시", "다시 듣기")
+
+            when(checkResults(str, positiveWordList, negativeWordList, replayWordList)) {
+                1 -> {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    answerBell.start()
+                    val reply = true
+                    var recordSrc = ""
+                    sendAnswer(reply, recordSrc)
+                    Handler().postDelayed({
+                        nextQuestion()
+                    }, 1500)
+                }
+
+                2 -> {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    answerBell.start()
+                    val reply = false
+                    var recordSrc = ""
+
+                    sendAnswer(reply, recordSrc)
+                    Handler().postDelayed({
+                        nextQuestion()
+                    }, 1500)
+                }
+
+                3 -> {
+                    questionPlayer.stop()
+                    questionPlayer.prepare()
+                    questionPlayer.start()
+                    startStt()
+                }
+
+                else -> startStt()
+            }
         }
 
         override fun onPartialResults(p0: Bundle?) { }
 
         override fun onEvent(p0: Int, p1: Bundle?) { }
+    }
+
+    /**
+     * 문자열에 찾는 단어가 있는지 확인하여 3가지 시그널을 반환함
+     *  - str : 검색할 문자열
+     *  - positiveWordList : 긍정 단어들을 담은 리스트
+     *  - negativeWordList : 부정 단어들을 담은 리스트
+     *  - replayWordList : 다시 듣기 단어들을 담은 리스트
+     *  - 시그널 종류
+     *      - 1 : 긍정
+     *      - 2 : 부정
+     *      - 3 : 다시 듣기
+     *      - -1 : 일치하는 단어 없음
+     */
+    private fun checkResults(
+        str : String,
+        positiveWordList : ArrayList<String>,
+        negativeWordList : ArrayList<String>,
+        replayWordList : ArrayList<String>) : Int {
+
+        if (positiveWordList.contains(str))
+            return 1
+        else if (negativeWordList.contains(str))
+            return 2
+        else if (replayWordList.contains(str))
+            return 3
+        return -1
     }
 }
