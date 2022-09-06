@@ -37,28 +37,32 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * 보호자의 질문 탭을 띄우도록 돕는 클래스
+ */
 class QuestionFragment : Fragment(R.layout.fragment_question) {
 
     private val storage: FirebaseStorage by lazy {
         FirebaseStorage.getInstance()
     }
 
+    // FCM을 보낼 수 있는 객체
     private val firebaseViewModel : FirebaseViewModel by viewModels()
     private val database = Firebase.database
+    // RecyclerView에 띄울 질문 리스트
     private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
+    // RecyclerView 세팅을 돕는 adapter 객체
     private lateinit var QuestionAdapter : QuestionFragmentRVAdapter
-    private lateinit var auth : FirebaseAuth
+    // 로그인한 보호자의 uid
     private lateinit var owner : String
     private lateinit var listenerDTO : ListenerDTO
 
-    // 프래그먼트 실행시 동작
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 로그인 한 사람 uid 가져오기
-        auth = Firebase.auth
-        owner = auth.currentUser?.uid.toString()
+        // 로그인한 보호자의 uid 가져오기
+        owner = Firebase.auth.currentUser?.uid.toString()
 
         // questionList 세팅
         setQuestionList()
@@ -70,7 +74,11 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         setAddQuestionButton(view)
     }
 
-    /* 질문 추가 버튼 세팅 */
+    /**
+     * 질문 추가 버튼을 세팅해주는 메서드
+     *  - 추가 버튼 클릭 시 나타나는 "질문 추가" 다이얼로그를 세팅해주는 것이 주요 기능
+     *  - view : QuestionFragment의 View
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setAddQuestionButton(view: View) {
         val questionPlusBtn = view.findViewById<ImageView>(R.id.question_rv_item_plusBtn)
@@ -98,7 +106,10 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
 
             textToSpeech.initTTS()
 
-            // 다이얼로그 종료 시 이벤트
+            /* 다이얼로그 종료 시 이벤트
+            * 1. 녹음 중이라이면 녹음 중단
+            * 2. 녹음파일 재생 중이라면 재생 중단
+             */
             dialog.setOnDismissListener {
                 recordActivity.stopRecording()
                 recordActivity.stopPlaying()
@@ -121,49 +132,75 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
 
             // 질문 추가 다이얼로그의 "저장"버튼을 눌렀을 때 이벤트 처리
             dialog.findViewById<Button>(R.id.add_question_btn).setOnClickListener {
-                it.isClickable = false
-
-                val progressBar =
-                    dialog.findViewById<ProgressBar>(R.id.setting_question_progressbar)
-                lateinit var recordFile: Uri
-
-                dialog.window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                progressBar.visibility = View.VISIBLE
-
-                // 생성 날짜, 텍스트, , ttsFlag, 비밀 옵션, 녹음 옵션, 녹음 파일 주소
-                val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                val questionText = dialog.findViewById<EditText>(R.id.question_text).text.toString()
-                val secret = dialog.findViewById<Switch>(R.id.secret_switch).isChecked
-                val record = dialog.findViewById<Switch>(R.id.record_switch).isChecked
-                var src: String? = null
-
-                // question 컬렉션에 추가할 QuestoinDTO 생성
-                val newQuestion = QuestionDTO(secret, record, ttsFlag, owner, date, questionText, src, mutableMapOf())
-
-                // 녹음 중이라면 중단 후 저장
-                recordActivity.stopRecording()
-                // 재생 중이라면 재생 중단
-                recordActivity.stopPlaying()
-
-                if (ttsFlag) {
-                    textToSpeech.synthesizeToFile(newQuestion.text!!)
-                    Handler().postDelayed({
-                        // 녹음 파일 생성 및 스토리지 저장
-                        recordFile = Uri.fromFile(File(textToSpeech.returnRecordingFile()))
-                        addRecordToStorage(recordFile, newQuestion, date, dialog, progressBar)
-                    }, 2000)
-                } else {
-                    // 녹음 파일 생성 및 스토리지 저장
-                    Handler().postDelayed({
-                        // 녹음 파일 생성 및 스토리지 저장
-                        recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
-                        addRecordToStorage(recordFile, newQuestion, date, dialog, progressBar)
-                    }, 2000)
-                }
+                view -> setDialogSaveBtn(view, dialog, ttsFlag, recordActivity, textToSpeech)
             }
         }
     }
 
+    /**
+     * "질문 추가" 다이얼로그의 "저장" 버튼 세팅해주는 메서드
+     *  - view : "저장" 버튼의 View
+     *  - dialog : "질문 추가" 다이얼로그
+     *  - ttsFlag : tts 기능 사용 여부
+     *  - recordActivity : 녹음 수정 기능을 위한 객체
+     *  - textToSpeech : tts 기능을 위한 객체
+     */
+    private fun setDialogSaveBtn(
+        view : View,
+        dialog : AlertDialog,
+        ttsFlag : Boolean,
+        recordActivity : RecordActivity,
+        textToSpeech : TextToSpeech) {
+
+        view.isClickable = false
+
+        val progressBar =
+            dialog.findViewById<ProgressBar>(R.id.setting_question_progressbar)
+        lateinit var recordFile: Uri
+
+        dialog.window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        progressBar.visibility = View.VISIBLE
+
+        // 생성 날짜, 텍스트, , ttsFlag, 비밀 옵션, 녹음 옵션, 녹음 파일 주소
+        val date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        val questionText = dialog.findViewById<EditText>(R.id.question_text).text.toString()
+        val secret = dialog.findViewById<Switch>(R.id.secret_switch).isChecked
+        val record = dialog.findViewById<Switch>(R.id.record_switch).isChecked
+        var src: String? = null
+
+        // question 컬렉션에 추가할 QuestoinDTO 생성
+        val newQuestion = QuestionDTO(secret, record, ttsFlag, owner, date, questionText, src, mutableMapOf())
+
+        // 녹음 중이라면 중단 후 저장
+        recordActivity.stopRecording()
+        // 재생 중이라면 재생 중단
+        recordActivity.stopPlaying()
+
+        if (ttsFlag) {
+            textToSpeech.synthesizeToFile(newQuestion.text!!)
+            Handler().postDelayed({
+                // 녹음 파일 생성 및 스토리지 저장
+                recordFile = Uri.fromFile(File(textToSpeech.returnRecordingFile()))
+                addRecordToStorage(recordFile, newQuestion, date, dialog, progressBar)
+            }, 2000)
+        } else {
+            // 녹음 파일 생성 및 스토리지 저장
+            Handler().postDelayed({
+                // 녹음 파일 생성 및 스토리지 저장
+                recordFile = Uri.fromFile(File(recordActivity.returnRecordingFile()))
+                addRecordToStorage(recordFile, newQuestion, date, dialog, progressBar)
+            }, 2000)
+        }
+    }
+
+    /**
+     * 새 질문을 데이터베이스에 업로드하는 메서드
+     *  - recordFile : 새로운 질문의 녹음파일 주소
+     *  - newQuestion : 새로운 질문의 정보를 담은 QuestionDTO
+     *  - date : 질문 업로드 날짜 및 시간
+     *  - dialog : "질문 수정" 다이얼로그
+     *  - progressBar : "질문 추가" 다이얼로그의 프로그레스바
+     */
     private fun addRecordToStorage(
         recordFile : Uri,
         newQuestion : QuestionDTO,
@@ -205,7 +242,10 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         }
     }
 
-    /* questionList 실시간 세팅 (수정 및 변경 적용 포함 )*/
+    /**
+     * RecyclerView에 띄워질 questionList를 데이터베이스에 따라 실시간으로 세팅하는 메서드
+     *  - 초기화 / 추가 / 수정 / 삭제 시 적용
+     */
     private fun setQuestionList(){
         // 로그인한 유저의 질문 목록
         val userQuestionRef = database.getReference("guardian").child(owner).child("questionList")
@@ -285,6 +325,9 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         listenerDTO = ListenerDTO(userQuestionRef, questionListener)
     }
 
+    /**
+     * 화면 종료 시 사용하고 이썬 리스너들을 반환하는 메서드
+     */
     override fun onDestroy() {
         super.onDestroy()
 
@@ -294,7 +337,10 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
         reference.removeEventListener(listener)
     }
 
-    // 리사이클러 뷰 세팅함수
+    /**
+     * RecyclerView를 세팅하기 위해 adapter 클래스에 연결하는 메서드
+     *  - view : "QuestionFragment"의 View
+     */
     private fun setRecyclerView(view : View){
         val recyclerView = view.findViewById<RecyclerView>(R.id.question_rv)
 
