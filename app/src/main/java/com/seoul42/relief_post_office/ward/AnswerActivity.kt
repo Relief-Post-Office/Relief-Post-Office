@@ -8,11 +8,15 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -30,6 +34,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.collections.ArrayList
 
 /**
  * 피보호자가 안부에 응답하는 클래스
@@ -37,16 +42,15 @@ import java.time.format.DateTimeFormatter
  *
  * UI에 표시될 내용 : 질문 내용,
  * 기능 : 질문이 순서대로 나오고 응답하면 자동으로 넘어갑니다. 아래 루틴을 따라갑니다.
- *  1. 질문이 나옵니다.
+ *  1. 질문과 stt 가 시작됩니다.
  *  2. 답변
- *      2-1. O
+ *      2-1. O, stt(긍정 답변)
  *          2-1-1. 음성 답변 옵션 답변있다면 자동으로 음성 녹음이 시작됩니다.
- *      2-2. X
+ *      2-2. X, stt(부정 답변)
  *  3. answer 을 데이터베이스와 동기화 시킵니다.
  *  모든 질문이 끝나면 FCM 을 보냅니다.
  */
 class AnswerActivity : AppCompatActivity() {
-
     // 레이아웃과 연결
     private val binding: WardSafetyBinding by lazy {
         WardSafetyBinding.inflate(layoutInflater)
@@ -62,6 +66,10 @@ class AnswerActivity : AppCompatActivity() {
     private val resultDB = database.getReference("result")
     private val userDB = database.getReference("user")
     private val wardDB = Firebase.database.getReference("ward")
+
+    // STT 기능을 위한 객체
+    private var speechRecognizer: SpeechRecognizer? = null
+    private var sttIsOn: Boolean = false
 
     // 응답해야하는 응답지
     private lateinit var answerList: ArrayList<Pair<String, AnswerDTO>>
@@ -88,6 +96,8 @@ class AnswerActivity : AppCompatActivity() {
         setListSize(answerList)
         // 버튼 이벤트 셋팅
         setButton()
+        // stt 시작
+        startStt()
     }
 
     /**
@@ -97,6 +107,7 @@ class AnswerActivity : AppCompatActivity() {
         answerBell = MediaPlayer.create(this, R.raw.bell)
         resultId = intent.getStringExtra("resultId").toString()
         answerList = intent.getSerializableExtra("answerList") as ArrayList<Pair<String, AnswerDTO>>
+        sttIsOn = intent.getBooleanExtra("sttIsOn", false)
     }
 
     /**
@@ -226,6 +237,7 @@ class AnswerActivity : AppCompatActivity() {
      * - 질문의 텍스트 셋팅
      * - 질문 미디어 객체 생성
      * - 다시듣기 버튼 이벤트 셋팅
+     * - stt 셋팅
      */
     private fun setQuestion() {
         // 질문 텍스트 셋팅
@@ -249,6 +261,8 @@ class AnswerActivity : AppCompatActivity() {
             questionPlayer.prepare()
             questionPlayer.start()
         }
+        //
+        startStt()
         window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
@@ -273,6 +287,10 @@ class AnswerActivity : AppCompatActivity() {
      * - 마지막 질문일 경우 EndingActivity 로 넘어갑니다.
      */
     private fun nextQuestion() {
+        // 음성 인식 종료
+        speechRecognizer?.stopListening()
+        speechRecognizer?.destroy()
+
         if (currentIndex < listSize - 1) {
             // 다음 질문이 있을 경우
             currentIndex += 1
@@ -375,5 +393,147 @@ class AnswerActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    /**
+     * 이하는 음성 대답 기능(STT) 구현을 위한 메서드
+     */
+
+    /**
+     * SpeechToText 설정 및 동작
+     */
+    private fun startStt() {
+        // STT 옵션이 켜져있고 질문이 녹음 회신 옵션이 꺼진 경우에만 실행
+        if (sttIsOn && !answerList[currentIndex].second.questionRecord) {
+            val speechRecognizerintent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR")
+            }
+
+            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this).apply {
+                setRecognitionListener(recognitionListener())
+                startListening(speechRecognizerintent)
+            }
+        }
+    }
+
+    /**
+     * SpeechToText 기능 세팅
+     *  - onResults
+     *      - 해석 결과가 긍정 / 부정 / 다시 듣기에 해당하면 알맞은 기능 수행
+     *      - 위에 해당하지 않는다면 음성인식 다시 수행
+     */
+    private fun recognitionListener() = object : RecognitionListener {
+        override fun onReadyForSpeech(p0: Bundle?) { }
+
+        override fun onBeginningOfSpeech() { }
+
+        override fun onRmsChanged(p0: Float) { }
+
+        override fun onBufferReceived(p0: ByteArray?) { }
+
+        override fun onEndOfSpeech() { }
+
+        override fun onError(error: Int) {
+            var message : String
+
+            when (error) {
+                SpeechRecognizer.ERROR_AUDIO ->
+                    message = "오디오 에러"
+                SpeechRecognizer.ERROR_CLIENT ->
+                    message = "클라이언트 에러"
+                SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS ->
+                    message = "퍼미션 없음"
+                SpeechRecognizer.ERROR_NETWORK ->
+                    message = "네트워크 에러"
+                SpeechRecognizer.ERROR_NETWORK_TIMEOUT ->
+                    message = "네트워크 타임아웃"
+                SpeechRecognizer.ERROR_NO_MATCH -> {
+                    message = "음성 인식 실패"
+                    startStt()
+                }
+                SpeechRecognizer.ERROR_RECOGNIZER_BUSY ->
+                    message = "RECOGNIZER가 바쁨"
+                SpeechRecognizer.ERROR_SERVER ->
+                    message = "서버가 이상함"
+                SpeechRecognizer.ERROR_SPEECH_TIMEOUT ->
+                    message = "말하는 시간초과"
+                else ->
+                    message = "알 수 없는 오류"
+            }
+            Toast.makeText(applicationContext, "에러 발생 $message", Toast.LENGTH_SHORT)
+        }
+
+        override fun onResults(results: Bundle?) {
+            var str = results!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)!![0]
+            var positiveWordList = arrayListOf("그래", "으응", "응", "엉", "어")
+            var negativeWordList = arrayListOf("아니", "않이", "안이")
+            var replayWordList = arrayListOf("다시", "다시 듣기")
+
+            when(checkResults(str, positiveWordList, negativeWordList, replayWordList)) {
+                1 -> {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    answerBell.start()
+                    val reply = true
+                    var recordSrc = ""
+                    sendAnswer(reply, recordSrc)
+                    Handler().postDelayed({
+                        nextQuestion()
+                    }, 1500)
+                }
+
+                2 -> {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    answerBell.start()
+                    val reply = false
+                    var recordSrc = ""
+
+                    sendAnswer(reply, recordSrc)
+                    Handler().postDelayed({
+                        nextQuestion()
+                    }, 1500)
+                }
+
+                3 -> {
+                    questionPlayer.stop()
+                    questionPlayer.prepare()
+                    questionPlayer.start()
+                    startStt()
+                }
+
+                else -> startStt()
+            }
+        }
+
+        override fun onPartialResults(p0: Bundle?) { }
+
+        override fun onEvent(p0: Int, p1: Bundle?) { }
+    }
+
+    /**
+     * 문자열에 찾는 단어가 있는지 확인하여 3가지 시그널을 반환함
+     *  - str : 검색할 문자열
+     *  - positiveWordList : 긍정 단어들을 담은 리스트
+     *  - negativeWordList : 부정 단어들을 담은 리스트
+     *  - replayWordList : 다시 듣기 단어들을 담은 리스트
+     *  - 시그널 종류
+     *      - 1 : 긍정
+     *      - 2 : 부정
+     *      - 3 : 다시 듣기
+     *      - -1 : 일치하는 단어 없음
+     */
+    private fun checkResults(
+        str : String,
+        positiveWordList : ArrayList<String>,
+        negativeWordList : ArrayList<String>,
+        replayWordList : ArrayList<String>) : Int {
+
+        if (positiveWordList.contains(str))
+            return 1
+        else if (negativeWordList.contains(str))
+            return 2
+        else if (replayWordList.contains(str))
+            return 3
+        return -1
     }
 }

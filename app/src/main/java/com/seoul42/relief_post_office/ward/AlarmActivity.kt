@@ -7,6 +7,7 @@ import android.graphics.drawable.AnimationDrawable
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
+import android.text.BoringLayout
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
@@ -36,6 +38,7 @@ class AlarmActivity : AppCompatActivity() {
     // 데이터베이스 참조 변수
     private val resultDB = Firebase.database.reference.child("result")
     private val answerDB = Firebase.database.reference.child("answer")
+    private val wardDB = Firebase.database.reference.child("ward")
 
     // 안부의 여러 질문들 중, 질문에 대한 응답 아이디 및 응답 데이터를 리스트 형태로 담음
     private val answerList: ArrayList<Pair<String, AnswerDTO>> = arrayListOf()
@@ -43,6 +46,10 @@ class AlarmActivity : AppCompatActivity() {
     // 알람 소리를 울릴 수 있도록 하는 미디어 플레이어 변수
     private var mediaPlayer: MediaPlayer? = null
 
+    // 음성 답변 기능(STT) 기능이 켜져있는지 확인하는 변수
+    private var sttIsOn : Boolean = false
+
+    private lateinit var myUserId : String
     private lateinit var resultId : String
     private lateinit var imageView : ImageButton
     private lateinit var animationDrawable: AnimationDrawable
@@ -77,6 +84,7 @@ class AlarmActivity : AppCompatActivity() {
     private fun checkResponse() {
         val recommendDTO =
             intent.getSerializableExtra("recommendDTO") as WardRecommendDTO
+        myUserId = Firebase.auth.currentUser?.uid.toString()
 
         resultDB.child(recommendDTO.resultId!!).get().addOnSuccessListener { result ->
             val resultDTO = result.getValue(ResultDTO::class.java)
@@ -85,6 +93,9 @@ class AlarmActivity : AppCompatActivity() {
             if (resultDTO.responseTime != "미응답") {
                 finish()
             } else {
+                wardDB.child(myUserId).child("stt").get().addOnSuccessListener{ snapshot ->
+                    sttIsOn = snapshot.getValue() as Boolean
+                }
                 imageView = binding.alarmButton
                 resultId = recommendDTO.resultId!!
                 animationDrawable = imageView.background as AnimationDrawable
@@ -184,6 +195,7 @@ class AlarmActivity : AppCompatActivity() {
             ActivityCompat.finishAffinity(this)
             intent.putExtra("resultId", resultId)
             intent.putExtra("answerList", answerList)
+            intent.putExtra("sttIsOn", sttIsOn)
             startActivity(intent)
         }
     }
