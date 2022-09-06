@@ -257,6 +257,7 @@ class SafetyQuestionSettingActivity : AppCompatActivity() {
                             q.second.secret = it.child("secret").getValue() as Boolean
                             q.second.date = it.child("date").getValue().toString()
                             q.second.src = it.child("src").getValue().toString()
+                            q.second.ttsFlag = it.child("ttsFlag").getValue() as Boolean
 
                             // 가장 최근에 수정된 것이 리스트 상단으로 가게 하기
                             // 내림차순으로 정렬(map -> list.sort -> map)

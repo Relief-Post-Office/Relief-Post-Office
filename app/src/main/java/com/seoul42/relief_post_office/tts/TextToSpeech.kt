@@ -52,7 +52,6 @@ class TextToSpeech(view : View, private val context : Context) {
     }
 
     fun synthesizeToFile(text: String) {
-        Log.d("진짜 확인용", recordingFilePath)
         tts!!.synthesizeToFile(text, HashMap(), recordingFilePath)
     }
 

@@ -240,6 +240,8 @@ class QuestionFragment : Fragment(R.layout.fragment_question) {
                             q.second.record = it.child("record").getValue() as Boolean
                             q.second.secret = it.child("secret").getValue() as Boolean
                             q.second.date = it.child("date").getValue().toString()
+                            q.second.ttsFlag = it.child("ttsFlag").getValue() as Boolean
+
                             val tmpList = it.child("connectedSafetyList").getValue() as MutableMap<String, String?>?
                             if (tmpList != null)
                                 q.second.connectedSafetyList = tmpList

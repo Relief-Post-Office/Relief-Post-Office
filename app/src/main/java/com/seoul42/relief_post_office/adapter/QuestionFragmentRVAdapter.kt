@@ -166,8 +166,6 @@ class QuestionFragmentRVAdapter(
                     question.child("record").setValue(editedRecord)
                     question.child("ttsFlag").setValue(ttsFlag)
 
-                    item.second.ttsFlag = ttsFlag
-
                     if (ttsFlag) {
                         textToSpeech.synthesizeToFile(editedQuestionText)
                         Handler().postDelayed({

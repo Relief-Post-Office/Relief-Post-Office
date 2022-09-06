@@ -181,8 +181,6 @@ class SafetyQuestionSettingAdapter(
                     question.child("record").setValue(editedRecord)
                     question.child("ttsFlag").setValue(ttsFlag)
 
-                    item.second.ttsFlag = ttsFlag
-
                     // EditRecordActivity에서 받은 녹음파일 변경주소 반영
                     var editRecordFile = Uri.fromFile(File(editRecordActivity.returnRecordingFile()))
                     val editRecordRef =
