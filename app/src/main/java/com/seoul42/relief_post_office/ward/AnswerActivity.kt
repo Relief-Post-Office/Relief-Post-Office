@@ -11,6 +11,7 @@ import android.os.Handler
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
@@ -34,6 +35,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -60,6 +62,8 @@ class AnswerActivity : AppCompatActivity() {
     private val storage: FirebaseStorage by lazy {
         FirebaseStorage.getInstance()
     }
+
+    // STT 기능을 위한 객체
     private var auth : FirebaseAuth = Firebase.auth
     private val database = Firebase.database
     private val answerDB = database.getReference("answer")
@@ -96,6 +100,7 @@ class AnswerActivity : AppCompatActivity() {
         setListSize(answerList)
         // 버튼 이벤트 셋팅
         setButton()
+
         // stt 시작
         startStt()
     }
@@ -261,7 +266,6 @@ class AnswerActivity : AppCompatActivity() {
             questionPlayer.prepare()
             questionPlayer.start()
         }
-        //
         startStt()
         window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
