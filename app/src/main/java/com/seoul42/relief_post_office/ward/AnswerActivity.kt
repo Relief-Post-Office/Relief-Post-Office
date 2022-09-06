@@ -370,7 +370,7 @@ class AnswerActivity : AppCompatActivity() {
             var str = results!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)!![0]
             var positiveWordList = arrayListOf("그래", "으응", "응", "엉", "어")
             var negativeWordList = arrayListOf("아니", "않이", "안이")
-            var replayWordList = arrayListOf("다시", "다시 듣기")
+            var replayWordList = arrayListOf("다시", "바지", "다시 듣기")
 
             when(checkResults(str, positiveWordList, negativeWordList, replayWordList)) {
                 1 -> {
@@ -430,11 +430,15 @@ class AnswerActivity : AppCompatActivity() {
         negativeWordList : ArrayList<String>,
         replayWordList : ArrayList<String>) : Int {
 
-        if (positiveWordList.contains(str))
+        var strSplit = str.split(' ')
+
+        Log.d("test", strSplit.toString())
+
+        if (strSplit.intersect(positiveWordList.toSet()).isNotEmpty())
             return 1
-        else if (negativeWordList.contains(str))
+        else if (strSplit.intersect(negativeWordList.toSet()).isNotEmpty())
             return 2
-        else if (replayWordList.contains(str))
+        else if (strSplit.intersect(replayWordList.toSet()).isNotEmpty())
             return 3
         return -1
     }
