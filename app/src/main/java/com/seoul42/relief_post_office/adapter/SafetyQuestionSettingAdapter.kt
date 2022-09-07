@@ -100,6 +100,9 @@ class SafetyQuestionSettingAdapter(
                 // 질문 수정 다이얼로그 세팅
                 setEditQuestionDialog(item)
             }
+
+            // 재생 버튼 클릭 이벤트
+            setRecordPlayBtn(item.second.src!!)
         }
 
         /**
@@ -166,9 +169,6 @@ class SafetyQuestionSettingAdapter(
 
             // 질문 수정 다이얼로그 띄우기
             dialog.show()
-
-            // 재생 버튼 클릭 이벤트
-            setRecordPlayBtn(item.second.src!!)
         }
 
         /**
@@ -339,7 +339,7 @@ class SafetyQuestionSettingAdapter(
             // 재생 버튼 클릭 이벤트
             var playing = false
             var player: MediaPlayer? = null
-            val playerBtn = itemView.findViewById<ImageView>(R.id.question_rv_item_playBtn)
+            val playerBtn = itemView.findViewById<ImageView>(R.id.safety_question_item_play_button)
             playerBtn.setOnClickListener {
                 // 재생 중이면 재생 버튼으로 이미지 변경
                 if (playing) {

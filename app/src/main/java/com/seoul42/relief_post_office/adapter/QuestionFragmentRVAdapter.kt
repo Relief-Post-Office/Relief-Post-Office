@@ -70,6 +70,9 @@ class QuestionFragmentRVAdapter(
 
                 setEditQuestionDialog(item)
             }
+
+            // 재생 버튼 클릭 이벤트
+            setRecordPlayBtn(item.second.src!!)
         }
 
         /**
@@ -136,9 +139,6 @@ class QuestionFragmentRVAdapter(
 
             // 질문 수정 다이얼로그 띄우기
             dialog.show()
-
-            // 재생 버튼 클릭 이벤트
-            setRecordPlayBtn(item.second.src!!)
         }
 
         /**
