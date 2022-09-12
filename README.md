@@ -11,10 +11,10 @@ https://github.com/Relief-Post-Office/Relief-Post-Office/blob/main/app-release.a
 
 ## 주요 기능
 ### 보호자 로그인 시
-<p align="center"><img src="https://user-images.githubusercontent.com/78855847/181042895-afa693af-f280-4467-abc0-b348aaf87ad9.png" width="500" > </p>
-<p align="center"><img src="https://user-images.githubusercontent.com/78855847/181044519-b73c51ab-310d-4693-ae30-87d902f623c2.png" width="500" > <img src="https://user-images.githubusercontent.com/78855847/181043697-88b254bd-afa9-49f9-b693-3f0596b3fc83.png" width="500" ></p>
+<p align="center"><img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/images/guardian_main.png?raw=true" width="500" > </p>
+<p align="center"><img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/images/guardian_question.png?raw=true" width="500" > <img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/images/guardian_safety.png?raw=true" width="500" ></p>
 
-<p align="center"><img src="https://user-images.githubusercontent.com/78855847/181044731-d2afeb8a-d86a-4182-bf26-60fc00937eed.png" width="500" > <img src="https://user-images.githubusercontent.com/78855847/181044958-3277417d-0666-4ea9-b1a8-9d3953bbe7c0.png" width="500" ></p>
+<p align="center"><img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/images/ward_profile.png?raw=true" width="500" > <img src="https://user-images.githubusercontent.com/78855847/181044958-3277417d-0666-4ea9-b1a8-9d3953bbe7c0.png" width="500" ></p>
 <p align="center"><img src="https://user-images.githubusercontent.com/78855847/181044982-10124ed3-7770-42dd-bb1e-12af5108d47a.png" width="500" > <img src="https://user-images.githubusercontent.com/78855847/181045010-f61709be-ed47-405f-a4ca-16b3f605ab9c.png" width="500" ></p>
 
 ### 피보호자 로그인 시
