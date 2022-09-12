@@ -1,5 +1,5 @@
 # Relief-Post-Office
-![image](https://user-images.githubusercontent.com/78855847/181042533-5bc576e4-5286-4495-9ed2-98051b2463f6.png)
+![image](https://user-images.githubusercontent.com/78855847/189635986-04fd87b5-38e7-4628-9880-6c07c25087a4.png)
 
 ## 앱 설치하기
 안드로이드 폰에 아래 apk파일 설치 후 실행  
@@ -14,13 +14,18 @@ https://github.com/Relief-Post-Office/Relief-Post-Office/blob/main/app-release.a
 <p align="center"><img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/images/guardian_main.png?raw=true" width="500" > </p>
 <p align="center"><img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/images/guardian_question.png?raw=true" width="500" > <img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/images/guardian_safety.png?raw=true" width="500" ></p>
 
-<p align="center"><img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/images/ward_profile.png?raw=true" width="500" > <img src="https://user-images.githubusercontent.com/78855847/181044958-3277417d-0666-4ea9-b1a8-9d3953bbe7c0.png" width="500" ></p>
-<p align="center"><img src="https://user-images.githubusercontent.com/78855847/181044982-10124ed3-7770-42dd-bb1e-12af5108d47a.png" width="500" > <img src="https://user-images.githubusercontent.com/78855847/181045010-f61709be-ed47-405f-a4ca-16b3f605ab9c.png" width="500" ></p>
+<p align="center"><img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/images/ward_profile.png?raw=true" width="500" > <img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/images/ward_safety.png?raw=true" width="500" ></p>
+
+<p align="center"><img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/images/ward_result.png?raw=true" width="500" > <img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/images/ward_result_detail.png?raw=true" width="500" ></p>
 
 ### 피보호자 로그인 시
-<p align="center"><img src="https://user-images.githubusercontent.com/78855847/181045038-7cff97de-eebd-4c04-b1d0-211a22b401a3.png" width="500" > <img src="https://user-images.githubusercontent.com/78855847/181045747-78951043-90cf-4a53-8c00-9ebf4e8f25b7.png" width="500" ></p>
+<p align="center"><img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/images/ward_main.png?raw=true" width="500" > <img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/images/ward_answer.png?raw=true" width="500" ></p>
 
-## 개발 환경
+## 개발 언어&환경
+### 개발 언어
+- Kotlin
+
+### 개발 환경
 - Android Studio Chipmunk
 - Firebase
   - Realtime Database
@@ -30,6 +35,7 @@ https://github.com/Relief-Post-Office/Relief-Post-Office/blob/main/app-release.a
   - In-App Messaging
   - Hosting
 
+
 ## SDK 버전
 - minSdkVersion : 23
 - targetSdkVersion : 32
@@ -37,8 +43,13 @@ https://github.com/Relief-Post-Office/Relief-Post-Office/blob/main/app-release.a
 ## 프로젝트 아키텍처
 <p align="center"><img src="https://user-images.githubusercontent.com/78855847/181050032-39e928c6-6fc6-47de-930e-d01ea1d7f687.png" width="1000" > </p>
 
-## 알람 예약 기능 구조
-<p align="center"><img src="https://user-images.githubusercontent.com/78855847/181049791-0a1427b9-a010-47b5-9caa-4e7a75a62982.png" width="500" > </p>
+본 프로젝트는 Firebase에서 제공하는 기능들을 활용하여 **Serverless 아키텍쳐**로 구축됨<br/> 
+서버가 없는 아키텍쳐에서 보호자-피보호자간의 **동기화**를 수행하기 위하여 **"자동 알람 시스템"** 구축
+
+## 자동 알람 시스템
+<p align="center"><img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/diagram/Alarm.png?raw=true" width="500" > </p>
+<p align="center"><img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/diagram/WardAlarm.png?raw=true" width="500" > <img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/diagram/GuardianAlarm.png?raw=true" width="500" ></p>
+<p align="center"><img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/diagram/BootAlarm.png?raw=true" width="500" > <img src="https://github.com/Relief-Post-Office/Relief-Post-Office/blob/docs/diagram/NetworkAlarm.png?raw=true" width="500" ></p>
 
 ## Credit
 **신동해** : github.com/Jeensh  
