@@ -41,7 +41,7 @@ https://github.com/Relief-Post-Office/Relief-Post-Office/blob/main/app-release2.
 - targetSdkVersion : 32
 
 ## 프로젝트 아키텍처
-<p align="center"><img src="https://user-images.githubusercontent.com/78855847/181050032-39e928c6-6fc6-47de-930e-d01ea1d7f687.png" width="1000" > </p>
+<p align="center"><img src="https://user-images.githubusercontent.com/81675254/190188415-25540ffd-0b89-4678-b8b8-c846392b6776.png" width="1000" > </p>
 
 본 프로젝트는 Firebase에서 제공하는 기능들을 활용하여 **Serverless 아키텍쳐**로 구축됨<br/> 
 서버가 없는 아키텍쳐에서 보호자-피보호자간의 **동기화**를 수행하기 위하여 **"자동 알람 시스템"** 구축
