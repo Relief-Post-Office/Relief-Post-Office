@@ -3,7 +3,7 @@
 
 ## 앱 설치하기
 안드로이드 폰에 아래 apk파일 설치 후 실행  
-https://github.com/Relief-Post-Office/Relief-Post-Office/blob/main/app-release.apk?raw=true 
+https://github.com/Relief-Post-Office/Relief-Post-Office/blob/main/app-release2.apk?raw=true 
 
 ## 프로젝트 목적
 **사회적 취약 계층**과 복지 종사자 및 지역 사회의 일원들을 연결하여  
