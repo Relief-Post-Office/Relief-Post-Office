@@ -34,11 +34,13 @@ https://github.com/Relief-Post-Office/Relief-Post-Office/blob/main/app-release2.
   - Cloud Messaging
   - In-App Messaging
   - Hosting
-
-
+  
 ## SDK 버전
 - minSdkVersion : 23
 - targetSdkVersion : 32
+
+## 소스 디렉토리 구조
+![image](https://user-images.githubusercontent.com/78855847/190316290-b8c222a3-cdec-4d79-84da-7f801ebca0e0.png)
 
 ## 프로젝트 아키텍처
 <p align="center"><img src="https://user-images.githubusercontent.com/81675254/190188415-25540ffd-0b89-4678-b8b8-c846392b6776.png" width="1000" > </p>
