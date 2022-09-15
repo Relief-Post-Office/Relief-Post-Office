@@ -49,7 +49,6 @@ class AddWardSafetyAdapter(private val items: ArrayList<Pair<String, QuestionDTO
          *  - recordSrc : 재생할 녹음 파일의 주소
          */
         private fun setRecordPlayBtn(recordSrc : String) {
-            // 재생 버튼 클릭 이벤트
             var playing = false
             var player: MediaPlayer? = null
             val playerBtn = itemView.findViewById<ImageView>(R.id.question_rv_item_playBtn)

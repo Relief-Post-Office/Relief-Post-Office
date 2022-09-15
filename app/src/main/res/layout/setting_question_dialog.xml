@@ -20,72 +20,95 @@
         android:layout_marginTop="20dp"
         tools:ignore="HardcodedText" />
 
-    <LinearLayout
+    <Switch
+        android:id="@+id/question_add_voice_record"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:orientation="horizontal"
+        android:layout_height="40dp"
+        android:text="@string/voice_record"
+        android:fontFamily="@font/jua"
+        android:textSize="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        tools:ignore="HardcodedText,SpUsage,UseSwitchCompatOrMaterialXml" />
+
+    <LinearLayout
+        android:id="@+id/question_add_record_layout"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:orientation="vertical"
+        android:visibility="gone"
         android:gravity="center_horizontal">
 
-        <com.seoul42.relief_post_office.record.RecordCountTime
-            android:id="@+id/question_setting_time"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="@string/question_set_time"
-            android:fontFamily="@font/bmjua"
-            android:textColor="@color/black"
-            android:layout_marginHorizontal="10dp"
-            android:textSize="30sp"
-            android:gravity="center"
-            android:layout_marginTop="20dp"
-            tools:ignore="HardcodedText" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
 
-        <com.seoul42.relief_post_office.record.RecordDurationTime
-            android:id="@+id/question_duration_time"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="@string/question_duration_time"
-            android:fontFamily="@font/bmjua"
-            android:textColor="@color/black"
-            android:layout_marginHorizontal="10dp"
-            android:textSize="30sp"
-            android:gravity="center"
-            android:layout_marginTop="20dp"
-            tools:ignore="HardcodedText" />
+            <com.seoul42.relief_post_office.record.RecordCountTime
+                android:id="@+id/question_setting_time"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="@string/question_set_time"
+                android:fontFamily="@font/bmjua"
+                android:textColor="@color/black"
+                android:layout_marginHorizontal="10dp"
+                android:textSize="30sp"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                tools:ignore="HardcodedText" />
+
+            <com.seoul42.relief_post_office.record.RecordDurationTime
+                android:id="@+id/question_duration_time"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="@string/question_duration_time"
+                android:fontFamily="@font/bmjua"
+                android:textColor="@color/black"
+                android:layout_marginHorizontal="10dp"
+                android:textSize="30sp"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+
+            <com.seoul42.relief_post_office.record.RecordButton
+                android:id="@+id/question_setting_playBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/button_rounded_weak_blue"
+                android:text="@string/record"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                tools:ignore="ButtonStyle,HardcodedText" />
+
+            <Button
+                android:id="@+id/question_record_settingBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/button_rounded_weak_blue"
+                android:text="@string/update"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                tools:ignore="ButtonStyle,HardcodedText" />
+
+        </LinearLayout>
 
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp">
-
-        <com.seoul42.relief_post_office.record.RecordButton
-            android:id="@+id/question_setting_playBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/button_rounded_weak_blue"
-            android:text="@string/record"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            android:layout_weight="1"
-            tools:ignore="ButtonStyle,HardcodedText" />
-
-        <Button
-            android:id="@+id/question_record_settingBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/button_rounded_weak_blue"
-            android:text="@string/update"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            android:layout_weight="1"
-            tools:ignore="ButtonStyle,HardcodedText" />
-
-    </LinearLayout>
-
 
     <FrameLayout
         android:layout_width="match_parent"

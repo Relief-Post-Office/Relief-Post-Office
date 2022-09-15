@@ -35,7 +35,6 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -174,66 +173,75 @@ class AnswerActivity : AppCompatActivity() {
                 // 질문 녹음 재생 중지
                 questionPlayer.stop()
 
-                // 녹음 안내 가이드 보이스
-                val recordGuide = MediaPlayer.create(this, R.raw.recordguide)
-                Handler().postDelayed({
-                    recordGuide.start()
-                }, 600)
-
-                val dialog = android.app.AlertDialog.Builder(binding.root.context).create()
-                val eDialog : LayoutInflater = LayoutInflater.from(binding.root.context)
-                val mView : View = eDialog.inflate(R.layout.answer_record_dialog, null)
-
-                dialog.setView(mView)
-                dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-                dialog.create()
-
-                Handler().postDelayed({
-                    // 녹음기능
-                    val answerRecordActivity = AnswerRecordActivity(mView)
-                    answerRecordActivity.startRecoding()
-
-                    dialog.show()
-
-                    var answerRecordFile = Uri.fromFile(File(answerRecordActivity.returnRecordingFile()))
-                    val answerRecordRef =
-                        storage.reference.child("answerRecord/${auth.currentUser?.uid + LocalDateTime.now().format(
-                            DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
-
-                    // 다이얼로그 종료 시 이벤트
-                    dialog.setOnDismissListener {
-                        // 녹음 중이라면 중단 후 저장
-                        answerRecordActivity.stopRecording()
-                        var uploadAnswerRecord = answerRecordRef.putFile(answerRecordFile)
-                        uploadAnswerRecord.addOnSuccessListener {
-                            answerRecordRef.downloadUrl.addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    recordSrc = task.result.toString()
-                                }
-                                sendAnswer(reply, recordSrc)
-                            }
-                            dialog.dismiss()
-                        }
-                        recordGuide.release()
-                        Handler().postDelayed({
-                            nextQuestion()
-                        }, 1500)
-                    }
-
-                    dialog.findViewById<Button>(R.id.record_stop_btn).setOnClickListener {
-                        dialog.dismiss()
-                    }
-                }, 13000)
+                // 녹음 회신 수행
+                setRecord(reply)
             }
             else {
-                // 음성 답변 옵션이 아닐 경우
                 sendAnswer(reply, recordSrc)
                 Handler().postDelayed({
                     nextQuestion()
                 }, 1500)
             }
         }
+    }
+
+    /**
+     * 음성 회신 기능을 수행하는 메서드
+     *  - reply : 질문에 대한 답변
+     */
+    private fun setRecord(reply: Boolean) {
+        var recordSrc = ""
+        val dialog = android.app.AlertDialog.Builder(binding.root.context).create()
+        val eDialog : LayoutInflater = LayoutInflater.from(binding.root.context)
+        val mView : View = eDialog.inflate(R.layout.answer_record_dialog, null)
+
+        // 녹음 안내 가이드 보이스
+        val recordGuide = MediaPlayer.create(this, R.raw.recordguide)
+        Handler().postDelayed({
+            recordGuide.start()
+        }, 600)
+
+        dialog.setView(mView)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.create()
+
+        Handler().postDelayed({
+            // 녹음기능
+            val answerRecordActivity = AnswerRecordActivity(mView)
+            answerRecordActivity.startRecoding()
+
+            dialog.show()
+
+            var answerRecordFile = Uri.fromFile(File(answerRecordActivity.returnRecordingFile()))
+            val answerRecordRef =
+                storage.reference.child("answerRecord/${auth.currentUser?.uid + LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
+
+            // 다이얼로그 종료 시 이벤트
+            dialog.setOnDismissListener {
+                // 녹음 중이라면 중단 후 저장
+                answerRecordActivity.stopRecording()
+                var uploadAnswerRecord = answerRecordRef.putFile(answerRecordFile)
+                uploadAnswerRecord.addOnSuccessListener {
+                    answerRecordRef.downloadUrl.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            recordSrc = task.result.toString()
+                        }
+                        sendAnswer(reply, recordSrc)
+                    }
+                    dialog.dismiss()
+                }
+                recordGuide.release()
+                Handler().postDelayed({
+                    nextQuestion()
+                }, 1500)
+            }
+
+            dialog.findViewById<Button>(R.id.record_stop_btn).setOnClickListener {
+                dialog.dismiss()
+            }
+        }, 13000)
     }
 
     /**
@@ -407,8 +415,8 @@ class AnswerActivity : AppCompatActivity() {
      * SpeechToText 설정 및 동작
      */
     private fun startStt() {
-        // STT 옵션이 켜져있고 질문이 녹음 회신 옵션이 꺼진 경우에만 실행
-        if (sttIsOn && !answerList[currentIndex].second.questionRecord) {
+        // STT 옵션이 켜져있는 경우에만 실행
+        if (sttIsOn) {
             val speechRecognizerintent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
                 putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
                 putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR")
@@ -472,7 +480,7 @@ class AnswerActivity : AppCompatActivity() {
             var str = results!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)!![0]
             var positiveWordList = arrayListOf("그래", "으응", "응", "엉", "어")
             var negativeWordList = arrayListOf("아니", "않이", "안이")
-            var replayWordList = arrayListOf("다시", "다시 듣기")
+            var replayWordList = arrayListOf("다시", "바지", "다시 듣기")
 
             when(checkResults(str, positiveWordList, negativeWordList, replayWordList)) {
                 1 -> {
@@ -480,10 +488,20 @@ class AnswerActivity : AppCompatActivity() {
                     answerBell.start()
                     val reply = true
                     var recordSrc = ""
-                    sendAnswer(reply, recordSrc)
-                    Handler().postDelayed({
-                        nextQuestion()
-                    }, 1500)
+
+                    if (answerList[currentIndex].second.questionRecord) {
+                        // 질문 녹음 재생 중지
+                        questionPlayer.stop()
+
+                        // 녹음 회신 수행
+                        setRecord(reply)
+                    }
+                    else {
+                        sendAnswer(reply, recordSrc)
+                        Handler().postDelayed({
+                            nextQuestion()
+                        }, 1500)
+                    }
                 }
 
                 2 -> {
@@ -532,11 +550,15 @@ class AnswerActivity : AppCompatActivity() {
         negativeWordList : ArrayList<String>,
         replayWordList : ArrayList<String>) : Int {
 
-        if (positiveWordList.contains(str))
+        var strSplit = str.split(' ')
+
+        Log.d("test", strSplit.toString())
+
+        if (strSplit.intersect(positiveWordList.toSet()).isNotEmpty())
             return 1
-        else if (negativeWordList.contains(str))
+        else if (strSplit.intersect(negativeWordList.toSet()).isNotEmpty())
             return 2
-        else if (replayWordList.contains(str))
+        else if (strSplit.intersect(replayWordList.toSet()).isNotEmpty())
             return 3
         return -1
     }
