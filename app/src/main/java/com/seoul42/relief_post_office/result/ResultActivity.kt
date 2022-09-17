@@ -24,6 +24,7 @@ import java.util.*
 /**
  * 결과 페이지의 첫번째 화면을 동작시키는 액티비티 클래스
  *
+ * 주요 UI : 안부의 이름, 응답여부 및 응답 시간
  */
 class ResultActivity : AppCompatActivity() {
     // 레이아웃 연결
