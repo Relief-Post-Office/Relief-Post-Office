@@ -53,6 +53,10 @@ class AnswerActivity : AppCompatActivity() {
     private var sttIsOn: Boolean = false
     private var auth : FirebaseAuth = Firebase.auth
     private val database = Firebase.database
+    private val answerDB = database.getReference("answer")
+    private val resultDB = database.getReference("result")
+    private val userDB = Firebase.database.getReference("user")
+    private val wardDB = Firebase.database.getReference("ward")
     private lateinit var answerList: ArrayList<Pair<String, AnswerDTO>>
     private var listSize = 0
     private var currentIndex: Int = 0
@@ -210,12 +214,10 @@ class AnswerActivity : AppCompatActivity() {
     }
 
     private fun sendAnswer(reply: Boolean, recordSrc: String) {
-        database.getReference("answer")
-            .child(answerList[currentIndex].first)
+        answerDB.child(answerList[currentIndex].first)
             .child("reply")
             .setValue(reply)
-        database.getReference("answer")
-            .child(answerList[currentIndex].first)
+        answerDB.child(answerList[currentIndex].first)
             .child("answerSrc")
             .setValue(recordSrc)
     }
@@ -238,8 +240,7 @@ class AnswerActivity : AppCompatActivity() {
                 val intent = Intent(this, EndingActivity::class.java)
 
                 answerBell.release()
-                database.getReference("result")
-                    .child(resultId)
+                resultDB.child(resultId)
                     .child("responseTime")
                     .setValue(date)
                 intent.putExtra("resultId", resultId)
@@ -256,53 +257,39 @@ class AnswerActivity : AppCompatActivity() {
     }
 
     private fun setUser(uid : String) {
-        val userDB = Firebase.database.getReference("user")
-
-        userDB.child(uid).get().addOnSuccessListener { user ->
-            if (user.getValue(UserDTO::class.java) != null) {
-                val userDTO = user.getValue(UserDTO::class.java) as UserDTO
-                setWard(uid, userDTO)
-            }
+        userDB.child(uid).get().addOnSuccessListener { userSnapshot ->
+            val userDTO = userSnapshot.getValue(UserDTO::class.java) ?: throw IllegalArgumentException("corresponding userID not exists")
+            setWard(uid, userDTO)
         }
     }
 
     private fun setWard(uid : String, userDTO : UserDTO) {
-        val wardDB = Firebase.database.getReference("ward")
-
-        wardDB.child(uid).get().addOnSuccessListener { ward ->
-            if (ward.getValue(WardDTO::class.java) != null) {
-                val wardDTO = ward.getValue(WardDTO::class.java) as WardDTO
-                setResult(userDTO, wardDTO)
-            }
+        wardDB.child(uid).get().addOnSuccessListener { wardSnapshot ->
+            val wardDTO = wardSnapshot.getValue(WardDTO::class.java) ?: throw IllegalArgumentException("corresponding wardID not exists")
+            setResult(userDTO, wardDTO)
         }
     }
 
     private fun setResult(userDTO : UserDTO, wardDTO : WardDTO) {
-        val resultDB = Firebase.database.getReference("result")
         val resultId = intent.getStringExtra("resultId").toString()
 
-        resultDB.child(resultId).get().addOnSuccessListener { result ->
-            if (result.getValue(ResultDTO::class.java) != null) {
-                val resultDTO = result.getValue(ResultDTO::class.java)
-                sendFCM(userDTO.name, wardDTO.connectList, resultDTO!!.safetyName)
-            }
+        resultDB.child(resultId).get().addOnSuccessListener { resultSnapshot ->
+            val resultDTO = resultSnapshot.getValue(ResultDTO::class.java) ?: throw IllegalArgumentException("corresponding resultID not exists")
+            sendFCM(userDTO.name, wardDTO.connectList, resultDTO!!.safetyName)
         }
     }
 
     private fun sendFCM(myName : String, connectList : MutableMap<String, String>, safety : String) {
-        val userDB = Firebase.database.getReference("user")
         val firebaseViewModel : FirebaseViewModel by viewModels()
 
         for (connect in connectList) {
             val uid = connect.key
-            userDB.child(uid).get().addOnSuccessListener {
-                if (it.getValue(UserDTO::class.java) != null) {
-                    val userDTO = it.getValue(UserDTO::class.java) as UserDTO
-                    val notificationData = NotificationDTO.NotificationData("안심우체국",
-                        myName, "$myName 님이 $safety 안부를 완료했습니다.")
-                    val notificationDTO = NotificationDTO(userDTO.token,"high", notificationData)
-                    firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
-                }
+            userDB.child(uid).get().addOnSuccessListener { userSnapshot ->
+                val userDTO = userSnapshot.getValue(UserDTO::class.java) ?: throw IllegalArgumentException("corresponding userID not exists")
+                val notificationData = NotificationDTO.NotificationData("안심우체국",
+                    myName, "$myName 님이 $safety 안부를 완료했습니다.")
+                val notificationDTO = NotificationDTO(userDTO.token,"high", notificationData)
+                firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
             }
         }
     }
