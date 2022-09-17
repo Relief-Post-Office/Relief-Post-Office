@@ -350,11 +350,9 @@ class AnswerActivity : AppCompatActivity() {
      * userId -> userDTO
      */
     private fun setUser(uid : String) {
-        userDB.child(uid).get().addOnSuccessListener { user ->
-            if (user.getValue(UserDTO::class.java) != null) {
-                val userDTO = user.getValue(UserDTO::class.java) as UserDTO
-                setWard(uid, userDTO)
-            }
+        userDB.child(uid).get().addOnSuccessListener { userSnapshot ->
+            val userDTO = userSnapshot.getValue(UserDTO::class.java) ?: throw IllegalArgumentException("corresponding userID not exists")
+            setWard(uid, userDTO)
         }
     }
 
@@ -362,11 +360,9 @@ class AnswerActivity : AppCompatActivity() {
      * userid 를 통해 wardDTO 를 찾는 매서드
      */
     private fun setWard(uid : String, userDTO : UserDTO) {
-        wardDB.child(uid).get().addOnSuccessListener { ward ->
-            if (ward.getValue(WardDTO::class.java) != null) {
-                val wardDTO = ward.getValue(WardDTO::class.java) as WardDTO
-                setResult(userDTO, wardDTO)
-            }
+        wardDB.child(uid).get().addOnSuccessListener { wardSnapshot ->
+            val wardDTO = wardSnapshot.getValue(WardDTO::class.java) ?: throw IllegalArgumentException("corresponding wardID not exists")
+            setResult(userDTO, wardDTO)
         }
     }
 
@@ -376,11 +372,9 @@ class AnswerActivity : AppCompatActivity() {
     private fun setResult(userDTO : UserDTO, wardDTO : WardDTO) {
         val resultId = intent.getStringExtra("resultId").toString()
 
-        resultDB.child(resultId).get().addOnSuccessListener { result ->
-            if (result.getValue(ResultDTO::class.java) != null) {
-                val resultDTO = result.getValue(ResultDTO::class.java)
-                sendFCM(userDTO.name, wardDTO.connectList, resultDTO!!.safetyName)
-            }
+        resultDB.child(resultId).get().addOnSuccessListener { resultSnapshot ->
+            val resultDTO = resultSnapshot.getValue(ResultDTO::class.java) ?: throw IllegalArgumentException("corresponding resultID not exists")
+            sendFCM(userDTO.name, wardDTO.connectList, resultDTO!!.safetyName)
         }
     }
 
@@ -395,14 +389,12 @@ class AnswerActivity : AppCompatActivity() {
         // 연결된 모든 보호자 찾기
         for (connect in connectList) {
             val uid = connect.key
-            userDB.child(uid).get().addOnSuccessListener {
-                if (it.getValue(UserDTO::class.java) != null) {
-                    val userDTO = it.getValue(UserDTO::class.java) as UserDTO
-                    val notificationData = NotificationDTO.NotificationData("안심우체국",
-                        myName, "$myName 님이 $safety 안부를 완료했습니다.")
-                    val notificationDTO = NotificationDTO(userDTO.token,"high", notificationData)
-                    firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
-                }
+            userDB.child(uid).get().addOnSuccessListener { userSnapshot ->
+                val userDTO = userSnapshot.getValue(UserDTO::class.java) ?: throw IllegalArgumentException("corresponding userID not exists")
+                val notificationData = NotificationDTO.NotificationData("안심우체국",
+                    myName, "$myName 님이 $safety 안부를 완료했습니다.")
+                val notificationDTO = NotificationDTO(userDTO.token,"high", notificationData)
+                firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
             }
         }
     }
