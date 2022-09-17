@@ -10,7 +10,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 
+/**
+ * 현재 프로젝트의 클라우드 메시징 서버 키를 헤더에 삽입
+ * 정상적으로 서버 접근이 가능하도록 헤더를 설정
+ */
 object RetrofitInstance {
+
     private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(FCM_URL)
@@ -23,7 +28,6 @@ object RetrofitInstance {
         retrofit.create(FcmInterface::class.java)
     }
 
-    // Client
     private fun provideOkHttpClient(
         interceptor: AppInterceptor
     ): OkHttpClient = OkHttpClient.Builder()
@@ -32,7 +36,9 @@ object RetrofitInstance {
             build()
         }
 
-    // 헤더 추가
+    /**
+     *  FCM_KEY : relief_post_office 의 클라우드 메시징 서버 키
+     */
     class AppInterceptor : Interceptor {
         @Throws(IOException::class)
         override fun intercept(chain: Interceptor.Chain)

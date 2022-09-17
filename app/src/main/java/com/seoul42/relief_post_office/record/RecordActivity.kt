@@ -42,27 +42,34 @@ class RecordActivity(view: View) {
         view.findViewById(R.id.question_setting_playBtn)
     }
 
-    // 요청할 권한들을 담을 배열에 음성 녹음 관련 권한을 담아줍니다.
     private val recordingFilePath: String by lazy {
         "${view.context.externalCacheDir?.absolutePath}/${auth.currentUser?.uid + dateAndTime.format(formatter)}.3gp"
     }
 
     private var state = RecordState.BEFORE_RECORDING
-        set(value) { // setter 설정
-            field = value // 실제 프로퍼티에 대입
+        set(value) {
+            field = value
             resetButton.isEnabled = (value == RecordState.AFTER_RECORDING || value == RecordState.ON_PLAYING)
             recordButton.updateIconWithState(value)
         }
 
-    private var recorder: MediaRecorder? = null // 사용 하지 않을 때는 메모리해제 및  null 처리
+    private var recorder: MediaRecorder? = null
     private var player: MediaPlayer? = null
 
-    // 초기 state에 따른 recordButton.text 설정
+    /**
+     * recordButton 초기화
+     * - BEFORE_RECORDING 상태
+     * - text = "녹음"
+     */
      fun initViews() {
         recordButton.updateIconWithState(state)
     }
 
-    // 현재 state에 따른 recordButton 눌렀을 때 작동할 메써드
+    /**
+     * recordButton 및 resetButton 상태
+     * - recordButton 클릭 시, 상태 변화 및 해당 메써드 실행
+     * - resetButton 클릭 시, 녹음 시간 및 녹음 상태를 BEFORE_RECORDING으로 세팅
+     */
      fun bindViews() {
         recordButton.setOnClickListener {
             when (state) {
@@ -83,35 +90,35 @@ class RecordActivity(view: View) {
 
         resetButton.setOnClickListener {
             stopPlaying()
-            // clear
             recordTimeTextView.clearCountTime()
             recordDurationTextView.clearCountTime()
             state = RecordState.BEFORE_RECORDING
         }
     }
 
-    // 처음 state init(BEFORE_RECORDING)으로 설정
+
+    /** 첫 state = BEFORE_RECORDING으로 세팅 */
     fun initVariables() {
         state = RecordState.BEFORE_RECORDING
     }
 
-    // 로컬에 저장된 녹음파일 캐시주소
-    // QuestionFragments로 전달, firebase storage에 3pg 파일형태로 저장될 예정
+    /**
+     * 로컬 캐시에 저장된 녹음주소
+     * - QuestionFragments로 전달
+     */
     fun returnRecordingFile() : String {
         return recordingFilePath
     }
 
-
-    // 녹음 메써드
+    /** 녹음 시작 */
     fun startRecoding() {
-
         // 녹음 시작 시 초기화
         recorder = MediaRecorder()
             .apply {
                 setAudioSource(MediaRecorder.AudioSource.MIC)
-                setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP) // 포멧
-                setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB) // 엔코더
-                setOutputFile(recordingFilePath) // 우리는 저장 x 캐시에
+                setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+                setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+                setOutputFile(recordingFilePath)
                 prepare()
             }
         recorder?.start()
@@ -120,7 +127,10 @@ class RecordActivity(view: View) {
         state = RecordState.ON_RECORDING
     }
 
-    // '녹음 중'일때 버튼 누를경우, 녹음 중단 및 메모리해제
+    /**
+     * 녹음 중단
+     * - 녹음 중단 및 메모리해제
+     */
     fun stopRecording() {
         if (state == RecordState.ON_RECORDING) {
             recorder?.run {
@@ -134,9 +144,11 @@ class RecordActivity(view: View) {
         }
     }
 
-    // 캐시에 저장된 녹음파일 실행
+    /**
+     * 음성파일 실행
+     * - 기존 캐시에 녹음된 파일 실행
+     */
     fun startPlaying() {
-        // MediaPlayer
         player = MediaPlayer()
             .apply {
                 setDataSource(recordingFilePath)
@@ -154,6 +166,10 @@ class RecordActivity(view: View) {
         state = RecordState.ON_PLAYING
     }
 
+    /**
+     * 음성파일 실행중지
+     * - resetButton 누르기 전까지 AFTER_RECORDING 상태유지
+     */
     fun stopPlaying() {
         if (state == RecordState.ON_PLAYING) {
             player?.release()

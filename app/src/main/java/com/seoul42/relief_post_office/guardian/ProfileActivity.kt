@@ -8,6 +8,9 @@ import com.bumptech.glide.Glide
 import com.seoul42.relief_post_office.databinding.ProfileBinding
 import com.seoul42.relief_post_office.model.UserDTO
 
+/**
+ * 단순히 보호자와 연결된 피보호자 정보를 확인하도록 하는 클래스
+ */
 class ProfileActivity : AppCompatActivity() {
 
     private val binding by lazy {
@@ -21,11 +24,13 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        /* 미리 저장된 정보들을 반영 */
         setPreProcessed()
         setBackButton()
     }
 
+    /**
+     * 미리 저장된 정보들을 반영
+     */
     private fun setPreProcessed() {
         userDTO = intent.getSerializableExtra("userDTO") as UserDTO
 

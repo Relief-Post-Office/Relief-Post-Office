@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.seoul42.relief_post_office.adapter.ResponseAdapter
 import com.seoul42.relief_post_office.databinding.DialogResponseBinding
 
-
+/**
+ * 피보호자가 요청온 보호자들에 대한 응답 다이얼로그 클래스
+ */
 class ResponseDialog(context : AppCompatActivity) {
 
     private val binding by lazy {
@@ -22,15 +24,24 @@ class ResponseDialog(context : AppCompatActivity) {
     private val responseDialog by lazy {
         Dialog(context)
     }
+
+    // 보호자들을 선택하고 응답 버튼을 눌렀을 때를 처리해주는 리스너 변수
     private lateinit var responseListener: ResponseAddClickedListener
 
-    fun show(responseAdapter : ResponseAdapter, responseLayout: LinearLayoutManager, resources : Resources) {
+    fun show(
+        responseAdapter : ResponseAdapter,
+        responseLayout: LinearLayoutManager,
+        resources : Resources
+    ) {
         binding.responseRecyclerView.adapter = responseAdapter
         binding.responseRecyclerView.layoutManager = responseLayout
         binding.responseRecyclerView.setHasFixedSize(true)
 
         binding.responseButton.buttonColor = resources.getColor(com.seoul42.relief_post_office.R.color.gray)
         binding.responseButton.cornerRadius = 30
+
+        // 보호자들을 선택하고 응답 버튼을 눌렀을 때
+        // WardActivity 에서 선택된 보호자들에 대한 응답 처리를 하도록 돕는 리스너
         binding.responseButton.setOnClickListener {
             responseListener.onSaveClicked()
             responseDialog.dismiss()

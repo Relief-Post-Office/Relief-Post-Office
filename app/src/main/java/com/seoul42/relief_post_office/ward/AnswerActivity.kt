@@ -8,11 +8,16 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -30,6 +35,8 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 class AnswerActivity : AppCompatActivity() {
 
@@ -41,6 +48,9 @@ class AnswerActivity : AppCompatActivity() {
         FirebaseStorage.getInstance()
     }
 
+    // STT 기능을 위한 객체
+    private var speechRecognizer: SpeechRecognizer? = null
+    private var sttIsOn: Boolean = false
     private var auth : FirebaseAuth = Firebase.auth
     private val database = Firebase.database
     private val answerDB = database.getReference("answer")
@@ -62,12 +72,15 @@ class AnswerActivity : AppCompatActivity() {
         getId()
         setSize(answerList.size)
         setButton()
+
+        startStt()
     }
 
     private fun getId() {
         answerBell = MediaPlayer.create(this, R.raw.bell)
         resultId = intent.getStringExtra("resultId").toString()
         answerList = intent.getSerializableExtra("answerList") as ArrayList<Pair<String, AnswerDTO>>
+        sttIsOn = intent.getBooleanExtra("sttIsOn", false)
     }
 
     private fun setSize(answerListSize : Int) {
@@ -108,57 +121,8 @@ class AnswerActivity : AppCompatActivity() {
                 // 질문 녹음 재생 중지
                 questionPlayer.stop()
 
-                // 녹음 안내 가이드 보이스
-                val recordGuide = MediaPlayer.create(this, R.raw.recordguide)
-                Handler().postDelayed({
-                    recordGuide.start()
-                }, 600)
-
-                val dialog = android.app.AlertDialog.Builder(binding.root.context).create()
-                val eDialog : LayoutInflater = LayoutInflater.from(binding.root.context)
-                val mView : View = eDialog.inflate(R.layout.answer_record_dialog, null)
-
-                dialog.setView(mView)
-                dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-                dialog.create()
-
-                Handler().postDelayed({
-                    // 녹음기능
-                    val answerRecordActivity = AnswerRecordActivity(mView)
-                    answerRecordActivity.startRecoding()
-
-                    dialog.show()
-
-                    var answerRecordFile = Uri.fromFile(File(answerRecordActivity.returnRecordingFile()))
-                    val answerRecordRef =
-                        storage.reference.child("answerRecord/${auth.currentUser?.uid + LocalDateTime.now().format(
-                            DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
-
-                    // 다이얼로그 종료 시 이벤트
-                    dialog.setOnDismissListener {
-                        // 녹음 중이라면 중단 후 저장
-                        answerRecordActivity.stopRecording()
-                        var uploadAnswerRecord = answerRecordRef.putFile(answerRecordFile)
-                        uploadAnswerRecord.addOnSuccessListener {
-                            answerRecordRef.downloadUrl.addOnCompleteListener { answerRecord ->
-                                if (answerRecord.isSuccessful) {
-                                    recordSrc = answerRecord.result.toString()
-                                }
-                                sendAnswer(reply, recordSrc)
-                            }
-                            dialog.dismiss()
-                        }
-                        recordGuide.release()
-                        Handler().postDelayed({
-                            nextQuestion()
-                        }, 1500)
-                    }
-
-                    dialog.findViewById<Button>(R.id.record_stop_btn).setOnClickListener {
-                        dialog.dismiss()
-                    }
-                }, 13000)
+                // 녹음 회신 수행
+                setRecord(reply)
             }
             else {
                 sendAnswer(reply, recordSrc)
@@ -167,6 +131,65 @@ class AnswerActivity : AppCompatActivity() {
                 }, 1500)
             }
         }
+    }
+
+    /**
+     * 음성 회신 기능을 수행하는 메서드
+     *  - reply : 질문에 대한 답변
+     */
+    private fun setRecord(reply: Boolean) {
+        var recordSrc = ""
+        val dialog = android.app.AlertDialog.Builder(binding.root.context).create()
+        val eDialog : LayoutInflater = LayoutInflater.from(binding.root.context)
+        val mView : View = eDialog.inflate(R.layout.answer_record_dialog, null)
+
+        // 녹음 안내 가이드 보이스
+        val recordGuide = MediaPlayer.create(this, R.raw.recordguide)
+        Handler().postDelayed({
+            recordGuide.start()
+        }, 600)
+
+        dialog.setView(mView)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.create()
+
+        Handler().postDelayed({
+            // 녹음기능
+            val answerRecordActivity = AnswerRecordActivity(mView)
+            answerRecordActivity.startRecoding()
+
+            dialog.show()
+
+            var answerRecordFile = Uri.fromFile(File(answerRecordActivity.returnRecordingFile()))
+            val answerRecordRef =
+                storage.reference.child("answerRecord/${auth.currentUser?.uid + LocalDateTime.now().format(
+                    DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))}")
+
+            // 다이얼로그 종료 시 이벤트
+            dialog.setOnDismissListener {
+                // 녹음 중이라면 중단 후 저장
+                answerRecordActivity.stopRecording()
+                var uploadAnswerRecord = answerRecordRef.putFile(answerRecordFile)
+                uploadAnswerRecord.addOnSuccessListener {
+                    answerRecordRef.downloadUrl.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            recordSrc = task.result.toString()
+                        }
+                        sendAnswer(reply, recordSrc)
+                    }
+                    dialog.dismiss()
+                }
+                recordGuide.release()
+                Handler().postDelayed({
+                    nextQuestion()
+                }, 1500)
+            }
+
+            dialog.findViewById<Button>(R.id.record_stop_btn).setOnClickListener {
+                dialog.dismiss()
+            }
+        }, 13000)
     }
 
     private fun setQuestion() {
@@ -186,6 +209,7 @@ class AnswerActivity : AppCompatActivity() {
             questionPlayer.prepare()
             questionPlayer.start()
         }
+        startStt()
         window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
@@ -199,6 +223,10 @@ class AnswerActivity : AppCompatActivity() {
     }
 
     private fun nextQuestion() {
+        // 음성 인식 종료
+        speechRecognizer?.stopListening()
+        speechRecognizer?.destroy()
+
         if (currentIndex < listSize - 1) {
             currentIndex += 1
             questionPlayer.release()
@@ -264,5 +292,161 @@ class AnswerActivity : AppCompatActivity() {
                 firebaseViewModel.sendNotification(notificationDTO) /* FCM 전송하기 */
             }
         }
+    }
+
+    /**
+     * 이하는 음성 대답 기능(STT) 구현을 위한 메서드
+     */
+
+    /**
+     * SpeechToText 설정 및 동작
+     */
+    private fun startStt() {
+        // STT 옵션이 켜져있는 경우에만 실행
+        if (sttIsOn) {
+            val speechRecognizerintent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR")
+            }
+
+            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this).apply {
+                setRecognitionListener(recognitionListener())
+                startListening(speechRecognizerintent)
+            }
+        }
+    }
+
+    /**
+     * SpeechToText 기능 세팅
+     *  - onResults
+     *      - 해석 결과가 긍정 / 부정 / 다시 듣기에 해당하면 알맞은 기능 수행
+     *      - 위에 해당하지 않는다면 음성인식 다시 수행
+     */
+    private fun recognitionListener() = object : RecognitionListener {
+        override fun onReadyForSpeech(p0: Bundle?) { }
+
+        override fun onBeginningOfSpeech() { }
+
+        override fun onRmsChanged(p0: Float) { }
+
+        override fun onBufferReceived(p0: ByteArray?) { }
+
+        override fun onEndOfSpeech() { }
+
+        override fun onError(error: Int) {
+            var message : String
+
+            when (error) {
+                SpeechRecognizer.ERROR_AUDIO ->
+                    message = "오디오 에러"
+                SpeechRecognizer.ERROR_CLIENT ->
+                    message = "클라이언트 에러"
+                SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS ->
+                    message = "퍼미션 없음"
+                SpeechRecognizer.ERROR_NETWORK ->
+                    message = "네트워크 에러"
+                SpeechRecognizer.ERROR_NETWORK_TIMEOUT ->
+                    message = "네트워크 타임아웃"
+                SpeechRecognizer.ERROR_NO_MATCH -> {
+                    message = "음성 인식 실패"
+                    startStt()
+                }
+                SpeechRecognizer.ERROR_RECOGNIZER_BUSY ->
+                    message = "RECOGNIZER가 바쁨"
+                SpeechRecognizer.ERROR_SERVER ->
+                    message = "서버가 이상함"
+                SpeechRecognizer.ERROR_SPEECH_TIMEOUT ->
+                    message = "말하는 시간초과"
+                else ->
+                    message = "알 수 없는 오류"
+            }
+            Toast.makeText(applicationContext, "에러 발생 $message", Toast.LENGTH_SHORT)
+        }
+
+        override fun onResults(results: Bundle?) {
+            var str = results!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)!![0]
+            var positiveWordList = arrayListOf("그래", "으응", "응", "엉", "어")
+            var negativeWordList = arrayListOf("아니", "않이", "안이")
+            var replayWordList = arrayListOf("다시", "바지", "다시 듣기")
+
+            when(checkResults(str, positiveWordList, negativeWordList, replayWordList)) {
+                1 -> {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    answerBell.start()
+                    val reply = true
+                    var recordSrc = ""
+
+                    if (answerList[currentIndex].second.questionRecord) {
+                        // 질문 녹음 재생 중지
+                        questionPlayer.stop()
+
+                        // 녹음 회신 수행
+                        setRecord(reply)
+                    }
+                    else {
+                        sendAnswer(reply, recordSrc)
+                        Handler().postDelayed({
+                            nextQuestion()
+                        }, 1500)
+                    }
+                }
+
+                2 -> {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    answerBell.start()
+                    val reply = false
+                    var recordSrc = ""
+
+                    sendAnswer(reply, recordSrc)
+                    Handler().postDelayed({
+                        nextQuestion()
+                    }, 1500)
+                }
+
+                3 -> {
+                    questionPlayer.stop()
+                    questionPlayer.prepare()
+                    questionPlayer.start()
+                    startStt()
+                }
+
+                else -> startStt()
+            }
+        }
+
+        override fun onPartialResults(p0: Bundle?) { }
+
+        override fun onEvent(p0: Int, p1: Bundle?) { }
+    }
+
+    /**
+     * 문자열에 찾는 단어가 있는지 확인하여 3가지 시그널을 반환함
+     *  - str : 검색할 문자열
+     *  - positiveWordList : 긍정 단어들을 담은 리스트
+     *  - negativeWordList : 부정 단어들을 담은 리스트
+     *  - replayWordList : 다시 듣기 단어들을 담은 리스트
+     *  - 시그널 종류
+     *      - 1 : 긍정
+     *      - 2 : 부정
+     *      - 3 : 다시 듣기
+     *      - -1 : 일치하는 단어 없음
+     */
+    private fun checkResults(
+        str : String,
+        positiveWordList : ArrayList<String>,
+        negativeWordList : ArrayList<String>,
+        replayWordList : ArrayList<String>) : Int {
+
+        var strSplit = str.split(' ')
+
+        Log.d("test", strSplit.toString())
+
+        if (strSplit.intersect(positiveWordList.toSet()).isNotEmpty())
+            return 1
+        else if (strSplit.intersect(negativeWordList.toSet()).isNotEmpty())
+            return 2
+        else if (strSplit.intersect(replayWordList.toSet()).isNotEmpty())
+            return 3
+        return -1
     }
 }

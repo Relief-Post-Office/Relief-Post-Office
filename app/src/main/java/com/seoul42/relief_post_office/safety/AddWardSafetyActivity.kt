@@ -30,14 +30,23 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
+/**
+ * 피보호자의 안부를 추가하는 화면을 띄우도록 돕는 클래스
+ */
 class AddWardSafetyActivity : AppCompatActivity() {
 
+    // FCM을 보내기 위한 객체
     private val database = Firebase.database
     private val firebaseViewModel : FirebaseViewModel by viewModels()
+    // 안부가 설정된 시간을 담는 변수
     private var time : String? = null
+    // 선택한 안부에 설정된 질문들을 담는 리스트
     private var questionList = arrayListOf<Pair<String, QuestionDTO>>()
+    // RecyclerView 세팅을 돕는 adapter 객체
     private lateinit var addWardSafetyAdapter : AddWardSafetyAdapter
+    // 피보호자의 ID
     private lateinit var wardId : String
+    // 피보호자의 이름
     private lateinit var wardName : String
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -64,7 +73,9 @@ class AddWardSafetyActivity : AppCompatActivity() {
         setBackButton()
     }
 
-    /* 초기 세팅 */
+    /**
+     * "안부 추가" 화면의 초기 세팅을 하는 메서드
+     */
     private fun setData() {
         // 선택한 피보호자 id, 이름 찾아오기
         wardId = intent.getStringExtra("wardId").toString()
@@ -104,13 +115,20 @@ class AddWardSafetyActivity : AppCompatActivity() {
         }
     }
 
-    /* 저장 버튼 세팅 */
+    /**
+     *  안부 저장(추가) 버튼을 세팅해주는 메서드
+     *   - 입력한 데이터와 설정값을 데이터베이스에 업로드
+     *   - 안부 저장 최소 조건
+     *    1. 시간 설정
+     *    2. 질문 1개 이상 설정
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setSaveButton() {
         // 저장 버튼 이벤트
         findViewById<Button>(R.id.add_ward_safety_add_button).setOnClickListener {
             // 프로그레스바 처리
-            it.isClickable = false
+            val saveBtnView = it
+            saveBtnView.isClickable = false
             window!!.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             val progressBar = findViewById<ProgressBar>(R.id.add_ward_safety_progress)
             progressBar.visibility = View.VISIBLE
@@ -134,11 +152,14 @@ class AddWardSafetyActivity : AppCompatActivity() {
 
             // 시간을 설정한 경우에만 추가 가능
             if (time == null){
+                saveBtnView.isClickable = true
                 progressBar.visibility = View.INVISIBLE
                 window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 Toast.makeText(this, "시간을 설정해 주세요", Toast.LENGTH_SHORT).show()
             }
+            // 질문을 설정한 경우에만 추가 가능
             else if (questionList.isEmpty()){
+                saveBtnView.isClickable = true
                 progressBar.visibility = View.INVISIBLE
                 window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 Toast.makeText(this, "질문을 설정해 주세요", Toast.LENGTH_SHORT).show()
@@ -171,14 +192,19 @@ class AddWardSafetyActivity : AppCompatActivity() {
         }
     }
 
-    /* 뒤로가기 버튼 세팅 */
+    /**
+     * "뒤로가기" 버튼을 세팅해주는 메서드
+     *  - "WardSafetySettingActivity"로 돌아감
+     */
     private fun setBackButton() {
         findViewById<ImageView>(R.id.add_ward_safety_backBtn).setOnClickListener{
             finish()
         }
     }
 
-    /* 리사이클러 뷰 세팅 */
+    /**
+     * RecyclerView를 세팅하기 위해 adapter클래스에 연결하는 메서드
+     */
     private fun setRecyclerView() {
         val rv = findViewById<RecyclerView>(R.id.add_ward_safety_rv)
         addWardSafetyAdapter = AddWardSafetyAdapter(questionList)
@@ -187,7 +213,11 @@ class AddWardSafetyActivity : AppCompatActivity() {
         rv.setHasFixedSize(true)
     }
 
-    /* 질문 버튼 세팅 */
+    /**
+     * "질문 설정" 버튼을 세팅해주는 메서드
+     *  - "SafetyQuestionSettingActivity"로 이동
+     *  - questionList를 함께 전달
+     */
     private fun setEditSafetyQuestionButton() {
         findViewById<ImageView>(R.id.add_ward_safety_question_setting).setOnClickListener{
             val tmpIntent = Intent(this, SafetyQuestionSettingActivity::class.java)
@@ -196,7 +226,9 @@ class AddWardSafetyActivity : AppCompatActivity() {
         }
     }
 
-    /* 안부에 연결 및 연결 해제된 질문들 connectedSafetyList 동기화 */
+    /**
+     * 데이터베이스에서 안부에 연결 및 연결 해제된 질문들 connectedSafetyList 동기화하는 메서드
+     */
     private fun connectedSafetyListSync(date : String, key : String) {
         // 설정한 질문들의 connedSafetyList에 현재 안부 아이디 추가
         for (q in questionList){
@@ -211,7 +243,10 @@ class AddWardSafetyActivity : AppCompatActivity() {
         }
     }
 
-    /* 피보호자에게 안부 동기화 FCM 보내기 */
+    /**
+     * 피보호자에게 안부 동기화 FCM 보내는 메서드
+     *  - 안부 추가 후 동작
+     */
     private fun wardSafetySync() {
         val wardRef = Firebase.database.reference.child("user").child(wardId)
         wardRef.get().addOnSuccessListener {
@@ -227,7 +262,10 @@ class AddWardSafetyActivity : AppCompatActivity() {
         }
     }
 
-    /* 피보호자와 연결된 보호자들에게 안부 동기화 FCM 보내기 */
+    /**
+     * 피보호자와 연결된 보호자들에게 안부 동기화 FCM 보내는 메서드
+     *  - wardSafetySync()에서 동작
+     */
     private fun guardianSafetySync() {
         val guardianListRef = database.getReference("ward").child(wardId).child("connectList")
         guardianListRef.get().addOnSuccessListener {
@@ -249,7 +287,10 @@ class AddWardSafetyActivity : AppCompatActivity() {
         }, 1500)
     }
 
-    /* 보호자 안부 가져오기 버튼 세팅 */
+    /**
+     * "안부 가져오기" 버튼 세팅해주는 메서드
+     *  - "GetGuardianSafetyActivity"로 이동
+     */
     private fun setGetSafetyButton() {
         findViewById<Button>(R.id.add_ward_safety_get_button).setOnClickListener{
             val tmpIntent = Intent(this, GetGuardianSafetyActivity::class.java)
@@ -258,6 +299,13 @@ class AddWardSafetyActivity : AppCompatActivity() {
     }
 
     /* 질문 설정, 안부 가져오기 작업 결과 가져오기 */
+    /**
+     * "질문 설정", "안부 가져오기" 페이지에서 작업한 결과 가져오는 메서드
+     *  - "질문 설정"
+     *      - 수정된 질문 할당 여부들을 가져와서 동기화
+     *  - "안부 가져오기"
+     *      - 선택한 보호자 안부(질문 모음)에 포함된 질문들을 questionList에 추가
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
