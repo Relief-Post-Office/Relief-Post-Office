@@ -63,3 +63,6 @@ https://github.com/Relief-Post-Office/Relief-Post-Office/blob/main/app-release2.
 <a href="https://www.flaticon.com/kr/free-icons/" title="새 아이콘">새 아이콘  제작자: Freepik - Flaticon</a>  
 <a href="https://www.flaticon.com/kr/free-icons/-" title="우편 집배원 아이콘">우편 집배원 아이콘  제작자: Freepik - Flaticon</a>   
 <a href="https://www.flaticon.com/kr/free-icons/" title="우편 아이콘">우편 아이콘  제작자: Freepik - Flaticon</a>  
+
+## License
+This project is licensed under the GPL License - see the [LICENSE](https://github.com/Relief-Post-Office/Relief-Post-Office/blob/license/License) file for details
