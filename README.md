@@ -66,3 +66,28 @@ https://github.com/Relief-Post-Office/Relief-Post-Office/blob/main/app-release2.
 
 ## License
 This project is licensed under the GPL License - see the [LICENSE](https://github.com/Relief-Post-Office/Relief-Post-Office/blob/license/License) file for details
+### License overview of included 3rd party libraries
+#### androidx
+- Apache 2.0
+- https://developer.android.com/license?hl=ko
+#### bumptech.glide
+- Apache 2.0
+- https://github.com/bumptech/glide/blob/master/LICENSE
+#### StevenDXC
+- Apache 2.0
+- https://github.com/StevenDXC/DxLoadingButton/blob/master/LICENSE
+#### de.hdodenhof
+- Apache 2.0
+- https://github.com/hdodenhof/CircleImageView/blob/master/LICENSE.txt
+#### jd-alexander
+- MIT
+- https://github.com/jd-alexander/Google-Directions-Android/blob/master/LICENSE.md
+#### squareup.retrofit2
+- Apache 2.0
+- https://square.github.io/retrofit/
+#### org.jetbrains.kotlinx
+- Apache 2.0
+- https://github.com/Kotlin/kotlinx.coroutines/blob/master/LICENSE.txt
+#### junit:4.13.2
+- EPL 1.0
+- https://junit.org/junit4/license.html
