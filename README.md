@@ -70,6 +70,9 @@ This project is licensed under the GPL License - see the [LICENSE](https://githu
 #### androidx
 - Apache 2.0
 - https://developer.android.com/license?hl=ko
+#### firebase
+- Apache 2.0
+- https://github.com/firebase/firebase-android-sdk/blob/master/LICENSE
 #### bumptech.glide
 - Apache 2.0
 - https://github.com/bumptech/glide/blob/master/LICENSE
